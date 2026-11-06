@@ -1,0 +1,7 @@
+# Target metadata for A02 (output gap, IMF estimate), the only target_distance indicator in v1
+# (indicator-parameters spec AC-PAR-6; analytics spec 4.1). The target is the same for every entity.
+indicator: A02
+target:
+  value: 0.0
+  unit: "% of potential output"
+  source_note: "Output gap of zero means actual output equals potential output (definition)."

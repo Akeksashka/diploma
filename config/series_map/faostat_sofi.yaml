@@ -1,0 +1,29 @@
+# Series map of group faostat_sofi. Key = parser series_ref: <M49 area>.<Item Code>.<Element Code>
+# (item 21004 = prevalence of undernourishment, 3-year average; element 6121 = value). [UNVERIFIED]
+# against a real FAOSTAT file: codes follow the synthetic fixture and recollection. Seed set only
+# (three countries); widen with the series-map seeding report (T52 reviewed CSV not supplied).
+series:
+  - dataset: Food_Security_Data
+    key: "276.21004.6121"
+    entity: DEU
+    indicator: G12
+    role: headline
+    valid_from: 2000-01-01
+    rationale: "FAOSTAT Food Security Data, prevalence of undernourishment (percent, 3-year average), Germany; stored at the centre year (data-sources research F11, G12)"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: Food_Security_Data
+    key: "356.21004.6121"
+    entity: IND
+    indicator: G12
+    role: headline
+    valid_from: 2000-01-01
+    rationale: "FAOSTAT Food Security Data, prevalence of undernourishment (percent, 3-year average), India; stored at the centre year (data-sources research F11, G12)"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: Food_Security_Data
+    key: "032.21004.6121"
+    entity: ARG
+    indicator: G12
+    role: headline
+    valid_from: 2000-01-01
+    rationale: "FAOSTAT Food Security Data, prevalence of undernourishment (percent, 3-year average), Argentina; stored at the centre year (data-sources research F11, G12)"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}

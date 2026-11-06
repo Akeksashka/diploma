@@ -1,0 +1,5 @@
+/* synthetic fixture, not the real tokens */
+:root { --mm-bg: #ffffff; --mm-text: #111; --mm-border: #bbbbbb; --mm-space-1: 4px; }
+@media (prefers-color-scheme: dark) {
+  :root { --mm-bg: #121212; --mm-text: #f0f0f0; --mm-border: #8a8a8a; }
+}

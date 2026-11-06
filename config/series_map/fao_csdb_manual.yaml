@@ -1,0 +1,14 @@
+# Dataset key differs from the automated group on purpose: sync-config identifies a map entry by (indicator, entity, dataset/key, role, valid_from) across sources.
+# Series map of group fao_csdb_manual (T64, ADR-028 fallback; role fallback, the automated group owns the headline). Copy of fao_csdb: Key = parser series_ref: column A of the CSDB worksheet. [UNVERIFIED]
+# against a real brief: the name follows the synthetic fixture. World aggregate only (research F11:
+# per-country ratios exist only in AMIS); G03 is a scope: country indicator, so the 42 country pairs
+# stay unmapped (known-gap decision for T63). Our stored copy is the only vintage of each brief.
+series:
+  - dataset: csdb-manual
+    key: "World cereals stocks-to-use ratio (%)"
+    entity: WLD
+    indicator: G03
+    role: fallback
+    valid_from: 1991-01-01
+    rationale: "FAO Cereal Supply and Demand Brief, world cereals stocks-to-use ratio by marketing year (data-sources research F11, G03)"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}

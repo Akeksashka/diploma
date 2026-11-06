@@ -1,0 +1,21 @@
+# Series map of group oecd_cli (source-config-schema section 4). Key = parser series_ref: the dimension
+# values of the SDMX-CSV row joined by ".". [UNVERIFIED] against a live OECD file: keys, dimension order
+# and codes follow the synthetic fixture. Seed set only (two countries per indicator); widen with the
+# series-map seeding report (T52 reviewed CSV not supplied).
+series:
+  - dataset: "OECD.SDD.STES,DSD_STES@DF_CLI"
+    key: "USA.M.LI.IX._Z.AA._Z._Z._Z"
+    entity: USA
+    indicator: M05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "OECD composite leading indicator, amplitude adjusted, United States (design Q33, M05)"
+    expect: {frequency: M, unit: IDX, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: "OECD.SDD.STES,DSD_STES@DF_CLI"
+    key: "JPN.M.LI.IX._Z.AA._Z._Z._Z"
+    entity: JPN
+    indicator: M05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "OECD composite leading indicator, amplitude adjusted, Japan (design Q33, M05)"
+    expect: {frequency: M, unit: IDX, seasonal_adjustment: NA, price_basis: NA}

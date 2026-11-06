@@ -1,0 +1,21 @@
+# Series map of group oecd_prices (source-config-schema section 4). Key = parser series_ref: the dimension
+# values of the SDMX-CSV row joined by ".". [UNVERIFIED] against a live OECD file: keys, dimension order
+# and codes follow the synthetic fixture. Seed set only (two countries per indicator); widen with the
+# series-map seeding report (T52 reviewed CSV not supplied).
+series:
+  - dataset: "OECD.SDD.TPS,DSD_PRICES@DF_PRICES_ALL"
+    key: "ARG.M.CPI.IX.N._Z"
+    entity: ARG
+    indicator: M06
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "OECD headline CPI index, Argentina (data-sources research F13, M06)"
+    expect: {frequency: M, unit: IDX, seasonal_adjustment: NSA, price_basis: NA}
+  - dataset: "OECD.SDD.TPS,DSD_PRICES@DF_PRICES_ALL"
+    key: "BRA.M.CPI.IX.N._Z"
+    entity: BRA
+    indicator: M06
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "OECD headline CPI index, Brazil (data-sources research F13, M06)"
+    expect: {frequency: M, unit: IDX, seasonal_adjustment: NSA, price_basis: NA}

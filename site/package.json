@@ -1,0 +1,27 @@
+{
+  "name": "macro-monitor-site",
+  "private": true,
+  "type": "module",
+  "description": "Macro Monitor dashboard site (ADR-010, ADR-023, ADR-024). Build-time Node tool only.",
+  "engines": {
+    "node": ">=20.18.1 <21"
+  },
+  "scripts": {
+    "prepare-data": "node scripts/prepare-data.mjs",
+    "build": "npm run prepare-data && observable build",
+    "dev": "npm run prepare-data && observable preview",
+    "test": "node --test tests/*.test.mjs",
+    "check:contrast": "node scripts/check-contrast.mjs",
+    "check:imports": "node scripts/check-npm-imports.mjs",
+    "measure:landing": "node scripts/measure-landing.mjs",
+    "smoke": "node --test tests/smoke/*.smoke.mjs"
+  },
+  "dependencies": {
+    "@observablehq/framework": "1.13.4",
+    "@observablehq/plot": "0.6.18",
+    "d3": "7.9.2"
+  },
+  "devDependencies": {
+    "playwright": "1.64.1"
+  }
+}

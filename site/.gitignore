@@ -1,0 +1,10 @@
+node_modules/
+dist/
+src/data/
+src/.observablehq/
+.observablehq/
+src/domain/
+src/peers/
+src/explorer.md
+src/revisions.md
+test-artifacts/

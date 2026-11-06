@@ -1,0 +1,30 @@
+# Series map of group dbnomics_ameco_gap. Key = parser series_ref: the DBnomics series_code.
+# [UNVERIFIED] against a live response: codes follow the synthetic fixture. A02c is its own
+# indicator (comparison series, ADR-009/D18), so role headline is the one headline of A02c; the
+# is_comparison flag is NOT set on A02c in indicators.yaml (role: comparison would fail rule 12),
+# decision for the user. Seed set only (research: 37 series expected).
+series:
+  - dataset: AMECO/AVGDGP
+    key: "DEU.1.0.0.0.AVGDGP"
+    entity: DEU
+    indicator: A02c
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "AMECO output gap (AVGDGP) via DBnomics, percent of potential GDP, DEU (data-sources research F6, A02c)"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: AMECO/AVGDGP
+    key: "FRA.1.0.0.0.AVGDGP"
+    entity: FRA
+    indicator: A02c
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "AMECO output gap (AVGDGP) via DBnomics, percent of potential GDP, FRA (data-sources research F6, A02c)"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: AMECO/AVGDGP
+    key: "USA.1.0.0.0.AVGDGP"
+    entity: USA
+    indicator: A02c
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "AMECO output gap (AVGDGP) via DBnomics, percent of potential GDP, USA (data-sources research F6, A02c)"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}

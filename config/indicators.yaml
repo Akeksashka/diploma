@@ -1,0 +1,1255 @@
+# Indicator catalog (docs/specs/source-config-schema.md section 3), transcribed by T32 from the approved
+# selection (docs/research/indicator-selection-g20-eu-cross-country.md) and the draft table of
+# docs/specs/indicator-parameters-spec.md section 5. Parameters resolve against
+# config/indicator_defaults.yaml (ADR-014): only values that differ from the family are written here.
+# No `alert.override` entry exists in v1 (rule 20, Q50, OQ-15). `is_support` is not authored (DG-02).
+# Review status: every row is `proposed`; only the user records `confirmed` (with `by` and `on`).
+# The plan (BL-12) says the user confirmed the parameters on 2026-10-27 in session; that statement
+# is not recorded here until the user (not an agent) supplies it.
+# Domains: 11, the DDL / source-config list; the empty `markets` domain was dropped on 2026-10-27
+# (plan OQ-12, source-config rule 13, AC-CFG-15), so it is not written (the T32 brief said 12).
+domains:
+  - {id: growth, name: Growth, ranked: true, min_coverage_for_rank: 0.5}   # B8 proposed default, user to confirm
+  - {id: prices, name: Prices and inflation, ranked: true, min_coverage_for_rank: 0.5}   # B8 proposed default, user to confirm
+  - {id: labour, name: Labour market, ranked: true, min_coverage_for_rank: 0.5}   # B8 proposed default, user to confirm
+  - {id: external, name: External, ranked: true, min_coverage_for_rank: 0.5}   # B8 proposed default, user to confirm
+  - {id: fiscal, name: Fiscal, ranked: true, min_coverage_for_rank: 0.5}   # B8 proposed default, user to confirm
+  - {id: fin, name: Financial, ranked: true, min_coverage_for_rank: 0.5}   # B8 proposed default, user to confirm
+  - {id: social, name: Social, ranked: true, min_coverage_for_rank: 0.5}   # B8 proposed default, user to confirm
+  - {id: structural, name: Structural, ranked: true, min_coverage_for_rank: 0.5}   # B8 proposed default, user to confirm
+  - {id: environment, name: Environment, ranked: true, min_coverage_for_rank: 0.5}   # B8 proposed default, user to confirm
+  - {id: agri, name: Agri-food, ranked: false, notice: "informational, unranked"}
+  - {id: global, name: Global series, ranked: false, notice: "informational, unranked"}
+
+indicators:
+  - id: M01
+    name: Industrial production index (excl. construction)
+    kind: indicator
+    scope: country
+    tier: M
+    priority: core
+    currency_basis: B1
+    family: activity_yoy
+    review: {status: proposed}
+    transform: YOY
+    alert: {adverse: -1}
+    rank: {mode: monotone_good, good_dir: 1, display_dir: null}
+    domains: [{id: growth, ranked: true}]
+
+  - id: M02
+    name: Retail trade volume
+    kind: indicator
+    scope: country
+    tier: M
+    priority: core
+    currency_basis: B1
+    family: activity_yoy
+    review: {status: proposed}
+    transform: YOY
+    alert: {adverse: -1}
+    rank: {mode: monotone_good, good_dir: 1, display_dir: null}
+    domains: [{id: growth, ranked: true}]
+
+  - id: M03
+    name: Business-confidence survey (EC ESI, OECD BCI)
+    kind: indicator
+    scope: country
+    tier: M
+    priority: core
+    currency_basis: B1
+    family: survey_balance
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: -1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: 1}
+    domains: [{id: growth, ranked: false}]
+    notes: "PMI part dropped (D20)"
+
+  - id: M04
+    name: Consumer confidence
+    kind: indicator
+    scope: country
+    tier: M
+    priority: core
+    currency_basis: B1
+    family: survey_balance
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: -1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: 1}
+    domains: [{id: growth, ranked: false}]
+
+  - id: M05
+    name: OECD Composite Leading Indicator
+    kind: indicator
+    scope: country
+    tier: M
+    priority: ext
+    currency_basis: B1
+    family: activity_yoy
+    stationarity_class: stationary
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: -1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: 1}
+    domains: [{id: growth, ranked: false}]
+
+  - id: M06
+    name: Headline CPI / HICP inflation
+    kind: indicator
+    scope: country
+    tier: M
+    priority: core
+    currency_basis: B1
+    family: price_rate
+    review: {status: proposed}
+    transform: YOY
+    alert: {adverse: 1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: prices, ranked: false}]
+
+  - id: M07
+    name: Core inflation (ex food, energy)
+    kind: indicator
+    scope: country
+    tier: M
+    priority: core
+    currency_basis: B1
+    family: price_rate
+    review: {status: proposed}
+    transform: YOY
+    alert: {adverse: 1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: prices, ranked: false}]
+
+  - id: M08
+    name: Industrial producer prices
+    kind: indicator
+    scope: country
+    tier: M
+    priority: ext
+    currency_basis: B1
+    family: price_rate
+    review: {status: proposed}
+    transform: YOY
+    alert: {adverse: 1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: prices, ranked: false}]
+
+  - id: M09
+    name: Unemployment rate
+    kind: indicator
+    scope: country
+    tier: M
+    priority: core
+    currency_basis: B1
+    family: labour_rate_level
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 1}
+    rank: {mode: monotone_good, good_dir: -1, display_dir: null}
+    domains: [{id: labour, ranked: true}]
+
+  - id: M10
+    name: Youth unemployment (<25)
+    kind: indicator
+    scope: country
+    tier: M
+    priority: ext
+    currency_basis: B1
+    family: labour_rate_level
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 1}
+    rank: {mode: monotone_good, good_dir: -1, display_dir: null}
+    domains: [{id: labour, ranked: true}]
+
+  - id: M11
+    name: Employment level/rate (monthly)
+    kind: indicator
+    scope: country
+    tier: M
+    priority: opt
+    currency_basis: B1
+    family: activity_yoy
+    review: {status: proposed}
+    transform: YOY
+    alert: {adverse: -1}
+    rank: {mode: monotone_good, good_dir: 1, display_dir: null}
+    domains: [{id: labour, ranked: true}]
+
+  - id: M12
+    name: Merchandise exports and imports
+    kind: indicator
+    scope: country
+    tier: M
+    priority: core
+    currency_basis: B1
+    family: activity_yoy
+    review: {status: proposed}
+    transform: YOY
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: external, ranked: false}]
+
+  - id: M13
+    name: Goods trade balance, 12-month sum as % of GDP
+    kind: indicator
+    scope: country
+    tier: M
+    priority: ext
+    currency_basis: B1
+    family: external_ratio
+    review: {status: proposed}
+    transform: SUM12_PCT_GDP
+    alert: {adverse: -1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: external, ranked: false}]
+    inputs:
+      - {id: X01, usage: denominator_gdp_lcu, currency_match: numerator, annualised_policy: fail, max_denominator_age_days: 120}
+
+  - id: M14
+    name: Official FX reserves
+    kind: indicator
+    scope: country
+    tier: M
+    priority: core
+    currency_basis: B2
+    family: external_ratio
+    review: {status: proposed}
+    transform: RESERVE_COVER
+    alert: {adverse: -1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: external, ranked: false}]
+    inputs:
+      - {id: X03, usage: imports_goods_services_usd, currency_match: usd, annualised_policy: fail}
+    notes: "no monthly source researched; n/a at launch (design section 5)"
+
+  - id: M15
+    name: Real effective exchange rate
+    kind: indicator
+    scope: country
+    tier: M
+    priority: core
+    currency_basis: B1
+    family: external_ratio
+    stationarity_class: stationary
+    review: {status: proposed}
+    transform: YOY
+    alert: {method: robust_z, adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: external, ranked: false}]
+    notes: "staleness class ACT120 proposed; MKT45 is the alternative (spec section 7 item 3)"
+
+  - id: M16
+    name: Exchange rate vs USD
+    kind: indicator
+    scope: country
+    tier: M
+    priority: core
+    currency_basis: B1
+    family: market_rate
+    stationarity_class: rate_of_change
+    review: {status: proposed}
+    transform: YOY
+    alert: {method: robust_z, adverse: 1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: external, ranked: false}]
+    notes: "LCU per USD rising = depreciation; domain External per Q30(a)"
+
+  - id: M17
+    name: Policy interest rate
+    kind: indicator
+    scope: country
+    tier: M
+    priority: core
+    currency_basis: B1
+    family: market_rate
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: fin, ranked: false}]
+
+  - id: M18
+    name: 10-year government bond yield and spread
+    kind: indicator
+    scope: country
+    tier: M
+    priority: core
+    currency_basis: B1
+    family: market_rate
+    stationarity_class: stationary
+    review: {status: proposed}
+    transform: SPREAD_VS_REF
+    alert: {method: robust_z, adverse: 1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: fin, ranked: false}]
+
+  - id: M19
+    name: Short-term interbank rate
+    kind: indicator
+    scope: country
+    tier: M
+    priority: ext
+    currency_basis: B1
+    family: market_rate
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: fin, ranked: false}]
+
+  - id: M21
+    name: Private-sector bank credit growth
+    kind: indicator
+    scope: country
+    tier: M
+    priority: ext
+    currency_basis: B1
+    family: price_rate
+    review: {status: proposed}
+    transform: YOY
+    alert: {adverse: 1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: fin, ranked: false}]
+
+  - id: M22
+    name: Broad money (M2/M3)
+    kind: indicator
+    scope: country
+    tier: M
+    priority: opt
+    currency_basis: B1
+    family: activity_yoy
+    review: {status: proposed}
+    transform: YOY
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: []
+    notes: "no scorecard domain in the selection"
+
+  - id: M24
+    name: Commodity and energy prices (Brent, gas, food index)
+    kind: indicator
+    scope: global
+    tier: M
+    priority: core
+    currency_basis: B2
+    family: market_rate
+    stationarity_class: rate_of_change
+    review: {status: proposed}
+    transform: YOY
+    alert: {method: robust_z, adverse: 1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: global, ranked: false}]
+    notes: "scope global (WLD)"
+
+  - id: M27
+    name: Electricity generation/consumption proxy
+    kind: indicator
+    scope: country
+    tier: M
+    priority: opt
+    currency_basis: B1
+    family: activity_yoy
+    review: {status: proposed}
+    transform: YOY
+    alert: {adverse: -1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: environment, ranked: false}]
+
+  - id: G01
+    name: Food CPI / HICP food and non-alcoholic beverages
+    kind: indicator
+    scope: country
+    tier: M
+    priority: core
+    currency_basis: B1
+    family: price_rate
+    review: {status: proposed}
+    transform: YOY
+    alert: {adverse: 1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: prices, ranked: false}, {id: agri, ranked: false}]
+
+  - id: G02
+    name: Agricultural and fertilizer commodity prices
+    kind: indicator
+    scope: global
+    tier: M
+    priority: ext
+    currency_basis: B2
+    family: market_rate
+    stationarity_class: rate_of_change
+    review: {status: proposed}
+    transform: YOY
+    alert: {method: robust_z, adverse: 1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: global, ranked: false}]
+    notes: "scope global (WLD)"
+
+  - id: G03
+    name: Stocks-to-use ratio (wheat, coarse grains, rice, oilseeds)
+    kind: indicator
+    scope: country
+    tier: M
+    priority: ext
+    currency_basis: B1
+    family: activity_yoy
+    stationarity_class: stationary
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: -1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: agri, ranked: false}]
+    calendar_basis: MKTYR
+    notes: "calendar_basis MKTYR; staleness borderline (spec section 7 item 3)"
+
+  - id: G04
+    name: Agricultural trade balance, 12-month sum
+    kind: indicator
+    scope: country
+    tier: M
+    priority: ext
+    currency_basis: B1
+    family: activity_yoy
+    stationarity_class: stationary
+    review: {status: proposed}
+    transform: SUM12_PCT_GDP
+    alert: {adverse: -1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: agri, ranked: false}]
+    inputs:
+      - {id: X01, usage: denominator_gdp_lcu, currency_match: numerator, annualised_policy: fail, max_denominator_age_days: 120}
+
+  - id: G05
+    name: Real trade-weighted agricultural exchange rate index
+    kind: indicator
+    scope: country
+    tier: M
+    priority: opt
+    currency_basis: B1
+    family: market_rate
+    staleness_class: Q270
+    stationarity_class: stationary
+    review: {status: proposed}
+    transform: YOY
+    alert: {method: robust_z, adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: agri, ranked: false}]
+    notes: "monthly values released quarterly"
+
+  - id: G06
+    name: Weather and drought anomalies in cropland
+    kind: indicator
+    scope: country
+    tier: M
+    priority: opt
+    currency_basis: B1
+    family: activity_yoy
+    stationarity_class: stationary
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: agri, ranked: false}]
+
+  - id: Q01
+    name: Real GDP (volume, SA)
+    kind: indicator
+    scope: country
+    tier: Q
+    priority: core
+    currency_basis: B1
+    family: quarterly_growth
+    review: {status: proposed}
+    transform: YOY
+    alert: {adverse: -1}
+    rank: {mode: monotone_good, good_dir: 1, display_dir: null}
+    domains: [{id: growth, ranked: true}]
+
+  - id: Q02
+    name: Real GDP per capita, PPP
+    kind: indicator
+    scope: country
+    tier: Q
+    priority: ext
+    currency_basis: B3
+    family: quarterly_growth
+    review: {status: proposed}
+    transform: YOY
+    alert: {adverse: -1}
+    rank: {mode: monotone_good, good_dir: 1, display_dir: null}
+    domains: [{id: growth, ranked: true}]
+    notes: "Q/A series; annual-only countries become stale after 270 days"
+
+  - id: Q03
+    name: Employment, hours worked
+    kind: indicator
+    scope: country
+    tier: Q
+    priority: ext
+    currency_basis: B1
+    family: quarterly_growth
+    review: {status: proposed}
+    transform: YOY
+    alert: {adverse: -1}
+    rank: {mode: monotone_good, good_dir: 1, display_dir: null}
+    domains: [{id: labour, ranked: true}]
+
+  - id: Q04
+    name: Expenditure components (contributions to growth)
+    kind: indicator
+    scope: country
+    tier: Q
+    priority: ext
+    currency_basis: B1
+    family: quarterly_growth
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: growth, ranked: false}]
+
+  - id: Q05
+    name: Current account balance, % of GDP
+    kind: indicator
+    scope: country
+    tier: Q
+    priority: core
+    currency_basis: B1
+    family: quarterly_ratio
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: -1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: external, ranked: false}]
+
+  - id: Q06
+    name: Credit to private non-financial sector, % of GDP and credit-to-GDP gap
+    kind: indicator
+    scope: country
+    tier: Q
+    priority: core
+    currency_basis: B1
+    family: quarterly_ratio
+    stationarity_class: stationary
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: fin, ranked: false}]
+    notes: "z-score only, no fixed override (OQ-15 closed by the user 2026-10-27)"
+
+  - id: Q07
+    name: Residential property prices (real)
+    kind: indicator
+    scope: country
+    tier: Q
+    priority: ext
+    currency_basis: B1
+    family: quarterly_growth
+    review: {status: proposed}
+    transform: YOY
+    alert: {adverse: 1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: fin, ranked: false}]
+
+  - id: Q08
+    name: General government gross debt, % of GDP
+    kind: indicator
+    scope: country
+    tier: Q
+    priority: core
+    currency_basis: B1
+    family: quarterly_ratio
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 1}
+    rank: {mode: monotone_good, good_dir: -1, display_dir: null}
+    domains: [{id: fiscal, ranked: true}]
+
+  - id: Q09
+    name: Net international investment position, % of GDP
+    kind: indicator
+    scope: country
+    tier: Q
+    priority: ext
+    currency_basis: B1
+    family: quarterly_ratio
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: -1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: external, ranked: false}]
+
+  - id: Q10
+    name: External debt; short-term external debt vs reserves
+    kind: indicator
+    scope: country
+    tier: Q
+    priority: ext
+    currency_basis: B2
+    family: quarterly_ratio
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 1}
+    rank: {mode: monotone_good, good_dir: -1, display_dir: null}
+    domains: [{id: external, ranked: true}]
+
+  - id: Q11
+    name: Banking soundness (NPL ratio, Tier 1 capital)
+    kind: indicator
+    scope: country
+    tier: Q
+    priority: ext
+    currency_basis: B1
+    family: quarterly_ratio
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 1}
+    rank: {mode: monotone_good, good_dir: -1, display_dir: null}
+    domains: [{id: fin, ranked: true}]
+    notes: "multi-measure row kept single (OQ-10); one orientation per series, NPL ratio is the headline proposal"
+
+  - id: Q12
+    name: Government net lending, % of GDP
+    kind: indicator
+    scope: country
+    tier: Q
+    priority: ext
+    currency_basis: B1
+    family: quarterly_ratio
+    stationarity_class: stationary
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: -1}
+    rank: {mode: monotone_good, good_dir: 1, display_dir: null}
+    domains: [{id: fiscal, ranked: true}]
+
+  - id: Q13
+    name: Household debt, % of GDP
+    kind: indicator
+    scope: country
+    tier: Q
+    priority: opt
+    currency_basis: B1
+    family: quarterly_ratio
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 1}
+    rank: {mode: monotone_good, good_dir: -1, display_dir: null}
+    domains: [{id: fin, ranked: true}]
+
+  - id: Q14
+    name: Inflation expectations
+    kind: indicator
+    scope: country
+    tier: Q
+    priority: opt
+    currency_basis: B1
+    family: quarterly_growth
+    stationarity_class: stationary
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: []
+    notes: "licence V, may be dropped"
+
+  - id: Q15
+    name: Labour productivity (GDP per hour)
+    kind: indicator
+    scope: country
+    tier: Q
+    priority: ext
+    currency_basis: B1
+    family: quarterly_growth
+    review: {status: proposed}
+    transform: YOY
+    alert: {adverse: -1}
+    rank: {mode: monotone_good, good_dir: 1, display_dir: null}
+    domains: [{id: structural, ranked: true}]
+
+  - id: Q16
+    name: Unit labour costs
+    kind: indicator
+    scope: country
+    tier: Q
+    priority: opt
+    currency_basis: B1
+    family: quarterly_growth
+    review: {status: proposed}
+    transform: YOY
+    alert: {adverse: 1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: []
+
+  - id: Q17
+    name: Agriculture gross value added, volume
+    kind: indicator
+    scope: country
+    tier: Q
+    priority: opt
+    currency_basis: B1
+    family: quarterly_growth
+    review: {status: proposed}
+    transform: YOY
+    alert: {adverse: -1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: agri, ranked: false}]
+
+  - id: A01
+    name: GDP per capita PPP and ratio to US
+    kind: indicator
+    scope: country
+    tier: A
+    priority: core
+    currency_basis: B3
+    family: annual_structural
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: monotone_good, good_dir: 1, display_dir: null}
+    domains: [{id: structural, ranked: true}]
+
+  - id: A02
+    name: Output gap, IMF estimate (headline)
+    kind: indicator
+    scope: country
+    tier: A
+    priority: core
+    currency_basis: B1
+    family: annual_alerted
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank:
+      mode: target_distance
+      good_dir: 0
+      display_dir: null
+      targets: {by_entity: config/targets/a02_output_gap.yaml}
+    domains: [{id: growth, ranked: true}]
+    notes: "IMF WEO only, 25 of 42 panel countries (D22); target 0"
+
+  - id: A02b
+    name: Output gap, OECD estimate (comparison)
+    kind: indicator
+    scope: country
+    tier: A
+    priority: opt
+    currency_basis: B1
+    family: comparison_series
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: []
+    notes: "comparison series (D18), never ranked"
+
+  - id: A02c
+    name: Output gap, European Commission estimate (comparison)
+    kind: indicator
+    scope: country
+    tier: A
+    priority: opt
+    currency_basis: B1
+    family: comparison_series
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: []
+    notes: "comparison series (D18)"
+
+  - id: A03
+    name: WEO forecasts (growth, inflation, current account, fiscal balance)
+    kind: indicator
+    scope: country
+    tier: A
+    priority: core
+    currency_basis: B1
+    family: weo_projection
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: []
+    notes: "projection series, vintage = WEO edition"
+
+  - id: A04
+    name: General government balance and primary balance, % of GDP
+    kind: indicator
+    scope: country
+    tier: A
+    priority: core
+    currency_basis: B1
+    family: annual_alerted
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: -1}
+    rank: {mode: monotone_good, good_dir: 1, display_dir: null}
+    domains: [{id: fiscal, ranked: true}]
+
+  - id: A05
+    name: Gross government debt, % of GDP
+    kind: indicator
+    scope: country
+    tier: A
+    priority: core
+    currency_basis: B1
+    family: annual_alerted
+    stationarity_class: trending_level
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 1}
+    rank: {mode: monotone_good, good_dir: -1, display_dir: null}
+    domains: [{id: fiscal, ranked: true}]
+    notes: "no fixed 60/90 override (Q50)"
+
+  - id: A07
+    name: Gross fixed capital formation, % of GDP
+    kind: indicator
+    scope: country
+    tier: A
+    priority: ext
+    currency_basis: B1
+    family: annual_structural
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: monotone_good, good_dir: 1, display_dir: null}
+    domains: [{id: structural, ranked: true}]
+
+  - id: A08
+    name: Gross national saving, % of GDP
+    kind: indicator
+    scope: country
+    tier: A
+    priority: opt
+    currency_basis: B1
+    family: annual_structural
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: []
+
+  - id: A09
+    name: Total factor productivity growth (whole economy)
+    kind: indicator
+    scope: country
+    tier: A
+    priority: ext
+    currency_basis: B1
+    family: annual_structural
+    stationarity_class: rate_of_change
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: monotone_good, good_dir: 1, display_dir: null}
+    domains: [{id: structural, ranked: true}]
+
+  - id: A10
+    name: Population, working-age share, old-age dependency
+    kind: indicator
+    scope: country
+    tier: A
+    priority: core
+    currency_basis: B1
+    family: annual_structural
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: monotone_good, good_dir: 1, display_dir: null}
+    domains: [{id: social, ranked: true}]
+    notes: "multi-measure row kept single (OQ-10); headline = working-age share"
+
+  - id: A11
+    name: Life expectancy at birth
+    kind: indicator
+    scope: country
+    tier: A
+    priority: core
+    currency_basis: B1
+    family: annual_structural
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: monotone_good, good_dir: 1, display_dir: null}
+    domains: [{id: social, ranked: true}]
+
+  - id: A12
+    name: Health expenditure, % of GDP
+    kind: indicator
+    scope: country
+    tier: A
+    priority: opt
+    currency_basis: B1
+    family: annual_structural
+    release_lag_aware: true          # draft list, proposed (OQ-10)
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: social, ranked: false}]
+    notes: "lag about 2 years; release_lag_aware candidate"
+
+  - id: A13
+    name: Educational attainment (tertiary share 25-34), PISA, schooling years
+    kind: indicator
+    scope: country
+    tier: A
+    priority: ext
+    currency_basis: B1
+    family: triennial_survey
+    release_lag_aware: true          # draft list, proposed (OQ-10)
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: monotone_good, good_dir: 1, display_dir: null}
+    domains: [{id: social, ranked: true}]
+    notes: "multi-measure row kept single (OQ-10)"
+
+  - id: A14
+    name: Income inequality (Gini, S80/S20, poverty rate)
+    kind: indicator
+    scope: country
+    tier: A
+    priority: core
+    currency_basis: B1
+    family: triennial_survey
+    release_lag_aware: true          # draft list, proposed (OQ-10)
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: monotone_good, good_dir: -1, display_dir: null}
+    domains: [{id: social, ranked: true}]
+    notes: "EU-SILC is annual: staleness class borderline"
+
+  - id: A15
+    name: Human Development Index
+    kind: indicator
+    scope: country
+    tier: A
+    priority: opt
+    currency_basis: B1
+    family: annual_structural
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: []
+
+  - id: A16
+    name: Worldwide Governance Indicators (six dimensions)
+    kind: indicator
+    scope: country
+    tier: A
+    priority: core
+    currency_basis: B1
+    family: annual_structural
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: monotone_good, good_dir: 1, display_dir: null}
+    domains: [{id: structural, ranked: true}]
+    notes: "multi-measure row kept single (OQ-10); headline or average of six dimensions undecided"
+
+  - id: A18
+    name: Export complexity, FDI inflows % of GDP
+    kind: indicator
+    scope: country
+    tier: A
+    priority: opt
+    currency_basis: B1
+    family: annual_structural
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: structural, ranked: false}]
+
+  - id: A19
+    name: Energy import dependence; energy intensity; electricity mix
+    kind: indicator
+    scope: country
+    tier: A
+    priority: opt
+    currency_basis: B1
+    family: annual_structural
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: environment, ranked: false}]
+
+  - id: A20
+    name: GHG emissions per capita and per GDP
+    kind: indicator
+    scope: country
+    tier: A
+    priority: opt
+    currency_basis: B1
+    family: annual_structural
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: environment, ranked: false}]
+
+  - id: A21
+    name: Renewable share of electricity
+    kind: indicator
+    scope: country
+    tier: A
+    priority: opt
+    currency_basis: B1
+    family: annual_structural
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: environment, ranked: false}]
+
+  - id: A22
+    name: Poverty headcount; labour force participation
+    kind: indicator
+    scope: country
+    tier: A
+    priority: ext
+    currency_basis: B1
+    family: triennial_survey
+    release_lag_aware: true          # draft list, proposed (OQ-10)
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: social, ranked: false}]
+    notes: "multi-measure row kept single (OQ-10); descriptive_only because AC-PAR-5 and analytics 4.1 do not list A22 (spec section 9 last bullet, open)"
+
+  - id: A23
+    name: R&D, % of GDP; patents
+    kind: indicator
+    scope: country
+    tier: A
+    priority: opt
+    currency_basis: B1
+    family: annual_structural
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: structural, ranked: false}]
+
+  - id: A24
+    name: Cyclically adjusted primary balance
+    kind: indicator
+    scope: country
+    tier: A
+    priority: opt
+    currency_basis: B1
+    family: annual_alerted
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: -1}
+    rank: {mode: monotone_good, good_dir: 1, display_dir: null}
+    domains: [{id: fiscal, ranked: true}]
+
+  - id: A25
+    name: GDP deflator inflation (and real GDP share of world)
+    kind: indicator
+    scope: country
+    tier: A
+    priority: ext
+    currency_basis: B1
+    family: annual_alerted
+    stationarity_class: rate_of_change
+    review: {status: proposed}
+    transform: YOY
+    alert: {method: robust_z, adverse: 1}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: prices, ranked: false}]
+
+  - id: A26
+    name: Household consumption per capita; food share of consumer spending
+    kind: indicator
+    scope: country
+    tier: A
+    priority: opt
+    currency_basis: B1
+    family: triennial_survey
+    release_lag_aware: true          # draft list, proposed (OQ-10)
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: social, ranked: false}]
+    notes: "duplicate of G11 left as drafted (OQ-10)"
+
+  - id: G07
+    name: Agricultural total factor productivity index
+    kind: indicator
+    scope: country
+    tier: A
+    priority: ext
+    currency_basis: B1
+    family: annual_structural
+    stationarity_class: rate_of_change
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: agri, ranked: false}]
+
+  - id: G08
+    name: Cereal yield; agricultural value added per worker
+    kind: indicator
+    scope: country
+    tier: A
+    priority: ext
+    currency_basis: B1
+    family: annual_structural
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: agri, ranked: false}]
+    notes: "value added per worker is B3 (PPP)"
+
+  - id: G09
+    name: Agriculture value added % of GDP; employment share in agriculture
+    kind: indicator
+    scope: country
+    tier: A
+    priority: ext
+    currency_basis: B1
+    family: annual_structural
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: agri, ranked: false}]
+
+  - id: G10
+    name: Cereal import dependency / self-sufficiency ratio
+    kind: indicator
+    scope: country
+    tier: A
+    priority: ext
+    currency_basis: B1
+    family: annual_structural
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: agri, ranked: false}]
+    calendar_basis: MKTYR
+    notes: "calendar_basis MKTYR"
+
+  - id: G11
+    name: Food expenditure share of household spending
+    kind: indicator
+    scope: country
+    tier: A
+    priority: ext
+    currency_basis: B1
+    family: triennial_survey
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: agri, ranked: false}]
+    notes: "duplicate of A26 left as drafted (OQ-10)"
+
+  - id: G12
+    name: Prevalence of undernourishment and food insecurity (FAO, 3-year averages)
+    kind: indicator
+    scope: country
+    tier: A
+    priority: ext
+    currency_basis: B1
+    family: triennial_survey
+    release_lag_aware: true          # draft list, proposed (OQ-10)
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: agri, ranked: false}]
+
+  - id: G14
+    name: 10-year agricultural projections (ERS baseline)
+    kind: indicator
+    scope: country
+    tier: A
+    priority: opt
+    currency_basis: B1
+    family: annual_structural
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: agri, ranked: false}]
+    notes: "projection series"
+
+  - id: G15
+    name: Agricultural land, irrigated area, fertilizer use
+    kind: indicator
+    scope: country
+    tier: A
+    priority: opt
+    currency_basis: B1
+    family: annual_structural
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
+    domains: [{id: agri, ranked: false}]
+
+  - id: X01
+    name: Nominal GDP, local currency units (input)
+    kind: input
+    scope: country
+    tier: Q
+    priority: core
+    currency_basis: NA
+    family: support_input
+    staleness_class: Q270
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0}
+    requires_flow_basis: PERIOD_FLOW
+    domains: []
+
+  - id: X02
+    name: Nominal GDP, USD (input)
+    kind: input
+    scope: country
+    tier: A
+    priority: core
+    currency_basis: NA
+    family: support_input
+    staleness_class: A730
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0}
+    requires_flow_basis: PERIOD_FLOW
+    domains: []
+
+  - id: X03
+    name: Imports of goods and services, USD, monthly (input)
+    kind: input
+    scope: country
+    tier: M
+    priority: core
+    currency_basis: NA
+    family: support_input
+    staleness_class: ACT120
+    review: {status: proposed}
+    transform: LEVEL
+    alert: {adverse: 0}
+    rank: {mode: descriptive_only, good_dir: 0}
+    domains: []

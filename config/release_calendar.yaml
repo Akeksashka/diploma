@@ -1,0 +1,24 @@
+# Release calendar per source group (source-config-schema section 5). Keys are group ids.
+eurostat_labour: {frequency: M, typical_lag_days: 45, tolerance_days: 20}   # [UNVERIFIED] lag; confirm against the Eurostat release calendar
+eurostat_sts: {frequency: M, typical_lag_days: 46, tolerance_days: 20}   # [UNVERIFIED] lag; research: Aug data on 2026-10-15
+eurostat_hicp: {frequency: M, typical_lag_days: 17, tolerance_days: 10}   # [UNVERIFIED] lag; research: 2026-09 present on 2026-10-17
+eurostat_gov_debt: {frequency: Q, typical_lag_days: 100, tolerance_days: 30}   # [UNVERIFIED] lag
+eurostat_gdp_q: {frequency: Q, typical_lag_days: 115, tolerance_days: 30}   # [UNVERIFIED] lag; research: 2026-Q2 present on 2026-10-22
+worldbank_support: {frequency: A, typical_lag_days: 300, tolerance_days: 120}   # [UNVERIFIED] lag
+worldbank_annual: {frequency: A, typical_lag_days: 300, tolerance_days: 120}   # [UNVERIFIED] lag; WDI database updated 2026-10-08 per research
+ecb_yields: {frequency: M, typical_lag_days: 40, tolerance_days: 20}   # [UNVERIFIED] lag; confirm against the ECB release calendar
+bis_cbpol: {frequency: M, typical_lag_days: 20, tolerance_days: 15}   # [UNVERIFIED] lag; confirm against the BIS release calendar
+bis_credit_gap: {frequency: Q, typical_lag_days: 120, tolerance_days: 30}   # PLACEHOLDER lag; BIS publishes credit-to-GDP gaps quarterly [UNVERIFIED]
+oecd_kei: {frequency: M, typical_lag_days: 45, tolerance_days: 20}   # [UNVERIFIED] lag; confirm against the OECD release calendar
+oecd_prices: {frequency: M, typical_lag_days: 40, tolerance_days: 15}   # [UNVERIFIED] lag
+oecd_cli: {frequency: M, typical_lag_days: 45, tolerance_days: 15}   # PLACEHOLDER lag
+pinksheet_monthly: {frequency: M, typical_lag_days: 5, tolerance_days: 10}   # [UNVERIFIED] lag; research: next release 2026-11-03
+fao_ffpi: {frequency: M, typical_lag_days: 7, tolerance_days: 10}   # [UNVERIFIED] lag
+fao_csdb: {frequency: M, typical_lag_days: 40, tolerance_days: 20}   # PLACEHOLDER; ten releases a year (research F11)
+# ADR-028 Q4: FAO published release dates 2026 [OBSERVED-ONCE 2026-11-05]: 6 Feb, 6 Mar, 3 Apr, 8 May, 5 Jun, 3 Jul, 4 Sep, 2 Oct, 6 Nov, 4 Dec.
+# Not yet encoded as `dates:` because monitoring/freshness.py rejects `dates` (CalendarError) until the freshness amendment rule 35 is built.
+fao_csdb_manual: {frequency: M, typical_lag_days: 40, tolerance_days: 20}   # fallback group, as fao_csdb
+pinksheet_manual: {frequency: M, typical_lag_days: 5, tolerance_days: 10}   # fallback group, as pinksheet_monthly
+faostat_sofi: {frequency: A, typical_lag_days: 300, tolerance_days: 120}   # PLACEHOLDER lag
+ec_bcs_monthly: {frequency: M, typical_lag_days: 2, tolerance_days: 7}   # [UNVERIFIED] lag
+dbnomics_ameco_gap: {frequency: A, typical_lag_days: 150, tolerance_days: 90}   # PLACEHOLDER lag; AMECO updated in spring and autumn

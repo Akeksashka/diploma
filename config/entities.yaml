@@ -1,0 +1,143 @@
+# Entities and group memberships (docs/specs/source-config-schema.md section 1; rule 14).
+# Source: docs/research/indicator-selection-g20-eu-cross-country.md, "Coverage" (EU27 + G20 minus
+# Russia = 42 countries; aggregates EU27, EA are unranked, D1) and "Metadata sub-groupings".
+# Plus WLD (aggregate, is_global, unranked) per the DDL (ref.entity).
+# [UNVERIFIED] items, to be checked by a reader against the selection document and the sources named:
+#  - euro_area: Bulgaria from 2026-01-01 (selection doc marks it UNVERIFIED; ECB, https://www.ecb.europa.eu);
+#    other accession dates are the standard euro adoption dates, not re-checked in this task.
+#  - advanced / emerging: IMF WEO classification as recalled by the implementer (Croatia advanced,
+#    Bulgaria emerging); not checked against the current WEO table. valid_from 1991-01-01 is a
+#    convention for a static classification and for G7 / non-euro EU.
+entities:
+  - {id: ARG, name: Argentina, kind: country, is_ranked: true, is_global: false}
+  - {id: AUS, name: Australia, kind: country, is_ranked: true, is_global: false}
+  - {id: AUT, name: Austria, kind: country, is_ranked: true, is_global: false}
+  - {id: BEL, name: Belgium, kind: country, is_ranked: true, is_global: false}
+  - {id: BGR, name: Bulgaria, kind: country, is_ranked: true, is_global: false}
+  - {id: BRA, name: Brazil, kind: country, is_ranked: true, is_global: false}
+  - {id: CAN, name: Canada, kind: country, is_ranked: true, is_global: false}
+  - {id: CHN, name: China, kind: country, is_ranked: true, is_global: false}
+  - {id: CYP, name: Cyprus, kind: country, is_ranked: true, is_global: false}
+  - {id: CZE, name: Czechia, kind: country, is_ranked: true, is_global: false}
+  - {id: DEU, name: Germany, kind: country, is_ranked: true, is_global: false}
+  - {id: DNK, name: Denmark, kind: country, is_ranked: true, is_global: false}
+  - {id: ESP, name: Spain, kind: country, is_ranked: true, is_global: false}
+  - {id: EST, name: Estonia, kind: country, is_ranked: true, is_global: false}
+  - {id: FIN, name: Finland, kind: country, is_ranked: true, is_global: false}
+  - {id: FRA, name: France, kind: country, is_ranked: true, is_global: false}
+  - {id: GBR, name: United Kingdom, kind: country, is_ranked: true, is_global: false}
+  - {id: GRC, name: Greece, kind: country, is_ranked: true, is_global: false}
+  - {id: HRV, name: Croatia, kind: country, is_ranked: true, is_global: false}
+  - {id: HUN, name: Hungary, kind: country, is_ranked: true, is_global: false}
+  - {id: IDN, name: Indonesia, kind: country, is_ranked: true, is_global: false}
+  - {id: IND, name: India, kind: country, is_ranked: true, is_global: false}
+  - {id: IRL, name: Ireland, kind: country, is_ranked: true, is_global: false}
+  - {id: ITA, name: Italy, kind: country, is_ranked: true, is_global: false}
+  - {id: JPN, name: Japan, kind: country, is_ranked: true, is_global: false}
+  - {id: KOR, name: South Korea, kind: country, is_ranked: true, is_global: false}
+  - {id: LTU, name: Lithuania, kind: country, is_ranked: true, is_global: false}
+  - {id: LUX, name: Luxembourg, kind: country, is_ranked: true, is_global: false}
+  - {id: LVA, name: Latvia, kind: country, is_ranked: true, is_global: false}
+  - {id: MEX, name: Mexico, kind: country, is_ranked: true, is_global: false}
+  - {id: MLT, name: Malta, kind: country, is_ranked: true, is_global: false}
+  - {id: NLD, name: Netherlands, kind: country, is_ranked: true, is_global: false}
+  - {id: POL, name: Poland, kind: country, is_ranked: true, is_global: false}
+  - {id: PRT, name: Portugal, kind: country, is_ranked: true, is_global: false}
+  - {id: ROU, name: Romania, kind: country, is_ranked: true, is_global: false}
+  - {id: SAU, name: Saudi Arabia, kind: country, is_ranked: true, is_global: false}
+  - {id: SVK, name: Slovakia, kind: country, is_ranked: true, is_global: false}
+  - {id: SVN, name: Slovenia, kind: country, is_ranked: true, is_global: false}
+  - {id: SWE, name: Sweden, kind: country, is_ranked: true, is_global: false}
+  - {id: TUR, name: Turkiye, kind: country, is_ranked: true, is_global: false}
+  - {id: USA, name: United States, kind: country, is_ranked: true, is_global: false}
+  - {id: ZAF, name: South Africa, kind: country, is_ranked: true, is_global: false}
+  - {id: EU27, name: European Union (27), kind: aggregate, is_ranked: false, is_global: false}
+  - {id: EA, name: Euro area, kind: aggregate, is_ranked: false, is_global: false}
+  - {id: WLD, name: World, kind: aggregate, is_ranked: false, is_global: true}
+groups:
+  - id: euro_area
+    members:
+      - {entity: AUT, valid_from: '1999-01-01', valid_to: null}
+      - {entity: BEL, valid_from: '1999-01-01', valid_to: null}
+      - {entity: BGR, valid_from: '2026-01-01', valid_to: null}
+      - {entity: CYP, valid_from: '2008-01-01', valid_to: null}
+      - {entity: DEU, valid_from: '1999-01-01', valid_to: null}
+      - {entity: ESP, valid_from: '1999-01-01', valid_to: null}
+      - {entity: EST, valid_from: '2011-01-01', valid_to: null}
+      - {entity: FIN, valid_from: '1999-01-01', valid_to: null}
+      - {entity: FRA, valid_from: '1999-01-01', valid_to: null}
+      - {entity: GRC, valid_from: '2001-01-01', valid_to: null}
+      - {entity: HRV, valid_from: '2023-01-01', valid_to: null}
+      - {entity: IRL, valid_from: '1999-01-01', valid_to: null}
+      - {entity: ITA, valid_from: '1999-01-01', valid_to: null}
+      - {entity: LTU, valid_from: '2015-01-01', valid_to: null}
+      - {entity: LUX, valid_from: '1999-01-01', valid_to: null}
+      - {entity: LVA, valid_from: '2014-01-01', valid_to: null}
+      - {entity: MLT, valid_from: '2008-01-01', valid_to: null}
+      - {entity: NLD, valid_from: '1999-01-01', valid_to: null}
+      - {entity: PRT, valid_from: '1999-01-01', valid_to: null}
+      - {entity: SVK, valid_from: '2009-01-01', valid_to: null}
+      - {entity: SVN, valid_from: '2007-01-01', valid_to: null}
+  - id: g7
+    members:
+      - {entity: CAN, valid_from: '1991-01-01', valid_to: null}
+      - {entity: FRA, valid_from: '1991-01-01', valid_to: null}
+      - {entity: DEU, valid_from: '1991-01-01', valid_to: null}
+      - {entity: ITA, valid_from: '1991-01-01', valid_to: null}
+      - {entity: JPN, valid_from: '1991-01-01', valid_to: null}
+      - {entity: GBR, valid_from: '1991-01-01', valid_to: null}
+      - {entity: USA, valid_from: '1991-01-01', valid_to: null}
+  - id: advanced
+    members:
+      - {entity: AUS, valid_from: '1991-01-01', valid_to: null}
+      - {entity: AUT, valid_from: '1991-01-01', valid_to: null}
+      - {entity: BEL, valid_from: '1991-01-01', valid_to: null}
+      - {entity: CAN, valid_from: '1991-01-01', valid_to: null}
+      - {entity: CYP, valid_from: '1991-01-01', valid_to: null}
+      - {entity: CZE, valid_from: '1991-01-01', valid_to: null}
+      - {entity: DEU, valid_from: '1991-01-01', valid_to: null}
+      - {entity: DNK, valid_from: '1991-01-01', valid_to: null}
+      - {entity: ESP, valid_from: '1991-01-01', valid_to: null}
+      - {entity: EST, valid_from: '1991-01-01', valid_to: null}
+      - {entity: FIN, valid_from: '1991-01-01', valid_to: null}
+      - {entity: FRA, valid_from: '1991-01-01', valid_to: null}
+      - {entity: GBR, valid_from: '1991-01-01', valid_to: null}
+      - {entity: GRC, valid_from: '1991-01-01', valid_to: null}
+      - {entity: HRV, valid_from: '1991-01-01', valid_to: null}
+      - {entity: IRL, valid_from: '1991-01-01', valid_to: null}
+      - {entity: ITA, valid_from: '1991-01-01', valid_to: null}
+      - {entity: JPN, valid_from: '1991-01-01', valid_to: null}
+      - {entity: KOR, valid_from: '1991-01-01', valid_to: null}
+      - {entity: LTU, valid_from: '1991-01-01', valid_to: null}
+      - {entity: LUX, valid_from: '1991-01-01', valid_to: null}
+      - {entity: LVA, valid_from: '1991-01-01', valid_to: null}
+      - {entity: MLT, valid_from: '1991-01-01', valid_to: null}
+      - {entity: NLD, valid_from: '1991-01-01', valid_to: null}
+      - {entity: PRT, valid_from: '1991-01-01', valid_to: null}
+      - {entity: SVK, valid_from: '1991-01-01', valid_to: null}
+      - {entity: SVN, valid_from: '1991-01-01', valid_to: null}
+      - {entity: SWE, valid_from: '1991-01-01', valid_to: null}
+      - {entity: USA, valid_from: '1991-01-01', valid_to: null}
+  - id: emerging
+    members:
+      - {entity: ARG, valid_from: '1991-01-01', valid_to: null}
+      - {entity: BGR, valid_from: '1991-01-01', valid_to: null}
+      - {entity: BRA, valid_from: '1991-01-01', valid_to: null}
+      - {entity: CHN, valid_from: '1991-01-01', valid_to: null}
+      - {entity: HUN, valid_from: '1991-01-01', valid_to: null}
+      - {entity: IDN, valid_from: '1991-01-01', valid_to: null}
+      - {entity: IND, valid_from: '1991-01-01', valid_to: null}
+      - {entity: MEX, valid_from: '1991-01-01', valid_to: null}
+      - {entity: POL, valid_from: '1991-01-01', valid_to: null}
+      - {entity: ROU, valid_from: '1991-01-01', valid_to: null}
+      - {entity: SAU, valid_from: '1991-01-01', valid_to: null}
+      - {entity: TUR, valid_from: '1991-01-01', valid_to: null}
+      - {entity: ZAF, valid_from: '1991-01-01', valid_to: null}
+  - id: non_euro_eu
+    members:
+      - {entity: CZE, valid_from: '1991-01-01', valid_to: null}
+      - {entity: DNK, valid_from: '1991-01-01', valid_to: null}
+      - {entity: HUN, valid_from: '1991-01-01', valid_to: null}
+      - {entity: POL, valid_from: '1991-01-01', valid_to: null}
+      - {entity: ROU, valid_from: '1991-01-01', valid_to: null}
+      - {entity: SWE, valid_from: '1991-01-01', valid_to: null}

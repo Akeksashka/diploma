@@ -1,0 +1,776 @@
+# Registry of data sources (docs/specs/source-config-schema.md section 1).
+# Validated against src/macro_monitor/registry/schemas/sources.schema.json; unknown keys are errors.
+archive_policy:
+  private_repo: null   # no private repository exists (user decision 2026-10-18); rule 17
+sources:
+  - id: eurostat
+    name: Eurostat dissemination API
+    provider: Eurostat
+    kind: sdmx
+    # Enabled 2026-11-05 on the user's go-ahead after a one-request probe (geo=DE, une_rt_m,
+    # freq=M s_adj=SA age=TOTAL unit=PC_ACT sex=T): HTTP 200, 33 monthly values to 2026-09.
+    # Other groups' filters are still unprobed.
+    enabled: true
+    wave: 1
+    base_url: https://ec.europa.eu/eurostat/api/dissemination/
+    auth: {type: none}
+    http:
+      user_agent_template: "macro-monitor/{version} (+{repo_url}; non-commercial research)"
+      timeout_s: 120
+      retries: {max: 4, backoff_s: 2, backoff_factor: 2, jitter: true, on: [429, 500, 502, 503, 504, timeout]}
+    rate_limit:
+      max_concurrent: 1
+      min_interval_s: 2
+      budget_per_hour: null
+      budget_per_day: null
+      source_note: "Fair-use thresholds, no numbers published; below 500k cells direct, async above (ADR-004)"
+    licence:
+      id: eurostat-reuse
+      url: https://ec.europa.eu/eurostat/web/main/help/copyright-notice
+      checked_on: 2026-10-17
+      non_commercial_ok: true
+      attribution: "Source: Eurostat"
+      redistribution_of_raw: allowed
+    archive: public        # follows redistribution_of_raw: allowed; user to confirm
+    publish_site: public   # explicit, no default (rule 15); user to confirm
+    automated_access: allowed
+    change_detection: [update_marker, content_hash]
+    groups:
+      - id: eurostat_labour
+        description: Monthly unemployment rate (une_rt_m), seasonally adjusted, total
+        request_template:
+          path: statistics/1.0/data/{dataset}
+          params: {format: JSON, sinceTimePeriod: "1991-01", geo: "{entities}"}
+          datasets: [une_rt_m]
+          fixed_filters:
+            une_rt_m: {freq: M, s_adj: SA, age: TOTAL, unit: PC_ACT, sex: T}
+        format: jsonstat
+        parser: macro_monitor.ingestion.parsers.jsonstat_v1:parse
+        missing_markers: [":"]
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/eurostat_labour.yaml
+        expected_series_min: 28   # EU27 + Türkiye, probed live 2026-11-05 (28 geos, all returned data)
+        freshness: {frequency: M, typical_lag_days: 45, tolerance_days: 20}   # [UNVERIFIED] lag
+        reestimating: false      # SA family; re-estimation register decision pending (AC-OPS-8). T53 left this LIVE group unchanged (user decision on design Q18 needed)
+        published_precision: null
+        on_failure: alert
+      # T53 groups. Operator probe OP-04 ran 2026-11-06 (geo=DE only; docs/ops/spike-results.md): dimension
+      # order and codes are verified by probe 2026-11-06 for sts_trtu_m, prc_hicp_minr and gov_10q_ggdebt
+      # (gov_10q_ggdebt key order corrected to freq.na_item.sector.unit.geo). sts_inpr_m indic_bt=PROD
+      # returned an EMPTY cube: that code is wrong and its replacement is still [UNVERIFIED]; the
+      # other countries' keys are unprobed. The fixtures of the original T53 run are synthetic. Each is parked with a group-level `enabled: false`
+      # (ADR-027) while the source stays enabled for eurostat_labour: they stay validated but are out of the
+      # fetch matrix. After the operator probe of a group, remove its `enabled: false` (or set true) and
+      # its pending-probe note. Sizing (ADR-004): the connector refuses a request of
+      # 500,000 cells or more; these are about 15,000 cells (28 countries x 45 years x 12 months).
+      - id: eurostat_sts
+        enabled: false
+        description: Short-term business statistics, seasonally and calendar adjusted (M01 industrial production, M02 retail volume)
+        request_template:
+          path: statistics/1.0/data/{dataset}
+          params: {format: JSON, sinceTimePeriod: "1991-01", geo: "{entities}"}
+          datasets: [sts_inpr_m, sts_trtu_m]
+          fixed_filters:
+            sts_inpr_m: {freq: M, indic_bt: PROD, nace_r2: B-D, s_adj: SCA, unit: I21}
+            sts_trtu_m: {freq: M, indic_bt: VOL_SLS, nace_r2: G47, s_adj: SCA, unit: I21}   # SCA, not CA (rule 8)
+        format: jsonstat
+        parser: macro_monitor.ingestion.parsers.jsonstat_v1:parse
+        missing_markers: [":"]
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/eurostat_sts.yaml
+        expected_series_min: 56   # PLACEHOLDER: the 56 proposed entries (28 countries x 2); set from the first real capture
+        freshness: {frequency: M, typical_lag_days: 46, tolerance_days: 20}   # [UNVERIFIED] lag; research: Aug data on 2026-10-15
+        reestimating: true       # source-SA family (design Q18 register)
+        note: "Eurostat seasonally and calendar adjusted short-term business statistics: SCA history is re-estimated at each release. DE-only probe done 2026-11-06 (see docs/ops/spike-results.md, section OP-04); group stays parked (enabled: false) until the user decides to enable it. sts_inpr_m indic_bt=PROD returned an empty cube: correct code unverified, needs one more authorised request. Non-DE geos, expected_series_min, freshness lag and revisions remain UNVERIFIED."
+        revision:
+          max_revised_rows: 5000   # PLACEHOLDER (rule 10; measure on the first three releases, AC-OPS-8)
+        published_precision: null
+        on_failure: alert
+      - id: eurostat_hicp
+        enabled: false
+        note: "DE-only probe done 2026-11-06 (see docs/ops/spike-results.md, section OP-04); group stays parked (enabled: false) until the user decides to enable it. Non-DE geos, expected_series_min, freshness lag and revisions remain UNVERIFIED."
+        description: HICP monthly index, 2025=100, COICOP 2018 (M06 all-items, M07 core, G01 food); replaces prc_hicp_manr
+        request_template:
+          path: statistics/1.0/data/{dataset}
+          params: {format: JSON, sinceTimePeriod: "1991-01", geo: "{entities}"}
+          datasets: [prc_hicp_minr]
+          fixed_filters:
+            prc_hicp_minr: {freq: M, unit: I25, coicop18: [TOTAL, TOT_X_NRG_FOOD, CP01]}   # unit I25 = index 2025=100; a rebase changes the code (new series, no splice)
+        format: jsonstat
+        parser: macro_monitor.ingestion.parsers.jsonstat_v1:parse
+        missing_markers: [":"]
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/eurostat_hicp.yaml
+        expected_series_min: 84   # PLACEHOLDER: 28 countries x 3 aggregates; set from the first real capture
+        freshness: {frequency: M, typical_lag_days: 17, tolerance_days: 10}   # [UNVERIFIED] lag; research: 2026-09 present on 2026-10-17
+        reestimating: false
+        published_precision: null
+        on_failure: alert
+      - id: eurostat_gov_debt
+        enabled: false
+        note: "DE-only probe done 2026-11-06 (see docs/ops/spike-results.md, section OP-04); group stays parked (enabled: false) until the user decides to enable it. Non-DE geos, expected_series_min, freshness lag and revisions remain UNVERIFIED."
+        description: Quarterly general government gross debt, % of GDP (Q08), EU27 members
+        request_template:
+          path: statistics/1.0/data/{dataset}
+          params: {format: JSON, sinceTimePeriod: "1991-Q1", geo: "{entities}"}
+          datasets: [gov_10q_ggdebt]
+          fixed_filters:
+            gov_10q_ggdebt: {freq: Q, unit: PC_GDP, sector: S13, na_item: GD}
+        format: jsonstat
+        parser: macro_monitor.ingestion.parsers.jsonstat_v1:parse
+        missing_markers: [":"]
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/eurostat_gov_debt.yaml
+        expected_series_min: 27   # PLACEHOLDER: the 27 EU members; Turkiye absent (research F5)
+        freshness: {frequency: Q, typical_lag_days: 100, tolerance_days: 30}   # [UNVERIFIED] lag
+        reestimating: false
+        published_precision: null
+        on_failure: alert
+      # T62 group. Key order and codes verified by probe 2026-11-06 (geo=DE, namq_10_gdp: freq.unit.s_adj.na_item.geo,
+      # 2026-Q3 present); other countries are unprobed [UNVERIFIED]; the older fixture is synthetic. Parked with a group-level `enabled: false` (ADR-027) until the user decides to enable it.
+      - id: eurostat_gdp_q
+        enabled: false
+        note: "DE-only probe done 2026-11-06 (see docs/ops/spike-results.md, section OP-04); group stays parked (enabled: false) until the user decides to enable it. Non-DE geos, expected_series_min, freshness lag and revisions remain UNVERIFIED."
+        description: Quarterly nominal GDP (B1GQ), current prices, million national currency, SCA (X01 headline, EU27); PERIOD_FLOW level, not a SAAR
+        request_template:
+          path: statistics/1.0/data/{dataset}
+          params: {format: JSON, sinceTimePeriod: "1991-Q1", geo: "{entities}"}
+          datasets: [namq_10_gdp]
+          fixed_filters:
+            namq_10_gdp: {freq: Q, unit: CP_MNAC, s_adj: SCA, na_item: B1GQ}
+        format: jsonstat
+        parser: macro_monitor.ingestion.parsers.jsonstat_v2:parse
+        missing_markers: [":"]
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/eurostat_gdp_q.yaml
+        expected_series_min: 27   # PLACEHOLDER: the 27 EU members; set from the first real capture
+        freshness: {frequency: Q, typical_lag_days: 115, tolerance_days: 30}   # [UNVERIFIED] lag; research: 2026-Q2 present on 2026-10-22
+        reestimating: false
+        published_precision: null
+        on_failure: alert
+  - id: ecb
+    name: ECB Data Portal (SDMX 2.1 REST)
+    provider: European Central Bank
+    kind: sdmx
+    # Disabled until an operator probe confirms keys and URL shape (fixture is synthetic).
+    enabled: false
+    wave: 1
+    base_url: https://data-api.ecb.europa.eu/service/
+    auth: {type: none}
+    http:
+      user_agent_template: "macro-monitor/{version} (+{repo_url}; non-commercial research)"
+      timeout_s: 60
+      retries: {max: 4, backoff_s: 2, backoff_factor: 2, jitter: true, on: [429, 500, 502, 503, 504, timeout]}
+    rate_limit:
+      max_concurrent: 1
+      min_interval_s: 2
+      budget_per_hour: null
+      budget_per_day: null
+      source_note: "No published rate limit found (data-sources research F13); 503 seen once on 2026-10-17"
+    licence:
+      id: ecb-reuse
+      url: https://www.ecb.europa.eu/stats/ecb_statistics/governance_and_quality_framework/html/usage_policy.en.html
+      checked_on: 2026-10-17
+      non_commercial_ok: true
+      attribution: "Source: ECB statistics"
+      redistribution_of_raw: allowed
+    archive: public        # follows redistribution_of_raw: allowed; user to confirm
+    publish_site: public   # explicit, no default (rule 15); user to confirm
+    automated_access: allowed
+    change_detection: [content_hash]
+    groups:
+      - id: ecb_yields
+        description: Monthly long-term government bond yields (IRS, L40), euro-area members and aggregate
+        request_template:
+          path: data/{dataset}/{key}
+          params: {format: csvdata, startPeriod: "1991-01"}
+        format: csv
+        parser: macro_monitor.ingestion.parsers.ecb_csv_v1:parse
+        missing_markers: [M, L]
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/ecb_yields.yaml
+        expected_series_min: 2   # PLACEHOLDER: the two fixture series
+        freshness: {frequency: M, typical_lag_days: 40, tolerance_days: 20}   # [UNVERIFIED] lag
+        reestimating: false
+        published_precision: null
+        on_failure: alert
+  - id: worldbank
+    name: World Bank Indicators API v2
+    provider: World Bank
+    kind: rest
+    # Disabled until an operator capture/probe confirms the query syntax and page metadata
+    # (fixture is synthetic; [UNVERIFIED]).
+    enabled: true   # 2026-11-05, user go-ahead; probed: 5 indicators x 42 countries, HTTP 200
+    wave: 1
+    base_url: https://api.worldbank.org/v2/
+    auth: {type: none}
+    http:
+      user_agent_template: "macro-monitor/{version} (+{repo_url}; non-commercial research)"
+      timeout_s: 60
+      retries: {max: 4, backoff_s: 2, backoff_factor: 2, jitter: true, on: [429, 500, 502, 503, 504, timeout]}
+    rate_limit:
+      max_concurrent: 1
+      min_interval_s: 1
+      budget_per_hour: null
+      budget_per_day: null
+      source_note: "No limit published (research 2026-10-17); project self-limit 1 request/s"
+    licence:
+      id: worldbank-cc-by-4.0
+      url: https://data.worldbank.org/summary-terms-of-use
+      checked_on: 2026-10-17
+      non_commercial_ok: true
+      attribution: "Source: World Bank"
+      redistribution_of_raw: allowed   # [UNVERIFIED] terms pages disagree (research F-sources); third-party indicators need a per-indicator check
+    archive: public        # follows redistribution_of_raw; user to confirm
+    publish_site: public   # explicit, no default (rule 15); user to confirm
+    automated_access: allowed
+    change_detection: [update_marker, content_hash]   # update_marker = page-meta lastupdated
+    groups:
+      - id: worldbank_annual
+        description: "Annual WDI indicators (seed M14 total reserves, annual fallback)"
+        request_template:
+          path: country/{entities}/indicator/{indicator}
+          params: {format: json, per_page: "5000", date: "1991:2100"}   # 42 countries x 35 years = 1470 rows; per_page 1000 stored only the first page (29 countries), 2026-11-05
+          datasets: [FI.RES.TOTL.CD, NY.GDP.PCAP.PP.CD, SP.DYN.LE00.IN, SI.POV.GINI, SL.TLF.CACT.ZS]   # indicator ids (M14, A01, A11, A14, A22)
+        format: json
+        parser: macro_monitor.ingestion.parsers.worldbank_v1:parse
+        unit_from_expect: true   # ADR-029 (approved 2026-11-06): the API leaves `unit` empty; the map's expect.unit supplies it
+        missing_markers: [".."]
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/worldbank_annual.yaml
+        expected_series_min: 205   # 5 indicators x 42 countries = 210 mapped; SI.POV.GINI has no value for one country (probed 2026-11-05)
+        freshness: {frequency: A, typical_lag_days: 300, tolerance_days: 120}   # [UNVERIFIED] lag
+        reestimating: false
+        published_precision: null
+        on_failure: alert
+      # T62 group: X01 annual fallback (NY.GDP.MKTP.CN) and X02 headline (NY.GDP.MKTP.CD).
+      # Unit and flow basis are parser-assigned (response `unit` is empty; LCU/USD and PERIOD_FLOW come from the parser table).
+      # Probe 2026-11-06 (DEU) confirms the indicator labels 'GDP (current LCU)' / 'GDP (current US$)' and annual coverage 1991-2025 (lastupdated 2026-10-08);
+      # the other 41 countries are unprobed [UNVERIFIED]; parked with a group-level `enabled: false` (ADR-027).
+      - id: worldbank_support
+        enabled: false
+        note: "DE-only probe done 2026-11-06 (see docs/ops/spike-results.md, section OP-04); group stays parked (enabled: false) until the user decides to enable it. Other 41 countries, expected_series_min, freshness lag and revisions remain UNVERIFIED."
+        description: "Annual nominal GDP, LCU and current USD (support inputs X01 fallback, X02)"
+        request_template:
+          path: country/{entities}/indicator/{indicator}
+          params: {format: json, per_page: "1000", date: "1991:2100"}
+          datasets: [NY.GDP.MKTP.CN, NY.GDP.MKTP.CD]   # indicator ids (X01, X02)
+        format: json
+        parser: macro_monitor.ingestion.parsers.worldbank_v2:parse
+        missing_markers: [".."]
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/worldbank_support.yaml
+        expected_series_min: 80   # PLACEHOLDER: 2 indicators x 42 countries = 84 mapped; set from the first real capture
+        freshness: {frequency: A, typical_lag_days: 300, tolerance_days: 120}   # [UNVERIFIED] lag
+        reestimating: false
+        published_precision: null
+        on_failure: alert
+  - id: bis
+    name: BIS bulk downloads (flat CSV zip)
+    provider: Bank for International Settlements
+    kind: bulk
+    # Disabled until an operator probe confirms the file URL, zip layout and column names
+    # (fixtures are synthetic; [UNVERIFIED]).
+    enabled: false
+    wave: 1
+    base_url: https://data.bis.org/
+    auth: {type: none}
+    http:
+      user_agent_template: "macro-monitor/{version} (+{repo_url}; non-commercial research)"
+      timeout_s: 300
+      retries: {max: 4, backoff_s: 2, backoff_factor: 2, jitter: true, on: [429, 500, 502, 503, 504, timeout]}
+    rate_limit:
+      max_concurrent: 1
+      min_interval_s: 5
+      budget_per_hour: null
+      budget_per_day: null
+      source_note: "No limit published (research 2026-10-17); project self-limit one file per 5 s, a handful of files per run"
+    licence:
+      id: bis-terms
+      url: https://data.bis.org/help/legal
+      checked_on: 2026-10-17
+      non_commercial_ok: true
+      attribution: "Source: BIS"
+      redistribution_of_raw: allowed   # research: "use of the statistics is unrestricted" with citation; user to confirm
+    archive: public        # follows redistribution_of_raw; user to confirm
+    publish_site: public   # explicit, no default (rule 15); user to confirm
+    automated_access: allowed
+    change_detection: [http_validators, update_marker, content_hash]   # update_marker = file date
+    groups:
+      - id: bis_cbpol
+        description: "BIS central bank policy rates, monthly (M17)"
+        request_template:
+          path: static/bulk/{dataset}_csv_flat.zip   # [UNVERIFIED] URL shape
+          datasets: [WS_CBPOL]
+        format: csv
+        parser: macro_monitor.ingestion.parsers.bis_v1:parse
+        missing_markers: [M, L]
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/bis_cbpol.yaml
+        expected_series_min: 2   # PLACEHOLDER: the two fixture series
+        freshness: {frequency: M, typical_lag_days: 20, tolerance_days: 15}   # release_calendar bis_cbpol, [UNVERIFIED]
+        reestimating: false
+        published_precision: null
+        on_failure: alert
+      - id: bis_credit_gap
+        description: "BIS credit-to-GDP gap (history recomputed on each release; Q06)"
+        note: "BIS credit-to-GDP gap, quarterly recompute"
+        request_template:
+          path: static/bulk/{dataset}_csv_flat.zip   # [UNVERIFIED] URL shape
+          datasets: [WS_CREDIT_GAP]
+        format: csv
+        parser: macro_monitor.ingestion.parsers.bis_v1:parse
+        missing_markers: [M, L]
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/bis_credit_gap.yaml
+        expected_series_min: 2   # PLACEHOLDER: the two fixture series
+        freshness: {frequency: Q, typical_lag_days: 120, tolerance_days: 30}   # PLACEHOLDER
+        reestimating: true
+        revision:
+          max_revised_rows: 5000   # PLACEHOLDER (rule 10; AC-OPS-8 measurement)
+          materiality_rel: 0.001
+          materiality_abs: 0
+          snapshot_mode: diff_above_tol
+        published_precision: null
+        on_failure: alert
+  - id: oecd
+    name: OECD Data API (SDMX REST, SDMX-CSV)
+    provider: OECD
+    kind: sdmx
+    # Disabled until an operator probe (at most one request) confirms the URL shape, format=csvfile, the
+    # column layout and the dataflow ids of oecd_cli (fixtures are synthetic; [UNVERIFIED]). All three
+    # groups stay off through this source-level flag (a group-level `enabled` exists, ADR-027).
+    enabled: false
+    wave: 1
+    base_url: https://sdmx.oecd.org/public/rest/
+    auth: {type: none}
+    http:
+      user_agent_template: "macro-monitor/{version} (+{repo_url}; non-commercial research)"
+      timeout_s: 300   # whole-dataflow responses are large (KEI about 35 MB, data-sources research F13)
+      # Every attempt, retries included, counts against budget_per_hour: few retries, none on 429
+      retries: {max: 1, backoff_s: 30, backoff_factor: 2, jitter: true, on: [500, 502, 503, 504, timeout]}
+    rate_limit:
+      max_concurrent: 1
+      min_interval_s: 30
+      budget_per_hour: 8      # stricter reading of the 60 vs 20 downloads/hour conflict (ADR-004, BB9)
+      budget_per_day: null
+      source_note: "Published limit is in conflict (60/hour oecd.org vs 20/hour mirror, research F3); project budget 8 whole-dataflow downloads per hour, persisted; the remainder is deferred to catch-up"
+    licence:
+      id: oecd-cc-by-4.0-default
+      url: https://oecd.org/en/about/oecd-open-by-default-policy.html
+      checked_on: 2026-10-17
+      non_commercial_ok: true
+      attribution: "Source: OECD"
+      redistribution_of_raw: unclear   # CC BY 4.0 is the default but data may carry third-party restrictions; the terms page returned 403 (research F3)
+    archive: hash_only      # PROPOSED for an unclear licence (rule 5); user to confirm
+    publish_site: withheld  # PROPOSED (rule 15); user to confirm
+    automated_access: allowed
+    change_detection: [http_validators, content_hash]   # no cheap update marker is wired (UpdatedAfter is partial, not used)
+    groups:
+      - id: oecd_kei
+        description: "OECD Key Economic Indicators, whole dataflow from 1991 (seed: M04 consumer confidence, M18 long-term yield; USA, JPN)"
+        request_template:
+          path: data/{dataset}/
+          params: {format: csvfile, startPeriod: "1991-01"}
+          datasets: ["OECD.SDD.STES,DSD_KEI@DF_KEI"]
+        format: csv
+        parser: macro_monitor.ingestion.parsers.sdmxcsv_v1:parse
+        missing_markers: [M]
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/oecd_kei.yaml
+        expected_series_min: 4   # PLACEHOLDER: the four seed series; set from the first real capture
+        freshness: {frequency: M, typical_lag_days: 45, tolerance_days: 20}   # [UNVERIFIED] lag
+        job_timeout_min: 300
+        reestimating: false
+        published_precision: null
+        on_failure: alert
+      - id: oecd_prices
+        description: "OECD consumer prices, whole dataflow from 1991 (seed: M06 headline CPI index, ARG and BRA)"
+        request_template:
+          path: data/{dataset}/
+          params: {format: csvfile, startPeriod: "1991-01"}
+          datasets: ["OECD.SDD.TPS,DSD_PRICES@DF_PRICES_ALL"]
+        format: csv
+        parser: macro_monitor.ingestion.parsers.sdmxcsv_v1:parse
+        missing_markers: [M]
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/oecd_prices.yaml
+        expected_series_min: 2   # PLACEHOLDER: the two seed series
+        freshness: {frequency: M, typical_lag_days: 40, tolerance_days: 15}   # [UNVERIFIED] lag
+        job_timeout_min: 300
+        reestimating: false
+        published_precision: null
+        on_failure: alert
+      - id: oecd_cli
+        description: "OECD Composite Leading Indicator (M05; history is re-estimated at each release)"
+        note: "OECD composite leading indicator: the whole history is re-estimated at each release"
+        request_template:
+          path: data/{dataset}/
+          params: {format: csvfile, startPeriod: "1991-01"}
+          datasets: ["OECD.SDD.STES,DSD_STES@DF_CLI"]   # [UNVERIFIED] dataflow id
+        format: csv
+        parser: macro_monitor.ingestion.parsers.sdmxcsv_v1:parse
+        missing_markers: [M]
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/oecd_cli.yaml
+        expected_series_min: 2   # PLACEHOLDER: the two seed series
+        freshness: {frequency: M, typical_lag_days: 45, tolerance_days: 15}   # PLACEHOLDER lag
+        job_timeout_min: 300
+        reestimating: true
+        revision:
+          max_revised_rows: 5000   # PLACEHOLDER (rule 10; AC-OPS-8 measurement); other revision keys at their defaults (rules 30-31)
+        published_precision: null
+        on_failure: alert
+  - id: worldbank_pinksheet
+    name: World Bank Commodity Price Data (Pink Sheet), monthly XLSX
+    provider: World Bank
+    kind: bulk
+    # T58/T64. Disabled until an operator probe confirms the discovery pattern (ADR-028), the
+    # workbook layout and the unit spellings (fixture is synthetic; [UNVERIFIED]). Enabling is also
+    # gated on the user's licence decision (redistribution_of_raw: unclear).
+    enabled: false
+    wave: 1
+    base_url: https://thedocs.worldbank.org/
+    auth: {type: none}
+    http:
+      user_agent_template: "macro-monitor/{version} (+{repo_url}; non-commercial research)"
+      timeout_s: 120
+      retries: {max: 4, backoff_s: 2, backoff_factor: 2, jitter: true, on: [429, 500, 502, 503, 504, timeout]}
+    rate_limit:
+      max_concurrent: 1
+      min_interval_s: 5
+      budget_per_hour: null
+      budget_per_day: null
+      source_note: "No limit published (research 2026-10-17); one file per run, project self-limit one request per 5 s"
+    licence:
+      id: worldbank-terms-conflict
+      url: https://data.worldbank.org/summary-terms-of-use
+      checked_on: 2026-10-17
+      non_commercial_ok: true
+      attribution: "Source: World Bank Commodity Price Data (The Pink Sheet)"
+      redistribution_of_raw: unclear   # the two World Bank terms pages disagree (CC BY 4.0 vs non-commercial only); the Pink Sheet is compiled from third-party prices (research, World Bank row)
+    archive: hash_only      # PROPOSED for an unclear licence (rule 5); user to confirm
+    publish_site: withheld  # PROPOSED (rule 15); user to confirm
+    automated_access: allowed
+    change_detection: [http_validators, content_hash]   # an XLSX has no usable member date
+    groups:
+      - id: pinksheet_monthly
+        description: "Pink Sheet monthly prices (seed: M24 Brent crude; G02 fallback food price index)"
+        request_template:
+          discover:   # ADR-028: the file URL carries a rotating <hash>-<digits> segment; found on the landing page
+            landing_url: https://www.worldbank.org/en/research/commodity-markets
+            link_pattern: '^https://thedocs\.worldbank\.org/en/doc/[0-9a-f]{32}-[0-9]+/related/CMO-Historical-Data-Monthly\.xlsx$'   # [UNVERIFIED] until the operator probe
+            expect_matches: 1
+            allowed_hosts: [www.worldbank.org, thedocs.worldbank.org]
+          datasets: [CMO-Historical-Data-Monthly]   # the logical file name; also the series_map dataset key
+        format: xlsx
+        parser: macro_monitor.ingestion.parsers.pinksheet_v1:parse
+        missing_markers: ["…", "..."]
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/pinksheet_monthly.yaml
+        expected_series_min: 2   # PLACEHOLDER: the two seed series
+        freshness: {frequency: M, typical_lag_days: 5, tolerance_days: 10}   # [UNVERIFIED] lag; research: next release 2026-11-03
+        reestimating: false
+        published_precision: null
+        on_failure: alert
+  - id: fao
+    name: FAO Food Price Index and Cereal Supply and Demand Brief (www.fao.org)
+    provider: Food and Agriculture Organization of the United Nations
+    kind: bulk
+    # T58/T64. Disabled until an operator probe confirms the file URLs, layouts and the cereal brief
+    # discovery pattern (ADR-028) (fixtures are synthetic; [UNVERIFIED]).
+    enabled: false
+    wave: 1
+    base_url: https://www.fao.org/
+    auth: {type: none}
+    http:
+      user_agent_template: "macro-monitor/{version} (+{repo_url}; non-commercial research)"
+      timeout_s: 120
+      retries: {max: 4, backoff_s: 2, backoff_factor: 2, jitter: true, on: [429, 500, 502, 503, 504, timeout]}
+    rate_limit:
+      max_concurrent: 1
+      min_interval_s: 5
+      budget_per_hour: null
+      budget_per_day: null
+      source_note: "Not stated (research 2026-10-17); one file per group per run, project self-limit one request per 5 s"
+    licence:
+      id: fao-cc-by-4.0-additional-terms
+      url: https://www.fao.org/contact-us/terms/db-terms-of-use/en/
+      checked_on: 2026-10-11
+      non_commercial_ok: true
+      attribution: "Source: FAO"
+      redistribution_of_raw: allowed   # CC BY 4.0 with FAO additional terms (no implied endorsement), research [VERIFIED-PAGE 11 Oct]; user to confirm
+    # The cereal brief page keeps no archive, so OUR stored copy is the only vintage of each brief:
+    # archive must stay `public` (bytes kept, replayable). hash_only would lose that vintage.
+    archive: public
+    publish_site: public   # explicit, no default (rule 15); user to confirm
+    automated_access: allowed
+    change_detection: [http_validators, content_hash]
+    groups:
+      - id: fao_ffpi
+        description: "FAO Food Price Index and sub-indices, monthly (seed: G02 headline)"
+        request_template:
+          path: media/docs/worldfoodsituationlibraries/default-document-library/{dataset}.csv   # [UNVERIFIED] URL shape
+          datasets: [food_price_indices_data]
+        format: csv
+        parser: macro_monitor.ingestion.parsers.fao_ffpi_v1:parse
+        missing_markers: [".."]
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/fao_ffpi.yaml
+        expected_series_min: 1   # PLACEHOLDER: the one seed series
+        freshness: {frequency: M, typical_lag_days: 7, tolerance_days: 10}   # [UNVERIFIED] lag
+        reestimating: false
+        published_precision: null
+        on_failure: alert
+      - id: fao_csdb
+        description: "FAO Cereal Supply and Demand Brief, world stocks-to-use (G03); our stored copy is the only vintage"
+        request_template:
+          discover:   # ADR-028: the file name changes monthly and the link carries a ?sfvrsn= version query
+            landing_url: https://www.fao.org/worldfoodsituation/csdb/en/
+            link_pattern: '^https://www\.fao\.org/media/docs/worldfoodsituationlibraries/wfs-library/csdb-data-\d{4}-\d{2}\.xlsx(\?sfvrsn=[A-Za-z0-9_]+)?$'   # [UNVERIFIED] until the operator probe
+            expect_matches: 1
+            allowed_hosts: [www.fao.org]
+          datasets: [csdb]   # the logical dataset (series_map key), not a file name
+        format: xlsx
+        parser: macro_monitor.ingestion.parsers.fao_csdb_v1:parse
+        missing_markers: []
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/fao_csdb.yaml
+        expected_series_min: 1   # PLACEHOLDER: the one seed series
+        freshness: {frequency: M, typical_lag_days: 40, tolerance_days: 20}   # PLACEHOLDER; ten releases a year (research F11); series are annual marketing years
+        reestimating: false
+        published_precision: null
+        on_failure: alert
+  - id: worldbank_pinksheet_manual
+    name: World Bank Pink Sheet, manual download fallback (ADR-028)
+    provider: World Bank
+    kind: manual
+    # T64 (ADR-028 Decision 9). Used by an operator only when a discovery_failed alert fires for
+    # worldbank_pinksheet; same frozen parser and layout. Loads under its own source id; rows are
+    # not merged with the automated ones (fallback role in the series map; ADR-028 Q2).
+    automated_access: manual_only
+    enabled: true
+    licence:
+      id: worldbank-terms-conflict
+      url: https://data.worldbank.org/summary-terms-of-use
+      checked_on: 2026-10-17
+      non_commercial_ok: true
+      attribution: "Source: World Bank Commodity Price Data (The Pink Sheet)"
+      redistribution_of_raw: unclear
+    archive: hash_only      # as the automated source (PROPOSED for an unclear licence; user to confirm)
+    publish_site: withheld
+    inbox:
+      path: manual_inbox/worldbank_pinksheet_manual
+      sidecar_required: [source_url, downloaded_on, downloaded_by, edition_label, edition_date]
+      sidecar_optional: [licence_note, import_label]
+    groups:
+      - id: pinksheet_manual
+        description: "Pink Sheet monthly workbook, hand-downloaded (fallback for pinksheet_monthly)"
+        format: xlsx
+        parser: macro_monitor.ingestion.parsers.pinksheet_v1:parse
+        missing_markers: ["…", "..."]
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/pinksheet_manual.yaml
+        expected_series_min: 2
+        freshness: {frequency: M, typical_lag_days: 5, tolerance_days: 10}   # [UNVERIFIED] lag, as pinksheet_monthly
+        reestimating: false
+        published_precision: null
+        on_failure: alert
+  - id: fao_manual
+    name: FAO Cereal Supply and Demand Brief, manual download fallback (ADR-028)
+    provider: Food and Agriculture Organization of the United Nations
+    kind: manual
+    # T64 (ADR-028 Decision 9). Used only when a discovery_failed alert fires for fao/fao_csdb.
+    automated_access: manual_only
+    enabled: true
+    licence:
+      id: fao-cc-by-4.0-additional-terms
+      url: https://www.fao.org/contact-us/terms/db-terms-of-use/en/
+      checked_on: 2026-10-11
+      non_commercial_ok: true
+      attribution: "Source: FAO"
+      redistribution_of_raw: allowed
+    archive: public         # our copy is the only vintage of each brief
+    publish_site: public
+    inbox:
+      path: manual_inbox/fao_manual
+      sidecar_required: [source_url, downloaded_on, downloaded_by, edition_label, edition_date]
+      sidecar_optional: [licence_note, import_label]
+    groups:
+      - id: fao_csdb_manual
+        description: "FAO cereal brief workbook, hand-downloaded (fallback for fao_csdb)"
+        format: xlsx
+        parser: macro_monitor.ingestion.parsers.fao_csdb_v1:parse
+        missing_markers: []
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/fao_csdb_manual.yaml
+        expected_series_min: 1
+        freshness: {frequency: M, typical_lag_days: 40, tolerance_days: 20}   # PLACEHOLDER, as fao_csdb
+        reestimating: false
+        published_precision: null
+        on_failure: alert
+  - id: faostat
+    name: FAOSTAT bulk files (Food Security Data, SOFI)
+    provider: Food and Agriculture Organization of the United Nations
+    kind: bulk
+    # T58. Own source because the bulk host differs from www.fao.org (one host per source).
+    # Disabled until an operator probe confirms the zip URL and the member layout (fixture is
+    # synthetic; [UNVERIFIED]).
+    enabled: false
+    wave: 1
+    base_url: https://bulks-faostat.fao.org/
+    auth: {type: none}
+    http:
+      user_agent_template: "macro-monitor/{version} (+{repo_url}; non-commercial research)"
+      timeout_s: 300
+      retries: {max: 4, backoff_s: 2, backoff_factor: 2, jitter: true, on: [429, 500, 502, 503, 504, timeout]}
+    rate_limit:
+      max_concurrent: 1
+      min_interval_s: 5
+      budget_per_hour: null
+      budget_per_day: null
+      source_note: "Not stated (research 2026-10-17); one zip per run, project self-limit one request per 5 s"
+    licence:
+      id: fao-cc-by-4.0-additional-terms
+      url: https://www.fao.org/contact-us/terms/db-terms-of-use/en/
+      checked_on: 2026-10-11
+      non_commercial_ok: true
+      attribution: "Source: FAO"
+      redistribution_of_raw: allowed   # as for source fao; FAOSTAT bulk terms not read separately; user to confirm
+    archive: public        # follows redistribution_of_raw; user to confirm
+    publish_site: public   # explicit, no default (rule 15); user to confirm
+    automated_access: allowed
+    change_detection: [http_validators, update_marker, content_hash]   # update_marker = file date
+    groups:
+      - id: faostat_sofi
+        description: "Prevalence of undernourishment, 3-year averages (G12; stored at the centre year)"
+        request_template:
+          path: production/{dataset}_E_All_Data_(Normalized).zip   # [UNVERIFIED] URL shape
+          datasets: [Food_Security_Data]
+        format: csv
+        parser: macro_monitor.ingestion.parsers.fao_stat_v1:parse
+        missing_markers: []
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/faostat_sofi.yaml
+        expected_series_min: 2   # PLACEHOLDER: the seed series
+        freshness: {frequency: A, typical_lag_days: 300, tolerance_days: 120}   # PLACEHOLDER lag
+        reestimating: false
+        published_precision: null
+        on_failure: alert
+  - id: ec_surveys
+    name: European Commission business and consumer surveys (ZIP)
+    provider: European Commission, DG ECFIN
+    kind: bulk
+    # T58. Disabled until an operator probe confirms the ZIP URL, member name and worksheet layout
+    # (fixture is synthetic; [UNVERIFIED]).
+    enabled: false
+    wave: 1
+    base_url: https://ec.europa.eu/
+    auth: {type: none}
+    http:
+      user_agent_template: "macro-monitor/{version} (+{repo_url}; non-commercial research)"
+      timeout_s: 120
+      retries: {max: 4, backoff_s: 2, backoff_factor: 2, jitter: true, on: [429, 500, 502, 503, 504, timeout]}
+    rate_limit:
+      max_concurrent: 1
+      min_interval_s: 5
+      budget_per_hour: null
+      budget_per_day: null
+      source_note: "Not stated (research 2026-10-17); one ZIP per run, project self-limit one request per 5 s"
+    licence:
+      id: ec-surveys-no-licence-text
+      url: https://economy-finance.ec.europa.eu/economic-forecast-and-surveys/business-and-consumer-surveys_en
+      checked_on: 2026-10-17
+      non_commercial_ok: true
+      attribution: "Source: European Commission, DG ECFIN business and consumer surveys"
+      redistribution_of_raw: unclear   # "free of charge", no licence text on the survey page (research)
+    archive: hash_only      # PROPOSED for an unclear licence (rule 5); user to confirm
+    publish_site: withheld  # PROPOSED (rule 15); user to confirm
+    automated_access: allowed
+    change_detection: [http_validators, update_marker, content_hash]   # update_marker = file date
+    groups:
+      - id: ec_bcs_monthly
+        description: "EC survey balances, monthly, seasonally adjusted (seed: M03 industry confidence, M04 consumer confidence)"
+        request_template:
+          path: economy_finance/db_indicators/surveys/documents/{dataset}.zip   # [UNVERIFIED] URL shape
+          datasets: [main_indicators_nace2]
+        format: xlsx
+        parser: macro_monitor.ingestion.parsers.ecsurvey_v1:parse
+        missing_markers: []
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/ec_bcs_monthly.yaml
+        expected_series_min: 8   # PLACEHOLDER: the seed series
+        freshness: {frequency: M, typical_lag_days: 2, tolerance_days: 7}   # [UNVERIFIED] lag
+        reestimating: false
+        published_precision: null
+        on_failure: alert
+  - id: dbnomics
+    name: DBnomics REST API (AMECO output gap only)
+    provider: DBnomics (mirror of the European Commission AMECO database)
+    kind: rest
+    # T58. Direct REST with httpx; the AGPL dbnomics client is not used. Used ONLY for A02c because
+    # AMECO has no native API (research U5). Disabled until an operator probe confirms the response
+    # shape and series codes (fixture is synthetic; [UNVERIFIED]).
+    enabled: false
+    wave: 1
+    base_url: https://api.db.nomics.world/
+    auth: {type: none}
+    http:
+      user_agent_template: "macro-monitor/{version} (+{repo_url}; non-commercial research)"
+      timeout_s: 120
+      retries: {max: 4, backoff_s: 2, backoff_factor: 2, jitter: true, on: [429, 500, 502, 503, 504, timeout]}
+    rate_limit:
+      max_concurrent: 1
+      min_interval_s: 5
+      budget_per_hour: null
+      budget_per_day: null
+      source_note: "No limit published (research 2026-10-17); one request per run, project self-limit one request per 5 s"
+    licence:
+      id: dbnomics-underlying-provider-terms
+      url: https://db.nomics.world/
+      checked_on: 2026-10-17
+      non_commercial_ok: true
+      attribution: "Source: European Commission, AMECO database, via DBnomics"
+      redistribution_of_raw: unclear   # DBnomics legal page returned 404; underlying provider terms apply [UNVERIFIED] (research)
+    archive: hash_only      # PROPOSED for an unclear licence (rule 5); user to confirm
+    publish_site: withheld  # PROPOSED (rule 15); user to confirm
+    automated_access: allowed
+    change_detection: [http_validators, content_hash]
+    groups:
+      - id: dbnomics_ameco_gap
+        description: "AMECO output gap AVGDGP (EC estimate, comparison series A02c), annual"
+        request_template:
+          path: v22/series/{dataset}
+          params: {observations: "1", format: json, limit: "1000"}
+          datasets: [AMECO/AVGDGP]
+        format: json
+        parser: macro_monitor.ingestion.parsers.ameco_v1:parse
+        missing_markers: ["NA"]
+        fetch_scope: complete
+        mode_default: full
+        series_map: config/series_map/dbnomics_ameco_gap.yaml
+        expected_series_min: 3   # PLACEHOLDER: the seed series (research: 37 expected)
+        freshness: {frequency: A, typical_lag_days: 150, tolerance_days: 90}   # PLACEHOLDER; AMECO is updated in spring and autumn
+        reestimating: false
+        published_precision: null
+        on_failure: alert

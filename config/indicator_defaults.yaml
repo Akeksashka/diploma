@@ -1,0 +1,33 @@
+# Shared indicator parameter defaults (ADR-014, docs/specs/source-config-schema.md section 3a,
+# docs/specs/indicator-parameters-spec.md sections 2-4). Lowest layers: global, then family;
+# the indicator entry in config/indicators.yaml overrides both. Values are PROPOSED defaults;
+# they become `confirmed` only when the user records it in indicators.yaml (review block).
+global:
+  alert:
+    alert_z: 2.0          # D19
+    watch_z: 1.5          # recorded as accepted in design 14b (Q6)
+    window_obs: {M: 240, Q: 80, A: 20}   # D19
+    min_obs: {M: 60, Q: 20, A: 10}       # selection short-series rule; accepted per design 14b (Q6)
+  max_ref_spread_days: {M: 92, Q: 190, A: 366}   # P2; accepted per design 14b (Q29)
+  release_lag_aware: false        # global default; the named true list (A12, A13, A14, A22, A26, G12) is written in indicators.yaml, proposed (plan OQ-10)
+  stationarity_class: stationary
+  rank_period_coverage_pct: 70    # P2
+  cov_min_entities: 10            # P20
+  hi_inflation_threshold: 0.25    # P10
+  max_denominator_age_days: 120   # P10
+families:                         # draft list: indicator-parameters spec section 4
+  activity_yoy: {staleness_class: ACT120, alert: {method: z}, stationarity_class: rate_of_change}
+  price_rate: {staleness_class: ACT120, alert: {method: robust_z}, stationarity_class: rate_of_change}
+  survey_balance: {staleness_class: SURV75, alert: {method: z}, stationarity_class: stationary}
+  market_rate: {staleness_class: MKT45, alert: {method: z}, stationarity_class: trending_level}
+  labour_rate_level: {staleness_class: ACT120, alert: {method: z}, stationarity_class: trending_level}
+  # staleness: ACT120 for monthly members; quarterly members write staleness_class: Q270 in their entry
+  external_ratio: {staleness_class: ACT120, alert: {method: z}, stationarity_class: trending_level}
+  quarterly_growth: {staleness_class: Q270, alert: {method: z}, stationarity_class: rate_of_change}
+  quarterly_ratio: {staleness_class: Q270, alert: {method: z}, stationarity_class: trending_level}
+  annual_alerted: {staleness_class: A730, alert: {method: z}, stationarity_class: stationary}
+  annual_structural: {staleness_class: A730, alert: {method: none}, stationarity_class: stationary}
+  triennial_survey: {staleness_class: TRI1460, alert: {method: none}, stationarity_class: stationary}
+  weo_projection: {staleness_class: A730, alert: {method: none}, stationarity_class: stationary}
+  comparison_series: {staleness_class: A730, alert: {method: none}, stationarity_class: stationary}
+  support_input: {alert: {method: none}, stationarity_class: stationary}   # staleness by input (written in the entry)

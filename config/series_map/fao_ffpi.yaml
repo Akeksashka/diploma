@@ -1,0 +1,12 @@
+# Series map of group fao_ffpi. Key = parser series_ref: the FFPI header cell. [UNVERIFIED] against a
+# real FFPI file: names follow the synthetic fixture. Sub-indices (Meat, Dairy, Cereals, ...) are
+# parsed when listed but not mapped: one headline per (indicator, entity) pair (ADR-009).
+series:
+  - dataset: food_price_indices_data
+    key: "Food Price Index"
+    entity: WLD
+    indicator: G02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "FAO Food Price Index, nominal, 2014-2016=100, monthly (data-sources research F11/Sources, G02)"
+    expect: {frequency: M, unit: IDX, base_period: "2014-2016=100", seasonal_adjustment: NA, price_basis: IDX}

@@ -1,0 +1,735 @@
+# Known coverage gaps (source-config-schema section 4; ADR-009). Pairs listed here are
+# separated from missing work by `macro-monitor config-report`. Generated/merged by
+# scripts/seed_series_map.py; evidence: data-sources research F5/F6/F13 (2026-10-17).
+known_gaps:
+- indicator: A02
+  entity: ARG
+  reason: IMF WEO output gap not published for this country (docs/research/data-sources-g20-eu-cross-country.md
+    F6)
+- indicator: A02
+  entity: BGR
+  reason: IMF WEO output gap not published for this country (docs/research/data-sources-g20-eu-cross-country.md
+    F6)
+- indicator: A02
+  entity: BRA
+  reason: IMF WEO output gap not published for this country (docs/research/data-sources-g20-eu-cross-country.md
+    F6)
+- indicator: A02
+  entity: CHN
+  reason: IMF WEO output gap not published for this country (docs/research/data-sources-g20-eu-cross-country.md
+    F6)
+- indicator: A02
+  entity: CZE
+  reason: IMF WEO output gap not published for this country (docs/research/data-sources-g20-eu-cross-country.md
+    F6)
+- indicator: A02
+  entity: HRV
+  reason: IMF WEO output gap not published for this country (docs/research/data-sources-g20-eu-cross-country.md
+    F6)
+- indicator: A02
+  entity: HUN
+  reason: IMF WEO output gap not published for this country (docs/research/data-sources-g20-eu-cross-country.md
+    F6)
+- indicator: A02
+  entity: IDN
+  reason: IMF WEO output gap not published for this country (docs/research/data-sources-g20-eu-cross-country.md
+    F6)
+- indicator: A02
+  entity: IND
+  reason: IMF WEO output gap not published for this country (docs/research/data-sources-g20-eu-cross-country.md
+    F6)
+- indicator: A02
+  entity: LTU
+  reason: IMF WEO output gap not published for this country (docs/research/data-sources-g20-eu-cross-country.md
+    F6)
+- indicator: A02
+  entity: LVA
+  reason: IMF WEO output gap not published for this country (docs/research/data-sources-g20-eu-cross-country.md
+    F6)
+- indicator: A02
+  entity: MEX
+  reason: IMF WEO output gap not published for this country (docs/research/data-sources-g20-eu-cross-country.md
+    F6)
+- indicator: A02
+  entity: POL
+  reason: IMF WEO output gap not published for this country (docs/research/data-sources-g20-eu-cross-country.md
+    F6)
+- indicator: A02
+  entity: ROU
+  reason: IMF WEO output gap not published for this country (docs/research/data-sources-g20-eu-cross-country.md
+    F6)
+- indicator: A02
+  entity: SAU
+  reason: IMF WEO output gap not published for this country (docs/research/data-sources-g20-eu-cross-country.md
+    F6)
+- indicator: A02
+  entity: TUR
+  reason: IMF WEO output gap not published for this country (docs/research/data-sources-g20-eu-cross-country.md
+    F6)
+- indicator: A02
+  entity: ZAF
+  reason: IMF WEO output gap not published for this country (docs/research/data-sources-g20-eu-cross-country.md
+    F6)
+- indicator: M07
+  entity: ARG
+  reason: No core-inflation source found for non-EU country other than Turkiye (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: M07
+  entity: AUS
+  reason: No core-inflation source found for non-EU country other than Turkiye (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: M07
+  entity: BRA
+  reason: No core-inflation source found for non-EU country other than Turkiye (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: M07
+  entity: CAN
+  reason: No core-inflation source found for non-EU country other than Turkiye (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: M07
+  entity: CHN
+  reason: No core-inflation source found for non-EU country other than Turkiye (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: M07
+  entity: GBR
+  reason: No core-inflation source found for non-EU country other than Turkiye (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: M07
+  entity: IDN
+  reason: No core-inflation source found for non-EU country other than Turkiye (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: M07
+  entity: IND
+  reason: No core-inflation source found for non-EU country other than Turkiye (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: M07
+  entity: JPN
+  reason: No core-inflation source found for non-EU country other than Turkiye (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: M07
+  entity: KOR
+  reason: No core-inflation source found for non-EU country other than Turkiye (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: M07
+  entity: MEX
+  reason: No core-inflation source found for non-EU country other than Turkiye (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: M07
+  entity: SAU
+  reason: No core-inflation source found for non-EU country other than Turkiye (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: M07
+  entity: USA
+  reason: No core-inflation source found for non-EU country other than Turkiye (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: M07
+  entity: ZAF
+  reason: No core-inflation source found for non-EU country other than Turkiye (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: M14
+  entity: ARG
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: AUS
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: AUT
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: BEL
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: BGR
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: BRA
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: CAN
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: CHN
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: CYP
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: CZE
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: DEU
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: DNK
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: ESP
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: EST
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: FIN
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: FRA
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: GBR
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: GRC
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: HRV
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: HUN
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: IDN
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: IND
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: IRL
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: ITA
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: JPN
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: KOR
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: LTU
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: LUX
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: LVA
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: MEX
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: MLT
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: NLD
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: POL
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: PRT
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: ROU
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: SAU
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: SVK
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: SVN
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: SWE
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: TUR
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: USA
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M14
+  entity: ZAF
+  reason: 'No monthly reserves route enabled: World Bank GEM TOTRESV needs the user decision on the Datastream
+    licence and lag (open questions 1 and 4); ECB RA6 unverified (HTTP 503); only the annual WDI fallback
+    exists (docs/research/data-sources-support-series-reserves-targets.md F5). RESERVE_COVER stays n/a.'
+- indicator: M17
+  entity: BGR
+  reason: No BIS policy-rate series for Bulgaria (docs/research/data-sources-g20-eu-cross-country.md F9)
+- indicator: M18
+  entity: ARG
+  reason: 10-year yield source not found (docs/research/data-sources-g20-eu-cross-country.md F5, F13)
+- indicator: M18
+  entity: SAU
+  reason: 10-year yield source not found (docs/research/data-sources-g20-eu-cross-country.md F5, F13)
+- indicator: M18
+  entity: TUR
+  reason: 10-year yield source not found (docs/research/data-sources-g20-eu-cross-country.md F5, F13)
+- indicator: Q06
+  entity: BGR
+  reason: Not in the BIS credit-to-GDP gap dataset (32 of 42 countries; docs/research/data-sources-g20-eu-cross-country.md
+    F6, F9)
+- indicator: Q06
+  entity: CYP
+  reason: Not in the BIS credit-to-GDP gap dataset (32 of 42 countries; docs/research/data-sources-g20-eu-cross-country.md
+    F6, F9)
+- indicator: Q06
+  entity: EST
+  reason: Not in the BIS credit-to-GDP gap dataset (32 of 42 countries; docs/research/data-sources-g20-eu-cross-country.md
+    F6, F9)
+- indicator: Q06
+  entity: HRV
+  reason: Not in the BIS credit-to-GDP gap dataset (32 of 42 countries; docs/research/data-sources-g20-eu-cross-country.md
+    F6, F9)
+- indicator: Q06
+  entity: LTU
+  reason: Not in the BIS credit-to-GDP gap dataset (32 of 42 countries; docs/research/data-sources-g20-eu-cross-country.md
+    F6, F9)
+- indicator: Q06
+  entity: LVA
+  reason: Not in the BIS credit-to-GDP gap dataset (32 of 42 countries; docs/research/data-sources-g20-eu-cross-country.md
+    F6, F9)
+- indicator: Q06
+  entity: MLT
+  reason: Not in the BIS credit-to-GDP gap dataset (32 of 42 countries; docs/research/data-sources-g20-eu-cross-country.md
+    F6, F9)
+- indicator: Q06
+  entity: ROU
+  reason: Not in the BIS credit-to-GDP gap dataset (32 of 42 countries; docs/research/data-sources-g20-eu-cross-country.md
+    F6, F9)
+- indicator: Q06
+  entity: SVK
+  reason: Not in the BIS credit-to-GDP gap dataset (32 of 42 countries; docs/research/data-sources-g20-eu-cross-country.md
+    F6, F9)
+- indicator: Q06
+  entity: SVN
+  reason: Not in the BIS credit-to-GDP gap dataset (32 of 42 countries; docs/research/data-sources-g20-eu-cross-country.md
+    F6, F9)
+- indicator: Q08
+  entity: ARG
+  reason: No quarterly government-debt source for non-EU countries (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: Q08
+  entity: AUS
+  reason: No quarterly government-debt source for non-EU countries (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: Q08
+  entity: BRA
+  reason: No quarterly government-debt source for non-EU countries (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: Q08
+  entity: CAN
+  reason: No quarterly government-debt source for non-EU countries (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: Q08
+  entity: CHN
+  reason: No quarterly government-debt source for non-EU countries (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: Q08
+  entity: GBR
+  reason: No quarterly government-debt source for non-EU countries (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: Q08
+  entity: IDN
+  reason: No quarterly government-debt source for non-EU countries (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: Q08
+  entity: IND
+  reason: No quarterly government-debt source for non-EU countries (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: Q08
+  entity: JPN
+  reason: No quarterly government-debt source for non-EU countries (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: Q08
+  entity: KOR
+  reason: No quarterly government-debt source for non-EU countries (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: Q08
+  entity: MEX
+  reason: No quarterly government-debt source for non-EU countries (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: Q08
+  entity: SAU
+  reason: No quarterly government-debt source for non-EU countries (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: Q08
+  entity: TUR
+  reason: No quarterly government-debt source for non-EU countries (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: Q08
+  entity: USA
+  reason: No quarterly government-debt source for non-EU countries (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: Q08
+  entity: ZAF
+  reason: No quarterly government-debt source for non-EU countries (docs/research/data-sources-g20-eu-cross-country.md
+    F5, F13)
+- indicator: X01
+  entity: ARG
+  reason: No Eurostat quarterly route; OECD QNA (not China, Saudi Arabia) and World Bank GEM quarterly
+    need the user decision on research open questions 1 and 2; only the annual WDI fallback is mapped
+    (docs/research/data-sources-support-series-reserves-targets.md F2).
+- indicator: X01
+  entity: AUS
+  reason: No Eurostat quarterly route; OECD QNA (not China, Saudi Arabia) and World Bank GEM quarterly
+    need the user decision on research open questions 1 and 2; only the annual WDI fallback is mapped
+    (docs/research/data-sources-support-series-reserves-targets.md F2).
+- indicator: X01
+  entity: BRA
+  reason: No Eurostat quarterly route; OECD QNA (not China, Saudi Arabia) and World Bank GEM quarterly
+    need the user decision on research open questions 1 and 2; only the annual WDI fallback is mapped
+    (docs/research/data-sources-support-series-reserves-targets.md F2).
+- indicator: X01
+  entity: CAN
+  reason: No Eurostat quarterly route; OECD QNA (not China, Saudi Arabia) and World Bank GEM quarterly
+    need the user decision on research open questions 1 and 2; only the annual WDI fallback is mapped
+    (docs/research/data-sources-support-series-reserves-targets.md F2).
+- indicator: X01
+  entity: CHN
+  reason: No Eurostat quarterly route; OECD QNA (not China, Saudi Arabia) and World Bank GEM quarterly
+    need the user decision on research open questions 1 and 2; only the annual WDI fallback is mapped
+    (docs/research/data-sources-support-series-reserves-targets.md F2).
+- indicator: X01
+  entity: GBR
+  reason: No Eurostat quarterly route; OECD QNA (not China, Saudi Arabia) and World Bank GEM quarterly
+    need the user decision on research open questions 1 and 2; only the annual WDI fallback is mapped
+    (docs/research/data-sources-support-series-reserves-targets.md F2).
+- indicator: X01
+  entity: IDN
+  reason: No Eurostat quarterly route; OECD QNA (not China, Saudi Arabia) and World Bank GEM quarterly
+    need the user decision on research open questions 1 and 2; only the annual WDI fallback is mapped
+    (docs/research/data-sources-support-series-reserves-targets.md F2).
+- indicator: X01
+  entity: IND
+  reason: No Eurostat quarterly route; OECD QNA (not China, Saudi Arabia) and World Bank GEM quarterly
+    need the user decision on research open questions 1 and 2; only the annual WDI fallback is mapped
+    (docs/research/data-sources-support-series-reserves-targets.md F2).
+- indicator: X01
+  entity: JPN
+  reason: No Eurostat quarterly route; OECD QNA (not China, Saudi Arabia) and World Bank GEM quarterly
+    need the user decision on research open questions 1 and 2; only the annual WDI fallback is mapped
+    (docs/research/data-sources-support-series-reserves-targets.md F2).
+- indicator: X01
+  entity: KOR
+  reason: No Eurostat quarterly route; OECD QNA (not China, Saudi Arabia) and World Bank GEM quarterly
+    need the user decision on research open questions 1 and 2; only the annual WDI fallback is mapped
+    (docs/research/data-sources-support-series-reserves-targets.md F2).
+- indicator: X01
+  entity: MEX
+  reason: No Eurostat quarterly route; OECD QNA (not China, Saudi Arabia) and World Bank GEM quarterly
+    need the user decision on research open questions 1 and 2; only the annual WDI fallback is mapped
+    (docs/research/data-sources-support-series-reserves-targets.md F2).
+- indicator: X01
+  entity: SAU
+  reason: No Eurostat quarterly route; OECD QNA (not China, Saudi Arabia) and World Bank GEM quarterly
+    need the user decision on research open questions 1 and 2; only the annual WDI fallback is mapped
+    (docs/research/data-sources-support-series-reserves-targets.md F2).
+- indicator: X01
+  entity: TUR
+  reason: No Eurostat quarterly route; OECD QNA (not China, Saudi Arabia) and World Bank GEM quarterly
+    need the user decision on research open questions 1 and 2; only the annual WDI fallback is mapped
+    (docs/research/data-sources-support-series-reserves-targets.md F2).
+- indicator: X01
+  entity: USA
+  reason: No Eurostat quarterly route; OECD QNA (not China, Saudi Arabia) and World Bank GEM quarterly
+    need the user decision on research open questions 1 and 2; only the annual WDI fallback is mapped
+    (docs/research/data-sources-support-series-reserves-targets.md F2).
+- indicator: X01
+  entity: ZAF
+  reason: No Eurostat quarterly route; OECD QNA (not China, Saudi Arabia) and World Bank GEM quarterly
+    need the user decision on research open questions 1 and 2; only the annual WDI fallback is mapped
+    (docs/research/data-sources-support-series-reserves-targets.md F2).
+- indicator: X03
+  entity: ARG
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: AUS
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: AUT
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: BEL
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: BGR
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: BRA
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: CAN
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: CHN
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: CYP
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: CZE
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: DEU
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: DNK
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: ESP
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: EST
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: FIN
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: FRA
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: GBR
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: GRC
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: HRV
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: HUN
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: IDN
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: IND
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: IRL
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: ITA
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: JPN
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: KOR
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: LTU
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: LUX
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: LVA
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: MEX
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: MLT
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: NLD
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: POL
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: PRT
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: ROU
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: SAU
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: SVK
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: SVN
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: SWE
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: TUR
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: USA
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'
+- indicator: X03
+  entity: ZAF
+  reason: 'No verified free monthly imports of goods AND services in USD (docs/research/data-sources-support-series-reserves-targets.md
+    F4): Eurostat bop_c6_m is in euro with confidential countries, goods-only monthly USD needs the goods_only
+    decision (open question 3).'

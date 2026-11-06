@@ -1,0 +1,21 @@
+# Series map of group bis_cbpol (source-config-schema section 4). Key = parser series_ref: the KEY
+# column without the dataflow prefix. [UNVERIFIED] against a live BIS file: keys follow the
+# synthetic fixture. Seed set only (two countries); widen with the series-map seeding report
+# (T52 reviewed CSV not supplied). Bulgaria has no BIS policy-rate series: known_gap M17/BGR.
+series:
+  - dataset: WS_CBPOL
+    key: "M.US"
+    entity: USA
+    indicator: M17
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "BIS central bank policy rates, monthly, United States (data-sources research F9, M17)"
+    expect: {frequency: M, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: WS_CBPOL
+    key: "M.JP"
+    entity: JPN
+    indicator: M17
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "BIS central bank policy rates, monthly, Japan (data-sources research F9, M17)"
+    expect: {frequency: M, unit: PCT, seasonal_adjustment: NA, price_basis: NA}

@@ -1,0 +1,24 @@
+# Dataset key differs from the automated group on purpose: sync-config identifies a map entry by (indicator, entity, dataset/key, role, valid_from) across sources.
+# Series map of group pinksheet_manual (T64, ADR-028 fallback; same keys as pinksheet_monthly, all `fallback` because
+# the automated group owns the headline). Copy of pinksheet_monthly otherwise: Series map of group pinksheet_monthly (source-config-schema section 4). Key = parser series_ref: the
+# commodity name of the Pink Sheet header row. [UNVERIFIED] against a real workbook: names follow the
+# synthetic fixture. One headline per (indicator, entity) pair (ADR-009): M24 maps Brent crude only;
+# the Pink Sheet gas, urea and wheat columns are NOT mapped (open design question: composition of
+# M24 and G02, plan T58 note). The Pink Sheet food price index is a G02 fallback behind FAO FFPI.
+series:
+  - dataset: CMO-Historical-Data-Monthly-manual
+    key: "Crude oil, Brent"
+    entity: WLD
+    indicator: M24
+    role: fallback
+    valid_from: 1991-01-01
+    rationale: "World Bank Pink Sheet, crude oil Brent, nominal USD per barrel, monthly (data-sources research, M24)"
+    expect: {frequency: M, unit: USD_BBL, seasonal_adjustment: NA, price_basis: NOM}
+  - dataset: CMO-Historical-Data-Monthly-manual
+    key: "Food price index"
+    entity: WLD
+    indicator: G02
+    role: fallback
+    valid_from: 1991-01-01
+    rationale: "World Bank Pink Sheet food price index (2010=100), fallback behind the FAO FFPI headline (data-sources research, G02)"
+    expect: {frequency: M, unit: IDX, base_period: "2010=100", seasonal_adjustment: NA, price_basis: IDX}

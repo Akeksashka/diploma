@@ -1,0 +1,70 @@
+# Series map of group ec_bcs_monthly. Key = parser series_ref: <worksheet>.<EC country code>.
+# [UNVERIFIED] against a real survey ZIP: worksheet names and codes follow the synthetic fixture.
+# DECISION FOR THE USER: M03 is named "EC ESI, OECD BCI"; the seed maps the INDUSTRY confidence
+# indicator (a balance) because the ESI is an index, not a balance. Seed set only (two countries
+# plus the EU27 and euro-area aggregates); widen with the series-map seeding report.
+series:
+  - dataset: main_indicators_nace2
+    key: "INDUSTRY.DE"
+    entity: DEU
+    indicator: M03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "EC business and consumer survey, industry confidence indicator, balance, seasonally adjusted, DEU (data-sources research, M03)"
+    expect: {frequency: M, unit: BALANCE, seasonal_adjustment: SA, price_basis: NA}
+  - dataset: main_indicators_nace2
+    key: "INDUSTRY.FR"
+    entity: FRA
+    indicator: M03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "EC business and consumer survey, industry confidence indicator, balance, seasonally adjusted, FRA (data-sources research, M03)"
+    expect: {frequency: M, unit: BALANCE, seasonal_adjustment: SA, price_basis: NA}
+  - dataset: main_indicators_nace2
+    key: "INDUSTRY.EU"
+    entity: EU27
+    indicator: M03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "EC business and consumer survey, industry confidence indicator, balance, seasonally adjusted, EU27 (data-sources research, M03)"
+    expect: {frequency: M, unit: BALANCE, seasonal_adjustment: SA, price_basis: NA}
+  - dataset: main_indicators_nace2
+    key: "INDUSTRY.EA"
+    entity: EA
+    indicator: M03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "EC business and consumer survey, industry confidence indicator, balance, seasonally adjusted, EA (data-sources research, M03)"
+    expect: {frequency: M, unit: BALANCE, seasonal_adjustment: SA, price_basis: NA}
+  - dataset: main_indicators_nace2
+    key: "CONSUMER.DE"
+    entity: DEU
+    indicator: M04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "EC business and consumer survey, consumer confidence indicator, balance, seasonally adjusted, DEU (data-sources research, M04)"
+    expect: {frequency: M, unit: BALANCE, seasonal_adjustment: SA, price_basis: NA}
+  - dataset: main_indicators_nace2
+    key: "CONSUMER.FR"
+    entity: FRA
+    indicator: M04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "EC business and consumer survey, consumer confidence indicator, balance, seasonally adjusted, FRA (data-sources research, M04)"
+    expect: {frequency: M, unit: BALANCE, seasonal_adjustment: SA, price_basis: NA}
+  - dataset: main_indicators_nace2
+    key: "CONSUMER.EU"
+    entity: EU27
+    indicator: M04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "EC business and consumer survey, consumer confidence indicator, balance, seasonally adjusted, EU27 (data-sources research, M04)"
+    expect: {frequency: M, unit: BALANCE, seasonal_adjustment: SA, price_basis: NA}
+  - dataset: main_indicators_nace2
+    key: "CONSUMER.EA"
+    entity: EA
+    indicator: M04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "EC business and consumer survey, consumer confidence indicator, balance, seasonally adjusted, EA (data-sources research, M04)"
+    expect: {frequency: M, unit: BALANCE, seasonal_adjustment: SA, price_basis: NA}

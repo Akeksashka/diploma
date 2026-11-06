@@ -1,0 +1,22 @@
+# Series map of group bis_credit_gap (source-config-schema sections 1a and 4). Key = parser
+# series_ref: the KEY column without the dataflow prefix. [UNVERIFIED] against a live BIS file:
+# keys follow the synthetic fixture. Seed set only (two countries); 32 of 42 countries have the
+# series, the ten EU members without it are known_gap Q06 entries. The gap is recomputed on every
+# BIS release (re-estimating group, REV-06).
+series:
+  - dataset: WS_CREDIT_GAP
+    key: "Q.US.P.A.C"
+    entity: USA
+    indicator: Q06
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "BIS credit-to-GDP gap, private non-financial sector, United States (data-sources research F9, Q06)"
+    expect: {frequency: Q, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: WS_CREDIT_GAP
+    key: "Q.DE.P.A.C"
+    entity: DEU
+    indicator: Q06
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "BIS credit-to-GDP gap, private non-financial sector, Germany (data-sources research F9, Q06)"
+    expect: {frequency: Q, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
