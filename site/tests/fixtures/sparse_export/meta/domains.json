@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "domains": [
+    {
+      "domain_id": "agri",
+      "name": "Synthetic agri",
+      "ranked": false,
+      "notices": [
+        "informational, unranked"
+      ],
+      "indicator_ids": [
+        "T05"
+      ],
+      "min_coverage_for_rank": 0.5,
+      "percentile_rank_label": "mean percentile of the domain's indicators"
+    },
+    {
+      "domain_id": "fin",
+      "name": "Synthetic fin",
+      "ranked": true,
+      "notices": [],
+      "indicator_ids": [
+        "T01"
+      ],
+      "min_coverage_for_rank": 0.5,
+      "percentile_rank_label": "mean percentile of the domain's indicators"
+    },
+    {
+      "domain_id": "growth",
+      "name": "Synthetic growth",
+      "ranked": true,
+      "notices": [],
+      "indicator_ids": [
+        "T01",
+        "T02",
+        "T03",
+        "T04"
+      ],
+      "min_coverage_for_rank": 0.5,
+      "percentile_rank_label": "mean percentile of the domain's indicators"
+    }
+  ]
+}

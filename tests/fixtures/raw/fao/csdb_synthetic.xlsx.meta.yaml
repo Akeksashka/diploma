@@ -1,0 +1,8 @@
+# Sidecar of a SYNTHETIC fixture (hand-built workbook, sheet 'CSDB'); no live capture; not real data.
+# Layout, names and URL are [UNVERIFIED]. Member dates are fixed so the bytes are stable.
+synthetic: true
+source_url: https://www.fao.org/worldfoodsituation/csdb/en/ (csdb-data-2026-10.xlsx) [UNVERIFIED]
+fetched_on: 2026-11-05
+sha256: 5cfd5a13ebb69e57bcd9055b9b5ca80001ba18b523b5c20061b238790dc2e409
+parser_id: fao_csdb_v1@1
+licence: Synthetic test data, project-authored (no third-party content).

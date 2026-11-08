@@ -93,17 +93,6 @@ const VERBATIM = {
   POSITION_HEADER: "Position",
   // ADR-026 decisions 2 and 4: the orientation sentence (user decision Q1, 2026-11-04); shipped at the Stage 1 review.
   ORIENTATION_NOTE: "Higher percentile means a more favourable position by each indicator's stated direction.",
-  NOT_EXPORTED: "not exported",
-  UNKNOWN_STATE: "unrecognised state",
-  COV01_NOT_YET: "not yet measurable",
-  NO_ANALYSIS_RUN: "no analysis run for this ingest run",
-  NO_WINDOW: "no expected window configured",
-  NOT_SHOWN: "not shown",
-  WINDOW_NOTE: "Expected release windows come from the source configuration; the release months are not verified against the publisher.",
-  COUNTS_NOTE: "Counts cover the published scope only (withheld sources are not counted). They are shown as exported.",
-  COV01_NOTE: "COV-01 reports, per indicator, how many entities qualify and whether the check can be measured yet. The share of entities that were stale on arrival is not part of the export.",
-  LOAD_NOTE: "The load result of a group is not part of the export yet; the column is empty until it is.",
-  BACKLOG_NOTE: "One figure for all sources together; the export has no backlog per group."
 };
 const OBJECTS = {
   GROUP_LABELS: {g7: "G7", euro_area: "Euro area", non_euro_eu: "EU members outside the euro area", advanced: "Advanced economies", emerging: "Emerging economies"},
@@ -111,8 +100,6 @@ const OBJECTS = {
   TRANSFORM_LABELS: {value: "Level", value_default_tf: "Indicator default", value_yoy: "Year-on-year"},
   KIND_LABELS: {all: "All revisions", regular: "Regular revisions only", reestimation: "Re-estimation revisions only"},
   CLASS_LABEL: {regular: "regular", reestimation: "re-estimation"},
-  STATE_LABELS: {fresh: "fresh", late: "late", stale: "stale", broken: "broken"},
-  LOAD_LABELS: {ok: "ok", warn: "warnings", failed: "failed", skipped: "skipped"},
   STATE_CODES: {stale: "stale", lagging: "lagging", unaligned: "unaligned", na: "n/a", not_published: "np"},
   // ADR-026 decision 4, user decision Q2 (2026-11-04): the four direction labels.
   DIRECTION_LABELS: {higher: "higher is better", lower: "lower is better", target: "closer to target is better", descriptive: "descriptive, not ranked"},
@@ -141,8 +128,30 @@ const DRAFT = [
   "DRAFT_PEER_DIRECTION", "DRAFT_PEER_FIGURE_LABEL", "DRAFT_PEER_TABLE_CAPTION", "DRAFT_PEER_MARKS", "DRAFT_PEER_GUIDES", "DRAFT_PEER_NOT_DRAWN", "DRAFT_PEER_FOCUS_HINT",
   // Stage 4 (T120-T124): written by the implementation, not confirmed.
   "DRAFT_SELECT_GROUP", "DRAFT_FREE_Y_LABEL", "DRAFT_CHART_SHOWS", "DRAFT_CHART_MARKS", "DRAFT_REBASE_MARKS", "DRAFT_FACET_STATEMENT", "DRAFT_Y_MODE", "DRAFT_SERIES_LABEL_PART",
-  "DRAFT_EXPLORER_FIGURE_LABEL", "DRAFT_TABLE_CAPTION", "DRAFT_TABLE_HEADERS", "DRAFT_DOWNLOAD", "DRAFT_BAR_LABEL",
-  "DRAFT_STEP_CHOOSE_PERIOD", "DRAFT_STEP_NOTE", "DRAFT_STEP_REMOVED", "DRAFT_STEP_FIGURE_LABEL", "DRAFT_STEP_FIGURE_PART", "DRAFT_STEP_SKIP"
+  "DRAFT_EXPLORER_FIGURE_LABEL", "DRAFT_TABLE_CAPTION", "DRAFT_TABLE_CAPTION_ALL", "DRAFT_UNIT_MISSING_SENTENCE", "DRAFT_TABLE_HEADERS", "DRAFT_DOWNLOAD", "DRAFT_BAR_LABEL",
+  "DRAFT_STEP_CHOOSE_PERIOD", "DRAFT_STEP_NOTE", "DRAFT_STEP_REMOVED", "DRAFT_STEP_FIGURE_LABEL", "DRAFT_STEP_FIGURE_PART", "DRAFT_STEP_SKIP",
+  // Redesign R3 (exact text is pinned in missing.test.mjs)
+  "DRAFT_NOT_PUBLISHED_SENTENCE", "DRAFT_NA_DEFINED_SENTENCE", "DRAFT_G_STR1_NO_SERIES", "DRAFT_NA_NO_RANKED_SENTENCE", "DRAFT_NA_NO_PERCENTILE_SENTENCE",
+  // Redesign R6: country page labels and figure line
+  "DRAFT_CRUMB_LABEL", "DRAFT_CRUMB_HOME", "DRAFT_CRUMB_COUNTRIES", "DRAFT_COUNTRY_KIND_LABEL", "DRAFT_COUNTRY_GROUPS_LABEL", "DRAFT_COUNTRY_NO_GROUPS", "DRAFT_WITHOUT_VALUE_GROUP", "DRAFT_FIGURE_COVERAGE", "DRAFT_FIGURE_POSITION",
+  // Redesign R7: country page rendering; G-STR3 labels stay DRAFT
+  "DRAFT_COUNTRY_SWITCHER_LABEL", "DRAFT_COUNTRY_SWITCHER_GO", "DRAFT_COUNTRY_FILTER_LEGEND", "DRAFT_COUNTRY_FILTER_ALL", "DRAFT_COUNTRY_FILTER_VALUE", "DRAFT_COUNTRY_COLUMNS", "DRAFT_COUNTRY_TABLE_CAPTION",
+  "DRAFT_PROFILE_FIGURE_LABEL", "DRAFT_PROFILE_DOT_LABEL", "DRAFT_OFFSET_FLAG", "DRAFT_COMPARE_COUNTRIES", "DRAFT_COMPARE_COUNTRIES_LABEL", "DRAFT_SERIES_LINK_LABEL", "DRAFT_FRESHNESS_LINE", "DRAFT_HEATMAP_INDICATOR_LINK", "DRAFT_HEATMAP_INDICATOR_LINK_LABEL",
+  // Redesign R8: About this value and Show history
+  "DRAFT_ABOUT_SUMMARY", "DRAFT_ABOUT_LABELS", "DRAFT_REESTIMATED_MARK", "DRAFT_HISTORY_SHOW", "DRAFT_HISTORY_HIDE", "DRAFT_HISTORY_REGION", "DRAFT_HISTORY_CONSEQUENCE", "DRAFT_HISTORY_FIGURE_LABEL", "DRAFT_HISTORY_TABLE_TITLE",
+  // Redesign R9: indicator page header and row table labels
+  "DRAFT_CRUMB_INDICATORS", "DRAFT_INDICATOR_FACT_LABELS", "DRAFT_INDICATOR_COLUMNS", "DRAFT_INDICATOR_TABLE_CAPTION",
+  // Redesign R10: indicator page controls, table and charts; G-STR3 labels stay DRAFT
+  "DRAFT_INDICATOR_GROUP_LEGEND", "DRAFT_INDICATOR_SORT_LABEL", "DRAFT_INDICATOR_SORT_LABELS", "DRAFT_INDICATOR_SWITCHER_LABEL", "DRAFT_INDICATOR_SWITCHER_GO", "DRAFT_INDICATOR_COLUMNS_MORE",
+  "DRAFT_TRANSFORMED_HEADER", "DRAFT_OPEN_AS_SERIES", "DRAFT_INDICATOR_SERIES_LINK", "DRAFT_VALUE_AXIS_TITLE", "DRAFT_VALUE_FIGURE_LABEL", "DRAFT_VALUE_ESTIMATE_MARK", "DRAFT_VALUE_NEUTRAL_LEGEND",
+  "DRAFT_CHOOSE_COUNTRIES_HINT", "DRAFT_HASH_FALLBACK_NOTE", "DRAFT_HASH_NO_ROWS_NOTE", "DRAFT_OTHER_INDICATORS_GROUP",
+  // Redesign R14: PG-SERIES about table and units; DRAFT
+  "DRAFT_ABOUT_SERIES_HEADING", "DRAFT_ABOUT_SERIES_COLUMNS", "DRAFT_TITLE_UNIT", "DRAFT_VALUE_HEADER_UNIT",
+  // Redesign R16: point reader and tip
+  "DRAFT_POINT_READER_LEGEND", "DRAFT_TIP_STATUS", "DRAFT_TIP_KNOWN_AT", "DRAFT_READER_NONE",
+  // Redesign R17/R18: home and domains pages
+  "DRAFT_HOME_LINKS", "DRAFT_HOME_COUNTRIES_HEADING", "DRAFT_HOME_AGGREGATES_HEADING", "DRAFT_HOME_INDICATORS_HEADING", "DRAFT_HOME_FILTER_LABEL", "DRAFT_HOME_FILTER_COUNT",
+  "DRAFT_HOME_FILTER_NONE", "DRAFT_HOME_DOMAINS_TITLE"
 ];
 
 test("DRAFT strings: exact text, and every DRAFT_ export is pinned here", () => {
@@ -153,6 +162,15 @@ test("DRAFT strings: exact text, and every DRAFT_ export is pinned here", () => 
   assert.equal(copy.DRAFT_CONSEQUENCE.scorecard, "The tables and charts on this page are not shown.");
   assert.equal(copy.DRAFT_SUBREGION_CONSEQUENCE, "The rest of this page is still shown. Choose another indicator to try again.");
   assert.equal(copy.DRAFT_NOSCRIPT, "This dashboard needs JavaScript to show its tables and charts. Enable JavaScript and reload the page.");
+  assert.deepEqual({...copy.DRAFT_HOME_LINKS}, {series: "Time series", domains: "Domains", revisions: "Revisions"});
+  assert.equal(copy.DRAFT_HOME_COUNTRIES_HEADING, "Choose a country");
+  assert.equal(copy.DRAFT_HOME_AGGREGATES_HEADING, "Aggregates");
+  assert.equal(copy.DRAFT_HOME_INDICATORS_HEADING, "Choose an indicator");
+  assert.deepEqual({...copy.DRAFT_HOME_FILTER_LABEL}, {countries: "Filter countries", indicators: "Filter indicators"});
+  assert.equal(copy.DRAFT_HOME_FILTER_COUNT(3), "3 shown");
+  assert.equal(copy.DRAFT_HOME_FILTER_NONE, "No match.");
+  assert.equal(copy.DRAFT_HOME_DOMAINS_TITLE, "Domains");
+  assert.equal(copy.DRAFT_CONSEQUENCE.lists, "The lists on this page are still shown.");
   assert.equal(copy.DRAFT_NEXT_GROUP, "Choose another group or another indicator.");
   assert.equal(copy.DRAFT_NEXT_SERIES, "Choose at least one country, or another indicator or range.");
   assert.equal(copy.DRAFT_LEGEND_TITLE, "Legend");
@@ -181,6 +199,9 @@ test("DRAFT strings: exact text, and every DRAFT_ export is pinned here", () => 
   assert.equal(copy.DRAFT_Y_MODE(true), "Each chart has its own y-axis scale: the shape of a series is easy to see, but levels cannot be compared between charts.");
   assert.equal(copy.DRAFT_SERIES_LABEL_PART("France", "2024-01-31", "2025-03-31", "3.1 %"), "France, 2024-01-31 to 2025-03-31, latest stored value 3.1 %");
   assert.equal(copy.DRAFT_EXPLORER_FIGURE_LABEL("Unemployment rate: Level", "%", ["A", "B"]), "Line chart of Unemployment rate: Level, y-axis %. A; B. The table under the chart lists the plotted points.");
+  assert.equal(copy.DRAFT_TABLE_CAPTION_ALL("T"), "T: plotted values, every plotted period of each series");
+  assert.equal(copy.DRAFT_UNIT_MISSING_SENTENCE, "This export holds no unit for this value.");
+  assert.equal(copy.DRAFT_VALUE_AXIS_TITLE("GDP", null), "GDP (This export holds no unit for this value.)");
   assert.equal(copy.DRAFT_TABLE_CAPTION("T", 24), "T: plotted values, latest 24 periods of each series");
   assert.deepEqual({...copy.DRAFT_TABLE_HEADERS}, {value: "Value", status: "Status"});
   assert.equal(copy.DRAFT_DOWNLOAD, "Download the data file of this indicator");
@@ -190,14 +211,90 @@ test("DRAFT strings: exact text, and every DRAFT_ export is pinned here", () => 
   assert.equal(copy.DRAFT_STEP_REMOVED, "removed");
   assert.equal(copy.DRAFT_STEP_FIGURE_LABEL("Unemployment rate", "Germany", "2026-06-01", "PCT", ["a: 1", "b: 2"]), "Step chart of Unemployment rate for Germany, reference period 2026-06-01, y-axis PCT. a: 1; b: 2. The version table below lists the same points.");
   assert.equal(copy.DRAFT_STEP_FIGURE_PART("2026-07-02", "5"), "2026-07-02: 5");
+  assert.equal(copy.DRAFT_CRUMB_LABEL, "Breadcrumb");
+  assert.equal(copy.DRAFT_CRUMB_HOME, "Home");
+  assert.equal(copy.DRAFT_CRUMB_COUNTRIES, "Countries");
+  assert.equal(copy.DRAFT_COUNTRY_KIND_LABEL, "Kind");
+  assert.equal(copy.DRAFT_COUNTRY_GROUPS_LABEL, "Groups");
+  assert.equal(copy.DRAFT_COUNTRY_NO_GROUPS, "none");
+  assert.equal(copy.DRAFT_WITHOUT_VALUE_GROUP, "Indicators without a value in this export");
+  assert.equal(copy.DRAFT_FIGURE_COVERAGE(2, 4), "2 of 4 indicators available");
+  assert.equal(copy.DRAFT_FIGURE_POSITION(3, 41), "position 3 of 41");
   assert.equal(copy.DRAFT_STEP_SKIP, "Skip to version table");
+  assert.equal(copy.DRAFT_COUNTRY_SWITCHER_LABEL, "Switch country");
+  assert.equal(copy.DRAFT_COUNTRY_FILTER_LEGEND, "Show");
+  assert.equal(copy.DRAFT_COUNTRY_FILTER_ALL, "All indicators");
+  assert.equal(copy.DRAFT_COUNTRY_FILTER_VALUE, "Only indicators with a value");
+  assert.deepEqual({...copy.DRAFT_COUNTRY_COLUMNS}, {indicator: "Indicator", value: "Latest value", period: "Reference period", percentile: "percentile vs all ranked countries", source: "Source", actions: "Actions", reason: "Why there is no value"});
+  assert.equal(copy.DRAFT_COUNTRY_TABLE_CAPTION("Growth", "Germany"), "Growth: indicators of Germany");
+  assert.equal(copy.DRAFT_PROFILE_FIGURE_LABEL("Germany", "Growth"), "percentile of each indicator for Germany, domain Growth; table below lists the same values");
+  assert.equal(copy.DRAFT_PROFILE_DOT_LABEL("GDP", "0.50"), "GDP: 0.50");
+  assert.equal(copy.DRAFT_OFFSET_FLAG(3), "offset 3 days");
+  assert.equal(copy.DRAFT_COMPARE_COUNTRIES, "Compare countries");
+  assert.equal(copy.DRAFT_COMPARE_COUNTRIES_LABEL("GDP"), "Compare countries: GDP");
+  assert.equal(copy.DRAFT_SERIES_LINK_LABEL("GDP", "Germany"), "Time series: GDP, Germany");
+  assert.equal(copy.DRAFT_G_STR1_NO_SERIES, "This export lists no series for this country and indicator.");
+  assert.equal(copy.FRESHNESS_LABEL, "Data cut-off");
+  assert.equal(copy.DRAFT_FRESHNESS_LINE("2026-11-01", "b1"), "Data cut-off: 2026-11-01 (build b1).");
+  assert.equal(copy.DRAFT_FRESHNESS_LINE(null, undefined), "Data cut-off: unknown (build unknown).");
+  assert.equal(copy.STALE_BANNER("2026-09-01", 64, 45), "Data may be out of date: the data cut-off (2026-09-01) is 64 days old, more than 45 days.");
+  assert.equal(copy.STALE_BANNER_UNREADABLE, "Data freshness unknown: this build has no readable data cut-off. Treat the data as out of date.");
+  assert.ok(![copy.STALE_BANNER("d", 1, 2), copy.STALE_BANNER_UNREADABLE, copy.DRAFT_FRESHNESS_LINE("d", "b")].some((t) => t.includes("known_cutoff")));
+  assert.equal(copy.DRAFT_RANKING_PERIOD_LINE, undefined, "deleted: the confirmed spreadText() wording is used");
+  assert.equal(copy.DRAFT_COMPARE_WITH_OTHERS, undefined, "dropped (G-STR3)");
+  assert.equal(copy.DRAFT_ABOUT_SUMMARY, "About this value");
+  assert.deepEqual({...copy.DRAFT_ABOUT_LABELS}, {indicator: "Indicator", country: "Country", seriesId: "Series id", source: "Source", attribution: "Attribution", frequency: "Frequency", unit: "Unit", seasonal: "Seasonal adjustment", priceBasis: "Price basis", refPeriod: "Reference period", knownAt: "Known at", sourceRelease: "Source release at", age: "Age (days)", staleLimit: "Staleness limit (days)", transform: "Transform", flags: "Flags", reestimating: "Re-estimation"});
+  assert.equal(copy.DRAFT_REESTIMATED_MARK, "re-estimated");
+  assert.equal(copy.DRAFT_HISTORY_SHOW, "Show history");
+  assert.equal(copy.DRAFT_HISTORY_HIDE, "Hide history");
+  assert.equal(copy.DRAFT_HISTORY_REGION, "the history of this indicator");
+  assert.equal(copy.DRAFT_HISTORY_CONSEQUENCE, "No history chart is shown for this indicator.");
+  assert.equal(copy.DRAFT_HISTORY_FIGURE_LABEL("GDP", "Germany", "%"), "history of GDP for Germany, in %; table below lists the latest values");
+  assert.equal(copy.DRAFT_HISTORY_TABLE_TITLE("GDP", "Germany"), "GDP: Germany");
+  assert.equal(copy.DRAFT_CRUMB_INDICATORS, "Indicators");
+  assert.deepEqual({...copy.DRAFT_INDICATOR_FACT_LABELS}, {id: "Identifier", domains: "Domains", unit: "Unit", frequency: "Frequency", direction: "Direction", notes: "Notes", transform: "Transform"});
+  assert.deepEqual({...copy.DRAFT_INDICATOR_COLUMNS}, {country: "Country", value: "Latest value", period: "Reference period", offset: "Offset (days)", percentile: "percentile vs all ranked countries"});
+  assert.equal(copy.DRAFT_INDICATOR_TABLE_CAPTION("GDP"), "GDP: latest values by country");
+  assert.equal(copy.DRAFT_INDICATOR_GROUP_LEGEND, "Peer group (filter)");
+  assert.equal(copy.DRAFT_INDICATOR_SORT_LABEL, "Sort by");
+  assert.deepEqual({...copy.DRAFT_INDICATOR_SORT_LABELS}, {name: "Country", value: "Value", percentile: "Percentile", period: "Reference period"});
+  assert.equal(copy.DRAFT_INDICATOR_SWITCHER_LABEL, "Switch indicator");
+  assert.equal(copy.DRAFT_INDICATOR_SWITCHER_GO, "Go");
+  assert.deepEqual({...copy.DRAFT_INDICATOR_COLUMNS_MORE}, {flags: "Flags", source: "Source", actions: "Actions", reason: "Why there is no value"});
+  assert.equal(copy.DRAFT_TRANSFORMED_HEADER("YOY"), "Transformed value (YOY)");
+  assert.equal(copy.DRAFT_OPEN_AS_SERIES, "Open as time series");
+  assert.equal(copy.DRAFT_INDICATOR_SERIES_LINK, "Time series");
+  assert.equal(copy.DRAFT_VALUE_AXIS_TITLE("GDP", "%"), "GDP (%)");
+  assert.equal(copy.DRAFT_VALUE_FIGURE_LABEL("GDP", "%", 3), "Bar chart of GDP, in %, 3 countries; table below lists the same values");
+  assert.equal(copy.DRAFT_VALUE_FIGURE_LABEL("GDP", "%", 1), "Bar chart of GDP, in %, 1 country; table below lists the same values");
+  assert.equal(copy.DRAFT_VALUE_ESTIMATE_MARK, "e");
+  assert.equal(copy.DRAFT_VALUE_NEUTRAL_LEGEND, "No percentile");
+  assert.equal(copy.DRAFT_CHOOSE_COUNTRIES_HINT, "Choose up to 5 countries to compare."); // spec C-SER-2, verbatim
+  assert.equal(copy.DRAFT_HASH_FALLBACK_NOTE, "Part of this link was not recognised and was ignored.");
+  assert.equal(copy.DRAFT_HASH_NO_ROWS_NOTE(["Germany", "France"]), "Not selected: this export has no values of this indicator for Germany, France.");
+  assert.equal(copy.DRAFT_OTHER_INDICATORS_GROUP, "Other indicators");
+  assert.equal(copy.DRAFT_ABOUT_SERIES_HEADING, "About these series");
+  assert.deepEqual(Object.keys(copy.DRAFT_ABOUT_SERIES_COLUMNS), ["country", "source", "attribution", "frequency", "unit", "seasonal", "priceBasis", "lastPeriod", "knownAt", "reestimating"]);
+  assert.equal(copy.DRAFT_ABOUT_SERIES_COLUMNS.knownAt, "Known at (last period)");
+  assert.equal(copy.DRAFT_TITLE_UNIT("%"), " (%)");
+  assert.equal(copy.DRAFT_VALUE_HEADER_UNIT("%"), "Value (%)");
+  assert.equal(copy.DRAFT_POINT_READER_LEGEND, "Read a value");
+  assert.deepEqual({...copy.DRAFT_TIP_STATUS}, {EST: "estimate", PROV: "provisional"});
+  assert.equal(copy.DRAFT_TIP_KNOWN_AT("2026-10-01"), "Known at 2026-10-01");
+  assert.equal(copy.DRAFT_READER_NONE, "Choose a country");
   assert.deepEqual(Object.keys(copy).filter((k) => k.startsWith("DRAFT_")).sort(), [...DRAFT].sort());
   // a region name is a logical name: no URL, no path, no digit
   for (const r of Object.values(copy.DRAFT_REGIONS)) assert.ok(!/[/:.\d]|https?/.test(r), r);
 });
 
+test("R11: the heatmap column link has the full indicator name in its accessible name, starting with the visible text", () => {
+  assert.equal(copy.DRAFT_HEATMAP_INDICATOR_LINK, "Indicator page");
+  assert.equal(copy.DRAFT_HEATMAP_INDICATOR_LINK_LABEL("Unemployment rate"), "Indicator page: Unemployment rate");
+  assert.ok(copy.DRAFT_HEATMAP_INDICATOR_LINK_LABEL("x").startsWith(copy.DRAFT_HEATMAP_INDICATOR_LINK));
+});
+
 test("copy.js exports nothing that is not covered above (a new string needs a verbatim assertion)", () => {
-  const known = new Set(["BIN_LABELS", ...Object.keys(VERBATIM), ...Object.keys(OBJECTS), "notRankedCell", "directionWithTarget", ...DRAFT]);
+  const known = new Set(["BIN_LABELS", "FRESHNESS_LABEL", "STALE_BANNER", "STALE_BANNER_UNREADABLE", ...Object.keys(VERBATIM), ...Object.keys(OBJECTS), "notRankedCell", "directionWithTarget", ...DRAFT]);
   assert.deepEqual(Object.keys(copy).filter((k) => !known.has(k)), []);
 });
 
@@ -205,7 +302,7 @@ test("copy.js has no imports and every export other than the data label is used 
   const text = readFileSync(join(src, "lib", "copy.js"), "utf8");
   assert.ok(!/^\s*import\b/m.test(text));
   const others = readdirSync(join(src, "lib")).filter((n) => n.endsWith(".js") && n !== "copy.js").map((n) => readFileSync(join(src, "lib", n), "utf8")).join("\n");
-  const unused = Object.keys(copy).filter((k) => k !== "DOMAIN_FIGURE_LABEL" && !new RegExp(`\\b${k}\\b`).test(others));
+  const unused = Object.keys(copy).filter((k) => k !== "DOMAIN_FIGURE_LABEL" && k !== "FRESHNESS_LABEL" && k !== "STALE_BANNER" && k !== "STALE_BANNER_UNREADABLE" && !new RegExp(`\\b${k}\\b`).test(others));
   assert.deepEqual(unused, []);
 });
 

@@ -1,0 +1,60 @@
+[
+ {
+  "page": 2,
+  "pages": 2,
+  "per_page": 3,
+  "total": 6,
+  "sourceid": "2",
+  "lastupdated": "2026-10-08"
+ },
+ [
+  {
+   "indicator": {
+    "id": "FI.RES.TOTL.CD",
+    "value": "Total reserves (includes gold, current US$)"
+   },
+   "country": {
+    "id": "FR",
+    "value": "France"
+   },
+   "countryiso3code": "FRA",
+   "date": "2024",
+   "value": 250100000000,
+   "unit": "",
+   "obs_status": "",
+   "decimal": 0
+  },
+  {
+   "indicator": {
+    "id": "FI.RES.TOTL.CD",
+    "value": "Total reserves (includes gold, current US$)"
+   },
+   "country": {
+    "id": "FR",
+    "value": "France"
+   },
+   "countryiso3code": "FRA",
+   "date": "2023",
+   "value": null,
+   "unit": "",
+   "obs_status": "",
+   "decimal": 0
+  },
+  {
+   "indicator": {
+    "id": "FI.RES.TOTL.CD",
+    "value": "Total reserves (includes gold, current US$)"
+   },
+   "country": {
+    "id": "FR",
+    "value": "France"
+   },
+   "countryiso3code": "FRA",
+   "date": "2022",
+   "value": 255500000000,
+   "unit": "",
+   "obs_status": "",
+   "decimal": 0
+  }
+ ]
+]

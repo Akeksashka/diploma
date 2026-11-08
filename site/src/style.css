@@ -32,11 +32,6 @@
   --mm-alert-alert: #b42318;
   --mm-alert-watch-ink: #ffffff;
   --mm-alert-alert-ink: #ffffff;
-  /* feed state */
-  --mm-feed-fresh: #1a7f37;
-  --mm-feed-late: #9a6700;
-  --mm-feed-stale: #b35806;
-  --mm-feed-broken: #b42318;
   /* warning (flags, banner, error) */
   --mm-warn-bg: #fef3c7;
   --mm-warn-border: #b45309;
@@ -90,11 +85,7 @@
     --mm-alert-alert: #f47a72;
     --mm-alert-watch-ink: #111111;
     --mm-alert-alert-ink: #111111;
-    --mm-feed-fresh: #4fc16e;
-    --mm-feed-late: #e0b43c;
-    --mm-feed-stale: #f0a24b;
-    --mm-feed-broken: #f47a72;
-    --mm-warn-bg: #3a2a05;
+            --mm-warn-bg: #3a2a05;
     --mm-warn-border: #e0a040;
     --mm-warn-ink: #fde9b0;
     --mm-warn-tint: #2a2108;
@@ -108,19 +99,18 @@
 }
 
 /* Per-view styles (T102). Selectors keep the wrapper class of each view; colours come from tokens only. */
-.mm-sc table, .mm-peers table, .mm-explorer table, .mm-revisions table, .mm-status-view table { border-collapse: collapse; }
+.mm-sc table, .mm-peers table, .mm-explorer table, .mm-revisions table { border-collapse: collapse; }
 /* AC-UX-6 (T107): a wide table scrolls inside itself instead of widening the page. display:block keeps the table role in current
    Chrome, Firefox and Safari; Chrome makes the scroller keyboard-focusable. */
-.mm-sc table, .mm-peers table, .mm-explorer table, .mm-revisions table, .mm-status-view table { display: block; max-width: 100%; overflow-x: auto; }
+.mm-sc table, .mm-peers table, .mm-explorer table, .mm-revisions table { display: block; max-width: 100%; overflow-x: auto; }
 .mm-sc table, .mm-peers table { margin: .5rem 0 1.5rem; font-size: .9rem; }
 .mm-explorer table, .mm-revisions table { margin: .5rem 0 1rem; font-size: .85rem; }
-.mm-status-view table { margin: .5rem 0 1rem; font-size: .88rem; }
 .mm-sc th, .mm-sc td, .mm-peers th, .mm-peers td, .mm-explorer th, .mm-explorer td,
-.mm-revisions th, .mm-revisions td, .mm-status-view th, .mm-status-view td {
+.mm-revisions th, .mm-revisions td {
   border-bottom: 1px solid var(--mm-border); padding: .25rem .6rem; text-align: left; vertical-align: top;
 }
-.mm-sc .mm-num, .mm-peers .mm-num, .mm-revisions .mm-num, .mm-status-view .mm-num { text-align: right; font-variant-numeric: tabular-nums; }
-.mm-sc .mm-flag, .mm-peers .mm-flag, .mm-revisions .mm-flag, .mm-status-view .mm-flag {
+.mm-sc .mm-num, .mm-peers .mm-num, .mm-revisions .mm-num { text-align: right; font-variant-numeric: tabular-nums; }
+.mm-sc .mm-flag, .mm-peers .mm-flag, .mm-revisions .mm-flag {
   display: inline-block; padding: 0 .35rem; border: 1px solid var(--mm-warn-border); border-radius: 3px;
   background: var(--mm-warn-bg); color: var(--mm-warn-ink); font-size: .78rem;
 }
@@ -128,7 +118,7 @@
 .mm-sc .mm-na, .mm-peers .mm-na, .mm-peers tr[data-status="stale"] td { color: var(--mm-text-muted); }
 .mm-sc .mm-caveat, .mm-sc .mm-peer-note, .mm-sc .mm-notice,
 .mm-peers .mm-caveat, .mm-peers .mm-filter-note, .mm-peers .mm-spread, .mm-peers .mm-indicator-note,
-.mm-explorer .mm-note, .mm-revisions .mm-note, .mm-status-view .mm-note {
+.mm-explorer .mm-note, .mm-revisions .mm-note {
   margin: .5rem 0; padding: .5rem .8rem; border-left: 3px solid var(--mm-border); background: var(--mm-surface); color: var(--mm-text);
 }
 .mm-explorer .mm-error, .mm-revisions .mm-error {
@@ -201,10 +191,6 @@
   .mm-explorer-layout { display: grid; grid-template-columns: 19rem minmax(0, 1fr); gap: var(--mm-space-5); align-items: start; }
   .mm-explorer-layout > .mm-selection { margin: 0; }
 }
-.mm-status-view dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: .2rem 1rem; }
-.mm-status-view dt { font-weight: 600; }
-.mm-status-view dd { overflow-wrap: anywhere; }
-@media (max-width: 40rem) { .mm-status-view dl { grid-template-columns: minmax(0, 1fr); } .mm-status-view dd { margin-left: 0; } } /* T132: label above value, so wide labels cannot squeeze the value */
 .mm-banner { margin: 0 0 1rem; padding: .6rem .9rem; border: 1px solid var(--mm-warn-border); background: var(--mm-warn-bg); color: var(--mm-warn-ink); border-radius: 4px; }
 .mm-asof { color: var(--mm-text-muted); font-size: .85rem; margin: 0 0 1rem; }
 .mm-attribution { margin-top: 2rem; font-size: .85rem; color: var(--mm-text-muted); }
@@ -255,7 +241,7 @@ input[type="checkbox"], input[type="radio"] { width: 24px; height: 24px; margin:
 }
 /* T131: prefers-contrast: more. State borders take the text colour (no token is redefined here; the style stays as is). */
 @media (prefers-contrast: more) {
-  .mm-cell, .mm-key, .mm-state, .mm-feed[data-feed], .mm-feed { border-color: var(--mm-text); }
+  .mm-cell, .mm-key, .mm-state { border-color: var(--mm-text); }
 }
 
 /* Stage 1 (T108-T112): state marks, percentile bins, legend, country x indicator heatmap, facts panel. Tokens only.
@@ -333,17 +319,6 @@ th[aria-sort="descending"] .mm-sort::after { border-top-color: currentColor; bor
 /* details of the values: stays in the DOM, closed by default */
 .mm-values > summary { min-height: 24px; padding: var(--mm-space-2) 0; font-weight: 600; cursor: pointer; }
 
-/* V5 (T128): feed-state chips. Word + glyph + 1 px border pattern; colour is the third channel (--mm-feed-* vs --mm-surface, 3:1). No overall state. */
-.mm-feed { display: inline-flex; align-items: center; gap: var(--mm-space-1); padding: 0 var(--mm-space-2); border: 1px solid var(--mm-feed-fresh); border-radius: 3px; background: var(--mm-surface); color: var(--mm-text); font-size: .85rem; white-space: nowrap; }
-.mm-feed .mm-glyph { color: var(--mm-feed-fresh); }
-.mm-feed[data-feed="late"] { border-style: dashed; border-color: var(--mm-feed-late); }
-.mm-feed[data-feed="late"] .mm-glyph { color: var(--mm-feed-late); }
-.mm-feed[data-feed="stale"] { border-style: dotted; border-color: var(--mm-feed-stale); }
-.mm-feed[data-feed="stale"] .mm-glyph { color: var(--mm-feed-stale); }
-.mm-feed[data-feed="broken"] { border-color: var(--mm-feed-broken); font-weight: 700; background: repeating-linear-gradient(135deg, transparent 0 5px, var(--mm-border) 5px 6px), var(--mm-surface); }
-.mm-feed[data-feed="broken"] .mm-glyph { color: var(--mm-feed-broken); }
-.mm-feed[data-feed="unknown"] { border-style: double; border-width: 3px; border-color: var(--mm-border); }
-.mm-feed[data-feed="unknown"] .mm-glyph { color: var(--mm-text-muted); }
 
 /* V4 (T126): signed revisions. Sign = printed text (true minus) + triangle; blue-orange (--mm-div-*) is the second channel (AC-UX-1, AC-UX-2).
    Class mark = text + left border (solid regular, dashed re-estimation). Bar = display scale, labelled by #bar-label. */
@@ -384,7 +359,7 @@ th[aria-sort="descending"] .mm-sort::after { border-top-color: currentColor; bor
   body, #observablehq-center { margin: 0; padding: 0; }
   #observablehq-main { max-width: none; margin-top: var(--mm-space-3); font-size: 10.5pt; }
   .mm-skip, .mm-nav, .mm-scroll-hint, .mm-skip-values, .mm-facts, .mm-group-buttons, .mm-selection, .mm-controls,
-  label:has(> select), fieldset.mm-radios, button.mm-group-btn { display: none; }
+  label:has(> select), fieldset.mm-radios, button.mm-group-btn, button.mm-history-btn, button.mm-country-go, fieldset.mm-point-reader { display: none; }
   .mm-print-url { display: block; margin-top: var(--mm-space-2); overflow-wrap: anywhere; font-size: 9pt; }
   #observablehq-footer { display: block !important; font-size: 9pt; } /* Framework's default.css hides the footer in print with !important */
   .mm-header { padding: 0 0 var(--mm-space-2); }
@@ -394,7 +369,7 @@ th[aria-sort="descending"] .mm-sort::after { border-top-color: currentColor; bor
   summary::marker, summary::-webkit-details-marker { display: none; }
   /* nothing clips or scrolls: scrollers and sticky cells become ordinary flow, tables fit the page width */
   .mm-heatmap-scroll, .mm-figure, .mm-explorer fieldset { max-height: none; overflow: visible; }
-  .mm-sc table, .mm-peers table, .mm-explorer table, .mm-revisions table, .mm-status-view table,
+  .mm-sc table, .mm-peers table, .mm-explorer table, .mm-revisions table,
   .mm-explorer .mm-view-table table { display: table; width: 100%; max-width: 100%; max-height: none; overflow: visible; table-layout: auto; font-size: 9pt; }
   .mm-sc .mm-heatmap-table { width: 100%; font-size: 9pt; }
   .mm-sc .mm-heatmap-table thead th, .mm-sc .mm-heatmap-table .mm-hm-country, .mm-sc .mm-hm-aggregates th[scope="rowgroup"] { position: static; }
@@ -408,3 +383,145 @@ th[aria-sort="descending"] .mm-sort::after { border-top-color: currentColor; bor
   h1, h2, h3, summary { break-after: avoid; }
   svg, img { max-width: 100%; height: auto; }
 }
+
+/* Redesign R7: country page (PG-COUNTRY). Tokens only; the bin colours and state signatures of the cells above apply to td[data-bin] / td[data-state]. */
+.mm-country { min-width: 0; }
+.mm-country-controls { display: flex; flex-wrap: wrap; gap: var(--mm-space-3) var(--mm-space-5); align-items: flex-start; margin: var(--mm-space-2) 0 var(--mm-space-4); }
+.mm-country-controls label { max-width: 100%; min-width: 0; margin: 0; }
+.mm-country-controls select { min-height: 24px; max-width: 100%; }
+.mm-country-controls .mm-radios { margin: 0; min-width: 0; padding: var(--mm-space-1) var(--mm-space-3) var(--mm-space-2); border: 1px solid var(--mm-border); border-radius: var(--mm-radius); }
+.mm-country-controls .mm-radios legend { padding: 0 var(--mm-space-1); }
+.mm-country-controls .mm-radio { display: inline-flex; align-items: center; gap: var(--mm-space-2); min-height: 24px; margin: 0 var(--mm-space-4) 0 0; }
+.mm-country-controls .mm-radio input { width: 1.25rem; height: 1.25rem; margin: 0; }
+.mm-country-domain { margin: var(--mm-space-6) 0; min-width: 0; }
+.mm-country-domain h2 { margin: 0 0 var(--mm-space-2); }
+.mm-country .mm-notice { margin: var(--mm-space-2) 0; padding: var(--mm-space-2) var(--mm-space-3); border-left: 3px solid var(--mm-border); background: var(--mm-surface); color: var(--mm-text); }
+.mm-figure-line { margin: var(--mm-space-2) 0; max-width: none; }
+.mm-figure-line .mm-glyph { margin-right: var(--mm-space-1); }
+.mm-country .mm-figure { margin: var(--mm-space-2) 0; padding: 0; max-width: 100%; overflow-x: auto; color: var(--mm-text); }
+.mm-country .mm-figure svg { display: block; min-width: 36rem; max-width: none; height: auto; color: var(--mm-text); }
+.mm-ctry-scroll { position: relative; max-height: 80vh; margin: var(--mm-space-2) 0 var(--mm-space-4); overflow: auto; border: 1px solid var(--mm-border); }
+.mm-country .mm-country-table { display: table; width: 100%; min-width: 44rem; max-width: none; margin: 0; overflow: visible; border-collapse: separate; border-spacing: 0; font-size: var(--mm-fs-small); line-height: 1.3; }
+.mm-country-table caption { padding: var(--mm-space-2); text-align: left; font-weight: 600; caption-side: top; }
+.mm-country-table th, .mm-country-table td { padding: var(--mm-space-1) var(--mm-space-2); border-bottom: 1px solid var(--mm-border); text-align: left; vertical-align: top; background-clip: padding-box; }
+.mm-country .mm-country-table thead th { position: sticky; top: 0; z-index: 3; background: var(--mm-surface); vertical-align: bottom; }
+.mm-country-table th[scope="row"] { min-width: 11rem; font-weight: 400; overflow-wrap: anywhere; }
+.mm-country-table .mm-num { text-align: right; font-variant-numeric: tabular-nums; }
+.mm-country-table .mm-id, .mm-country-table .mm-unit, .mm-country-table .mm-sentence { color: var(--mm-text-muted); font-size: .78rem; }
+.mm-country-table .mm-id { display: block; }
+.mm-country-table .mm-pct { min-width: 8rem; }
+.mm-country-table .mm-pct .mm-cell, .mm-country-table .mm-reason .mm-cell { display: inline-flex; width: auto; min-height: 1.75rem; justify-content: flex-start; }
+.mm-country-table .mm-actions a { display: inline-block; min-height: 24px; padding: var(--mm-space-1) 0; margin-right: var(--mm-space-3); }
+.mm-country-table .mm-flag { display: inline-block; padding: 0 var(--mm-space-1); border: 1px solid var(--mm-warn-border); border-radius: 3px; background: var(--mm-warn-bg); color: var(--mm-warn-ink); font-size: .78rem; }
+.mm-country-table .mm-group-row th[scope="rowgroup"] { background: var(--mm-surface); color: var(--mm-text-muted); font-weight: 600; }
+.mm-hollow { display: inline-block; width: .7em; height: .7em; margin-right: 2px; border: 2px solid currentColor; border-radius: 50%; vertical-align: -0.05em; box-sizing: border-box; }
+.mm-country-table tbody[hidden] { display: none; }
+/* R8: About this value and Show history (sub-row under each value row). Tokens only. */
+.mm-country-table .mm-sub-row td { padding: 0 var(--mm-space-2) var(--mm-space-1); }
+.mm-about summary { min-height: 24px; padding: var(--mm-space-1) 0; cursor: pointer; font-weight: 600; }
+.mm-about-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); gap: var(--mm-space-1) var(--mm-space-4); margin: var(--mm-space-1) 0 var(--mm-space-2); }
+.mm-about-field { min-width: 0; }
+.mm-about-field dt { color: var(--mm-text-muted); font-size: .78rem; }
+.mm-about-field dd { margin: 0; overflow-wrap: anywhere; }
+.mm-about-flags { margin: 0; padding-left: 1.1rem; }
+.mm-history-btn { min-height: 24px; margin-right: var(--mm-space-3); padding: var(--mm-space-1) var(--mm-space-2); border: 1px solid var(--mm-border); border-radius: var(--mm-radius); background: var(--mm-surface); color: var(--mm-text); font: inherit; font-size: var(--mm-fs-small); cursor: pointer; }
+.mm-history { margin: var(--mm-space-1) 0 var(--mm-space-2); min-width: 0; }
+.mm-history[hidden] { display: none; }
+.mm-history .mm-state-error { margin: var(--mm-space-1) 0; padding: var(--mm-space-2) var(--mm-space-3); border: 1px solid var(--mm-warn-border); background: var(--mm-warn-bg); color: var(--mm-warn-ink); }
+.mm-history .mm-view-table summary { min-height: 24px; padding: var(--mm-space-1) 0; cursor: pointer; font-weight: 600; }
+.mm-history .mm-view-table table { display: table; width: 100%; max-width: 100%; }
+@media print {
+  .mm-ctry-scroll { max-height: none; overflow: visible; }
+  .mm-country .mm-country-table { min-width: 0; font-size: 9pt; }
+  .mm-country .mm-country-table thead th { position: static; }
+  .mm-country .mm-figure { overflow: visible; }
+  .mm-country .mm-figure svg { min-width: 0; }
+}
+
+/* Redesign R10: indicator page (PG-INDICATOR). Tokens only; bin colours and state signatures of the cells above apply to td[data-bin] / td[data-state]. */
+.mm-indicator { min-width: 0; }
+.mm-ind-controls { display: flex; flex-wrap: wrap; gap: var(--mm-space-3) var(--mm-space-5); align-items: flex-start; margin: var(--mm-space-2) 0 var(--mm-space-4); }
+.mm-ind-controls label { max-width: 100%; min-width: 0; margin: 0; }
+.mm-ind-controls select { min-height: 24px; max-width: 100%; }
+.mm-ind-controls .mm-radios { margin: 0; min-width: 0; padding: var(--mm-space-1) var(--mm-space-3) var(--mm-space-2); border: 1px solid var(--mm-border); border-radius: var(--mm-radius); }
+.mm-ind-controls .mm-radios legend { padding: 0 var(--mm-space-1); }
+.mm-ind-controls .mm-radio { display: inline-flex; align-items: center; gap: var(--mm-space-2); min-height: 24px; margin: 0 var(--mm-space-4) 0 0; }
+.mm-ind-controls .mm-radio input { width: 1.5rem; height: 1.5rem; margin: 0; } /* R12: 24 px target (AC-DASH-9), as the retired peers page had */
+.mm-indicator .mm-filter-note, .mm-indicator .mm-spread { margin: var(--mm-space-2) 0; max-width: none; color: var(--mm-text-muted); }
+.mm-ind-links a { display: inline-block; min-height: 24px; padding: var(--mm-space-1) 0; margin-right: var(--mm-space-4); }
+.mm-indicator .mm-figure { margin: var(--mm-space-2) 0; padding: 0; max-width: 100%; overflow-x: auto; color: var(--mm-text); }
+.mm-indicator .mm-figure svg { display: block; min-width: 36rem; max-width: none; height: auto; color: var(--mm-text); }
+.mm-ind-legend .mm-swatch[data-bin="none"] { background: var(--mm-text-muted); opacity: .45; }
+.mm-ind-scroll { position: relative; max-height: 80vh; margin: var(--mm-space-2) 0 var(--mm-space-4); overflow: auto; border: 1px solid var(--mm-border); }
+.mm-indicator .mm-indicator-table { display: table; width: 100%; min-width: 60rem; max-width: none; margin: 0; overflow: visible; border-collapse: separate; border-spacing: 0; font-size: var(--mm-fs-small); line-height: 1.3; }
+.mm-indicator-table caption { padding: var(--mm-space-2); text-align: left; font-weight: 600; caption-side: top; }
+.mm-indicator-table th, .mm-indicator-table td { padding: var(--mm-space-1) var(--mm-space-2); border-bottom: 1px solid var(--mm-border); text-align: left; vertical-align: top; background-clip: padding-box; }
+.mm-indicator .mm-indicator-table thead th { position: sticky; top: 0; z-index: 3; background: var(--mm-surface); vertical-align: bottom; }
+.mm-indicator-table th[scope="row"] { min-width: 9rem; font-weight: 400; overflow-wrap: anywhere; }
+.mm-indicator-table .mm-num { text-align: right; font-variant-numeric: tabular-nums; }
+.mm-indicator-table .mm-unit, .mm-indicator-table .mm-sentence { color: var(--mm-text-muted); font-size: .78rem; }
+.mm-indicator-table .mm-pct { min-width: 8rem; }
+.mm-indicator-table .mm-pct .mm-cell, .mm-indicator-table .mm-reason .mm-cell { display: inline-flex; width: auto; min-height: 1.75rem; justify-content: flex-start; }
+.mm-indicator-table .mm-actions a { display: inline-block; min-height: 24px; padding: var(--mm-space-1) 0; }
+.mm-indicator-table .mm-flag { display: inline-block; padding: 0 var(--mm-space-1); border: 1px solid var(--mm-warn-border); border-radius: 3px; background: var(--mm-warn-bg); color: var(--mm-warn-ink); font-size: .78rem; }
+.mm-indicator-table .mm-group-row th[scope="rowgroup"] { background: var(--mm-surface); color: var(--mm-text-muted); font-weight: 600; }
+.mm-indicator-table .mm-sub-row td { padding: 0 var(--mm-space-2) var(--mm-space-1); }
+.mm-indicator-table tr[data-focus="true"] > th, .mm-indicator-table tr[data-focus="true"] > td { box-shadow: inset 0 2px 0 var(--mm-focus), inset 0 -2px 0 var(--mm-focus); }
+/* Narrow screens: each row becomes a card with the same cells in the same order, each labelled from data-label. */
+@media (max-width: 40rem) {
+  .mm-ind-scroll { max-height: none; overflow: visible; border: 0; }
+  .mm-indicator .mm-indicator-table { display: block; min-width: 0; }
+  .mm-indicator .mm-indicator-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .mm-indicator-table tbody, .mm-indicator-table tr, .mm-indicator-table th[scope="row"], .mm-indicator-table th[scope="rowgroup"], .mm-indicator-table td { display: block; }
+  .mm-indicator-table tr { margin: 0 0 var(--mm-space-3); padding: var(--mm-space-1) var(--mm-space-3); border: 1px solid var(--mm-border); border-radius: var(--mm-radius); }
+  .mm-indicator-table th[scope="row"], .mm-indicator-table td { border-bottom: 0; padding: var(--mm-space-1) 0; }
+  .mm-indicator-table th[scope="row"] { font-weight: 600; }
+  .mm-indicator-table td[data-label] { display: grid; grid-template-columns: minmax(0, 9rem) minmax(0, 1fr); gap: 0 var(--mm-space-3); text-align: left; overflow-wrap: anywhere; }
+  .mm-indicator-table td[data-label]::before { content: attr(data-label); color: var(--mm-text-muted); font-size: .85rem; }
+  .mm-indicator-table td.mm-num { text-align: left; }
+  .mm-indicator-table tr[data-focus="true"] { border-color: var(--mm-focus); border-width: 2px; }
+  .mm-indicator-table tr[data-focus="true"] > * { box-shadow: none; }
+  .mm-indicator .mm-figure svg { min-width: 30rem; }
+}
+@media print {
+  .mm-ind-scroll { max-height: none; overflow: visible; }
+  .mm-indicator .mm-indicator-table { min-width: 0; font-size: 9pt; }
+  .mm-indicator .mm-indicator-table thead th { position: static; }
+  .mm-indicator .mm-figure { overflow: visible; }
+  .mm-indicator .mm-figure svg { min-width: 0; }
+}
+/* R11: link to the indicator page under a heatmap column header */
+.mm-hm-open { display: block; font-size: .78rem; font-weight: 400; }
+/* R11/R12: links inside tables are targets of at least 24 px (AC-UX-4), as the other link rules above */
+.mm-heatmap-table a, .mm-revisions table a, .mm-indicator-table a, .mm-country-table a { display: inline-block; min-height: 24px; padding: var(--mm-space-1) 0; }
+.mm-country-controls .mm-radio input { width: 1.5rem; height: 1.5rem; }
+/* R12: the indicator switcher (htl wraps label and Go button in an unclassed span) wraps inside the controls row (WCAG 1.4.12 at 320 px). Screen only: print hides the select. */
+@media screen {
+  .mm-ind-controls > span:has(> .mm-country-switch) { display: flex; flex-wrap: wrap; align-items: center; gap: var(--mm-space-1) var(--mm-space-2); max-width: 100%; min-width: 0; }
+  .mm-ind-controls .mm-country-switch { display: flex; flex-wrap: wrap; align-items: center; gap: var(--mm-space-1) var(--mm-space-2); }
+  .mm-ind-controls .mm-country-switch select { flex: 1 1 8rem; min-width: 0; }
+}
+/* R12: a long indicator name wraps in the page title (WCAG 1.4.12 at 320 px) */
+h1[data-indicator] { overflow-wrap: anywhere; }
+
+/* Redesign R16: "Read a value" point reader (outside the role="img" figure) and Escape dismissal of the pointer tip (WCAG 1.4.13). Tokens only. */
+.mm-point-reader { display: flex; flex-wrap: wrap; align-items: center; gap: var(--mm-space-2) var(--mm-space-4); margin: var(--mm-space-2) 0; padding: var(--mm-space-1) var(--mm-space-3) var(--mm-space-2); border: 1px solid var(--mm-border); border-radius: var(--mm-radius); min-width: 0; }
+.mm-point-reader legend { padding: 0 var(--mm-space-1); font-weight: 600; }
+.mm-point-reader label { display: inline-flex; align-items: center; gap: var(--mm-space-2); margin: 0; }
+.mm-point-reader select, .mm-point-reader input[type="range"] { min-height: 24px; max-width: 100%; }
+.mm-point-reader output { flex: 1 1 14rem; min-width: 0; color: var(--mm-text); overflow-wrap: anywhere; }
+.mm-figure.mm-tip-hidden g[aria-label="tip"]:not(.mm-static-tip) { display: none; }
+.mm-figure.mm-static-hidden g.mm-static-tip { display: none; } /* Escape while focus is in the reader; the <output> text stays */
+
+/* R18: home lists and filters (spec 4.1). Plain lists; the filter control exists only with JavaScript. */
+.mm-home-list ul { margin: var(--mm-space-2, 0.5rem) 0; padding-left: 1.25rem; }
+.mm-home-list details { margin: var(--mm-space-2, 0.5rem) 0; }
+.mm-home-list summary { cursor: pointer; font-weight: 600; }
+.mm-home-list [hidden] { display: none; }
+.mm-filter { margin: var(--mm-space-2, 0.5rem) 0; }
+.mm-filter input { min-width: 14rem; max-width: 100%; }
+.mm-filter[data-filter-slot] { min-height: 3.5rem; }
+.mm-home-shell { min-height: 2.25rem; }
+.mm-home-shell .mm-loading { min-height: 0; margin: 0 0 1rem; padding: 0; border: 0; background: none; }
+.mm-filter-status { margin: 0.25rem 0 0; min-height: 1.5em; color: var(--mm-text-muted); }
+.mm-home-links { display: flex; flex-wrap: wrap; gap: 1rem; list-style: none; padding: 0; margin: 1.5rem 0; }

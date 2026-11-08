@@ -1,0 +1,15 @@
+# Sidecar of the recorded-bytes fixture. REAL response, captured unmodified: operator probe OP-04, geo=DE only.
+synthetic: false
+source_url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?format=JSON&freq=Q&geo=DE&na_item=GD&sector=S13&sinceTimePeriod=1991-Q1&unit=PC_GDP
+fetched_at: 2026-11-06T07:31:36Z
+http_status: 200
+content_type: "application/json"
+sha256: 8fb43983a3b9800906c50e2d7ac511e4bb2e5bd06855f6c5121289e124e1dd4e
+source_updated: "2026-10-21T11:00:00+0200"
+parser_id: jsonstat_v1@1
+notes: "operator probe OP-04, geo=DE only; group eurostat_gov_debt"
+licence:
+  id: eurostat-reuse
+  url: https://ec.europa.eu/eurostat/web/main/help/copyright-notice
+  attribution: "Source: Eurostat"
+  redistribution_of_raw: allowed

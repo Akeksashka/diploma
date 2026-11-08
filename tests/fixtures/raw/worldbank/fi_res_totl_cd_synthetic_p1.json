@@ -1,0 +1,60 @@
+[
+ {
+  "page": 1,
+  "pages": 2,
+  "per_page": 3,
+  "total": 6,
+  "sourceid": "2",
+  "lastupdated": "2026-10-08"
+ },
+ [
+  {
+   "indicator": {
+    "id": "FI.RES.TOTL.CD",
+    "value": "Total reserves (includes gold, current US$)"
+   },
+   "country": {
+    "id": "DE",
+    "value": "Germany"
+   },
+   "countryiso3code": "DEU",
+   "date": "2024",
+   "value": 294178000000,
+   "unit": "",
+   "obs_status": "",
+   "decimal": 0
+  },
+  {
+   "indicator": {
+    "id": "FI.RES.TOTL.CD",
+    "value": "Total reserves (includes gold, current US$)"
+   },
+   "country": {
+    "id": "DE",
+    "value": "Germany"
+   },
+   "countryiso3code": "DEU",
+   "date": "2023",
+   "value": 286700000000,
+   "unit": "",
+   "obs_status": "",
+   "decimal": 0
+  },
+  {
+   "indicator": {
+    "id": "FI.RES.TOTL.CD",
+    "value": "Total reserves (includes gold, current US$)"
+   },
+   "country": {
+    "id": "DE",
+    "value": "Germany"
+   },
+   "countryiso3code": "DEU",
+   "date": "2022",
+   "value": null,
+   "unit": "",
+   "obs_status": "",
+   "decimal": 0
+  }
+ ]
+]

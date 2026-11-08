@@ -1,0 +1,154 @@
+name: monthly-refresh
+
+on:
+  schedule:
+    - cron: "23 4 1 * *" # refresh (UTC)
+    - cron: "23 4 4 * *" # catch-up: failed or skipped groups and unloaded backlog
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "refresh or catchup"
+        type: choice
+        options:
+          - refresh
+          - catchup
+        default: refresh
+      groups:
+        description: "comma-separated group ids; empty = all due"
+        type: string
+        default: ""
+      dry_run:
+        description: "plan only: no fetch, load, analysis or release"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mm-refresh
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  MM_ENV: production
+  MM_RAW_STORE: release_public
+  MM_REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+
+jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: write # opens the draft raw release (T45, not wired yet)
+      issues: write # failure issue
+    outputs:
+      fetch_matrix: ${{ steps.plan.outputs.fetch_matrix }}
+      has_fetch: ${{ steps.plan.outputs.has_fetch }}
+      load_groups: ${{ steps.plan.outputs.load_groups }}
+      run_id: ${{ steps.plan.outputs.run_id }}
+      release_tag: ${{ steps.plan.outputs.release_tag }}
+      mode: ${{ steps.plan.outputs.mode }}
+      dry_run: ${{ steps.plan.outputs.dry_run }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - name: Validate inputs, warm up Neon, sync config, plan (ingest role)
+        id: plan
+        env:
+          DATABASE_URL: ${{ secrets.NEON_URL_MM_INGEST }}
+          GITHUB_TOKEN: ${{ github.token }}
+          MM_EVENT_NAME: ${{ github.event_name }}
+          MM_SCHEDULE: ${{ github.event.schedule }}
+          MM_INPUT_MODE: ${{ inputs.mode }}
+          MM_INPUT_GROUPS: ${{ inputs.groups }}
+          MM_INPUT_DRY_RUN: ${{ inputs.dry_run }}
+        run: scripts/ci/monthly_refresh.sh plan
+      - name: Open a failure issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          MM_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          body="monthly-refresh plan failed: ${MM_RUN_URL}"
+          gh issue create --title "[pipeline] plan failed (run ${GITHUB_RUN_ID})" --label pipeline --body "$body" \
+            || gh issue create --title "[pipeline] plan failed (run ${GITHUB_RUN_ID})" --body "$body" \
+            || echo "::warning::could not open a failure issue"
+
+  fetch:
+    needs: plan
+    if: needs.plan.outputs.has_fetch == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ matrix.job_timeout_min }}
+    permissions:
+      contents: write # raw release assets
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix: ${{ fromJSON(needs.plan.outputs.fetch_matrix) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - name: Fetch one source group (ingest role)
+        env:
+          DATABASE_URL: ${{ secrets.NEON_URL_MM_INGEST }}
+          GITHUB_TOKEN: ${{ github.token }}
+          MM_GROUP: ${{ matrix.group }}
+          MM_MODE: ${{ needs.plan.outputs.mode }}
+        run: scripts/ci/monthly_refresh.sh fetch
+
+  load:
+    needs: [plan, fetch]
+    if: always() && needs.plan.result == 'success' && needs.plan.outputs.dry_run == 'false'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      issues: write # failure issue
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - name: Drain the unloaded queue (ingest role)
+        id: load
+        env:
+          DATABASE_URL: ${{ secrets.NEON_URL_MM_INGEST }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: scripts/ci/monthly_refresh.sh load
+      - name: Analyze (analytics role)
+        env:
+          DATABASE_URL: ${{ secrets.NEON_URL_MM_ANALYTICS }}
+        run: scripts/ci/monthly_refresh.sh analyze
+      - name: Open a failure issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          MM_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          body="monthly-refresh load/analyze failed: ${MM_RUN_URL}"
+          gh issue create --title "[pipeline] load failed (run ${GITHUB_RUN_ID})" --label pipeline --body "$body" \
+            || gh issue create --title "[pipeline] load failed (run ${GITHUB_RUN_ID})" --body "$body" \
+            || echo "::warning::could not open a failure issue"
+
+  r-analysis:
+    needs: load
+    if: needs.load.result == 'success' && vars.ENABLE_R == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: R modules (placeholder until the R phase)
+        run: echo "::notice::r-analysis has no modules yet; ADR-006 makes R optional and off by default"

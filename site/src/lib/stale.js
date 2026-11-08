@@ -1,3 +1,5 @@
+import {STALE_BANNER, STALE_BANNER_UNREADABLE} from "./copy.js";
+
 // AC-DASH-7: the stale banner is evaluated in the browser on the manifest `known_cutoff`
 // (data and analysis time), not on `generated_at` (build time).
 export const STALE_DAYS = 45;
@@ -13,6 +15,6 @@ export function staleness(knownCutoff, now, limitDays = STALE_DAYS) {
 
 export function bannerMessage(st) {
   if (!st.stale) return null;
-  if (st.reason === "unreadable") return `Data freshness unknown: the build has no readable known_cutoff (${st.knownCutoff ?? "missing"}). Treat the data as out of date.`;
-  return `Data may be out of date: the latest data cutoff (known_cutoff ${st.knownCutoff}) is ${Math.floor(st.ageDays)} days old, older than ${st.limitDays} days.`;
+  if (st.reason === "unreadable") return STALE_BANNER_UNREADABLE;
+  return STALE_BANNER(new Date(Date.parse(st.knownCutoff)).toISOString().slice(0, 10), Math.floor(st.ageDays), st.limitDays);
 }

@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0",
+  "indicators": [
+    {
+      "indicator_id": "T01",
+      "name": "Synthetic indicator T01",
+      "domain_ids": [
+        "growth",
+        "fin"
+      ],
+      "rank_mode": "monotone_good",
+      "good_dir": 1,
+      "unit_label": "SYNTH_UNIT",
+      "frequency_set": [
+        "A"
+      ],
+      "notes": [],
+      "target": null,
+      "staleness_limit_days": 730
+    },
+    {
+      "indicator_id": "T02",
+      "name": "Synthetic indicator T02",
+      "domain_ids": [
+        "growth"
+      ],
+      "rank_mode": "monotone_good",
+      "good_dir": 1,
+      "unit_label": "SYNTH_UNIT",
+      "frequency_set": [
+        "A"
+      ],
+      "notes": [],
+      "target": null,
+      "staleness_limit_days": 730
+    },
+    {
+      "indicator_id": "T03",
+      "name": "Synthetic indicator T03",
+      "domain_ids": [
+        "growth"
+      ],
+      "rank_mode": "descriptive_only",
+      "good_dir": 1,
+      "unit_label": "SYNTH_UNIT",
+      "frequency_set": [
+        "A"
+      ],
+      "notes": [],
+      "target": null,
+      "staleness_limit_days": 730
+    },
+    {
+      "indicator_id": "T04",
+      "name": "Synthetic indicator T04",
+      "domain_ids": [
+        "growth"
+      ],
+      "rank_mode": "monotone_good",
+      "good_dir": 1,
+      "unit_label": "SYNTH_UNIT",
+      "frequency_set": [
+        "A"
+      ],
+      "notes": [],
+      "target": null,
+      "staleness_limit_days": 730
+    },
+    {
+      "indicator_id": "T05",
+      "name": "Synthetic indicator T05",
+      "domain_ids": [
+        "agri"
+      ],
+      "rank_mode": "monotone_good",
+      "good_dir": 1,
+      "unit_label": "SYNTH_UNIT",
+      "frequency_set": [
+        "A"
+      ],
+      "notes": [],
+      "target": null,
+      "staleness_limit_days": 730
+    }
+  ]
+}

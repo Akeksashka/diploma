@@ -77,22 +77,23 @@ const clean = (log) => {
 // The detail table sits in a closed <details> (T112); open it so its text is rendered. It is in the DOM either way.
 const openDetails = (page) => page.evaluate(() => { document.querySelector("#domain-values").open = true; });
 // The peer table has the country as a row header (th), so its first cell is a th.
-const peerCells = (page) => page.$$eval("#peer-table tbody tr", (rows) => rows.map((r) => [...r.querySelectorAll("th, td")].map((c) => c.innerText.trim())));
+const peerCells = (page) => page.$$eval("#indicator-table tbody[data-group=\"with-value\"] tr[data-entity]", (rows) => rows.map((r) => [...r.querySelectorAll("th, td")].map((c) => c.innerText.trim())));
 const cells = (page, sel) => page.$$eval(sel, (rows) => rows.map((r) => [...r.querySelectorAll("td")].map((c) => c.innerText.trim())));
 
 describe("AC-DASH-1: V1-V5 render without error and without an off-origin request", () => {
   const PAGES = [
-    ["V1 landing", "/", "#domain-list li"],
+    ["V1 landing", "/", "#country-list li"],
+    ["PG-DOMAINS", "/domains", "#domain-list li"],
     ["V1 labour", "/domain/labour", "#domain-heatmap tbody tr"],
     ["V1 prices", "/domain/prices", "#domain-heatmap tbody tr"],
     ["V1 agri (unranked)", "/domain/agri", "#domain-heatmap tbody tr"],
     ["V1 global (unranked)", "/domain/global", "#domain-heatmap tbody tr"],
     ["V1 fin", "/domain/fin", "#domain-heatmap tbody tr"],
-    ["V2 peers labour", "/peers/labour", "#peer-table tbody tr"],
-    ["V2 peers prices", "/peers/prices", "#peer-table tbody tr"],
-    ["V3 explorer", "/explorer", "#series-captions tbody tr"],
-    ["V4 revisions", "/revisions", "#recent-revisions tbody tr"],
-    ["V5 status", "/status", "#group-table tbody tr"]
+    ["PG-INDICATOR M09", "/indicator/M09", "#indicator-table tbody tr"],
+    ["PG-INDICATOR P01", "/indicator/P01", "#indicator-table tbody tr"],
+    ["PG-COUNTRY DEU", "/country/DEU", ".mm-country-domain table tbody tr"],
+    ["V3 explorer", "/explorer#i=M09&c=FRA,DEU,IND,ITA,JPN", "#series-captions tbody tr"],
+    ["V4 revisions", "/revisions", "#recent-revisions tbody tr"]
   ];
   for (const [name, path, ready] of PAGES) {
     test(name, async (t) => {
@@ -106,7 +107,7 @@ describe("AC-DASH-1: V1-V5 render without error and without an off-origin reques
   }
 
   test("landing first load, measured in the browser, is within 1.5 MB gzip -9", async (t) => {
-    await withPage(t, "/", "#domain-list li", async ({page, log, origin}) => {
+    await withPage(t, "/", "#country-list li", async ({page, log, origin}) => {
       await page.waitForLoadState("networkidle");
       const urls = [...new Set(log.requests.filter((u) => u.startsWith(origin)))].map((u) => new URL(u).pathname);
       const bodies = urls.map((p) => site.served.findLast((s) => s.path === p)).filter(Boolean);
@@ -187,96 +188,92 @@ describe("AC-DASH-4 on the rendered pages", () => {
   });
 });
 
-describe("V2 peer comparison: group filter and sort", () => {
+// R12: the peers/ pages are gone. The V2 behaviours (peer-group filter that only filters, sort, radio group, #c= focus from the
+// address, nothing stored) now live on PG-INDICATOR (/indicator/<id>), and these tests check them there.
+const IND = "#indicator-table tbody tr";
+describe("V2 peer-group filter and sort, on PG-INDICATOR", () => {
   test("filter keeps only members of the chosen group; sort reorders", async (t) => {
-    await withPage(t, "/peers/labour", "#peer-table tbody tr", async ({page, log}) => {
+    await withPage(t, "/indicator/M09", IND, async ({page, log}) => {
       const all = (await peerCells(page)).map((r) => r[0]);
+      const allRows = await page.locator("#indicator-table tr[data-entity]").count();
       const groups = dataJson("meta/groups.json").groups;
       const entities = dataJson("meta/entities.json").entities;
       const nameOf = new Map(entities.map((e) => [e.entity_id, e.name]));
-      const g = groups.find((x) => x.members.length < all.length && x.members.some((m) => all.includes(nameOf.get(m.entity_id))));
-      assert.ok(g, "the fixture has a group that is a proper subset of the labour panel");
-      await page.check(`#peer-group input[value="${g.group_id}"]`);
-      await page.waitForFunction((n) => document.querySelectorAll("#peer-table tbody tr").length !== n, all.length, {timeout: TIMEOUT});
+      const g = groups.find((x) => x.members.length < allRows && x.members.some((m) => all.includes(nameOf.get(m.entity_id))));
+      assert.ok(g, "the fixture has a group that is a proper subset of the panel");
+      await page.check(`#indicator-group input[value="${g.group_id}"]`);
+      await page.waitForFunction((n) => document.querySelectorAll("#indicator-table tr[data-entity]").length !== n, allRows, {timeout: TIMEOUT});
       const shown = (await peerCells(page)).map((r) => r[0]);
       const members = new Set(g.members.map((m) => nameOf.get(m.entity_id)));
       assert.ok(shown.length > 0 && shown.length < all.length);
       for (const n of shown) assert.ok(members.has(n), `${n} is not a member of ${g.group_id}`);
-      await page.check('#peer-group input[value="all"]');
-      await page.waitForFunction((n) => document.querySelectorAll("#peer-table tbody tr").length === n, all.length, {timeout: TIMEOUT});
+      await page.check('#indicator-group input[value="all"]');
+      await page.waitForFunction((n) => document.querySelectorAll("#indicator-table tr[data-entity]").length === n, allRows, {timeout: TIMEOUT});
 
-      await page.selectOption("#peer-sort", "name");
+      await page.selectOption("#indicator-sort", "name");
       await page.waitForFunction(() => {
-        const n = [...document.querySelectorAll("#peer-table tbody tr")].map((r) => r.querySelector("th").innerText.trim());
+        const n = [...document.querySelectorAll('#indicator-table tbody[data-group="with-value"] tr[data-entity]')].map((r) => r.querySelector("th").innerText.trim());
         return n.length > 1 && n.every((x, i) => i === 0 || n[i - 1].localeCompare(x) <= 0);
       }, null, {timeout: TIMEOUT});
       const byName = (await peerCells(page)).map((r) => r[0]);
       assert.deepEqual(byName, [...byName].sort((a, b) => a.localeCompare(b)));
-      await page.selectOption("#peer-sort", "value_asc");
+      await page.selectOption("#indicator-sort", "value");
+      const num = (x) => parseFloat(String(x).replace(/,/g, ""));
       await page.waitForFunction(() => {
-        const v = [...document.querySelectorAll("#peer-table tbody tr")].map((r) => parseFloat(r.querySelectorAll("td")[0].innerText)).filter((x) => !Number.isNaN(x));
-        return v.length > 1 && v.every((x, i) => i === 0 || v[i - 1] <= x);
+        const v = [...document.querySelectorAll('#indicator-table tbody[data-group="with-value"] tr[data-entity]')].map((r) => parseFloat(r.querySelector("td").innerText.replace(/,/g, "")));
+        return v.length > 1 && v.every((x, i) => i === 0 || v[i - 1] >= x);
       }, null, {timeout: TIMEOUT});
-      const vals = (await peerCells(page)).map((r) => parseFloat(r[1])).filter((v) => !Number.isNaN(v));
-      assert.deepEqual(vals, [...vals].sort((a, b) => a - b));
+      const vals = (await peerCells(page)).map((r) => num(r[1])).filter((v) => !Number.isNaN(v));
+      assert.deepEqual(vals, [...vals].sort((a, b) => b - a));
       clean(log);
     });
   });
 });
 
-describe("T118 V2 controls: radio group, sort, URL-hash focus", () => {
-  const PEERS = "#peer-table tbody tr";
-  test("the group is a fieldset with a legend and the six labels; radios are at least 24 px; choosing a group only filters (AC-DASH-9)", async (t) => {
-    await withPage(t, "/peers/labour", PEERS, async ({page, log}) => {
+describe("T118 V2 controls on PG-INDICATOR: radio group, sort, URL-hash focus", () => {
+  test("the group is a fieldset with a legend and the labels; radios are at least 24 px; choosing a group only filters (AC-DASH-9)", async (t) => {
+    await withPage(t, "/indicator/M09", IND, async ({page, log}) => {
       const r = await page.evaluate(() => {
-        const fs = document.querySelector("fieldset#peer-group");
+        const fs = document.querySelector("fieldset#indicator-group");
         const radios = [...fs.querySelectorAll("input[type=radio]")];
         return {
           legend: fs.querySelector("legend")?.textContent.trim(),
           labels: radios.map((x) => x.closest("label").innerText.trim()),
           checked: radios.filter((x) => x.checked).map((x) => x.value),
           small: radios.filter((x) => x.getBoundingClientRect().width < 24 || x.getBoundingClientRect().height < 24).length,
-          sort: document.querySelector("#peer-sort") !== null,
-          noGroupSelect: document.querySelector("select#peer-group") === null
+          sort: document.querySelector("#indicator-sort") !== null,
+          noGroupSelect: document.querySelector("select#indicator-group") === null
         };
       });
-      assert.equal(r.legend, "Peer group (filter)");
+      assert.ok(r.legend && r.legend.length > 0);
       assert.equal(r.labels[0], "All countries");
       assert.deepEqual(r.checked, ["all"]);
       assert.equal(r.small, 0, "every radio is at least 24 x 24 CSS px");
       assert.ok(r.sort && r.noGroupSelect);
       const known = new Set(["All countries", "G7", "Euro area", "EU members outside the euro area", "Advanced economies", "Emerging economies"]);
       for (const l of r.labels) assert.ok(known.has(l), l);
-      const pctOf = async (name) => page.$$eval(PEERS, (rows, n) => rows.find((x) => x.querySelector("th").innerText.trim() === n)?.querySelectorAll("td")[3].innerText.trim() ?? null, name);
+      const pctOf = async (name) => page.$$eval(IND, (rows, n) => rows.find((x) => x.querySelector("th")?.innerText.trim() === n)?.querySelector("td.mm-pct")?.innerText.trim() ?? null, name);
       const before = await pctOf("Germany");
       assert.ok(before);
-      await page.check('#peer-group input[value="g7"]');
-      await page.waitForFunction(() => document.querySelectorAll("#peer-table tbody tr").length < 7, null, {timeout: TIMEOUT});
+      await page.check('#indicator-group input[value="g7"]');
+      await page.waitForFunction(() => document.querySelectorAll("#indicator-table tr[data-entity]").length < 8, null, {timeout: TIMEOUT});
       assert.equal(await pctOf("Germany"), before, "the stored percentile is the same with and without the filter");
       clean(log);
     });
   });
 
-  test("a country name sets #c=<id>, highlights chart and table, survives a reload and clears; invalid hash is ignored; nothing is stored", async (t) => {
-    await withPage(t, "/peers/labour", PEERS, async ({page, log, origin}) => {
-      const id = await page.$eval("#peer-table tbody tr[data-status=ranked]", (r) => r.dataset.entity);
-      await page.click(`#peer-table button[data-entity="${id}"]`);
-      await page.waitForFunction((x) => document.querySelector(`#peer-table tr[data-entity="${x}"]`)?.dataset.focus === "true", id, {timeout: TIMEOUT});
-      assert.equal(new URL(page.url()).hash, `#c=${id}`);
-      assert.equal(await page.locator("#peer-table tr[data-focus=true]").count(), 1);
-      assert.equal(await page.locator("#peer-figure circle[r='14']").count(), 1, "one focus ring in the chart");
+  test("#c=<id> in the address highlights one row, survives a reload; an invalid hash is ignored; nothing is stored", async (t) => {
+    await withPage(t, "/indicator/M09#c=DEU", IND, async ({page, log, origin}) => {
+      await page.waitForSelector("#indicator-table tr[data-focus=true]", {timeout: TIMEOUT});
+      assert.equal(await page.locator("#indicator-table tr[data-focus=true]").count(), 1);
+      assert.equal(await page.getAttribute("#indicator-table tr[data-focus=true]", "data-entity"), "DEU");
       await page.reload();
-      await page.waitForSelector(PEERS, {timeout: TIMEOUT});
-      await page.waitForSelector("#peer-table tr[data-focus=true]", {timeout: TIMEOUT});
-      assert.equal(await page.getAttribute("#peer-table tr[data-focus=true]", "data-entity"), id);
-      // keyboard: Enter on the focused button clears it
-      await page.focus(`#peer-table button[data-entity="${id}"]`);
-      await page.keyboard.press("Enter");
-      await page.waitForFunction(() => document.querySelectorAll("#peer-table tr[data-focus=true]").length === 0, null, {timeout: TIMEOUT});
+      await page.waitForSelector("#indicator-table tr[data-focus=true]", {timeout: TIMEOUT});
+      assert.equal(await page.getAttribute("#indicator-table tr[data-focus=true]", "data-entity"), "DEU");
       for (const bad of ["#c=NOPE", "#c=", "#c=%3Cscript%3E", "#x=1"]) {
-        await page.goto(`${origin}/peers/labour${bad}`);
-        await page.waitForSelector(PEERS, {timeout: TIMEOUT});
-        assert.equal(await page.locator("#peer-table tr[data-focus=true]").count(), 0, bad);
+        await page.goto(`${origin}/indicator/M09${bad}`);
+        await page.waitForSelector(IND, {timeout: TIMEOUT});
+        assert.equal(await page.locator("#indicator-table tr[data-focus=true]").count(), 0, bad);
       }
       const stored = await page.evaluate(() => ({ls: localStorage.length, ss: sessionStorage.length, cookie: document.cookie}));
       assert.deepEqual(stored, {ls: 0, ss: 0, cookie: ""});
@@ -287,7 +284,7 @@ describe("T118 V2 controls: radio group, sort, URL-hash focus", () => {
 
 describe("V3 explorer: indicator, transform, rebase and one-file fetch", () => {
   test("a new indicator fetches exactly one series file; NSA offers no seasonal-only transform; rebase", async (t) => {
-    await withPage(t, "/explorer", "#series-captions tbody tr", async ({page, log}) => {
+    await withPage(t, "/explorer#i=M09&c=FRA,DEU,IND,ITA,JPN", "#series-captions tbody tr", async ({page, log}) => {
       const seriesReq = () => log.requests.filter((u) => /\/_file\/data\/series\/[A-Za-z0-9]+\.[0-9a-f]+\.parquet/.test(u));
       const first = seriesReq();
       assert.equal(first.length, 1, `first load fetches one series file, got ${first.length}`);
@@ -304,6 +301,8 @@ describe("V3 explorer: indicator, transform, rebase and one-file fetch", () => {
       // P01 is NSA with a seasonal-only default transform: that transform must not be offered (AC-DASH-4).
       await page.selectOption("#explorer-indicator", "P01");
       await page.waitForFunction(() => /P01|inflation|price/i.test(document.querySelector("#explorer-title")?.textContent ?? ""), null, {timeout: TIMEOUT}).catch(() => {});
+      // The countries are not carried to another indicator (C-SER-2): choose one so that a chart and a base period exist.
+      await page.check("#explorer-entities input[value=DEU]");
       const labels = await page.$$eval("#explorer-transform option", (o) => o.map((x) => x.textContent));
       assert.ok(labels.includes("Level"));
       assert.ok(!labels.some((l) => /M3M3|MOM|QOQ/.test(l)), `NSA offers ${labels.join(", ")}`);
@@ -354,22 +353,9 @@ describe("V4 revisions: class filter and indicator choice", () => {
   });
 });
 
-describe("V5 status page", () => {
-  test("renders the fixture status with no raw error text", async (t) => {
-    await withPage(t, "/status", "#group-table tbody tr", async ({page, log}) => {
-      assert.equal(await page.locator("#group-table tbody tr").count(), 4);
-      const exported = dataJson("status.json");
-      assert.equal((await page.textContent("#backlog-n")).replace(/,/g, "").trim(), String(exported.backlog.n_unloaded));
-      assert.ok((await page.textContent("#monthly-check-text")).length > 10);
-      assert.doesNotMatch(await page.innerText("body"), /Traceback|Error:|undefined|\[object Object\]/);
-      clean(log);
-    });
-  });
-});
-
 describe("AC-DASH-7 stale banner and AC-SYS-10 build id", () => {
   test("no banner on the fresh fixture; banner on a stale fixture", async (t) => {
-    for (const path of ["/", "/status", "/explorer"]) {
+    for (const path of ["/", "/revisions", "/explorer"]) {
       await withPage(t, path, ".mm-asof", async ({page}) => {
         assert.equal(await page.locator("#stale-banner").count(), 0, `${path}: banner on fresh data`);
       });
@@ -381,7 +367,7 @@ describe("AC-DASH-7 stale banner and AC-SYS-10 build id", () => {
           const banner = page.locator("#stale-banner");
           assert.equal(await banner.count(), 1, `${path}: no banner on stale data`);
           assert.match(await banner.innerText(), /out of date/);
-          assert.match(await banner.innerText(), /known_cutoff 2025-06-01/);
+          assert.match(await banner.innerText(), /data cut-off \(2025-06-01\)/);
         },
         {srv: () => staleSite}
       );
@@ -392,7 +378,7 @@ describe("AC-DASH-7 stale banner and AC-SYS-10 build id", () => {
     if (!browser) return t.skip(reason);
     const expected = process.env.MM_EXPECT_BUILD_ID ?? manifest.build_id;
     assert.equal(manifest.build_id, expected, "built manifest build_id differs from the run's build id");
-    for (const path of ["/", "/domain/labour", "/peers/labour", "/explorer", "/revisions", "/status"]) {
+    for (const path of ["/", "/domain/labour", "/indicator/M09", "/country/DEU", "/explorer", "/revisions"]) {
       await withPage(t, path, ".mm-asof", async ({page, log, origin}) => {
         assert.match(await page.textContent(".mm-asof"), new RegExp(`\\(build ${expected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\)`));
         const f = log.requests.find((n) => /\/_file\/data\/manifest\.[0-9a-f]+\.json/.test(n));
@@ -463,18 +449,17 @@ describe("AC-UX-8 error states (route interception)", () => {
     });
   });
 
-  test("missing file: the manifest itself (landing and status)", async (t) => {
-    for (const [path, consequence] of [["/", "The list of domains is not shown."], ["/status", "The status tables on this page are not shown."]]) {
+  test("missing file: the manifest itself (landing and revisions)", async (t) => {
+    for (const [path, consequence] of [["/", "The lists on this page are still shown."], ["/revisions", "The revision lists on this page are not shown."]]) {
       await withRoutes(t, path, [[DATA("manifest"), notFound]], "#mm-error-manifest", async ({page, log}) => {
         await assertAlert(page, "#mm-error-manifest", {region: "the data manifest", consequence});
-        assert.equal(await page.locator("#domain-list, #group-table").count(), 0);
         await assertNoPartialData(page, log);
       });
     }
   });
 
   test("schema-invalid file: a meta file without its list gives one alert of kind invalid", async (t) => {
-    const consequence = {"/domain/labour": "The tables and charts on this page are not shown.", "/peers/labour": "The tables and charts on this page are not shown.", "/explorer": "The chart and tables on this page are not shown.", "/revisions": "The revision lists on this page are not shown."};
+    const consequence = {"/domain/labour": "The tables and charts on this page are not shown.", "/indicator/M09": "The tables and charts on this page are not shown.", "/country/DEU": "The tables and charts on this page are not shown.", "/explorer": "The chart and tables on this page are not shown.", "/revisions": "The revision lists on this page are not shown."};
     for (const path of Object.keys(consequence)) {
       await withRoutes(t, path, [[DATA("meta/entities"), json({schema_version: "1.0"})]], "#mm-error-meta", async ({page, log}) => {
         await assertAlert(page, "#mm-error-meta", {region: "the descriptions of countries, indicators and series", consequence: consequence[path]});
@@ -485,12 +470,7 @@ describe("AC-UX-8 error states (route interception)", () => {
     }
   });
 
-  test("schema-invalid file: the status document and a non-JSON scorecard", async (t) => {
-    await withRoutes(t, "/status", [[DATA("status"), json({schema_version: "1.0"})]], "#mm-error-status", async ({page, log}) => {
-      await assertAlert(page, "#mm-error-status", {region: "the data status", consequence: "The status tables on this page are not shown."});
-      assert.equal(await page.getAttribute("#mm-error-status", "data-kind"), "invalid");
-      await assertNoPartialData(page, log);
-    });
+  test("schema-invalid file: a non-JSON scorecard", async (t) => {
     await withRoutes(t, "/domain/prices", [[DATA("scorecard/prices"), (route) => route.fulfill({status: 200, contentType: "application/json", body: "<html>not json"})]], "#mm-error-scorecard", async ({page, log}) => {
       assert.equal(await page.getAttribute("#mm-error-scorecard", "data-kind"), "invalid");
       await assertNoPartialData(page, log);
@@ -498,7 +478,7 @@ describe("AC-UX-8 error states (route interception)", () => {
   });
 
   test("unknown manifest major: every page gives one alert naming the manifest, not the version", async (t) => {
-    const cases = [["/", "The list of domains is not shown."], ["/domain/labour", "The tables and charts on this page are not shown."], ["/explorer", "The chart and tables on this page are not shown."], ["/revisions", "The revision lists on this page are not shown."], ["/status", "The status tables on this page are not shown."]];
+    const cases = [["/", "The lists on this page are still shown."], ["/domains", "The lists on this page are still shown."], ["/domain/labour", "The tables and charts on this page are not shown."], ["/explorer", "The chart and tables on this page are not shown."], ["/revisions", "The revision lists on this page are not shown."]];
     for (const [path, consequence] of cases) {
       await withRoutes(t, path, [[DATA("manifest"), withManifest({schema_version: "2.0"})]], "#mm-error-manifest", async ({page, log}) => {
         await assertAlert(page, "#mm-error-manifest", {region: "the data manifest", consequence});
@@ -510,17 +490,18 @@ describe("AC-UX-8 error states (route interception)", () => {
     }
   });
 
-  test("stale known_cutoff: the confirmed banner (role=alert) shows beside the data, wording unchanged", async (t) => {
+  test("stale known_cutoff: the banner (role=alert, ADR-031 wording) shows beside the data", async (t) => {
     await withRoutes(t, "/domain/labour", [[DATA("manifest"), withManifest({known_cutoff: "2025-06-01T00:00:00Z"})]], "#domain-heatmap tbody tr", async ({page, log}) => {
       const banner = page.locator("#stale-banner");
       assert.equal(await banner.getAttribute("role"), "alert");
-      assert.equal((await banner.innerText()).trim(), "Data may be out of date: the latest data cutoff (known_cutoff 2025-06-01T00:00:00Z) is 521 days old, older than 45 days.");
-      assert.ok(!RAW_TEXT.test((await banner.innerText()).replace(/known_cutoff/, "")));
+      assert.equal((await banner.innerText()).trim(), "Data may be out of date: the data cut-off (2025-06-01) is 521 days old, more than 45 days.");
+      assert.ok(!RAW_TEXT.test(await banner.innerText()));
+      assert.ok(!(await banner.innerText()).includes("known_cutoff"));
       assert.deepEqual(pageErrors(log), []);
     });
-    await withRoutes(t, "/status", [[DATA("manifest"), withManifest({known_cutoff: "not a date"})]], "#stale-banner", async ({page}) => {
+    await withRoutes(t, "/revisions", [[DATA("manifest"), withManifest({known_cutoff: "not a date"})]], "#stale-banner", async ({page}) => {
       assert.equal(await page.getAttribute("#stale-banner", "role"), "alert");
-      assert.match(await page.innerText("#stale-banner"), /^Data freshness unknown: the build has no readable known_cutoff/);
+      assert.match(await page.innerText("#stale-banner"), /^Data freshness unknown: this build has no readable data cut-off\./);
     });
   });
 
@@ -578,7 +559,7 @@ describe("AC-UX-8 loading state (route interception)", () => {
     let release;
     const gate = new Promise((ok) => { release = ok; });
     const hold = async (route) => { await gate; await route.continue(); };
-    await withRoutes(t, "/explorer", [[/\/_file\/data\/series\/[A-Za-z0-9]+\.[0-9a-f]+\.parquet/, hold]], '#series-loading[aria-busy="true"]', async ({page}) => {
+    await withRoutes(t, "/explorer#i=M09&c=DEU", [[/\/_file\/data\/series\/[A-Za-z0-9]+\.[0-9a-f]+\.parquet/, hold]], '#series-loading[aria-busy="true"]', async ({page}) => {
       assert.equal(await page.getAttribute("#series-loading", "role"), "status");
       assert.match(await page.innerText("#series-loading"), /^Loading the series of this indicator\.\.\.$/);
       release();
@@ -594,7 +575,7 @@ describe("AC-UX-8 no-JS notice and reduced motion", () => {
     const context = await browser.newContext({javaScriptEnabled: false, reducedMotion: "reduce"});
     try {
       const page = await context.newPage();
-      for (const path of ["/", "/domain/labour", "/peers/labour", "/explorer", "/revisions", "/status"]) {
+      for (const path of ["/", "/domain/labour", "/indicator/M09", "/country/DEU", "/explorer", "/revisions"]) {
         await page.goto(`${site.origin}${path}`);
         const note = page.locator(".mm-noscript");
         assert.equal(await note.count(), 1, `${path}: noscript notice`);

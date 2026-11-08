@@ -1,0 +1,93 @@
+{
+  "analysis_run_id": 0,
+  "build_id": "synthetic-sparse-fixture",
+  "code_version": "0.0.0",
+  "files": [
+    {
+      "bytes": 70,
+      "format": "json",
+      "path": "alerts.json",
+      "rows": null,
+      "sha256": "863fd3526e30ab19d4ac851ca6d158411ff3250149c3be3c659a3dea8abd3f4f"
+    },
+    {
+      "bytes": 963,
+      "format": "json",
+      "path": "meta/domains.json",
+      "rows": 3,
+      "sha256": "30d853df71896c018b772eea9e1b002ecff8eb1d9cd0057abec131ef75780d9c"
+    },
+    {
+      "bytes": 8419,
+      "format": "json",
+      "path": "meta/entities.json",
+      "rows": 44,
+      "sha256": "5893c5b04e0020a83084c55190082d37218153e68fe1bbf0e3e7545edf0d7f89"
+    },
+    {
+      "bytes": 1420,
+      "format": "json",
+      "path": "meta/groups.json",
+      "rows": 2,
+      "sha256": "187d2e7b62151dfb413dd61b8f2353074cc15d71f4d0e5f1e8863b1590bba3aa"
+    },
+    {
+      "bytes": 1783,
+      "format": "json",
+      "path": "meta/indicators.json",
+      "rows": 5,
+      "sha256": "25e9156ba53c73be83479bc46c2431af15e6301fe26719acc55870a7fb6d171d"
+    },
+    {
+      "bytes": 6110,
+      "format": "json",
+      "path": "meta/series.json",
+      "rows": 13,
+      "sha256": "b028bc007afeb492d4320dcafb06eb21bd473d12314303f9b288520cb9161579"
+    },
+    {
+      "bytes": 118,
+      "format": "json",
+      "path": "revisions_recent.json",
+      "rows": null,
+      "sha256": "0cad3642b46c9a38c2859a56f3275be1533181f3fd13229fb08e904614735349"
+    },
+    {
+      "bytes": 52048,
+      "format": "json",
+      "path": "scorecard/agri.json",
+      "rows": 44,
+      "sha256": "e3d9f4de90ddc0fda379b01cf5fc8bd9c1c74db4154a5f2ca260dddb632e1e51"
+    },
+    {
+      "bytes": 52166,
+      "format": "json",
+      "path": "scorecard/fin.json",
+      "rows": 44,
+      "sha256": "9e17604137827ede81d2e91b96a9499515b4e60d8a34d6f0731701575207c46d"
+    },
+    {
+      "bytes": 166653,
+      "format": "json",
+      "path": "scorecard/growth.json",
+      "rows": 44,
+      "sha256": "67bded7bed45bf69489f0e97a7d081eef6faca0301bde7b3d5ab3f99b9514445"
+    },
+    {
+      "bytes": 628,
+      "format": "json",
+      "path": "status.json",
+      "rows": null,
+      "sha256": "80db1287f4358a976abf98fadde9a52ba4ad2e44ee77585be96dd6ce8bad9655"
+    }
+  ],
+  "generated_at": "2026-11-03T00:05:00Z",
+  "history_start": "1991-01-01",
+  "ingest_run_id": 0,
+  "known_cutoff": "2026-11-03T00:00:00Z",
+  "schema_version": "1.0",
+  "totals": {
+    "bytes": 290378,
+    "files": 11
+  }
+}

@@ -27,3 +27,16 @@ test("the scan flags each seeded violation", () => {
   for (const [rule, text] of Object.entries(seeded)) assert.ok(scan(text).includes(rule), rule);
   assert.deepEqual(scan("var(--mm-pct-4) currentColor"), []);
 });
+
+// R5 (AC-RD-50, AC-RD-62 support): the redesign modules are named here so that dropping one from the scan file set fails.
+const NEW_MODULES = ["hash", "period", "units", "sort", "missing", "copy", "country-view", "profile-chart", "indicator-view", "value-chart"].map((n) => `lib/${n}.js`);
+
+test("R5: the redesign modules are in the colour/inline-style file set and carry no literal", () => {
+  const files = listFiles(src, (n) => /\.(js|md)$/.test(n)).map((f) => f.slice(src.length + 1));
+  for (const m of NEW_MODULES) assert.ok(files.includes(m), `${m} is not scanned`);
+  for (const m of NEW_MODULES) assert.deepEqual(scan(readFileSync(join(src, m), "utf8")), [], m);
+});
+
+test("R5: a seeded literal in a redesign module is flagged", () => {
+  for (const m of NEW_MODULES) assert.ok(scan(`export const x = "${"steel" + "blue"}"; // ${m}`).includes("named colour"), m);
+});

@@ -67,6 +67,8 @@ export function revisionsContext({manifest, seriesMeta, entities, indicators}) {
     files,
     indicatorById,
     entityName: new Map(entities.map((e) => [e.entity_id, e.name])),
+    countryPages: new Set(entities.filter((e) => e.is_global !== true).map((e) => e.entity_id)), // R11: global entities have no country page
+    indicatorPages: new Set(indicators.map((i) => i.indicator_id)), // one generated page per indicator of meta/indicators.json (prepare-data)
     seriesById: new Map(seriesMeta.map((s) => [s.series_id, s]))
   };
 }
@@ -84,6 +86,8 @@ function recentRowView(ctx, r) {
     indicatorId: r.indicatorId,
     indicator: indicatorLabel(ctx, r.indicatorId),
     entity: r.entity,
+    hasCountryPage: ctx.countryPages.has(r.entity),
+    hasIndicatorPage: ctx.indicatorPages.has(r.indicatorId),
     name: entityNameOf(ctx, r.entity),
     period: r.period ?? "n/a",
     knownAt: isoMinute(r.knownAt),

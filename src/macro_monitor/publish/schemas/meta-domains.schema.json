@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "meta-domains.schema.json",
+  "title": "meta/domains.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "domains"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "domains": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "domain_id",
+          "name",
+          "ranked",
+          "min_coverage_for_rank",
+          "indicator_ids",
+          "notices",
+          "percentile_rank_label"
+        ],
+        "properties": {
+          "domain_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string"
+          },
+          "ranked": {
+            "type": "boolean"
+          },
+          "min_coverage_for_rank": {
+            "type": "number"
+          },
+          "indicator_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "notices": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "percentile_rank_label": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

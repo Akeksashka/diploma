@@ -1,0 +1,86 @@
+# Fixture series map for source S (T83 export tests).
+series:
+  - dataset: d
+    key: "U1.DEU"
+    entity: DEU
+    indicator: U1
+    role: headline
+    valid_from: 1991-01-01
+    rationale: fixture
+  - dataset: d
+    key: "U1.USA"
+    entity: USA
+    indicator: U1
+    role: headline
+    valid_from: 1991-01-01
+    rationale: fixture
+  - dataset: d
+    key: "U1.FRA"
+    entity: FRA
+    indicator: U1
+    role: headline
+    valid_from: 1991-01-01
+    rationale: fixture
+  - dataset: d
+    key: "U1.ITA"
+    entity: ITA
+    indicator: U1
+    role: headline
+    valid_from: 1991-01-01
+    rationale: fixture
+  - dataset: d
+    key: "U3.DEU"
+    entity: DEU
+    indicator: U3
+    role: headline
+    valid_from: 1991-01-01
+    rationale: fixture
+  - dataset: d
+    key: "U3.USA"
+    entity: USA
+    indicator: U3
+    role: headline
+    valid_from: 1991-01-01
+    rationale: fixture
+  - dataset: d
+    key: "U3.FRA"
+    entity: FRA
+    indicator: U3
+    role: headline
+    valid_from: 1991-01-01
+    rationale: fixture
+  - dataset: d
+    key: "U3.ITA"
+    entity: ITA
+    indicator: U3
+    role: headline
+    valid_from: 1991-01-01
+    rationale: fixture
+  - dataset: d
+    key: "M18.DEU"
+    entity: DEU
+    indicator: M18
+    role: headline
+    valid_from: 1991-01-01
+    rationale: fixture
+  - dataset: d
+    key: "M18.USA"
+    entity: USA
+    indicator: M18
+    role: headline
+    valid_from: 1991-01-01
+    rationale: fixture
+  - dataset: d
+    key: "M18.FRA"
+    entity: FRA
+    indicator: M18
+    role: headline
+    valid_from: 1991-01-01
+    rationale: fixture
+  - dataset: d
+    key: "M18.ITA"
+    entity: ITA
+    indicator: M18
+    role: headline
+    valid_from: 1991-01-01
+    rationale: fixture

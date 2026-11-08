@@ -1,0 +1,161 @@
+{
+ "indicator_alignment_published": [
+  {
+   "indicator_id": "U3",
+   "max_ref_spread_days": 92,
+   "n_ranked": 2,
+   "n_unaligned": 0,
+   "publish_scope": "ranked",
+   "rank_reference_period": "2026-08-31",
+   "reference_period_spread_days": 0
+  },
+  {
+   "indicator_id": "U1",
+   "max_ref_spread_days": 92,
+   "n_ranked": 4,
+   "n_unaligned": 0,
+   "publish_scope": "ranked",
+   "rank_reference_period": "2026-08-31",
+   "reference_period_spread_days": 0
+  },
+  {
+   "indicator_id": "U4",
+   "max_ref_spread_days": 92,
+   "n_ranked": 4,
+   "n_unaligned": 0,
+   "publish_scope": "ranked",
+   "rank_reference_period": "2026-08-31",
+   "reference_period_spread_days": 0
+  }
+ ],
+ "indicator_rank_published": [
+  {
+   "entity_id": "FRA",
+   "indicator_id": "U3",
+   "n_ranked": 2,
+   "percentile": 0.75,
+   "publish_scope": "ranked"
+  },
+  {
+   "entity_id": "ITA",
+   "indicator_id": "U3",
+   "n_ranked": 2,
+   "percentile": 0.25,
+   "publish_scope": "ranked"
+  },
+  {
+   "entity_id": "DEU",
+   "indicator_id": "U1",
+   "n_ranked": 4,
+   "percentile": 0.875,
+   "publish_scope": "ranked"
+  },
+  {
+   "entity_id": "DEU",
+   "indicator_id": "U4",
+   "n_ranked": 4,
+   "percentile": 0.875,
+   "publish_scope": "ranked"
+  },
+  {
+   "entity_id": "FRA",
+   "indicator_id": "U1",
+   "n_ranked": 4,
+   "percentile": 0.375,
+   "publish_scope": "ranked"
+  },
+  {
+   "entity_id": "FRA",
+   "indicator_id": "U4",
+   "n_ranked": 4,
+   "percentile": 0.375,
+   "publish_scope": "ranked"
+  },
+  {
+   "entity_id": "ITA",
+   "indicator_id": "U1",
+   "n_ranked": 4,
+   "percentile": 0.125,
+   "publish_scope": "ranked"
+  },
+  {
+   "entity_id": "ITA",
+   "indicator_id": "U4",
+   "n_ranked": 4,
+   "percentile": 0.125,
+   "publish_scope": "ranked"
+  },
+  {
+   "entity_id": "USA",
+   "indicator_id": "U1",
+   "n_ranked": 4,
+   "percentile": 0.625,
+   "publish_scope": "ranked"
+  },
+  {
+   "entity_id": "USA",
+   "indicator_id": "U4",
+   "n_ranked": 4,
+   "percentile": 0.625,
+   "publish_scope": "ranked"
+  }
+ ],
+ "scorecard_published": [
+  {
+   "domain_id": "D1",
+   "entity_id": "DEU",
+   "heterogeneous_peer_set": true,
+   "low_coverage": false,
+   "n_available": 2,
+   "n_defined": 4,
+   "n_ranked_entities": 4,
+   "peer_set_size_max": 4,
+   "peer_set_size_min": 2,
+   "percentile_rank": 0.875,
+   "publish_scope": "ranked",
+   "rank_position": 1
+  },
+  {
+   "domain_id": "D1",
+   "entity_id": "FRA",
+   "heterogeneous_peer_set": true,
+   "low_coverage": false,
+   "n_available": 3,
+   "n_defined": 4,
+   "n_ranked_entities": 4,
+   "peer_set_size_max": 4,
+   "peer_set_size_min": 2,
+   "percentile_rank": 0.5,
+   "publish_scope": "ranked",
+   "rank_position": 3
+  },
+  {
+   "domain_id": "D1",
+   "entity_id": "ITA",
+   "heterogeneous_peer_set": true,
+   "low_coverage": false,
+   "n_available": 3,
+   "n_defined": 4,
+   "n_ranked_entities": 4,
+   "peer_set_size_max": 4,
+   "peer_set_size_min": 2,
+   "percentile_rank": 0.16666666666666666,
+   "publish_scope": "ranked",
+   "rank_position": 4
+  },
+  {
+   "domain_id": "D1",
+   "entity_id": "USA",
+   "heterogeneous_peer_set": true,
+   "low_coverage": false,
+   "n_available": 2,
+   "n_defined": 4,
+   "n_ranked_entities": 4,
+   "peer_set_size_max": 4,
+   "peer_set_size_min": 2,
+   "percentile_rank": 0.625,
+   "publish_scope": "ranked",
+   "rank_position": 2
+  }
+ ]
+}

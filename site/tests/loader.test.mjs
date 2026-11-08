@@ -57,10 +57,11 @@ test("stale: future cutoff is fresh, missing or garbage cutoff is stale", () => 
   }
 });
 
-test("stale: banner text names known_cutoff and age, none when fresh", () => {
+test("stale: banner text names the data cut-off date and age, none when fresh", () => {
   assert.equal(bannerMessage(staleness(cutoff, t0 + day)), null);
   const msg = bannerMessage(staleness(cutoff, t0 + 50.5 * day));
-  assert.match(msg, /known_cutoff 2026-09-20T00:00:00Z/);
+  assert.match(msg, /the data cut-off \(2026-09-20\) is 50 days old, more than 45 days\./);
+  assert.ok(!msg.includes("known_cutoff"));
   assert.match(msg, /50 days old/);
 });
 

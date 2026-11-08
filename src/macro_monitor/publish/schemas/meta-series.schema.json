@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "meta-series.schema.json",
+  "title": "meta/series.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "series"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "series": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "series_id",
+          "indicator_id",
+          "entity_id",
+          "source_id",
+          "source_name",
+          "series_key",
+          "frequency",
+          "unit_code",
+          "unit_mult",
+          "base_period",
+          "seasonal_adjustment",
+          "price_basis",
+          "flow_basis",
+          "calendar_basis",
+          "inherited",
+          "licence_attribution",
+          "source_url",
+          "publish",
+          "reestimating",
+          "published_precision"
+        ],
+        "properties": {
+          "series_id": {
+            "type": "integer"
+          },
+          "indicator_id": {
+            "type": "string"
+          },
+          "entity_id": {
+            "type": "string"
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "source_name": {
+            "type": "string"
+          },
+          "series_key": {
+            "type": "string"
+          },
+          "frequency": {
+            "enum": [
+              "D",
+              "M",
+              "Q",
+              "A"
+            ]
+          },
+          "unit_code": {
+            "type": "string"
+          },
+          "unit_mult": {
+            "type": "integer"
+          },
+          "base_period": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "seasonal_adjustment": {
+            "type": "string"
+          },
+          "price_basis": {
+            "type": "string"
+          },
+          "flow_basis": {
+            "type": "string"
+          },
+          "calendar_basis": {
+            "type": "string"
+          },
+          "inherited": {
+            "type": "boolean"
+          },
+          "licence_attribution": {
+            "type": "string"
+          },
+          "source_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "publish": {
+            "enum": [
+              "public",
+              "withheld"
+            ]
+          },
+          "reestimating": {
+            "type": "boolean"
+          },
+          "published_precision": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

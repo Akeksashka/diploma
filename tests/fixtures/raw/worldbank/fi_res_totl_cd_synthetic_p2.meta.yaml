@@ -1,0 +1,8 @@
+# Sidecar of the recorded-bytes fixture. SYNTHETIC: hand-built to the documented World Bank
+# Indicators API v2 JSON structure ([meta, rows]); no live capture was made; not real World Bank data.
+synthetic: true
+source_url: https://api.worldbank.org/v2/country/DEU;FRA/indicator/FI.RES.TOTL.CD?date=1991:2100&format=json&page=2&per_page=3 [UNVERIFIED]
+fetched_on: 2026-11-03
+sha256: 94e9e90512dbe5ef6128a2520302d3ba417c196ba5caf63c717e8c1f0c5ca554
+parser_id: worldbank_v1@1
+licence: Synthetic test data, project-authored (no third-party content).

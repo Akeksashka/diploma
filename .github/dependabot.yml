@@ -1,0 +1,13 @@
+# Dependency updates (ADR-024 decision 6, AC-NPM-5). Version updates are proposed as pull requests
+# only; nothing is merged automatically. Every bump must pass the site build, unit and Playwright tests.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /site
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      site-npm:
+        patterns:
+          - "*"

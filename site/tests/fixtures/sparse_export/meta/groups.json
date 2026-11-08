@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0",
+  "groups": [
+    {
+      "group_id": "synthetic_a",
+      "name": "synthetic_a",
+      "members": [
+        {
+          "entity_id": "SY01",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "SY02",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "SY03",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        }
+      ]
+    },
+    {
+      "group_id": "synthetic_b",
+      "name": "synthetic_b",
+      "members": [
+        {
+          "entity_id": "SY04",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "SY05",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "SY06",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "SY07",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "SY08",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "SY09",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "SY10",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        }
+      ]
+    }
+  ]
+}

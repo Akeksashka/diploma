@@ -1,0 +1,97 @@
+name: decide
+
+on:
+  workflow_dispatch:
+    inputs:
+      kind:
+        description: "drift or override"
+        type: choice
+        required: true
+        options:
+          - drift
+          - override
+      decision:
+        description: "drift: accepted, rejected or skip_object; override: exclude or include"
+        type: choice
+        required: true
+        options:
+          - accepted
+          - rejected
+          - skip_object
+          - exclude
+          - include
+      event_id:
+        description: "drift: ops.drift_event id (accepted or rejected)"
+        type: string
+        default: ""
+      raw_id:
+        description: "drift: raw object id (skip_object)"
+        type: string
+        default: ""
+      series_id:
+        description: "override: series id"
+        type: string
+        default: ""
+      ref_period_start:
+        description: "override: reference period start, YYYY-MM-DD"
+        type: string
+        default: ""
+      known_at:
+        description: "override: vintage known_at, YYYY-MM-DDTHH:MM:SSZ (optional)"
+        type: string
+        default: ""
+      note:
+        description: "reason (required for an override)"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mm-decide
+  cancel-in-progress: false
+
+env:
+  MM_ENV: production
+  MM_RAW_STORE: release_public
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  decide:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - name: Validate inputs
+        env:
+          MM_IN_KIND: ${{ inputs.kind }}
+          MM_IN_DECISION: ${{ inputs.decision }}
+          MM_IN_EVENT_ID: ${{ inputs.event_id }}
+          MM_IN_RAW_ID: ${{ inputs.raw_id }}
+          MM_IN_SERIES_ID: ${{ inputs.series_id }}
+          MM_IN_REF_PERIOD_START: ${{ inputs.ref_period_start }}
+          MM_IN_KNOWN_AT: ${{ inputs.known_at }}
+          MM_IN_NOTE: ${{ inputs.note }}
+          MM_ACTOR: ${{ github.actor }}
+        run: scripts/ci/decide.sh check
+      - name: Record the decision, then drain the load queue (mm_ingest, decided_by = actor)
+        env:
+          DATABASE_URL: ${{ secrets.NEON_URL_MM_INGEST }}
+          GITHUB_TOKEN: ${{ github.token }}
+          MM_IN_KIND: ${{ inputs.kind }}
+          MM_IN_DECISION: ${{ inputs.decision }}
+          MM_IN_EVENT_ID: ${{ inputs.event_id }}
+          MM_IN_RAW_ID: ${{ inputs.raw_id }}
+          MM_IN_SERIES_ID: ${{ inputs.series_id }}
+          MM_IN_REF_PERIOD_START: ${{ inputs.ref_period_start }}
+          MM_IN_KNOWN_AT: ${{ inputs.known_at }}
+          MM_IN_NOTE: ${{ inputs.note }}
+          MM_ACTOR: ${{ github.actor }}
+        run: scripts/ci/decide.sh apply

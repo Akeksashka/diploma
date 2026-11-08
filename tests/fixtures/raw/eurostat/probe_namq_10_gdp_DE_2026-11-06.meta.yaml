@@ -1,0 +1,15 @@
+# Sidecar of the recorded-bytes fixture. REAL response, captured unmodified: operator probe OP-04, geo=DE only.
+synthetic: false
+source_url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?format=JSON&freq=Q&geo=DE&na_item=B1GQ&s_adj=SCA&sinceTimePeriod=1991-Q1&unit=CP_MNAC
+fetched_at: 2026-11-06T07:31:38Z
+http_status: 200
+content_type: "application/json"
+sha256: 667f86ac97766568d62759d6a969d66a02ebf9828afb4c4853dcc69d31cf0b0a
+source_updated: "2026-11-05T23:00:00+0100"
+parser_id: jsonstat_v2@2
+notes: "operator probe OP-04, geo=DE only; group eurostat_gdp_q"
+licence:
+  id: eurostat-reuse
+  url: https://ec.europa.eu/eurostat/web/main/help/copyright-notice
+  attribution: "Source: Eurostat"
+  redistribution_of_raw: allowed

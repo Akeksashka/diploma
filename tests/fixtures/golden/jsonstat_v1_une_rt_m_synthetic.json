@@ -1,0 +1,141 @@
+{
+ "extras": {},
+ "metas": [
+  {
+   "base_period": null,
+   "calendar_basis": "CAL",
+   "currency_code": null,
+   "entity_code": "DE",
+   "flow_basis": "NA",
+   "frequency": "M",
+   "price_basis": "NA",
+   "published_decimals": 2,
+   "seasonal_adjustment": "SA",
+   "series_ref": "M.SA.TOTAL.PC_ACT.T.DE",
+   "title": "Unemployment by sex and age - monthly data (SYNTHETIC) | Seasonally adjusted data, not calendar adjusted data | Total | Percentage of population in the labour force | Total | Germany",
+   "unit_code": "PC_ACT",
+   "unit_mult": 0
+  },
+  {
+   "base_period": null,
+   "calendar_basis": "CAL",
+   "currency_code": null,
+   "entity_code": "ES",
+   "flow_basis": "NA",
+   "frequency": "M",
+   "price_basis": "NA",
+   "published_decimals": 1,
+   "seasonal_adjustment": "SA",
+   "series_ref": "M.SA.TOTAL.PC_ACT.T.ES",
+   "title": "Unemployment by sex and age - monthly data (SYNTHETIC) | Seasonally adjusted data, not calendar adjusted data | Total | Percentage of population in the labour force | Total | Spain",
+   "unit_code": "PC_ACT",
+   "unit_mult": 0
+  },
+  {
+   "base_period": null,
+   "calendar_basis": "CAL",
+   "currency_code": null,
+   "entity_code": "FR",
+   "flow_basis": "NA",
+   "frequency": "M",
+   "price_basis": "NA",
+   "published_decimals": 1,
+   "seasonal_adjustment": "SA",
+   "series_ref": "M.SA.TOTAL.PC_ACT.T.FR",
+   "title": "Unemployment by sex and age - monthly data (SYNTHETIC) | Seasonally adjusted data, not calendar adjusted data | Total | Percentage of population in the labour force | Total | France",
+   "unit_code": "PC_ACT",
+   "unit_mult": 0
+  }
+ ],
+ "observations": [
+  {
+   "ref_period_end": "2026-06-30",
+   "ref_period_start": "2026-06-01",
+   "series_ref": "M.SA.TOTAL.PC_ACT.T.DE",
+   "source_flags": null,
+   "source_release_at": null,
+   "value": "3.10",
+   "value_status": "OBS",
+   "vintage_label": null
+  },
+  {
+   "ref_period_end": "2026-07-31",
+   "ref_period_start": "2026-07-01",
+   "series_ref": "M.SA.TOTAL.PC_ACT.T.DE",
+   "source_flags": null,
+   "source_release_at": null,
+   "value": "3.2",
+   "value_status": "OBS",
+   "vintage_label": null
+  },
+  {
+   "ref_period_end": "2026-08-31",
+   "ref_period_start": "2026-08-01",
+   "series_ref": "M.SA.TOTAL.PC_ACT.T.DE",
+   "source_flags": "p",
+   "source_release_at": null,
+   "value": "3.25",
+   "value_status": "PROV",
+   "vintage_label": null
+  },
+  {
+   "ref_period_end": "2026-06-30",
+   "ref_period_start": "2026-06-01",
+   "series_ref": "M.SA.TOTAL.PC_ACT.T.ES",
+   "source_flags": null,
+   "source_release_at": null,
+   "value": "11.0",
+   "value_status": "OBS",
+   "vintage_label": null
+  },
+  {
+   "ref_period_end": "2026-08-31",
+   "ref_period_start": "2026-08-01",
+   "series_ref": "M.SA.TOTAL.PC_ACT.T.ES",
+   "source_flags": "c",
+   "source_release_at": null,
+   "value": null,
+   "value_status": "MISS",
+   "vintage_label": null
+  },
+  {
+   "ref_period_end": "2026-06-30",
+   "ref_period_start": "2026-06-01",
+   "series_ref": "M.SA.TOTAL.PC_ACT.T.FR",
+   "source_flags": null,
+   "source_release_at": null,
+   "value": "7.5",
+   "value_status": "OBS",
+   "vintage_label": null
+  },
+  {
+   "ref_period_end": "2026-07-31",
+   "ref_period_start": "2026-07-01",
+   "series_ref": "M.SA.TOTAL.PC_ACT.T.FR",
+   "source_flags": ":",
+   "source_release_at": null,
+   "value": null,
+   "value_status": "MISS",
+   "vintage_label": null
+  },
+  {
+   "ref_period_end": "2026-08-31",
+   "ref_period_start": "2026-08-01",
+   "series_ref": "M.SA.TOTAL.PC_ACT.T.FR",
+   "source_flags": null,
+   "source_release_at": null,
+   "value": "7.4",
+   "value_status": "OBS",
+   "vintage_label": null
+  }
+ ],
+ "rejected": [
+  {
+   "period": "2026-07",
+   "raw_value": "n/a",
+   "reason": "PARSE-03: non-numeric value",
+   "series_ref": "M.SA.TOTAL.PC_ACT.T.ES"
+  }
+ ],
+ "source_updated": "2026-10-30T11:00:00+0100"
+}

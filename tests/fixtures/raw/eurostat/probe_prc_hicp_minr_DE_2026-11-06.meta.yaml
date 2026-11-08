@@ -1,0 +1,15 @@
+# Sidecar of the recorded-bytes fixture. REAL response, captured unmodified: operator probe OP-04, geo=DE only.
+synthetic: false
+source_url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?coicop18=CP01&coicop18=TOTAL&coicop18=TOT_X_NRG_FOOD&format=JSON&freq=M&geo=DE&sinceTimePeriod=1991-01&unit=I25
+fetched_at: 2026-11-06T07:31:34Z
+http_status: 200
+content_type: "application/json"
+sha256: 25869cfa468fe3533b4269a7e65e057f4d032ca0546725801fdc0a3dc113f56a
+source_updated: "2026-11-04T11:00:00+0100"
+parser_id: jsonstat_v1@1
+notes: "operator probe OP-04, geo=DE only; group eurostat_hicp"
+licence:
+  id: eurostat-reuse
+  url: https://ec.europa.eu/eurostat/web/main/help/copyright-notice
+  attribution: "Source: Eurostat"
+  redistribution_of_raw: allowed

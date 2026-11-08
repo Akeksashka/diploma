@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status:*)", "Bash(git diff:*)", "Bash(git log:*)",
+      "Bash(pytest:*)", "Bash(python -m pytest:*)", "Bash(ruff:*)",
+      "Bash(uv sync:*)", "Bash(uv lock:*)", "Bash(uv run:*)", "Bash(uv add:*)",
+      "Bash(mypy:*)", "Bash(uv run mypy:*)", "Bash(actionlint:*)",
+      "Bash(docker run:*)", "Bash(docker compose:*)", "Bash(docker ps:*)", "Bash(docker stop:*)",
+      "Bash(node --version)", "Bash(npm ci:*)", "Bash(npm run:*)", "Bash(npm test:*)",
+      "Bash(Rscript:*)",
+      "Write(./.github/workflows/**)", "Write(./manual_inbox/**)", "Write(./ops/**)",
+      "Write(./site/**)", "Write(./docs/ops/**)", "Write(./pyproject.toml)",
+      "Write(./.python-version)", "Write(./.env.example)",     "Read(./.env)", "Read(./.env.*)", "Read(./secrets/**)"
+    ],
+    "deny": [
+      "Edit(./data/raw/**)",
+      "Edit(./CLAUDE.md)", "Edit(./.claude/**)",
+      "Bash(rm -rf:*)", "Bash(git push:*)", "Bash(gh workflow run:*)", "Bash(gh secret:*)"
+    ]
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "meta-indicators.schema.json",
+  "title": "meta/indicators.json (no is_support key: inputs are not published)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "indicators"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "indicators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "indicator_id",
+          "name",
+          "domain_ids",
+          "scope",
+          "frequency_set",
+          "unit_label",
+          "adverse_dir",
+          "rank_mode",
+          "good_dir",
+          "display_dir",
+          "target",
+          "max_ref_spread_days",
+          "staleness_limit_days",
+          "transform_options",
+          "default_transform",
+          "alert_method",
+          "priority",
+          "currency_basis",
+          "notes"
+        ],
+        "properties": {
+          "indicator_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "domain_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "scope": {
+            "enum": [
+              "country",
+              "global"
+            ]
+          },
+          "frequency_set": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "D",
+                "M",
+                "Q",
+                "A"
+              ]
+            }
+          },
+          "unit_label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "adverse_dir": {
+            "enum": [
+              -1,
+              0,
+              1
+            ]
+          },
+          "rank_mode": {
+            "enum": [
+              "monotone_good",
+              "target_distance",
+              "descriptive_only"
+            ]
+          },
+          "good_dir": {
+            "enum": [
+              -1,
+              0,
+              1
+            ]
+          },
+          "display_dir": {
+            "enum": [
+              -1,
+              0,
+              1,
+              null
+            ]
+          },
+          "target": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "value",
+              "source_note"
+            ],
+            "properties": {
+              "value": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "source_note": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "max_ref_spread_days": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "staleness_limit_days": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "transform_options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "default_transform": {
+            "type": "string"
+          },
+          "alert_method": {
+            "enum": [
+              "z",
+              "robust_z",
+              "percentile",
+              "fixed_only",
+              "none"
+            ]
+          },
+          "priority": {
+            "type": "string"
+          },
+          "currency_basis": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

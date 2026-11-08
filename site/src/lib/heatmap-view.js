@@ -2,9 +2,13 @@
 // `html` is htl's tag, passed in. The table has a caption, th scope on rows and columns, text in every cell, one tbody per row
 // group (aggregates have their own, with no colour), a sticky header and first column inside its own scroll container with a
 // visible hint. Colours and patterns come from style.css through data-bin, data-state and data-signature; no colour here.
-import {AGGREGATE_NOT_RANKED, AHEAD_TAG, COUNTRY_HEADER, COVERAGE_HEADER, DRAFT_FACT_LABELS as FACT, DRAFT_HEATMAP_CAPTION, DRAFT_HEATMAP_CAPTION_INFO, DRAFT_SCROLL_HINT, INFORMATIONAL_NOTICE, NA, ORIENTATION_NOTE, POSITION_HEADER} from "./copy.js";
+import {AGGREGATE_NOT_RANKED, AHEAD_TAG, COUNTRY_HEADER, COVERAGE_HEADER, DRAFT_FACT_LABELS as FACT, DRAFT_HEATMAP_CAPTION, DRAFT_HEATMAP_CAPTION_INFO, DRAFT_SCROLL_HINT, DRAFT_HEATMAP_INDICATOR_LINK, DRAFT_HEATMAP_INDICATOR_LINK_LABEL, INFORMATIONAL_NOTICE, NA, ORIENTATION_NOTE, POSITION_HEADER} from "./copy.js";
 import {glyph} from "./glyphs.js";
 import {nextSort, sortRows} from "./heatmap.js";
+
+// Links to the other pages (R11). The page is /domain/<id>, so a sibling folder is "../".
+export const countryHref = (entityId) => `../country/${entityId}`;
+export const indicatorPageHref = (indicatorId) => `../indicator/${indicatorId}`;
 
 const shown = (v) => (v === null || v === undefined ? NA : v);
 
@@ -69,7 +73,7 @@ function domainFigureCells(html, row) {
 }
 
 function bodyRow(html, model, row) {
-  return html`<tr data-entity="${row.entityId}" data-status="${row.summary.status}"><th scope="row" class="mm-hm-country">${row.name}</th>${model.informational ? [] : domainFigureCells(html, row)}${row.cells.map((e, k) => indicatorCell(html, row, e, model.columns[k]))}</tr>`;
+  return html`<tr data-entity="${row.entityId}" data-status="${row.summary.status}"><th scope="row" class="mm-hm-country">${row.summary.hasCountryPage ? html`<a href="${countryHref(row.entityId)}" data-link="country">${row.name}</a>` : row.name}</th>${model.informational ? [] : domainFigureCells(html, row)}${row.cells.map((e, k) => indicatorCell(html, row, e, model.columns[k]))}</tr>`;
 }
 
 function headCells(html, model, ids, sortState) {
@@ -86,7 +90,7 @@ function headCells(html, model, ids, sortState) {
         html`<th scope="col" class="mm-hm-pos">${POSITION_HEADER}</th>`
       ];
   const indicators = model.columns.map(
-    (c) => html`<th scope="col" class="mm-hm-ind" data-indicator="${c.indicatorId}" aria-sort="${model.informational ? "none" : aria(c.indicatorId)}" title="${c.name}${c.unit ? ` (${c.unit})` : ""}">${head(c.indicatorId, html`<span class="mm-hm-name">${c.name}</span>`)}${c.unit ? html`<span class="mm-hm-unit">${c.unit}</span>` : ""}${c.direction ? html`<span class="mm-hm-dir" data-direction="${c.direction.key}">${c.direction.text}</span>` : ""}</th>`
+    (c) => html`<th scope="col" class="mm-hm-ind" data-indicator="${c.indicatorId}" aria-sort="${model.informational ? "none" : aria(c.indicatorId)}" title="${c.name}${c.unit ? ` (${c.unit})` : ""}">${head(c.indicatorId, html`<span class="mm-hm-name">${c.name}</span>`)}${c.unit ? html`<span class="mm-hm-unit">${c.unit}</span>` : ""}${c.direction ? html`<span class="mm-hm-dir" data-direction="${c.direction.key}">${c.direction.text}</span>` : ""}<a class="mm-hm-open" href="${indicatorPageHref(c.indicatorId)}" data-link="indicator" aria-label="${DRAFT_HEATMAP_INDICATOR_LINK_LABEL(c.name)}">${DRAFT_HEATMAP_INDICATOR_LINK}</a></th>`
   );
   return [country, ...figure, ...indicators];
 }

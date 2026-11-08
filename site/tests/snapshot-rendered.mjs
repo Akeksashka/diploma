@@ -8,17 +8,16 @@ import {launchBrowser, openPage, serve} from "./smoke/support.mjs";
 
 const NOW = "2026-11-02T00:00:00Z";
 const PAGES = [
-  ["/", "#domain-list li"],
+  ["/", "#country-list li"],
   ["/domain/labour", "#domain-heatmap tbody tr"],
   ["/domain/prices", "#domain-heatmap tbody tr"],
   ["/domain/agri", "#domain-heatmap tbody tr"],
   ["/domain/global", "#domain-heatmap tbody tr"],
   ["/domain/fin", "#domain-heatmap tbody tr"],
-  ["/peers/labour", "#peer-table tbody tr"],
-  ["/peers/prices", "#peer-table tbody tr"],
-  ["/explorer", "#series-captions tbody tr"],
-  ["/revisions", "#recent-revisions tbody tr"],
-  ["/status", "#group-table tbody tr"]
+  ["/indicator/M09", "#indicator-table tbody tr"],
+  ["/country/DEU", ".mm-country-domain table tbody tr"],
+  ["/explorer#i=M09&c=FRA,DEU,IND,ITA,JPN", "#series-captions tbody tr"],
+  ["/revisions", "#recent-revisions tbody tr"]
 ];
 const text = (page) => page.evaluate(() => document.body.innerText + "\n[selects]\n" + [...document.querySelectorAll("select")].map((s) => s.id + ": " + [...s.options].map((o) => o.text).join(" | ")).join("\n"));
 

@@ -150,7 +150,7 @@ export function entitySummary(e, sc, entityMeta) {
   const name = entityMeta?.name ?? e.entity_id;
   const coverage = isNum(e.n_available) && isNum(e.n_defined) ? `${e.n_available}/${e.n_defined}` : NA;
   const staleCount = e.indicators.filter((i) => i.is_stale === true).length;
-  const row = {entityId: e.entity_id, name, kind: entityMeta?.kind ?? null, aggregate: entityMeta?.kind === "aggregate", rankPosition: isNum(e.rank_position) ? e.rank_position : null, coverageText: coverage, staleCount, meanPercentile: null, meanText: null, positionText: NO_POSITION, status: "ranked"};
+  const row = {entityId: e.entity_id, name, kind: entityMeta?.kind ?? null, hasCountryPage: entityMeta !== undefined && entityMeta !== null && entityMeta.is_global !== true, aggregate: entityMeta?.kind === "aggregate", rankPosition: isNum(e.rank_position) ? e.rank_position : null, coverageText: coverage, staleCount, meanPercentile: null, meanText: null, positionText: NO_POSITION, status: "ranked"};
   if (sc.ranked === false) return {...row, status: "unranked_domain", meanText: UNRANKED, positionText: UNRANKED};
   const mean = e.n_available === 0 || !isNum(e.percentile_rank) ? null : e.percentile_rank;
   if (mean === null) {

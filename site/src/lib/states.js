@@ -2,7 +2,7 @@
 // fields of scorecard.js to {key, code, signature, glyph, accessibleName}. Every state has a visible text code or a word, and a
 // non-colour signature; colour is a third channel. A status that scorecard.js can assign and this module does not map throws.
 // Wording comes from copy.js; nothing is computed.
-import {AGGREGATE_NOT_RANKED, AHEAD_NAME, AHEAD_TAG, ALERT_LEVEL_PREFIX, DESCRIPTIVE_CELL, ESTIMATE_MARK, FLAG_ESTIMATE, FLAG_INHERITED, FLAG_LOW_COVERAGE, NO_POSITION_LOW_COVERAGE, NOT_PUBLISHED, NA, PERCENTILE_COLUMN_LABEL, STALE_NAME, STATE_CODES, STATE_LABELS, UNKNOWN_STATE, notRankedCell} from "./copy.js";
+import {AGGREGATE_NOT_RANKED, AHEAD_NAME, AHEAD_TAG, ALERT_LEVEL_PREFIX, DESCRIPTIVE_CELL, ESTIMATE_MARK, FLAG_ESTIMATE, FLAG_INHERITED, FLAG_LOW_COVERAGE, NO_POSITION_LOW_COVERAGE, NOT_PUBLISHED, NA, PERCENTILE_COLUMN_LABEL, STALE_NAME, STATE_CODES, notRankedCell} from "./copy.js";
 
 export class StateError extends Error {
   constructor(message) {
@@ -123,23 +123,4 @@ export function summaryState(s) {
     default:
       throw new StateError(`no state for summary status ${JSON.stringify(s.status)}`);
   }
-}
-
-// Feed states of the V5 status view (T128): the stored enum of `groups[].state`. Word = the existing STATE_LABELS wording (no new
-// text). `signature`: glyph plus border pattern of the chip, unique per state, so the four differ without colour. `rank` orders
-// the list from the most to the least severe; it only orders the stored enum, nothing is derived from it. An unrecognised value
-// keeps the fixed UNKNOWN_STATE wording and sorts after the known problem states, before fresh.
-const feed = (key, glyph, signature, rank) => Object.freeze({key, code: STATE_LABELS[key] ?? UNKNOWN_STATE, glyph, signature, rank});
-export const FEED_STATES = Object.freeze({
-  broken: feed("broken", "cross", "cross-solid-heavy", 0),
-  stale: feed("stale", "hourglass", "hourglass-dotted", 1),
-  late: feed("late", "clock", "clock-dashed", 2),
-  unknown: feed("unknown", "dash", "dash-double", 3),
-  fresh: feed("fresh", "check", "check-solid", 4)
-});
-export const FEED_GLYPH_NAMES = Object.freeze(["check", "clock", "hourglass", "cross", "dash"]);
-
-export function feedState(value) {
-  const k = typeof value === "string" && Object.hasOwn(STATE_LABELS, value) ? value : "unknown";
-  return {...FEED_STATES[k], accessibleName: FEED_STATES[k].code};
 }

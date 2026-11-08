@@ -1,0 +1,15 @@
+# Sidecar of the recorded-bytes fixture. REAL response, captured unmodified: operator probe OP-04, geo=DE only.
+synthetic: false
+source_url: https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.CD?date=1991:2100&format=json&page=1&per_page=100
+fetched_at: 2026-11-06T07:31:40Z
+http_status: 200
+content_type: "application/json;charset=utf-8"
+sha256: 5991b5d224fd029313dafb4e3e7a4ca77fce5021d3054cfb959a1a22a43e65b1
+source_updated: "2026-10-08"
+parser_id: worldbank_v2@2
+notes: "operator probe OP-04, geo=DE only; group worldbank_support"
+licence:
+  id: worldbank-cc-by-4.0
+  url: https://data.worldbank.org/summary-terms-of-use
+  attribution: "Source: World Bank"
+  redistribution_of_raw: allowed   # [UNVERIFIED] as in config/sources.yaml; terms pages disagree

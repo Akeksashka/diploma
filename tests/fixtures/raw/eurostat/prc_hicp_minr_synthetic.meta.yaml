@@ -1,0 +1,8 @@
+# Sidecar of a SYNTHETIC recorded-bytes fixture (T53): hand-built to the JSON-stat 2.0 structure;
+# not real Eurostat data; dimension order, codes and URL are [UNVERIFIED] until an operator capture (OP-04).
+synthetic: true
+source_url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?freq=M&unit=I25&coicop18=TOTAL&coicop18=TOT_X_NRG_FOOD&coicop18=CP01&geo=DE&geo=FR&geo=TR&sinceTimePeriod=1991-01&format=JSON [UNVERIFIED]
+fetched_on: 2026-11-05
+sha256: 2137c7969de1c6ddbfe34da7f14339dd0d949397dc12b999a29ce67f7f65f69f
+parser_id: jsonstat_v1@1
+licence: Synthetic test data, project-authored (no third-party content).

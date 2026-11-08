@@ -1,0 +1,10 @@
+# Sidecar of a SYNTHETIC fixture: a hand-trimmed SDMX-CSV (format=csvfile style) of the OECD Key
+# Economic Indicators dataflow; no live capture; not real OECD data. Column names, dimension order,
+# codes and the DATAFLOW cell format are [UNVERIFIED]. Contains deliberate bad rows (period 2025-13,
+# non-numeric value) and unmapped series to exercise the whitelist and the rejects.
+synthetic: true
+source_url: https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_KEI@DF_KEI/?format=csvfile&startPeriod=1991-01 [UNVERIFIED]
+fetched_on: 2026-11-05
+sha256: 02587b035b6ce823318da8927b279a4b444041bdbefad0e2ea06fc88c66dac86
+parser_id: sdmxcsv_v1@1
+licence: Synthetic test data, project-authored (no third-party content).

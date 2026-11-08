@@ -1,0 +1,401 @@
+{
+  "schema_version": "1.0",
+  "entities": [
+    {
+      "entity_id": "SY01",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY01"
+    },
+    {
+      "entity_id": "SY02",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY02"
+    },
+    {
+      "entity_id": "SY03",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY03"
+    },
+    {
+      "entity_id": "SY04",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY04"
+    },
+    {
+      "entity_id": "SY05",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY05"
+    },
+    {
+      "entity_id": "SY06",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY06"
+    },
+    {
+      "entity_id": "SY07",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY07"
+    },
+    {
+      "entity_id": "SY08",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY08"
+    },
+    {
+      "entity_id": "SY09",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY09"
+    },
+    {
+      "entity_id": "SY10",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY10"
+    },
+    {
+      "entity_id": "SY11",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY11"
+    },
+    {
+      "entity_id": "SY12",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY12"
+    },
+    {
+      "entity_id": "SY13",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY13"
+    },
+    {
+      "entity_id": "SY14",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY14"
+    },
+    {
+      "entity_id": "SY15",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY15"
+    },
+    {
+      "entity_id": "SY16",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY16"
+    },
+    {
+      "entity_id": "SY17",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY17"
+    },
+    {
+      "entity_id": "SY18",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY18"
+    },
+    {
+      "entity_id": "SY19",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY19"
+    },
+    {
+      "entity_id": "SY20",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY20"
+    },
+    {
+      "entity_id": "SY21",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY21"
+    },
+    {
+      "entity_id": "SY22",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY22"
+    },
+    {
+      "entity_id": "SY23",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY23"
+    },
+    {
+      "entity_id": "SY24",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY24"
+    },
+    {
+      "entity_id": "SY25",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY25"
+    },
+    {
+      "entity_id": "SY26",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY26"
+    },
+    {
+      "entity_id": "SY27",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY27"
+    },
+    {
+      "entity_id": "SY28",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY28"
+    },
+    {
+      "entity_id": "SY29",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY29"
+    },
+    {
+      "entity_id": "SY30",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY30"
+    },
+    {
+      "entity_id": "SY31",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY31"
+    },
+    {
+      "entity_id": "SY32",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY32"
+    },
+    {
+      "entity_id": "SY33",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY33"
+    },
+    {
+      "entity_id": "SY34",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY34"
+    },
+    {
+      "entity_id": "SY35",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY35"
+    },
+    {
+      "entity_id": "SY36",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY36"
+    },
+    {
+      "entity_id": "SY37",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY37"
+    },
+    {
+      "entity_id": "SY38",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY38"
+    },
+    {
+      "entity_id": "SY39",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY39"
+    },
+    {
+      "entity_id": "SY40",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY40"
+    },
+    {
+      "entity_id": "SY41",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": null,
+      "kind": "country",
+      "name": "Synthetic SY41"
+    },
+    {
+      "entity_id": "SYA1",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": false,
+      "iso3": null,
+      "kind": "aggregate",
+      "name": "Synthetic SYA1"
+    },
+    {
+      "entity_id": "SYA2",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": false,
+      "iso3": null,
+      "kind": "aggregate",
+      "name": "Synthetic SYA2"
+    },
+    {
+      "entity_id": "SYA3",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": false,
+      "iso3": null,
+      "kind": "aggregate",
+      "name": "Synthetic SYA3"
+    }
+  ]
+}

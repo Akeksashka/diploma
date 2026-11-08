@@ -52,6 +52,15 @@ test("the fixed vintage text is exactly the spec text and carries no forbidden p
   for (const p of FORBIDDEN) assert.ok(!VINTAGE_TEXT.toLowerCase().includes(p));
 });
 
+test("R11: indicator and country names in the recent list link to their pages; a global entity stays plain text", () => {
+  const rv = recentView(parseRecent(doc([rrow({}), rrow({entity_id: "WLD", series_id: 102})])), revisionsContext({manifest, seriesMeta: [...seriesMeta, sm(102, "M09", "WLD")], entities: [...entities, {entity_id: "WLD", name: "World", is_global: true}], indicators}), {});
+  const out = ordinaryBlock(html, rv).s;
+  assert.ok(out.includes('<a href="indicator/M09" data-link="indicator">M09 Unemployment rate</a>'));
+  assert.ok(out.includes('<a href="country/DEU" data-link="country">Germany</a>'));
+  assert.ok(out.includes("<td>World</td>") && !out.includes("country/WLD"));
+  assert.ok(!out.includes("peers/"));
+});
+
 test("recent view: ordinary rows keep export order, regular vs reestimation filter, class distinguishable", () => {
   const rows = [rrow({revision_pct: 12.5}), rrow({entity_id: "FRA", series_id: 101, revision_pct: -6.25}), rrow({indicator_id: "P01", entity_id: "FRA", series_id: 401, revision_pct: 1.2, revision_class: "reestimation"})];
   const recent = parseRecent(doc(rows));
@@ -339,4 +348,13 @@ test("history summary line pluralises: one reference period and two stored versi
   assert.ok(!one.includes("1 reference periods"));
   const all = historyBlock(htmlC, historyView(ctx(), "M09", fileRows(), {series: "100"}), {chosen: true, Plot: fakePlot}).s;
   assert.match(all, /\d+ reference periods, \d+ stored versions shown\./);
+});
+
+test("R11: the indicator name links to indicator/<id> only when that indicator has a generated page", () => {
+  const c = ctx();
+  assert.ok(c.indicatorPages.has("M09"));
+  c.indicatorPages.delete("M09"); // negative: no generated page for M09
+  const out = ordinaryBlock(html, recentView(parseRecent(doc([rrow({})])), c, {})).s;
+  assert.ok(!out.includes("indicator/M09"));
+  assert.ok(out.includes("M09 Unemployment rate"));
 });

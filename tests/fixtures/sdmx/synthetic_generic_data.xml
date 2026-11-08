@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC FIXTURE: hand-written for the T04 compatibility spike. Not real source data. -->
+<mes:GenericData xmlns:mes="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message"
+                 xmlns:gen="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/data/generic"
+                 xmlns:com="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common">
+  <mes:Header>
+    <mes:ID>SYNTHETIC-1</mes:ID>
+    <mes:Test>true</mes:Test>
+    <mes:Prepared>2026-01-01T00:00:00Z</mes:Prepared>
+    <mes:Sender id="SYNTHETIC"/>
+    <mes:Structure structureID="SYN_DSD" dimensionAtObservation="TIME_PERIOD">
+      <com:Structure>
+        <Ref agencyID="SYN" id="SYN_DSD" version="1.0" class="DataStructure"/>
+      </com:Structure>
+    </mes:Structure>
+  </mes:Header>
+  <mes:DataSet structureRef="SYN_DSD">
+    <gen:Series>
+      <gen:SeriesKey>
+        <gen:Value id="FREQ" value="M"/>
+        <gen:Value id="GEO" value="XX"/>
+      </gen:SeriesKey>
+      <gen:Attributes>
+        <gen:Value id="UNIT" value="IDX"/>
+      </gen:Attributes>
+      <gen:Obs>
+        <gen:ObsDimension value="2026-01"/>
+        <gen:ObsValue value="100.5"/>
+        <gen:Attributes><gen:Value id="OBS_STATUS" value="A"/></gen:Attributes>
+      </gen:Obs>
+      <gen:Obs>
+        <gen:ObsDimension value="2026-02"/>
+        <gen:ObsValue value="101.25"/>
+        <gen:Attributes><gen:Value id="OBS_STATUS" value="P"/></gen:Attributes>
+      </gen:Obs>
+    </gen:Series>
+  </mes:DataSet>
+</mes:GenericData>

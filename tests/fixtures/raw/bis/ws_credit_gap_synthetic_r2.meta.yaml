@@ -1,0 +1,9 @@
+# Sidecar of a SYNTHETIC fixture: a hand-built zip with one flat-CSV member, modelled on the BIS
+# bulk-download idea; no live capture; not real BIS data. Zip layout, column names, URL shape and
+# KEY format are [UNVERIFIED]. Zip member date is fixed (2026-10-15) so the bytes are deterministic.
+synthetic: true
+source_url: https://data.bis.org/static/bulk/WS_CREDIT_GAP_csv_flat.zip [UNVERIFIED]
+fetched_on: 2026-11-04
+sha256: 63599f512c49536b2cadcf253ac4b332f831ed7093c50ad40b83996a6f469a22
+parser_id: bis_v1@1
+licence: Synthetic test data, project-authored (no third-party content).

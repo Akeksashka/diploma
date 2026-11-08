@@ -1,0 +1,362 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scorecard.schema.json",
+  "title": "scorecard/<domain_id>.json (no modal_ref_period_end)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "domain_id",
+    "analysis_run_id",
+    "ranked",
+    "min_coverage_for_rank",
+    "percentile_rank_label",
+    "heterogeneous_peer_set",
+    "peer_set_size_by_indicator",
+    "alignment",
+    "entities"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "domain_id": {
+      "type": "string"
+    },
+    "analysis_run_id": {
+      "type": "integer"
+    },
+    "ranked": {
+      "type": "boolean"
+    },
+    "min_coverage_for_rank": {
+      "type": "number"
+    },
+    "percentile_rank_label": {
+      "type": "string"
+    },
+    "heterogeneous_peer_set": {
+      "type": "boolean"
+    },
+    "peer_set_size_by_indicator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "min",
+        "max"
+      ],
+      "properties": {
+        "min": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "max": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      }
+    },
+    "alignment": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "indicator_id",
+          "rank_reference_period",
+          "reference_period_spread_days",
+          "n_ranked",
+          "n_unaligned",
+          "max_ref_spread_days"
+        ],
+        "properties": {
+          "indicator_id": {
+            "type": "string"
+          },
+          "rank_reference_period": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reference_period_spread_days": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "n_ranked": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "n_unaligned": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "max_ref_spread_days": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "entity_id",
+          "n_available",
+          "n_defined",
+          "percentile_rank",
+          "percentile_rank_label",
+          "rank_position",
+          "n_ranked_entities",
+          "low_coverage",
+          "indicators"
+        ],
+        "properties": {
+          "entity_id": {
+            "type": "string"
+          },
+          "n_available": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "n_defined": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "percentile_rank": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "percentile_rank_label": {
+            "type": "string"
+          },
+          "rank_position": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "n_ranked_entities": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "low_coverage": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "indicators": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "indicator_id",
+                "series_id",
+                "value",
+                "transformed_value",
+                "transform_id",
+                "rank_mode",
+                "value_kind",
+                "ref_period_end",
+                "ref_offset_days",
+                "known_at",
+                "source_release_at",
+                "age_days",
+                "stale_limit_days",
+                "limit_source",
+                "is_stale",
+                "alignment",
+                "alignment_reason",
+                "inherited",
+                "deviation",
+                "published",
+                "publish_scope",
+                "percentile",
+                "percentile_label",
+                "n_ranked",
+                "alert_level",
+                "alert_confidence"
+              ],
+              "properties": {
+                "indicator_id": {
+                  "type": "string"
+                },
+                "series_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "value": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "transformed_value": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "transform_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "rank_mode": {
+                  "type": "string"
+                },
+                "value_kind": {
+                  "enum": [
+                    "observed",
+                    "estimate"
+                  ]
+                },
+                "ref_period_end": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "ref_offset_days": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "known_at": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "source_release_at": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "age_days": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "stale_limit_days": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "limit_source": {
+                  "enum": [
+                    "class",
+                    "release_lag_aware"
+                  ]
+                },
+                "is_stale": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "alignment": {
+                  "enum": [
+                    "aligned",
+                    "ahead",
+                    "lagging",
+                    "unaligned",
+                    "n/a"
+                  ]
+                },
+                "alignment_reason": {
+                  "enum": [
+                    "fiscal_year_basis",
+                    null
+                  ]
+                },
+                "inherited": {
+                  "type": "boolean"
+                },
+                "deviation": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "published": {
+                  "type": "boolean"
+                },
+                "publish_scope": {
+                  "enum": [
+                    "ranked",
+                    "info_only",
+                    "excluded"
+                  ]
+                },
+                "percentile": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "percentile_label": {
+                  "type": "string"
+                },
+                "n_ranked": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "alert_level": {
+                  "enum": [
+                    "none",
+                    "watch",
+                    "alert",
+                    null
+                  ]
+                },
+                "alert_confidence": {
+                  "enum": [
+                    "full",
+                    "low",
+                    "none",
+                    null
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

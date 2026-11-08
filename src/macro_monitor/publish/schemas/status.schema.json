@@ -1,0 +1,321 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "status.schema.json",
+  "title": "status.json (no secrets, no values)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "last_run",
+    "groups",
+    "backlog",
+    "validation",
+    "manual_sources",
+    "schedule_check"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "last_run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ingest_run_id",
+        "started_at",
+        "finished_at",
+        "mode",
+        "new_raw_objects",
+        "new_observations",
+        "revisions",
+        "alerts_opened"
+      ],
+      "properties": {
+        "ingest_run_id": {
+          "type": "integer"
+        },
+        "started_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "finished_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "mode": {
+          "type": "string"
+        },
+        "new_raw_objects": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "new_observations": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "revisions": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "alerts_opened": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      }
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_group",
+          "series_group",
+          "state",
+          "expected_period_end",
+          "latest_period_end",
+          "evaluated_at",
+          "load_result"
+        ],
+        "properties": {
+          "source_group": {
+            "type": "string"
+          },
+          "series_group": {
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "fresh",
+              "late",
+              "stale",
+              "broken"
+            ]
+          },
+          "expected_period_end": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "latest_period_end": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evaluated_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "load_result": {
+            "enum": [
+              "ok",
+              "warn",
+              "failed",
+              "skipped",
+              null
+            ]
+          }
+        }
+      }
+    },
+    "backlog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "n_unloaded",
+        "oldest_age_days"
+      ],
+      "properties": {
+        "n_unloaded": {
+          "type": "integer"
+        },
+        "oldest_age_days": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "counts",
+        "cov01",
+        "open_drift"
+      ],
+      "properties": {
+        "counts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "check_family",
+              "severity",
+              "n_results",
+              "n_failed"
+            ],
+            "properties": {
+              "check_family": {
+                "type": "string"
+              },
+              "severity": {
+                "type": "string"
+              },
+              "n_results": {
+                "type": "integer"
+              },
+              "n_failed": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "cov01": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "indicator_id",
+              "state",
+              "n_qualifying"
+            ],
+            "properties": {
+              "indicator_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "state": {
+                "enum": [
+                  "not_yet_measurable",
+                  "measured"
+                ]
+              },
+              "n_qualifying": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "n_results": {
+                "type": "integer"
+              },
+              "n_failed": {
+                "type": "integer"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "open_drift": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "n_open",
+            "by_kind"
+          ],
+          "properties": {
+            "n_open": {
+              "type": "integer"
+            },
+            "by_kind": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "manual_sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_id",
+          "last_edition_date",
+          "last_ingested_at",
+          "next_expected"
+        ],
+        "properties": {
+          "source_id": {
+            "type": "string"
+          },
+          "last_edition_date": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "last_ingested_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "next_expected": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "window_from",
+              "window_to",
+              "remind_on"
+            ],
+            "properties": {
+              "window_from": {
+                "type": "string"
+              },
+              "window_to": {
+                "type": "string"
+              },
+              "remind_on": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "schedule_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generated_at",
+        "text"
+      ],
+      "properties": {
+        "generated_at": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

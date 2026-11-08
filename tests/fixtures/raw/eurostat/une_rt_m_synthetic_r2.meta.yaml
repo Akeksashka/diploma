@@ -1,0 +1,8 @@
+# Second release (DE 2026-07 revised 3.2 to 3.3) for the T31 slice test. Sidecar of the recorded-bytes fixture. SYNTHETIC: hand-built to the JSON-stat 2.0 structure
+# (plan T22 fallback while OP-04 capture has not been run); not real Eurostat data.
+synthetic: true
+source_url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?freq=M&s_adj=SA&age=TOTAL&unit=PC_ACT&sex=T&geo=DE&geo=FR&geo=ES [UNVERIFIED]
+fetched_on: 2026-11-02
+sha256: fba11c8984815acb033468924f0012b523e0c26531298b0fdeae0ec23a23977f
+parser_id: jsonstat_v1@1
+licence: Synthetic test data, project-authored (no third-party content).

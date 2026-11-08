@@ -5,8 +5,7 @@ import {readFileSync} from "node:fs";
 import {test} from "node:test";
 import {CELL_STATUSES, SUMMARY_STATUSES, indicatorCell} from "../src/lib/scorecard.js";
 import {GLYPH_NAMES, glyph, glyphSprite} from "../src/lib/glyphs.js";
-import {DECORATIONS, FEED_GLYPH_NAMES, FEED_STATES, STATES, StateError, cellState, feedState, summaryState} from "../src/lib/states.js";
-import {STATE_LABELS, UNKNOWN_STATE} from "../src/lib/copy.js";
+import {DECORATIONS, STATES, StateError, cellState, summaryState} from "../src/lib/states.js";
 import {html} from "./support/html-standin.mjs";
 
 const ind = (o = {}) => ({indicator_id: "M09", value: 3.1, rank_mode: "monotone_good", is_stale: false, alignment: "aligned", inherited: false, published: true, publish_scope: "ranked", percentile: 0.9, ref_period_end: "2026-09-30", ...o});
@@ -99,17 +98,4 @@ test("glyphs are inline SVG, aria-hidden, defined once; an unknown glyph throws"
   assert.ok(g.startsWith("<svg") && g.includes('aria-hidden="true"') && g.includes('href="#mm-g-clock"'));
   assert.throws(() => glyph(html, "smiley"));
   for (const s of [...Object.values(STATES), ...Object.values(DECORATIONS)]) assert.ok(s.glyph === null || GLYPH_NAMES.includes(s.glyph));
-});
-
-test("T128 feed states: exhaustive over the stored enum, distinct word, signature and glyph, unknown keeps fixed wording", () => {
-  assert.deepEqual(Object.keys(FEED_STATES).filter((k) => k !== "unknown").sort(), Object.keys(STATE_LABELS).sort());
-  const all = Object.values(FEED_STATES);
-  for (const key of ["code", "signature", "glyph"]) assert.equal(new Set(all.map((s) => s[key])).size, all.length, key);
-  for (const s of all) assert.ok(FEED_GLYPH_NAMES.includes(s.glyph), s.glyph);
-  assert.deepEqual(["fresh", "late", "stale", "broken"].map((k) => feedState(k).code), ["fresh", "late", "stale", "broken"]);
-  assert.deepEqual(["broken", "stale", "late", "unknown", "fresh"], Object.values(FEED_STATES).sort((a, b) => a.rank - b.rank).map((s) => s.key));
-  for (const bad of [null, undefined, 7, "Traceback: x", "constructor", "__proto__"]) {
-    assert.equal(feedState(bad).key, "unknown");
-    assert.equal(feedState(bad).code, UNKNOWN_STATE);
-  }
 });

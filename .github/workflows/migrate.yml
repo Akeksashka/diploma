@@ -1,0 +1,39 @@
+name: migrate
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_version:
+        description: "latest, or the four-digit version of the highest migration file"
+        type: string
+        default: latest
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mm-migrate
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  migrate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - name: Validate input and print versions
+        env:
+          MM_TARGET_VERSION: ${{ inputs.target_version }}
+        run: scripts/ci/migrate.sh check
+      - name: Apply pending migrations (owner role, migrate lock, checksum check)
+        env:
+          DATABASE_URL: ${{ secrets.NEON_URL_MM_OWNER }}
+          MM_TARGET_VERSION: ${{ inputs.target_version }}
+        run: scripts/ci/migrate.sh apply

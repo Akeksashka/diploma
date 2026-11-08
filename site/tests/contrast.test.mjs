@@ -121,7 +121,7 @@ test("repository tokens: names from brief section 3.1 exist in both themes", asy
     ...[1, 2, 3, 4, 5].flatMap((n) => [`--mm-pct-${n}`, `--mm-pct-${n}-ink`]),
     "--mm-div-neg", "--mm-div-pos", "--mm-div-mid",
     "--mm-alert-watch", "--mm-alert-alert", "--mm-alert-watch-ink", "--mm-alert-alert-ink",
-    "--mm-feed-fresh", "--mm-feed-late", "--mm-feed-stale", "--mm-feed-broken", "--mm-focus"
+    "--mm-focus"
   ];
   for (const theme of ["light", "dark"]) for (const n of required) assert.ok(Object.hasOwn(themes[theme], n), `${theme}: ${n}`);
   const raw = parseTokenBlocks(realCss()).light;

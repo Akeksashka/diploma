@@ -1,4 +1,4 @@
-// T107 UX smoke (ADR-025 AC-UX-3, 4, 6, 7, 12) over V1-V5 of a built fixture site. Localhost only; off-origin requests abort.
+// T107 UX smoke (ADR-025 AC-UX-3, 4, 6, 7, 12) over V1-V4 of a built fixture site. Localhost only; off-origin requests abort.
 // Skips without a browser unless MM_SMOKE_REQUIRE_BROWSER=1 (CI). Screenshots go to site/test-artifacts/ (git-ignored).
 // Upload as a CI artifact awaits an OP-07 commit SHA for actions/upload-artifact (blocker B5); not added.
 import assert from "node:assert/strict";
@@ -40,14 +40,15 @@ const builtJson = (stem) => {
   return JSON.parse(readFileSync(join(dir, f), "utf8"));
 };
 const TIMEOUT = 20000;
-// V1 (landing and a domain scorecard), V2, V3, V4, V5. Selector = content that proves the page rendered its data.
+// V1 (landing and a domain scorecard), V2, V3, V4. Selector = content that proves the page rendered its data.
 const PAGES = [
-  ["V1 landing", "/", "#domain-list li"],
+  ["V1 landing", "/", "#country-list li"],
+  ["PG-DOMAINS", "/domains", "#domain-list li"],
   ["V1 domain", "/domain/labour", "#domain-heatmap tbody tr"],
-  ["V2 peers", "/peers/labour", "#peer-table tbody tr"],
-  ["V3 explorer", "/explorer", "#series-captions tbody tr"],
-  ["V4 revisions", "/revisions", "#recent-revisions tbody tr"],
-  ["V5 status", "/status", "#group-table tbody tr"]
+  ["PG-INDICATOR", "/indicator/M09", "#indicator-table tbody tr"],
+  ["PG-COUNTRY", "/country/DEU", ".mm-country-domain table tbody tr"],
+  ["V3 explorer", "/explorer#i=M09&c=FRA,DEU,IND,ITA,JPN", "#series-captions tbody tr"],
+  ["V4 revisions", "/revisions", "#recent-revisions tbody tr"]
 ];
 const slug = (p) => (p === "/" ? "index" : p.replace(/^\//, "").replace(/\//g, "-"));
 
@@ -237,7 +238,7 @@ describe("AC-UX-7: review screenshots (light, dark, print) and media emulation",
   }
 
   test("forced-colors and reduced-motion emulation reach the page; focus ring survives forced colours", async (t) => {
-    await withPage(t, "/status", "#group-table tbody tr", async ({page}) => {
+    await withPage(t, "/revisions", "#recent-revisions tbody tr", async ({page}) => {
       await setForcedColors(page);
       await setReducedMotion(page);
       assert.equal(await page.evaluate(() => matchMedia("(forced-colors: active)").matches), true);
@@ -493,17 +494,18 @@ describe("T113 T112: sorting, facts on focus, Escape, skip link", () => {
   });
 });
 
-describe("T117-T119 V2 dot plot, table alternative and cards", () => {
-  const PEERS = "#peer-table tbody tr";
+// R12: the peers/ pages are gone; the V2 dot plot, table alternative and cards are checked on PG-INDICATOR.
+describe("T117-T119 V2 dot plot, table alternative and cards, on PG-INDICATOR", () => {
+  const PEERS = "#indicator-table tbody tr";
+  const ROWS = '#indicator-table tbody[data-group="with-value"] tr[data-entity]';
   test("figure has an aria-label, guides are three constant neutral lines, no statistic words, orientation note and direction near the chart, values beside labels", async (t) => {
-    await withPage(t, "/peers/labour", PEERS, async ({page}) => {
+    await withPage(t, "/indicator/M09", PEERS, async ({page}) => {
       const read = () =>
         page.evaluate(() => {
-          const fig = document.querySelector("#peer-figure");
+          const fig = document.querySelector("#indicator-dot-figure");
           const rules = [...fig.querySelectorAll("[aria-label=rule] line")];
           const dots = [...fig.querySelectorAll("circle")];
           const labels = [...fig.querySelectorAll("[aria-label=\"y-axis tick label\"] text")].map((x) => x.textContent.trim());
-          const block = document.querySelector("#peer-chart-block");
           return {
             role: fig.getAttribute("role"),
             label: fig.getAttribute("aria-label"),
@@ -511,13 +513,12 @@ describe("T117-T119 V2 dot plot, table alternative and cards", () => {
             ruleX: rules.map((l) => l.getAttribute("x1")).join(","),
             radii: [...new Set(dots.map((d) => d.getAttribute("r")))].sort(),
             labels,
-            orientation: block.querySelector("#peer-orientation")?.innerText ?? "",
-            direction: block.querySelector("#peer-direction")?.innerText ?? "",
-            figureFirst: block.querySelector("#peer-figure").compareDocumentPosition(document.querySelector("#peer-table")) & Node.DOCUMENT_POSITION_FOLLOWING,
+            orientation: document.querySelector(".mm-orientation")?.innerText ?? "",
+            figureFirst: fig.compareDocumentPosition(document.querySelector("#indicator-table")) & Node.DOCUMENT_POSITION_FOLLOWING,
             body: document.body.innerText,
-            tableValues: [...document.querySelectorAll("#peer-table tbody tr")].map((r) => [r.querySelector("th").innerText.trim(), r.dataset.status, r.querySelectorAll("td")[0].innerText.replace(/\s+/g, " ").trim()]),
-            caption: document.querySelector("#peer-table caption")?.innerText ?? "",
-            noScope: [...document.querySelectorAll("#peer-table th")].filter((x) => !x.getAttribute("scope")).length
+            tableValues: [...document.querySelectorAll('#indicator-table tbody[data-group="with-value"] tr[data-entity]')].map((r) => [r.querySelector("th").innerText.trim(), r.dataset.state, r.querySelectorAll("td")[0].innerText.replace(/\s+/g, " ").trim()]),
+            caption: document.querySelector("#indicator-table caption")?.innerText ?? "",
+            noScope: [...document.querySelectorAll("#indicator-table th")].filter((x) => !x.getAttribute("scope")).length
           };
         });
       const a = await read();
@@ -527,7 +528,6 @@ describe("T117-T119 V2 dot plot, table alternative and cards", () => {
       assert.ok(a.radii.includes("8"), "dots are r = 8");
       assert.ok(!/median|quartile/i.test(a.body), "no median or quartile word on the page");
       assert.equal(a.orientation.includes("Higher percentile means a more favourable position by each indicator's stated direction."), true);
-      assert.match(a.direction, /^Direction of this indicator: .+\.$/);
       assert.ok(a.figureFirst, "the chart comes before the table alternative");
       assert.ok(a.caption.length > 0 && a.noScope === 0, "table caption and th scope (AC-UX-5)");
       // a stored value beside every drawn country label, taken from the table
@@ -537,46 +537,43 @@ describe("T117-T119 V2 dot plot, table alternative and cards", () => {
       // unranked rows stay in the table and are not drawn
       for (const [name] of a.tableValues.filter((r) => r[1] !== "ranked")) assert.ok(!a.labels.some((l) => l.startsWith(`${name}:`)), name);
       // the guide lines do not move with the group filter or the indicator
-      await page.check('#peer-group input[value="g7"]');
+      await page.check('#indicator-group input[value="g7"]');
       await page.waitForTimeout(300);
       const b = await read();
       assert.deepEqual([b.rules, b.ruleX], [a.rules, a.ruleX]);
-      const other = (await page.$$eval("#peer-indicator option", (o) => o.map((x) => x.value))).find((v, i) => i > 0);
-      if (other) {
-        await page.selectOption("#peer-indicator", other);
-        await page.waitForTimeout(300);
-        const c = await page.evaluate(() => [...document.querySelectorAll("#peer-figure [aria-label=rule] line")].map((l) => l.getAttribute("x1")).join(","));
-        if (await page.locator("#peer-figure").count()) assert.equal(c, a.ruleX);
-      }
+      await page.selectOption("#indicator-sort", "value");
+      await page.waitForTimeout(300);
+      const c = await page.evaluate(() => [...document.querySelectorAll("#indicator-dot-figure [aria-label=rule] line")].map((l) => l.getAttribute("x1")).join(","));
+      assert.equal(c, a.ruleX, "the guide lines do not move with the sort either");
     });
   });
 
   test("reference offset column shows the stored ref_offset_days; the narrow layout is cards with the same cells in the same order", async (t) => {
-    await withPage(t, "/peers/labour", PEERS, async ({page}) => {
-      const indicator = await page.inputValue("#peer-indicator");
+    await withPage(t, "/indicator/M09", PEERS, async ({page}) => {
+      const indicator = "M09";
       const stored = new Map(builtJson("labour").entities.map((e) => [e.entity_id, e.indicators.find((i) => i.indicator_id === indicator)?.ref_offset_days ?? null]));
       const snap = () =>
         page.evaluate(() =>
-          [...document.querySelectorAll("#peer-table tbody tr")].map((r) => ({
+          [...document.querySelectorAll('#indicator-table tbody[data-group="with-value"] tr[data-entity]')].map((r) => ({
             id: r.dataset.entity,
             cells: [...r.children].map((c) => c.innerText.replace(/\s+/g, " ").trim()),
             offset: r.querySelectorAll("td")[2].innerText.trim()
           }))
         );
       await setViewport(page, 1280);
-      const header = await page.$$eval("#peer-table thead th", (h) => h.map((x) => x.innerText.trim()));
-      assert.ok(header.includes("Reference offset (days)"));
+      const header = await page.$$eval("#indicator-table thead th", (h) => h.map((x) => x.innerText.trim()));
+      assert.ok(header.includes("Offset (days)"));
       const wide = await snap();
-      for (const r of wide) assert.equal(r.offset, stored.get(r.id) === null || stored.get(r.id) === undefined ? "n/a" : String(stored.get(r.id)), r.id);
-      const displayWide = await page.$eval("#peer-table tbody tr", (r) => getComputedStyle(r).display);
+      for (const r of wide) assert.equal(r.offset, stored.get(r.id) === null || stored.get(r.id) === undefined ? "" : String(stored.get(r.id)), r.id);
+      const displayWide = await page.$eval(ROWS, (r) => getComputedStyle(r).display);
       assert.equal(displayWide, "table-row");
       for (const w of [320, 390]) {
         await setViewport(page, w);
         await page.waitForTimeout(100);
         const card = await page.evaluate(() => {
-          const tr = document.querySelector("#peer-table tbody tr");
+          const tr = document.querySelector('#indicator-table tbody[data-group="with-value"] tr[data-entity]');
           const td = tr.querySelector("td");
-          const head = document.querySelector("#peer-table thead");
+          const head = document.querySelector("#indicator-table thead");
           const label = getComputedStyle(td, "::before").content;
           return {tr: getComputedStyle(tr).display, td: getComputedStyle(td).display, label, headClipped: head.getBoundingClientRect().width <= 1, roles: tr.getAttribute("role"), cardWidth: tr.getBoundingClientRect().width, vw: innerWidth};
         });
@@ -599,7 +596,7 @@ describe("T117-T119 V2 dot plot, table alternative and cards", () => {
 // the series file in the browser, so more than 5 countries can be selected without any other change to the site.
 const WIDE_M09 = readFileSync(join(here, "..", "fixtures", "explorer-m09-7countries.parquet"));
 const useWide = (page) => page.route(/\/_file\/data\/series\/M09\.[0-9a-f]+\.parquet/, (r) => r.fulfill({status: 200, contentType: "application/octet-stream", body: WIDE_M09}));
-const withWide = (t, fn, opts = {}) => withPage(t, "/explorer", "#explorer-figure svg", fn, {before: async (page) => { await useWide(page); await opts.before?.(page); }});
+const withWide = (t, fn, opts = {}) => withPage(t, "/explorer#i=M09&c=FRA,DEU,IND,ITA,JPN", "#explorer-figure svg", fn, {before: async (page) => { await useWide(page); await opts.before?.(page); }});
 
 describe("T125: V3 explorer chart (AC-UX-3 to 6, 12)", () => {
   test("figure label, hollow and ring marks, end labels, no legend, gap kept (AC-UX-5)", async (t) => {
@@ -607,10 +604,10 @@ describe("T125: V3 explorer chart (AC-UX-3 to 6, 12)", () => {
       const fig = await page.$eval("#explorer-figure", (f) => ({role: f.getAttribute("role"), label: f.getAttribute("aria-label")}));
       assert.equal(fig.role, "img");
       for (const name of ["France", "Germany", "India", "Italy", "Japan"]) assert.ok(fig.label.includes(`${name}, 2023-01-31 to 2025-12-31, latest stored value`), name);
-      assert.ok(fig.label.includes("Germany, 2023-01-31 to 2025-12-31, latest stored value 2.3 % of labour force"));
-      const ends = await page.$$eval("#explorer-figure svg text", (x) => x.map((n) => n.textContent).filter((s) => /^[A-Za-z ]+: [\d.]+ % of labour force$/.test(s)));
+      assert.ok(fig.label.includes("Germany, 2023-01-31 to 2025-12-31, latest stored value 2.3 e % of labour force"));
+      const ends = await page.$$eval("#explorer-figure svg text", (x) => x.map((n) => n.textContent).filter((s) => /^[A-Za-z ]+: [\d.]+( e)? % of labour force$/.test(s)));
       assert.equal(ends.length, 5, "one end label per series");
-      assert.ok(ends.includes("Germany: 2.3 % of labour force"));
+      assert.ok(ends.includes("Germany: 2.3 e % of labour force"));
       assert.equal(await page.locator("#explorer-figure [aria-label*='legend' i], #explorer-figure form, #explorer-figure .plot-swatches").count(), 0, "no legend");
       // hollow marker for the estimate (Germany, last month): a marker whose fill is the page colour and stroke a series colour
       const hollow = await page.$$eval("#explorer-figure svg g[aria-label='dot']", (gs) => {
@@ -633,15 +630,17 @@ describe("T125: V3 explorer chart (AC-UX-3 to 6, 12)", () => {
       assert.equal((await summary.textContent()).trim(), "View as table");
       assert.equal(await page.$eval("#explorer-view-table", (d) => d.open), false);
       await summary.click();
+      await page.waitForSelector("#explorer-view-table-table tbody tr", {state: "attached"}); // the rows are built on the first open (toggle event)
       const rows = await page.$$eval("#explorer-view-table-table tbody tr", (trs) => trs.map((r) => [r.dataset.entity, r.children[1].textContent, r.children[2].textContent, r.children[3].textContent]));
-      assert.equal(rows.length, 5 * 24, "five series, latest 24 periods each");
+      assert.ok(rows.length > 5 * 24, "five series, every plotted period of each (spec 5.6)");
       const deu = rows.filter((r) => r[0] === "DEU");
       assert.equal(deu.at(-1)[1], "2025-12-31");
-      assert.equal(deu.at(-1)[2], "2.3");
+      assert.equal(deu.at(-1)[2], "2.3 e");
       assert.equal(deu.at(-1)[3], "EST");
-      assert.equal(deu[0][1], "2024-01-31");
+      assert.ok(deu.length > 24 && deu[0][1] < "2024-01-31", "the table holds every plotted period, not only the latest 24");
+      assert.deepEqual(deu.map((r) => r[1]), [...deu.map((r) => r[1])].sort(), "date order");
       // the same latest values as the end labels of the chart
-      const ends = await page.$$eval("#explorer-figure svg text", (x) => x.map((n) => n.textContent).filter((s) => /^[A-Za-z ]+: [\d.]+ % of labour force$/.test(s)));
+      const ends = await page.$$eval("#explorer-figure svg text", (x) => x.map((n) => n.textContent).filter((s) => /^[A-Za-z ]+: [\d.]+( e)? % of labour force$/.test(s)));
       for (const r of rows.filter((x) => x[1] === "2025-12-31")) assert.ok(ends.some((e) => e.endsWith(`: ${r[2]} % of labour force`)), `${r[0]} ${r[2]}`);
       const href = await page.getAttribute("#explorer-view-table-download", "href");
       assert.match(href, /\/_file\/data\/series\/M09\.[0-9a-f]+\.parquet$/);
@@ -657,7 +656,7 @@ describe("T125: V3 explorer chart (AC-UX-3 to 6, 12)", () => {
       assert.ok((await page.textContent("#y-mode")).includes("More than 5 countries are selected, so each country has its own chart."));
       assert.ok((await page.textContent("#y-mode")).includes("All charts share one y-axis scale"));
       assert.equal(await page.$eval("#y-mode", (e) => e.dataset.free), "false");
-      const titles = await page.$$eval("#explorer-figure svg text", (x) => x.map((n) => n.textContent).filter((s) => /: [\d.]+ % of labour force$/.test(s)));
+      const titles = await page.$$eval("#explorer-figure svg text", (x) => x.map((n) => n.textContent).filter((s) => /: [\d.]+( e)? % of labour force$/.test(s)));
       assert.equal(titles.length, 7, "every facet has a title");
       await page.check("#explorer-free-y");
       await page.waitForFunction(() => document.querySelectorAll("#explorer-figure svg").length === 7);
@@ -683,7 +682,7 @@ describe("T125: V3 explorer chart (AC-UX-3 to 6, 12)", () => {
       await page.waitForFunction(() => document.querySelectorAll("#explorer-figure svg g[aria-label='line'] path").length === 2);
       const strokes = await page.$$eval("#explorer-figure svg g[aria-label='line']", (gs) => gs.map((g) => g.getAttribute("stroke")));
       const tok = await computedTokens(page, ["--mm-series-1", "--mm-series-2"]);
-      const first = await page.$$eval("#explorer-figure svg text", (x) => x.map((n) => n.textContent).filter((s) => /^[A-Za-z ]+: [\d.]+ % of labour force$/.test(s)));
+      const first = await page.$$eval("#explorer-figure svg text", (x) => x.map((n) => n.textContent).filter((s) => /^[A-Za-z ]+: [\d.]+( e)? % of labour force$/.test(s)));
       assert.equal(first.length, 2);
       assert.ok(strokes.includes(tok["--mm-series-1"]) && strokes.includes(tok["--mm-series-2"]), `strokes ${strokes} tokens ${JSON.stringify(tok)}`);
     });
@@ -737,11 +736,11 @@ describe("T125: V3 explorer chart (AC-UX-3 to 6, 12)", () => {
     await withWide(t, async ({page}) => {
       await page.check("#explorer-rebase");
       await page.waitForFunction(() => /rebased to 100 at/.test(document.querySelector("#explorer-title")?.textContent ?? ""));
-      assert.match(await page.textContent("#explorer-title"), /^Unemployment rate: Level, rebased to 100 at \d{4}-\d{2}-\d{2}$/);
+      assert.match(await page.textContent("#explorer-title"), /^Unemployment rate: Level, rebased to 100 at \d{4}-\d{2}-\d{2} \(index, \d{4}-\d{2}-\d{2} = 100\)$/);
       assert.ok((await page.textContent("#rebase-note")).startsWith("Rebasing is a display scaling only"));
       assert.ok((await page.textContent("#chart-explain")).includes("The grey lines mark the index value 100 and the base period."));
-      assert.ok((await page.$$eval("#explorer-figure svg text", (x) => x.map((n) => n.textContent))).some((s) => /^Germany: [\d.]+ index$/.test(s)));
-      assert.match(await page.$eval("#explorer-figure svg", (s) => s.textContent), /Index \(base period = 100\)/);
+      assert.ok((await page.$$eval("#explorer-figure svg text", (x) => x.map((n) => n.textContent))).some((s) => /^Germany: [\d.]+( e)? index, \d{4}-\d{2}-\d{2} = 100$/.test(s)));
+      assert.match(await page.$eval("#explorer-figure svg", (s) => s.textContent), /index, \d{4}-\d{2}-\d{2} = 100/);
     });
   });
 
@@ -755,11 +754,10 @@ describe("T125: V3 explorer chart (AC-UX-3 to 6, 12)", () => {
   });
 });
 
-// ---- T129: V4 revisions and V5 status (AC-UX-2 feed and class marks, 3, 4, 5, 6, 8, 12) -----------------------------------
+// ---- T129: V4 revisions (AC-UX-2 class marks, 3, 4, 5, 6, 8, 12) -----------------------------------
 const REVISION_FILE = /\/_file\/data\/revisions\/[A-Za-z0-9]+\.[0-9a-f]+\.parquet/;
-const STATUS_ROWS = "#group-table tbody tr";
 const STEP = "#step-figure svg";
-const SCREEN_RULES = [["V4 revisions", "/revisions", "#recent-revisions tbody tr"], ["V5 status", "/status", STATUS_ROWS]];
+const SCREEN_RULES = [["V4 revisions", "/revisions", "#recent-revisions tbody tr"]];
 
 // Choose M09, then a series and a reference period; wait until the step figure (or its absence note) is drawn.
 async function chooseStep(page, country, period) {
@@ -793,46 +791,7 @@ async function textProblems(page) {
   return bad;
 }
 
-describe("T129 AC-UX-2: V5 feed chips and V4 class marks are told apart without colour", () => {
-  test("V5: one chip per group = glyph (aria-hidden) + the state word + a border pattern; signatures are unique; grayscale images differ", async (t) => {
-    await withPage(t, "/status", STATUS_ROWS, async ({page}) => {
-      await page.addStyleTag({content: "html { filter: grayscale(1); }"});
-      const rows = await page.$$eval(STATUS_ROWS, (trs) => trs.map((tr) => {
-        const chip = tr.querySelectorAll(".mm-feed");
-        const c = chip[0];
-        const svg = c?.querySelector("svg.mm-glyph");
-        return {state: tr.getAttribute("data-state"), chips: chip.length, feed: c?.getAttribute("data-feed"), sig: c?.getAttribute("data-signature"), word: c?.querySelector(".mm-feed-word")?.textContent.trim(), name: c?.getAttribute("aria-label") ?? null, glyphHidden: svg?.getAttribute("aria-hidden"), glyphUse: svg?.querySelector("use")?.getAttribute("href"), border: c ? getComputedStyle(c).borderTopStyle + " " + getComputedStyle(c).borderTopWidth : null, pattern: c ? [getComputedStyle(c).borderTopStyle, getComputedStyle(c).backgroundImage !== "none" ? "hatch" : "plain", getComputedStyle(c).fontWeight].join("/") : null, text: c?.textContent.trim().replace(/\s+/g, " ")};
-      }));
-      assert.ok(rows.length >= 4, "fixture has all four exported feed states");
-      const byFeed = new Map();
-      for (const r of rows) {
-        assert.equal(r.chips, 1, `${r.state}: one chip`);
-        assert.equal(r.feed, r.state, "chip state equals the row's stored state");
-        assert.equal(r.glyphHidden, "true", `${r.state}: glyph is aria-hidden`);
-        assert.match(r.glyphUse, /^#mm-fg-/);
-        assert.ok(r.word && r.word.length > 1, `${r.state}: a visible state word`);
-        assert.equal(r.text, r.word, `${r.state}: the chip's accessible text is its visible word only (the glyph adds no name)`);
-        assert.equal(r.name, null, "no aria-label that could differ from the visible word");
-        assert.match(r.border, /^(solid|dashed|dotted|double) 1px$|^(solid|dashed|dotted|double) [2-9]px$/, `${r.state}: border ${r.border}`);
-        byFeed.set(r.feed, r);
-      }
-      for (const k of ["fresh", "late", "stale", "broken"]) assert.ok(byFeed.has(k), `fixture lacks feed state ${k}`);
-      const vals = (f) => [...byFeed.values()].map(f);
-      for (const [name, f] of [["signature", (r) => r.sig], ["word", (r) => r.word], ["glyph", (r) => r.glyphUse], ["border pattern (style, hatch, weight)", (r) => r.pattern]]) {
-        assert.equal(new Set(vals(f)).size, byFeed.size, `${name} is not unique per state: ${vals(f).join(", ")}`);
-      }
-      // the stored word is the one a screen reader gets; no state word appears twice on one row
-      const shots = new Map();
-      for (const k of byFeed.keys()) {
-        const el = page.locator(`${STATUS_ROWS.replace(" tbody tr", "")} .mm-feed[data-feed="${k}"]`).first();
-        await el.scrollIntoViewIfNeeded();
-        shots.set(k, createHash("sha256").update(await el.screenshot()).digest("hex"));
-      }
-      assert.equal(new Set(shots.values()).size, shots.size, "two feed states give the same chip image under grayscale");
-      await screenshot(page, "v5-status", "grayscale");
-    });
-  });
-
+describe("T129 AC-UX-2: V4 class marks are told apart without colour", () => {
   test("V4: re-estimation rows carry the class word plus a flag mark and a dashed edge; regular rows a solid edge and no flag; signs are written (true minus, plus) with an aria-hidden triangle", async (t) => {
     await withPage(t, "/revisions", "#recent-revisions tbody tr", async ({page}) => {
       const rows = await page.$$eval("#recent-revisions tbody tr", (trs) => trs.map((tr) => {
@@ -958,7 +917,7 @@ describe("T129 V4 step chart (AC-UX-5): a chosen period is drawn from the same v
   });
 });
 
-describe("T129: the V4 page with a step chart drawn, and the V5 page, in every checked state", () => {
+describe("T129: the V4 page with a step chart drawn in every checked state", () => {
   for (const scheme of SCHEMES) {
     test(`AC-UX-3: V4 with the step chart, ${scheme}: text contrast, and the line, ring and rule against the page colour at 3:1`, async (t) => {
       await withStep(t, "Germany", "2026-06-01", async ({page}) => {
@@ -1020,51 +979,17 @@ describe("T129: the V4 page with a step chart drawn, and the V5 page, in every c
     }, {before: installCls});
   });
 
-  for (const scheme of SCHEMES) {
-    test(`AC-UX-3: V5 status chips, ${scheme}: each chip's border and glyph reach 3:1 on the chip surface, its word 4.5:1`, async (t) => {
-      await withPage(t, "/status", STATUS_ROWS, async ({page}) => {
-        await setTheme(page, scheme);
-        const chips = await page.$$eval(".mm-feed", (cs) => cs.map((c) => { const s = getComputedStyle(c); return {feed: c.dataset.feed, border: s.borderTopColor, glyph: getComputedStyle(c.querySelector("svg")).color, bg: s.backgroundColor, word: getComputedStyle(c.querySelector(".mm-feed-word")).color}; }));
-        assert.ok(chips.length >= 4);
-        const bad = [];
-        for (const c of chips) {
-          const bg = cssToHex(c.bg);
-          for (const [what, col, need] of [["border", c.border, 3], ["glyph", c.glyph, 3], ["word", c.word, 4.5]]) {
-            const fg = cssToHex(col);
-            if (!fg || !bg) { bad.push(`${c.feed} ${what}: unresolved ${col} on ${c.bg}`); continue; }
-            const r = contrastRatio(fg.hex, bg.hex);
-            if (r < need) bad.push(`${c.feed} ${what} ${fg.hex} on ${bg.hex} = ${r.toFixed(2)} < ${need} (${scheme})`);
-          }
-        }
-        assert.deepEqual(bad, []);
-        assert.deepEqual(await textProblems(page), []);
-      });
-    });
-  }
-
-  test("AC-UX-6: V5 chips never wrap or clip at 320 px; the group table scrolls inside its own container", async (t) => {
-    await withPage(t, "/status", STATUS_ROWS, async ({page}) => {
-      await setViewport(page, 320);
-      await page.waitForTimeout(150);
-      const o = await horizontalOverflow(page);
-      assert.ok(o.scrollW <= o.vw, `page scrolls horizontally: ${o.scrollW} > ${o.vw} ${o.offenders.join("; ")}`);
-      const chipBoxes = await page.$$eval(".mm-feed", (cs) => cs.map((c) => { const r = c.getBoundingClientRect(); const cell = c.closest("td").getBoundingClientRect(); return {h: r.height, w: r.width, cellW: cell.width, inCell: r.right <= cell.right + 1}; }));
-      assert.ok(chipBoxes.every((b) => b.inCell), "a chip overflows its cell");
-      assert.ok(chipBoxes.every((b) => b.h < 40), `a chip wrapped to several lines: ${chipBoxes.map((b) => b.h).join(",")}`);
-    });
-  });
 });
 
-describe("T129 AC-UX-8: the error blocks of V4 and V5 in the UX checks", () => {
+describe("T129 AC-UX-8: the error blocks of V4 in the UX checks", () => {
   const notFound = (route) => route.fulfill({status: 404, contentType: "text/plain", body: "missing"});
   for (const scheme of SCHEMES) {
-    test(`V4 revision-file failure and V5 status failure: alert role, readable in ${scheme}, a border as the non-colour cue, no overflow at 320 px, no focus trap`, async (t) => {
+    test(`V4 revision-file failure: alert role, readable in ${scheme}, a border as the non-colour cue, no overflow at 320 px, no focus trap`, async (t) => {
       if (!browser) return t.skip(reason);
       const cases = [
         ["/revisions", [[REVISION_FILE, notFound]], "#recent-revisions tbody tr", "#vintage-error", async (page) => {
           for (let i = 0; i < 20 && (await page.locator("#vintage-error").count()) === 0; i += 1) { await page.selectOption("#vintage-indicator", "M09"); await page.waitForTimeout(250); }
         }],
-        ["/status", [[/\/_file\/data\/status\.[0-9a-f]+\.json$/, (r) => r.fulfill({status: 200, contentType: "application/json", body: JSON.stringify({schema_version: "1.0"})})]], "#mm-error-status", "#mm-error-status", async () => {}]
       ];
       for (const [path, routes, ready, alertSel, act] of cases) {
         const {page, context, log} = await openPage(browser, site.origin, {fixedTime: NOW});
@@ -1141,7 +1066,7 @@ describe("T130 AC-UX-9: print stylesheet", () => {
         assert.equal(r.adjust, "exact");
         assert.deepEqual(r.visibleControls, [], "controls hidden");
         assert.equal(r.closedHidden, 0, `closed <details> content not visible in print (${r.closedCount} closed)`);
-        assert.match(r.asof, /Data as of .*build/, "freshness line");
+        assert.match(r.asof, /Data cut-off: .*build/, "freshness line");
         if (r.caveatPresent) assert.equal(r.caveatVisible, true, "caveat");
         if (r.sources !== null) assert.equal(r.sources, true, "Sources");
         assert.equal(r.url, r.href, "page URL");
@@ -1214,7 +1139,6 @@ describe("T131 AC-UX-9: reduced motion and forced colours", () => {
   const HM_SEL = "#domain-heatmap td[data-state] .mm-cell";
   const cases = [
     ["V1 heatmap states", "/domain/labour", HM, HM_SEL],
-    ["V5 feed chips", "/status", STATUS_ROWS, ".mm-feed"],
     ["V4 class marks", "/revisions", "#recent-revisions tbody tr", "#recent-revisions tbody tr td:nth-child(9)"]
   ];
   for (const [name, path, ready, sel] of cases) {
@@ -1247,7 +1171,6 @@ describe("T131 AC-UX-9: reduced motion and forced colours", () => {
         });
       }
       if (name.startsWith("V1")) assert.ok(rankedCells > 0, "no ranked heatmap cell was checked for its number");
-      if (name.startsWith("V5")) for (const k of ["fresh", "late", "stale", "broken"]) assert.ok(seen.has(k), `feed state ${k} not covered`);
       if (name.startsWith("V1")) for (const k of ["ranked", "stale", "lagging", "unaligned", "descriptive", "na", "aggregate", "low_coverage", "inherited", "plain"]) assert.ok(seen.has(k), `heatmap state ${k} not covered`);
       if (name.startsWith("V4")) assert.ok(seen.has("reestimation") && seen.has("regular"), `V4 classes: ${[...seen]}`);
     });
@@ -1307,7 +1230,7 @@ describe("T131 AC-UX-9: reduced motion and forced colours", () => {
 describe("T132 AC-UX-6: responsive matrix and the WCAG 1.4.12 text-spacing override", () => {
   // WCAG 1.4.12 values: line height 1.5, paragraph spacing 2x font size, letter spacing 0.12em, word spacing 0.16em.
   const SPACING_CSS = "*{line-height:1.5 !important;letter-spacing:0.12em !important;word-spacing:0.16em !important}p{margin-bottom:2em !important}";
-  const EXTRA = [["V1 domain agri", "/domain/agri", "#domain-heatmap tbody tr"], ["V2 peers fin", "/peers/fin", "#peer-table tbody tr"]];
+  const EXTRA = [["V1 domain agri", "/domain/agri", "#domain-heatmap tbody tr"], ["PG-INDICATOR M18", "/indicator/M18", "#indicator-table tbody tr"]];
   const MATRIX = [...PAGES, ...EXTRA];
 
   // Browser side: text that is cut off by a clipping box (overflow hidden/clip, ellipsis, SVG viewport) and interactive controls

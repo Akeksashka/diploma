@@ -4,7 +4,8 @@ import {test} from "node:test";
 import {listOf} from "../src/lib/meta.js";
 import {ALL_GROUP, CAVEAT, FILTER_NOTE, NON_EURO_MARK, PERCENTILE_COLUMN_LABEL, filterRows, focusFromHash, focusHash, groupMembers, panelState, peerView, sortRows, spreadText} from "../src/lib/peers.js";
 import {GUIDES, peerChart, peersBlock, radioGroup, selectBox} from "../src/lib/peers-view.js";
-import {DOMAIN_ID_RE, peersPageSource} from "../scripts/lib.mjs";
+import * as pageLib from "../scripts/lib.mjs";
+import {DOMAIN_ID_RE, domainPageSource} from "../scripts/lib.mjs";
 
 const LABEL = "mean percentile of the domain's indicators";
 const ind = (id, o = {}) => ({indicator_id: id, value: 3.1, rank_mode: "monotone_good", is_stale: false, alignment: "aligned", inherited: false, published: true, publish_scope: "ranked", percentile: 0.9, ref_period_end: "2026-09-30", ...o});
@@ -177,13 +178,15 @@ test("selectBox renders ids and escaped labels", () => {
   assert.ok(out.includes('<select id="peer-group">') && out.includes("A&lt;b&gt;"));
 });
 
-test("peers page source is built from a validated id and imports no Inputs", () => {
-  const src = peersPageSource("labour");
-  assert.ok(src.includes('FileAttachment("../data/scorecard/labour.json")') && src.includes("groups.json"));
+test("R12: the peers page generator is gone; the domain page source is built from a validated id, imports no Inputs and links no peers/ page", () => {
+  assert.equal(pageLib.peersPageSource, undefined);
+  const src = domainPageSource("labour");
+  assert.ok(src.includes('FileAttachment("../data/scorecard/labour.json")'));
   assert.ok(!src.includes("Inputs") && !src.includes("npm:"));
+  assert.ok(!src.includes("peers/"));
   for (const bad of ["../x", "a/b", "A", "", 'a"b']) {
     assert.ok(!DOMAIN_ID_RE.test(bad));
-    assert.throws(() => peersPageSource(bad), /unsafe domain_id/);
+    assert.throws(() => domainPageSource(bad), /unsafe domain_id/);
   }
 });
 
@@ -287,7 +290,7 @@ test("T118: radioGroup is a fieldset with a legend, one checked radio, and a val
 
 test("T118: no cookie or storage in the peers modules and page", () => {
   const files = ["../src/lib/peers.js", "../src/lib/peers-view.js"].map((f) => readFileSync(new URL(f, import.meta.url), "utf8"));
-  files.push(peersPageSource("labour"));
+  files.push(domainPageSource("labour"), readFileSync(new URL("../src/lib/indicator-view.js", import.meta.url), "utf8"));
   for (const t of files) assert.ok(!/localStorage|sessionStorage|document\.cookie/.test(t));
-  assert.ok(peersPageSource("labour").includes("radioGroup(html"));
+  assert.ok(files.at(-1).includes("radioGroup(html"));
 });

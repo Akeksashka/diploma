@@ -1,0 +1,8 @@
+# Sidecar of a SYNTHETIC recorded-bytes fixture (T53): hand-built to the JSON-stat 2.0 structure;
+# not real Eurostat data; dimension order, codes and URL are [UNVERIFIED] until an operator capture (OP-04).
+synthetic: true
+source_url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/sts_trtu_m?freq=M&indic_bt=VOL_SLS&nace_r2=G47&s_adj=SCA&unit=I21&geo=DE&geo=EL&geo=FR&sinceTimePeriod=1991-01&format=JSON [UNVERIFIED]
+fetched_on: 2026-11-05
+sha256: 1991226cdb45d7782318b13aa387414b99679ed2f5b381640b60903f78636aff
+parser_id: jsonstat_v1@1
+licence: Synthetic test data, project-authored (no third-party content).

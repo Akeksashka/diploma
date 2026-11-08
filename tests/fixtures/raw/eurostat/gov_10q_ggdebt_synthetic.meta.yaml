@@ -1,0 +1,8 @@
+# Sidecar of a SYNTHETIC recorded-bytes fixture (T53): hand-built to the JSON-stat 2.0 structure;
+# not real Eurostat data; dimension order freq,na_item,sector,unit,geo matches the live capture of probe 2026-11-06.
+synthetic: true
+source_url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?freq=Q&na_item=GD&sector=S13&unit=PC_GDP&geo=DE&geo=EL&sinceTimePeriod=1991-Q1&format=JSON [UNVERIFIED]
+fetched_on: 2026-11-05
+sha256: ad308a8ae8949ee28556fc9000445be539ba516812ea07d58b933d95dae94cf7
+parser_id: jsonstat_v1@1
+licence: Synthetic test data, project-authored (no third-party content).

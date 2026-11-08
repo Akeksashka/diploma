@@ -3,6 +3,11 @@ import {createHash} from "node:crypto";
 import {readdirSync, readFileSync} from "node:fs";
 import {join, posix, relative, sep} from "node:path";
 import {gzipSync} from "node:zlib";
+import {countryHeader} from "../src/lib/country-model.js";
+import {firstDomainId, indicatorHeader} from "../src/lib/indicator-model.js";
+import {CAVEAT} from "../src/lib/copy.js";
+import {DOMAINS_TITLE, domainsListHtml} from "../src/lib/domains-list.js";
+import {homeListsHtml} from "../src/lib/home-lists.js";
 
 export const LANDING_LIMIT_BYTES = 1_500_000; // AC-DASH-2: 1.5 MB (MB = 1,000,000 bytes) gzipped
 
@@ -197,7 +202,7 @@ const boot = await loadAll([
 setBusy(busy, false);
 \`\`\`
 
-<p><a href="../">All domains</a> | <a href="../peers/${domainId}">Compare countries (peer groups)</a></p>
+<p><a href="../domains">All domains</a></p>
 
 \`\`\`js
 display(pageHead(html, boot, "scorecard"));
@@ -205,73 +210,6 @@ if (boot.ok) {
   const dv = boot.derived.dv;
   display(domainBlock(html, dv));
   display(attributionBlock(html, boot.data.meta.seriesMeta, dv.indicatorIds));
-}
-\`\`\`
-`;
-}
-
-// V2 peer comparison page (T90), one per domain like the V1 page. The controls are plain select
-// elements read with Generators.input (no Inputs import, so no new jsDelivr module).
-export function peersPageSource(domainId, name = null) {
-  if (!DOMAIN_ID_RE.test(domainId)) throw new Error(`unsafe domain_id: ${JSON.stringify(domainId)}`);
-  return `---
-title: Peer comparison
----
-
-${pageH1("Peer comparison", name)}
-
-\`\`\`js
-import * as Plot from "@observablehq/plot";
-import {parseManifest} from "../lib/manifest.js";
-import {listOf} from "../lib/meta.js";
-import {pageHead, attributionBlock} from "../lib/shell.js";
-import {focusFromHash, peerView} from "../lib/peers.js";
-import {peersBlock, radioGroup, selectBox} from "../lib/peers-view.js";
-import {DRAFT_REGIONS as R} from "../lib/copy.js";
-import {busyBlock, loadAll, setBusy} from "../lib/state-blocks.js";
-\`\`\`
-
-\`\`\`js
-const busy = busyBlock(html, R.loadingData);
-display(busy);
-\`\`\`
-
-\`\`\`js
-// A failed file never throws into the page: loadAll returns one failed region per file (T105).
-const boot = await loadAll([
-  {key: "manifest", region: R.manifest, load: () => FileAttachment("../data/manifest.json").json(), parse: parseManifest},
-  {key: "meta", region: R.meta, load: async () => ({series: await FileAttachment("../data/meta/series.json").json(), entities: await FileAttachment("../data/meta/entities.json").json(), indicators: await FileAttachment("../data/meta/indicators.json").json(), groups: await FileAttachment("../data/meta/groups.json").json()}),
-    parse: (m) => ({seriesMeta: listOf(m.series, "series"), entities: listOf(m.entities, "entities"), indicators: listOf(m.indicators, "indicators"), groups: listOf(m.groups, "groups")})},
-  {key: "scorecard", region: R.scorecard, load: () => FileAttachment("../data/scorecard/${domainId}.json").json()}
-], (d) => ({pv: peerView(d.scorecard, {entities: d.meta.entities, indicators: d.meta.indicators, groups: d.meta.groups, knownCutoff: d.manifest.known_cutoff})}), R.scorecard);
-setBusy(busy, false);
-const pv = boot.derived?.pv ?? null;
-const indicatorBox = pv ? selectBox(html, {id: "peer-indicator", label: "Indicator", options: pv.indicators.map((i) => ({id: i.indicatorId, label: i.name}))}) : null;
-const groupBox = pv ? radioGroup(html, {id: "peer-group", legend: "Peer group (filter)", options: pv.groupOptions}) : null;
-const sortBox = pv ? selectBox(html, {id: "peer-sort", label: "Sort by", options: pv.sortOptions}) : null;
-const pIndicator = pv ? Generators.input(indicatorBox.querySelector("select")) : null;
-const pGroup = pv ? Generators.input(groupBox) : null;
-const pSort = pv ? Generators.input(sortBox.querySelector("select")) : null;
-// Country focus lives only in the address (#c=<id>); an unknown or malformed hash is ignored (T118).
-const pFocus = pv ? Generators.observe((notify) => {
-  const read = () => notify(focusFromHash(location.hash, pv.entityIds));
-  addEventListener("hashchange", read);
-  read();
-  return () => removeEventListener("hashchange", read);
-}) : null;
-\`\`\`
-
-<p><a href="../domain/${domainId}">Back to the domain scorecard</a></p>
-
-\`\`\`js
-display(pageHead(html, boot, "scorecard"));
-if (pv) display(html\`<div class="mm-peer-controls">\${indicatorBox}\${groupBox}\${sortBox}</div>\`);
-\`\`\`
-
-\`\`\`js
-if (pv) {
-  display(peersBlock(html, Plot, pv, {indicator: pIndicator, group: pGroup, sort: pSort, focus: pFocus}));
-  display(attributionBlock(html, boot.data.meta.seriesMeta, pv.indicators.map((i) => i.indicatorId)));
 }
 \`\`\`
 `;
@@ -307,7 +245,7 @@ import * as Plot from "@observablehq/plot";
 import {parseManifest} from "./lib/manifest.js";
 import {listOf} from "./lib/meta.js";
 import {pageHead, attributionBlock} from "./lib/shell.js";
-import {explorerContext, indicatorChoices, loadSeries, buildModel} from "./lib/explorer.js";
+import {explorerContext, indicatorGroups, initialSelection, loadSeries, buildModel, replaceHash, selectionHash} from "./lib/explorer.js";
 import {selectBox, explorerControls, explorerLayout, explorerBlock} from "./lib/explorer-view.js";
 import {DRAFT_REGIONS as R} from "./lib/copy.js";
 import {busyBlock, loadAll, setBusy} from "./lib/state-blocks.js";
@@ -328,13 +266,32 @@ ${attachments}
 // A failed file never throws into the page: loadAll returns one failed region per file (T105).
 const boot = await loadAll([
   {key: "manifest", region: R.manifest, load: () => FileAttachment("data/manifest.json").json(), parse: parseManifest},
-  {key: "meta", region: R.meta, load: async () => ({series: await FileAttachment("data/meta/series.json").json(), entities: await FileAttachment("data/meta/entities.json").json(), indicators: await FileAttachment("data/meta/indicators.json").json(), groups: await FileAttachment("data/meta/groups.json").json()}),
-    parse: (m) => ({seriesMeta: listOf(m.series, "series"), entities: listOf(m.entities, "entities"), indicators: listOf(m.indicators, "indicators"), groups: listOf(m.groups, "groups")})},
+  {key: "meta", region: R.meta, load: async () => ({series: await FileAttachment("data/meta/series.json").json(), entities: await FileAttachment("data/meta/entities.json").json(), indicators: await FileAttachment("data/meta/indicators.json").json(), domains: await FileAttachment("data/meta/domains.json").json(), groups: await FileAttachment("data/meta/groups.json").json()}),
+    parse: (m) => ({seriesMeta: listOf(m.series, "series"), entities: listOf(m.entities, "entities"), indicators: listOf(m.indicators, "indicators"), domains: listOf(m.domains, "domains"), groups: listOf(m.groups, "groups")})},
   {key: "alerts", region: R.alerts, load: () => FileAttachment("data/alerts.json").json(), parse: (a) => listOf(a, "alerts")}
-], (d) => ({ctx: explorerContext({manifest: d.manifest, seriesMeta: d.meta.seriesMeta, entities: d.meta.entities, indicators: d.meta.indicators, alerts: d.alerts, groups: d.meta.groups, knownCutoff: d.manifest.known_cutoff})}), R.meta);
+], (d) => ({ctx: explorerContext({manifest: d.manifest, seriesMeta: d.meta.seriesMeta, entities: d.meta.entities, indicators: d.meta.indicators, alerts: d.alerts, groups: d.meta.groups, domains: d.meta.domains, knownCutoff: d.manifest.known_cutoff})}), R.meta);
 setBusy(busy, false);
 const ctx = boot.derived?.ctx ?? null;
-const indicatorBox = ctx ? selectBox(html, {id: "explorer-indicator", label: "Indicator", options: indicatorChoices(ctx)}) : null;
+\`\`\`
+
+\`\`\`js
+// The address, re-read on hashchange (also for a link on the page or Back/Forward). replaceState below fires no hashchange, and a
+// hash equal to the one last seen or written is not passed on, so an unchanged address re-renders nothing.
+const addr = {seen: location.hash};
+const pHash = Generators.observe((notify) => {
+  const read = () => { if (location.hash !== addr.seen) { addr.seen = location.hash; notify(addr.seen); } };
+  notify(addr.seen);
+  addEventListener("hashchange", read);
+  return () => removeEventListener("hashchange", read);
+});
+\`\`\`
+
+\`\`\`js
+// #i and #c set the first indicator and countries; unrecognised parts fall back to the default (first indicator of the first domain, no country).
+// \`sel\` follows the user's choices (countries are kept when the indicator changes); \`touched\` is set by the first user change.
+const initial = ctx ? initialSelection(ctx, pHash) : null;
+const sel = {entities: initial ? [...initial.entities] : [], touched: false, last: null};
+const indicatorBox = ctx ? selectBox(html, {id: "explorer-indicator", label: "Indicator", groups: indicatorGroups(ctx), value: initial.indicator ?? undefined}) : null;
 const pIndicator = ctx ? Generators.input(indicatorBox.querySelector("select")) : null;
 \`\`\`
 
@@ -354,7 +311,8 @@ try {
 } catch (e) {
   fileHref = null;
 }
-const box = ctx ? explorerControls(html, ctx, pIndicator, loaded.rows) : null;
+const fresh = ctx !== null && !sel.touched && pIndicator === initial.indicator;
+const box = ctx ? explorerControls(html, ctx, pIndicator, loaded.rows, {indicator: pIndicator, entities: sel.entities, note: fresh && initial.note}) : null;
 const pEntities = box ? Generators.input(box.entities) : null;
 const pTransform = box ? Generators.input(box.transform.querySelector("select")) : null;
 const pFrom = box ? Generators.input(box.from.querySelector("select")) : null;
@@ -380,6 +338,23 @@ if (layout) display(layout.el);
 if (box) {
   const model = buildModel(ctx, pIndicator, loaded.rows, {entities: pEntities, transform: pTransform, from: pFrom, to: pTo, rebase: pRebase, base: pBase});
   layout.main.replaceChildren(explorerBlock(html, Plot, model, loaded.error, {free: pFree, href: fileHref}), attributionBlock(html, boot.data.meta.seriesMeta, [pIndicator]));
+}
+\`\`\`
+
+\`\`\`js
+// Write the address after a user change of indicator or countries (replaceState, picker order). Nothing is written on load.
+if (box && layout) {
+  const now = {i: pIndicator, c: selectionHash(pIndicator, pEntities, box.order)};
+  if (sel.last === null) sel.last = now;
+  else if (now.i !== sel.last.i || now.c !== sel.last.c) {
+    const entitiesChanged = now.c !== selectionHash(pIndicator, box.start, box.order);
+    sel.last = now;
+    sel.touched = true;
+    sel.entities = [...pEntities];
+    document.getElementById("explorer-hash-note")?.remove();
+    if (entitiesChanged) document.getElementById("explorer-norows-note")?.remove();
+    if (replaceHash(location, history, now.c)) addr.seen = location.hash;
+  }
 }
 \`\`\`
 `;
@@ -539,5 +514,233 @@ if (hbox) {
   display(attributionBlock(html, boot.data.meta.seriesMeta, [...new Set([...rv.rows.map((r) => r.indicatorId), ...(pHistIndicator === NO_CHOICE ? [] : [pHistIndicator])])]));
 }
 \`\`\`
+`;
+}
+
+// Page ids of generated country and indicator pages (git-ignored like domain/*.md).
+export const PAGE_ID_RE = /^[A-Za-z][A-Za-z0-9_.-]{0,40}$/;
+
+// R6: the country page (PG-COUNTRY). Static part: breadcrumb, h1 = entity name, kind and group memberships (from the export at
+// build time). The scorecard FileAttachment paths must be literal, so one per domain id is written. R7 renders the controls and the domain sections (country-view.js).
+// `manifest` (optional): its series files get one lazy FileAttachment each, used only by "Show history" (R8); without it no
+// history button is offered. (Framework preloads the Parquet reader scripts for any page that names a .parquet FileAttachment,
+// in the page or in a module it imports, dynamically or not; the reader runs and the file is fetched only on activation.)
+export function countryPageSource(entity, groups, domainIds, manifest = null) {
+  if (!PAGE_ID_RE.test(entity.entity_id)) throw new Error(`unsafe country id: ${JSON.stringify(entity.entity_id)}`);
+  for (const d of domainIds) if (!DOMAIN_ID_RE.test(d)) throw new Error(`unsafe domain_id: ${JSON.stringify(d)}`);
+  const h = countryHeader(entity, groups);
+  const groupText = h.memberships.length ? h.memberships.map((m) => escHtml(m.label)).join(", ") : escHtml(h.noGroupsText);
+  // Spec section 3: every scorecard except `global` (it holds WLD only, which has no country page).
+  const scorecards = domainIds.filter((d) => d !== "global").map((d) => `${JSON.stringify(d)}: await FileAttachment("../data/scorecard/${d}.json").json()`).join(", ");
+  const attachments = manifest ? seriesPaths(manifest).map((s) => `${JSON.stringify(s.id)}: FileAttachment(${JSON.stringify(`../data/${s.path}`)})`).join(", ") : "";
+  return `---
+title: Country
+---
+
+<div role="group" aria-label="${escHtml(h.labels.crumb)}" class="mm-crumb"><ol><li><a href="../">${escHtml(h.labels.home)}</a></li><li><a href="../#countries">${escHtml(h.labels.countries)}</a></li><li aria-current="page">${escHtml(h.name)}</li></ol></div>
+
+<h1 data-entity="${escHtml(h.entityId)}">${escHtml(h.name)}</h1>
+
+<p class="mm-country-facts">${escHtml(h.labels.kind)}: ${escHtml(h.kind ?? "")}. ${escHtml(h.labels.groups)}: ${groupText}.</p>
+
+\`\`\`js
+import * as Plot from "@observablehq/plot";
+import {parseManifest} from "../lib/manifest.js";
+import {listOf} from "../lib/meta.js";
+import {pageHead, attributionBlock} from "../lib/shell.js";
+import {countryModel} from "../lib/country-model.js";
+import {countryBlock, switcherOptions} from "../lib/country-view.js";
+import {historySource} from "../lib/history.js";
+import {CAVEAT, DRAFT_REGIONS as R, ORIENTATION_NOTE} from "../lib/copy.js";
+import {busyBlock, loadAll, setBusy} from "../lib/state-blocks.js";
+\`\`\`
+
+\`\`\`js
+const busy = busyBlock(html, R.loadingData);
+display(busy);
+\`\`\`
+
+\`\`\`js
+// A failed file never throws into the page: loadAll returns one failed region per file (T105).
+const boot = await loadAll([
+  {key: "manifest", region: R.manifest, load: () => FileAttachment("../data/manifest.json").json(), parse: parseManifest},
+  {key: "meta", region: R.meta, load: async () => ({series: await FileAttachment("../data/meta/series.json").json(), entities: await FileAttachment("../data/meta/entities.json").json(), indicators: await FileAttachment("../data/meta/indicators.json").json(), domains: await FileAttachment("../data/meta/domains.json").json(), groups: await FileAttachment("../data/meta/groups.json").json()}),
+    parse: (m) => ({seriesMeta: listOf(m.series, "series"), entities: listOf(m.entities, "entities"), indicators: listOf(m.indicators, "indicators"), domains: listOf(m.domains, "domains"), groups: listOf(m.groups, "groups")})},
+  {key: "scorecards", region: R.scorecard, load: async () => ({${scorecards}})}
+], (d) => {
+  const entity = d.meta.entities.find((e) => e.entity_id === ${JSON.stringify(entity.entity_id)});
+  if (!entity) throw new Error("entity not in meta/entities.json");
+  return {options: switcherOptions(d.meta.entities.filter((e) => e.is_global !== true)), model: countryModel({entity, domains: d.meta.domains, scorecards: d.scorecards, indicators: d.meta.indicators, series: d.meta.seriesMeta, groups: d.meta.groups})};
+}, R.scorecard);
+setBusy(busy, false);
+\`\`\`
+
+\`\`\`js
+// FileAttachment must be called in the page (not in an imported module); each one is lazy and nothing is fetched until "Show history".
+const seriesFiles = {${attachments}};
+\`\`\`
+
+\`\`\`js
+display(pageHead(html, boot, "scorecard"));
+if (boot.ok) {
+  const model = boot.derived.model;
+  // ADR-026 decision 3: caveat first, then the orientation note, and the latter only where a percentile is shown.
+  display(html\`<p class="mm-caveat">\${CAVEAT}</p>\${model.showsPercentiles ? html\`<p class="mm-orientation">\${ORIENTATION_NOTE}</p>\` : ""}\`);
+  display(countryBlock(html, Plot, model, boot.derived.options, historySource(boot.data.manifest, seriesFiles)));
+  display(attributionBlock(html, boot.data.meta.seriesMeta));
+}
+\`\`\`
+`;
+}
+
+// R9: the indicator page (PG-INDICATOR). Static part (build time, from meta): breadcrumb, h1 = indicator name, identifier,
+// domain links, unit, frequency set, direction label, notes[] verbatim, transform label. The scorecard FileAttachment is
+// literal and is only that of the FIRST domain of `domain_ids` (spec section 3, AC-RD-24). `transformId`: the stored
+// transform_id of the indicator's cells (storedTransformId), else the indicator's default_transform.
+// R10 renders controls, charts and the table (indicator-view.js). `manifest` (optional): when it lists `series/<id>.parquet|json` for
+// this indicator, a lazy FileAttachment resolves the address of the download link (nothing is fetched until the link is used).
+export function indicatorPageSource(indicator, domains, transformId = null, manifest = null) {
+  if (!PAGE_ID_RE.test(indicator.indicator_id)) throw new Error(`unsafe indicator id: ${JSON.stringify(indicator.indicator_id)}`);
+  const first = firstDomainId(indicator);
+  for (const d of indicator.domain_ids) if (!DOMAIN_ID_RE.test(d)) throw new Error(`unsafe domain_id: ${JSON.stringify(d)}`);
+  const h = indicatorHeader(indicator, domains, transformId);
+  const seriesFile = manifest ? seriesPaths(manifest).find((p) => p.id === indicator.indicator_id && p.path.endsWith(".parquet")) ?? null : null;
+  const f = h.labels.facts;
+  const facts = [
+    [f.id, escHtml(h.indicatorId)],
+    [f.domains, h.domains.map((d) => `<a href="../domain/${escHtml(d.id)}">${escHtml(d.name)}</a>`).join(", ")],
+    [f.unit, h.unit === null ? null : escHtml(h.unit)],
+    [f.frequency, h.frequencies.length ? escHtml(h.frequencies.join(", ")) : null],
+    [f.direction, h.directionText === null ? null : escHtml(h.directionText)],
+    [f.transform, h.transformLabel === null ? null : escHtml(h.transformLabel)]
+  ].filter(([, v]) => v !== null);
+  const notes = h.notes.length ? `<ul class="mm-indicator-notes" aria-label="${escHtml(f.notes)}">${h.notes.map((n) => `<li>${escHtml(n)}</li>`).join("")}</ul>` : "";
+  return `---
+title: Indicator
+---
+
+<div role="group" aria-label="${escHtml(h.labels.crumb)}" class="mm-crumb"><ol><li><a href="../">${escHtml(h.labels.home)}</a></li><li><a href="../#indicators">${escHtml(h.labels.indicators)}</a></li><li aria-current="page">${escHtml(h.name)}</li></ol></div>
+
+<h1 data-indicator="${escHtml(h.indicatorId)}">${escHtml(h.name)}</h1>
+
+<dl class="mm-indicator-facts">${facts.map(([k, v]) => `<div><dt>${escHtml(k)}</dt><dd>${v}</dd></div>`).join("")}</dl>
+
+${notes}
+
+\`\`\`js
+import * as Plot from "@observablehq/plot";
+import {parseManifest} from "../lib/manifest.js";
+import {listOf} from "../lib/meta.js";
+import {pageHead, attributionBlock} from "../lib/shell.js";
+import {indicatorModel} from "../lib/indicator-model.js";
+import {indicatorBlock, indicatorOptions} from "../lib/indicator-view.js";
+import {CAVEAT, DRAFT_REGIONS as R, ORIENTATION_NOTE} from "../lib/copy.js";
+import {busyBlock, loadAll, setBusy} from "../lib/state-blocks.js";
+\`\`\`
+
+\`\`\`js
+const busy = busyBlock(html, R.loadingData);
+display(busy);
+\`\`\`
+
+\`\`\`js
+// A failed file never throws into the page: loadAll returns one failed region per file (T105).
+const boot = await loadAll([
+  {key: "manifest", region: R.manifest, load: () => FileAttachment("../data/manifest.json").json(), parse: parseManifest},
+  {key: "meta", region: R.meta, load: async () => ({series: await FileAttachment("../data/meta/series.json").json(), entities: await FileAttachment("../data/meta/entities.json").json(), indicators: await FileAttachment("../data/meta/indicators.json").json(), domains: await FileAttachment("../data/meta/domains.json").json(), groups: await FileAttachment("../data/meta/groups.json").json()}),
+    parse: (m) => ({seriesMeta: listOf(m.series, "series"), entities: listOf(m.entities, "entities"), indicators: listOf(m.indicators, "indicators"), domains: listOf(m.domains, "domains"), groups: listOf(m.groups, "groups")})},
+  {key: "scorecards", region: R.scorecard, load: async () => ({${JSON.stringify(first)}: await FileAttachment("../data/scorecard/${first}.json").json()})}
+], (d) => {
+  const indicator = d.meta.indicators.find((i) => i.indicator_id === ${JSON.stringify(indicator.indicator_id)});
+  if (!indicator) throw new Error("indicator not in meta/indicators.json");
+  return {model: indicatorModel({indicator, domains: d.meta.domains, scorecards: d.scorecards, entities: d.meta.entities, series: d.meta.seriesMeta})};
+}, R.scorecard);
+setBusy(busy, false);
+\`\`\`
+
+\`\`\`js
+// FileAttachment must be called in the page; it is lazy and only its address is resolved, for the download link.
+const seriesFile = ${seriesFile ? `FileAttachment(${JSON.stringify(`../data/${seriesFile.path}`)})` : "null"};
+\`\`\`
+
+\`\`\`js
+display(pageHead(html, boot, "scorecard"));
+if (boot.ok) {
+  const model = boot.derived.model;
+  // ADR-026 decision 3: caveat first, then the orientation note, and the latter only where a percentile is shown.
+  display(html\`<p class="mm-caveat">\${CAVEAT}</p>\${model.showsPercentiles ? html\`<p class="mm-orientation">\${ORIENTATION_NOTE}</p>\` : ""}\`);
+  // Address of the download link; resolving it fetches nothing.
+  let downloadHref = null;
+  try {
+    downloadHref = (await seriesFile?.url()) ?? null;
+  } catch (e) {
+    downloadHref = null;
+  }
+  display(indicatorBlock(html, Plot, model, {options: indicatorOptions(boot.data.meta.indicators), groups: boot.data.meta.groups, knownCutoff: boot.data.manifest.known_cutoff, downloadHref}));
+  display(attributionBlock(html, boot.data.meta.seriesMeta, [${JSON.stringify(indicator.indicator_id)}]));
+}
+\`\`\`
+`;
+}
+
+// R18: the home page (PG-HOME). The country and indicator lists are static HTML built from meta/*.json, so they are in the built page
+// without JavaScript; the only script cells are the shell (freshness line, stale banner) and the filter enhancement. No heatmap, figure or status block.
+const HOME_TITLE = "Country scorecards";
+const SHELL_CELLS = (importPath, withFilters) => `<div class="mm-home-shell">
+
+\`\`\`js
+import {parseManifest} from "${importPath}manifest.js";
+import {pageHead} from "${importPath}shell.js";
+import {DRAFT_REGIONS as R} from "${importPath}copy.js";
+import {busyBlock, loadAll, setBusy} from "${importPath}state-blocks.js";${withFilters ? `
+import {mountFilters} from "${importPath}home-lists.js";` : ""}
+\`\`\`
+
+\`\`\`js
+const busy = busyBlock(html, R.loadingData);
+display(busy);
+\`\`\`
+
+\`\`\`js
+// A failed file never throws into the page: loadAll returns one failed region per file (T105). The lists below are static.
+const boot = await loadAll([
+  {key: "manifest", region: R.manifest, load: () => FileAttachment("data/manifest.json").json(), parse: parseManifest}
+]);
+setBusy(busy, false);
+display(pageHead(html, boot, "lists"));
+\`\`\`
+
+</div>`;
+
+export function homePageSource({entities, indicators, domains}) {
+  return `---
+title: ${HOME_TITLE}
+---
+
+<h1>${escHtml(HOME_TITLE)}</h1>
+
+${SHELL_CELLS("./lib/", true)}
+
+<p class="mm-caveat" id="caveat">${escHtml(CAVEAT)}</p>
+
+${homeListsHtml({entities, indicators, domains})}
+
+\`\`\`js
+mountFilters(document);
+\`\`\`
+`;
+}
+
+// R17: the domains page (PG-DOMAINS): static list of the domains with a link to each PG-DOMAIN page.
+export function domainsPageSource(domains) {
+  return `---
+title: ${DOMAINS_TITLE}
+---
+
+<h1>${escHtml(DOMAINS_TITLE)}</h1>
+
+${SHELL_CELLS("./lib/", false)}
+
+${domainsListHtml(domains)}
 `;
 }

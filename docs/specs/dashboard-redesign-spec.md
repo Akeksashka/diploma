@@ -1,0 +1,290 @@
+---
+status: approved   # drafted and revised 2026-11-06; approved by the user on 2026-11-06 (stated in session: "approve all"), with ADR-030.
+inputs:
+  - docs/design/adr/ADR-030-dashboard-redesign-user-journeys.md
+  - docs/design/adr/ADR-010-interactive-dashboard.md
+  - docs/design/adr/ADR-023-dashboard-toolkit-observable-framework.md
+  - docs/design/adr/ADR-024-observable-framework-as-site-build-tool.md
+  - docs/design/adr/ADR-025-dashboard-ui-ux-design-system.md
+  - docs/design/adr/ADR-026-percentile-orientation-legend-and-dashboard-display-rules.md
+  - docs/specs/dashboard-export-spec.md
+  - docs/design/briefs/dashboard-ux-brief.md   # section 1 only
+  - docs/ops/dashboard-ux-baseline.md
+  - docs/specs/dashboard-redesign-point-reader-amendment.md   # approved by the user 2026-11-07; folded in 2026-11-08
+  - docs/ops/dashboard-redesign-decisions.md                  # approved by the user 2026-11-07; items 1 and 3 folded in 2026-11-08
+---
+# Spec: dashboard redesign (pages, components, data per page, export change requests, acceptance criteria, test plan)
+
+Date: 2026-11-06. Labels: [REPO] read in this repository this session; [SURVEY #n] and [ANALYSIS §n] refer to the session working files `dashboard-survey.md` and `dashboard-analysis.md` (text-only evidence, not approved research, see ADR-030 "Evidence status"); [UNVERIFIED] not checked. Other dashboards are mentioned only with a survey entry number.
+
+This spec changes no export file. It reads only files defined in `docs/specs/dashboard-export-spec.md` (sections 3-7). A page that needs a field the export lacks lists it in section 9 as a change request (CR); no field is invented here.
+
+## 1. Conventions
+1. Stored values only (D6). The browser filters, sorts, selects, plots and formats. It never computes a rank, percentile, mean, position, n/N, count of entities, or an overall status. "Formats" means number and date presentation (decimals from `published_precision` as a display hint, period labels from `ref_period_end` and `frequency`); it never changes a value.
+2. Names, not identifiers. Display names come from `meta/entities.json` `name`, `meta/indicators.json` `name`, `meta/domains.json` `name`. The identifier appears as secondary text (smaller, after the name).
+3. Journeys are hypotheses (ADR-030); the audience (economics students and professors) is stated, the journeys are untested. Page IDs below are PG-*; journeys J1-J3 and H1-H5 are as in ADR-030.
+4. All states, tokens, caveat, orientation note and accessibility rules of ADR-025 and ADR-026 apply to every new page. Where this spec says "existing", the string or component is the one in `site/src/lib/copy.js` and `site/src/style.css` [REPO baseline].
+5. Hash parameters (state in the URL, so views are shareable): one combined syntax `#i=<indicator_id>&c=<entity_id>[,<entity_id>...]&g=<group_id>`, each part optional, `&`-separated. The existing explorer and peers pages already use a hash such as `#c=<entity_id>` [REPO baseline, Stage 3]; the exact existing parameter names are reconciled in the first implementation task [UNVERIFIED].
+   - Hash notes (R13; decisions record item 3.1). Parsing keeps the valid parts and ignores the rest. Two separate notes, both `role="status"`, shown above the controls: (a) fallback note for unrecognised or malformed parts: "Part of this link was not recognised and was ignored."; (b) no-values note for valid country ids that have no rows in the loaded series file: "Not selected: this export has no values of this indicator for <names>." (names joined with ", "). The notes are cleared at the first user change.
+   - PG-INDICATOR write-back and `hashchange` (decisions record item 3.5). A user change of the country in focus or of the peer group writes `#c` and `#g` with `history.replaceState` (not `pushState`), only when the serialized hash differs; nothing is written on initial load. The existing `hashchange` handler applies `g` as well as `c`. `replaceState` fires no `hashchange`, so there is no loop. PG-COUNTRY keeps no hash state (the path is the state).
+6. Data only (user instruction 2026-11-06, ADR-030). Pages carry data, not explanation. Allowed text beyond data: names and labels; per value, the unit, reference period, source name, estimate and missing-data markers with their short sentence (section 5.1); per page, the data cut-off, one standing-caveat line and one orientation-note line (on pages that show percentiles). Closed list of other fixed sentences allowed on data pages, each a `copy.js` entry: the reference-period line of C-IND-2; the hint "Choose up to 5 countries to compare." and the small-multiples reason of C-SER-2; the filter note of C-IND-1; the vintage text of PG-REVISIONS; the stale-banner wording (if it contains no link); the two hash notes of section 1.5 (fallback note and no-values note). Allowed control labels (labels, not prose) include the point-reader labels of section 5.6: "Read a value" (legend), "Country", "Reference period". Nothing else. Not allowed: a Guide page, a Status page, "About this page" blocks, paragraphs of interpretation. "About this value" is a field list (section 5.5).
+
+## 2. Page list (exact)
+
+| Page ID | Path | Generated from | Journey | Status vs today |
+|---|---|---|---|---|
+| PG-HOME | `index` | static + build-time lists from `meta/*` | entry for J1, J2, J3 | CHANGED: domain list moves out; two entry lists added; status block removed |
+| PG-COUNTRY | `country/<entity_id>` | one per entity in `meta/entities.json` with `is_global = false` (42 countries and the aggregates; 44 entities in the real export [REPO baseline (e)]; not `WLD`) | J1 (H1) | NEW |
+| PG-INDICATOR | `indicator/<indicator_id>` | one per entry of `meta/indicators.json` (about 80) | J2 (H2) | NEW; absorbs `peers/<domain>` |
+| PG-SERIES | `explorer` | static + `meta/*` | J3 | KEPT URL, CHANGED behaviour |
+| PG-DOMAINS | `domains` | build-time list from `meta/domains.json` | secondary | NEW (content of today's home list) |
+| PG-DOMAIN | `domain/<domain_id>` | one per domain | secondary overview | KEPT, links added |
+| PG-REVISIONS | `revisions` | unchanged | secondary (H3) | KEPT unchanged (data page) |
+| PG-STATUS | `status` | | | WITHDRAWN: removed from the site (data-only rule, ADR-030 Decision 3) |
+| PG-GUIDE | `guide` | | | WITHDRAWN: never built (data-only rule); its content is replaced by the inline markers of section 5 |
+| (removed) | `peers/<domain_id>` | | | DROPPED, merged into PG-INDICATOR (ADR-030 Decision 3, Q6) |
+
+Header navigation on every page, in this order: Home, Time series (PG-SERIES), Domains, Revisions. Breadcrumb on PG-COUNTRY and PG-INDICATOR: Home > Countries or Indicators (anchors on PG-HOME) > name. Skip link, freshness line (data cut-off), stale banner (a data-currency marker with no link to a status page), no-JS notice, footer sources line: unchanged (shell, [REPO baseline T104/T105]).
+
+Entry points and cross-links (all are plain `<a>` links, present in the HTML before JavaScript where the page is generated at build time):
+- PG-HOME lists every country and every indicator as a link (static).
+- Every country name in any table (PG-DOMAIN, PG-INDICATOR, PG-REVISIONS) links to PG-COUNTRY; every indicator name links to PG-INDICATOR.
+- Every value row on PG-COUNTRY and PG-INDICATOR links to PG-SERIES with `#i=` and `#c=` set.
+- PG-INDICATOR links to its domain page(s); PG-COUNTRY section headings link to the domain page.
+
+## 3. Data each page reads (only files of the export spec)
+
+| Page | Files read | Fields used | When loaded |
+|---|---|---|---|
+| All pages (shell) | `manifest.json`, `status.json` (`last_run`, `groups[]` for the existing freshness line and stale banner) | `known_cutoff`, `schema_version`, `files[]` | first load |
+| PG-HOME | `meta/entities.json`, `meta/indicators.json`, `meta/domains.json` (at build time for the static lists; at run time only for the filter) | `entity_id`, `name`, `kind`, `is_global`; `indicator_id`, `name`, `domain_ids`; `domain_id`, `name`, `indicator_ids` | build and first load |
+| PG-COUNTRY | `meta/entities.json`, `meta/groups.json`, `meta/domains.json`, `meta/indicators.json`, `meta/series.json`; `scorecard/<domain_id>.json` for every domain in `meta/domains.json` with `ranked` true or false except `global` (WLD only) | entity: `name`, `kind`, `group_ids`. Domain: `percentile_rank_label`, `ranked`, `notices[]`. Per entity row: `n_available`, `n_defined`, `percentile_rank`, `rank_position`, `n_ranked_entities`, `low_coverage`. Per indicator: `value`, `transformed_value`, `transform_id`, `rank_mode`, `value_kind`, `ref_period_end`, `ref_offset_days`, `known_at`, `source_release_at`, `age_days`, `stale_limit_days`, `is_stale`, `alignment`, `alignment_reason`, `inherited`, `deviation`, `published`, `publish_scope`, `percentile`, `percentile_label`, `n_ranked`, `alert_level`, `alert_confidence`, `series_id`. Indicator meta: `name`, `unit_label`, `good_dir`, `rank_mode`, `target`, `frequency_set`, `notes[]`. Series meta (by `series_id`, and by `(indicator_id, entity_id)` for the "defined" lookup): `source_name`, `source_url`, `licence_attribution`, `frequency`, `unit_code`, `unit_mult`, `seasonal_adjustment`, `price_basis`, `reestimating`, `published_precision`, `publish` | scorecards and meta on page load |
+| PG-COUNTRY, history of one indicator | `series/<indicator_id>.parquet` | rows of the page's `entity_id`: `ref_period_start`, `ref_period_end`, `value`, `value_default_tf`, `value_yoy`, `value_status`, `known_at`, `load_kind`, `frequency` | on activation of "Show history", one file per activation |
+| PG-INDICATOR | `meta/*` (as above, plus `meta/groups.json` for peer groups), `scorecard/<domain_id>.json` for the first domain in the indicator's `domain_ids` (see AC-RD-24 for an indicator in two domains) | per entity: the indicator row (fields above); domain-level `alignment[]` entry of this indicator: `rank_reference_period`, `reference_period_spread_days`, `n_ranked`, `n_unaligned`, `max_ref_spread_days`; `heterogeneous_peer_set`, `peer_set_size_by_indicator` | on page load |
+| PG-SERIES | `meta/*`, `alerts.json`, `series/<indicator_id>.parquet`, `revisions/<indicator_id>.parquet` is NOT read here | as today, plus `meta/series.json` for the "About these series" table | on selection, as today |
+| PG-DOMAINS | `meta/domains.json`, `meta/indicators.json` | `domain_id`, `name`, `ranked`, `notices[]`, `indicator_ids` | on load |
+| PG-DOMAIN | as today (`scorecard/<domain_id>.json`, `meta/*`) | unchanged | unchanged |
+| PG-REVISIONS | as today | unchanged | unchanged |
+| PG-STATUS, PG-GUIDE | withdrawn; no reads | | |
+
+Rules:
+- A page never reads `series/*` for the whole export. PG-COUNTRY loads one Parquet file per activation; the first activation also loads the Parquet reader libraries (about 1.8 MB gzipped on the fixture [REPO baseline, T133]); later activations load only the file.
+- PG-COUNTRY reads every domain scorecard. If the measured payload exceeds the budget of AC-RD-53, change request CR-4 (per-entity profile files) replaces this; until then no such file is assumed.
+- The "series defined" lookup is `meta/series.json` containing a row for `(indicator_id, entity_id)`. It is a read of a stored list, not a computation.
+
+## 4. Components per page
+
+### 4.1 PG-HOME
+- C-HOME-1 Title, the existing standing caveat (one line, static), freshness line (data cut-off) and stale banner (shell).
+- C-HOME-2 "Choose a country": static list of links to PG-COUNTRY, countries first (alphabetical by name), then the aggregates under a separate subheading. A text filter input (labelled, progressive enhancement) hides non-matching list items; no-JS shows the whole list.
+- C-HOME-3 "Choose an indicator": static links to PG-INDICATOR, grouped by domain name (an indicator in two domains is listed in both), each group in a `<details>`; text filter as C-HOME-2. Link text is the indicator name.
+- C-HOME-4 Links: "Look at one series over time" (PG-SERIES), "Domain overviews" (PG-DOMAINS), "Revisions" (PG-REVISIONS).
+- C-HOME-5 WITHDRAWN (the status block of freshness per group is pipeline status; the data cut-off remains in the shell).
+There is no table, chart or heatmap on the home page, and no overall figure (U1).
+
+### 4.2 PG-COUNTRY (J1)
+Header: `h1` = entity name (static, generated); group memberships as text from `meta/groups.json` via `group_ids`; entity kind; the freshness line (shell); a country switcher (labelled `<select>` of countries, navigating to the chosen page); controls "Show: all indicators | only indicators with a value" (filter only).
+Per domain section (in the order of `meta/domains.json`; Q8/CR-9), with a heading that links to PG-DOMAIN:
+- C-CTRY-1 Domain figure line, only for a ranked domain: the stored label `percentile_rank_label` ("mean percentile of the domain's indicators"), the stored `percentile_rank`, and "n_available of n_defined" as stored; position `rank_position` of `n_ranked_entities` as stored, absent when `low_coverage` (existing rule). Non-ranked domains (agri, global): no percentile fields (export spec section 5). Aggregates: the existing "not ranked" wording.
+- C-CTRY-2 Profile chart (Plot): dot strip, one dot per indicator that has a stored `percentile`, x = stored percentile (0 to 1) with the five bin bands and their edges from ADR-026 decision 6, y = indicator names; hollow dot for estimate or inherited (existing mark). Indicators without a stored percentile are not drawn; the table lists them. Wrapped in a `<figure role="img">` with a generated label ("percentile of each indicator for <country>, domain <domain>; table below lists the same values"). It displays stored percentiles only; it has no axis for an average.
+- C-CTRY-3 Indicator table (caption, `th scope`, sticky header). Columns: Indicator (name linking to PG-INDICATOR, direction label from ADR-026 decision 4 as small text, identifier as secondary text); Latest value with unit (value from `value`, unit from section 5.2); Reference period (section 5.3) with the offset flag when `ref_offset_days` is not 0 or null and the `ahead`/`lagging`/`unaligned` tag (existing); Percentile (bin chip with the stored number and the existing state code; column header "percentile vs all ranked countries"); Source (short `source_name`); Actions: "About this value" (a `<details>` row, section 5.5), "Show history" (button; lazy line chart for this country only, with the unit on the axis and a "Compare with other countries" link to PG-SERIES), "Compare countries" link to PG-INDICATOR.
+- C-CTRY-4 Rows are in two groups inside one table: rows with a value first (order: as in `meta/domains.json.indicator_ids`), then rows without a value under a group row "Indicators without a value in this export" with one reason sentence each (section 5.1). The filter hides the second group. The number of hidden rows is not displayed.
+- C-CTRY-5 Domain-level notices from `meta/domains.json.notices[]` as text (for example "informational, unranked").
+- C-CTRY-6 WITHDRAWN as an "About this page" block. Replaced by two lines at the top of the page: the standing caveat, then the orientation note (existing strings, in this order, per ADR-026 decision 3). No projections sentence, no guide link.
+
+### 4.3 PG-INDICATOR (J2)
+Header: `h1` = indicator name (static, generated); identifier secondary; domain links; `unit_label` (section 5.2); frequency set; direction label (ADR-026 decision 4); `notes[]` verbatim (for example the M18 non-euro wording); transform label for the stored `transform_id` taken from `transform_options[]` if that carries a label, otherwise the stored `transform_id` itself (no name is invented); the transformed value is shown in the table. An indicator switcher (`<select>` grouped by domain). The standing caveat (one line) and orientation note (one line) appear once at the top.
+- C-IND-1 Controls: peer group (radio group, existing V2 behaviour: filters and sorts only; the existing filter note unchanged); sort select with options Country (A-Z, default), Value, Percentile, Reference period; all sorts use stored fields, nulls last. Groups come from `meta/groups.json`.
+- C-IND-2 Reference-period line: the stored `reference_period_spread_days` and `rank_reference_period` ("Rankings compare latest observations that refer to different periods; spread N days; common period P"), existing ADR-010 decision 10 wording. When both are null (unranked indicator) the line says the indicator is not ranked.
+- C-IND-3 Value chart (Plot, horizontal bars, one bar per entity with a stored `value`), x = stored `value`, axis label = indicator name and unit, bars filled by the percentile bin token (neutral fill when no percentile), country in focus outlined; entities without a value are not drawn and are listed in the table. Bar order follows the sort select. The chart does not rank or aggregate.
+- C-IND-4 Percentile dot plot (existing V2 chart, kept). Legend: bins (existing).
+- C-IND-5 All-country table (caption, `th scope`; becomes cards under 40 rem, existing): Country (links to PG-COUNTRY), Value with unit, Reference period, Offset (days) (`ref_offset_days`), Transformed value (when `transform_id` is not the level transform; unit pending CR-6; header uses the transform label of section 4.3 header), Percentile (bin and number, or state; column header "percentile vs all ranked countries"), Flags (existing), Source, "About this value" disclosure, link "Time series" to PG-SERIES with `#i=` and `#c=`. Rows without a value are in a second group with reason sentences (section 5.1).
+- C-IND-6 "Open as time series": link to PG-SERIES `#i=<indicator>&c=<country in focus or first rows>`. It never preselects "best" or "worst" countries (that would use a rank); it preselects the country in focus, otherwise the first five countries in alphabetical order, whatever the current sort order (sorting by percentile and preselecting the first five would select the best or worst countries).
+- C-IND-7 Download: link to `series/<indicator_id>.parquet` (existing explorer behaviour). A CSV link is CR-10 (Q9), not built until approved. (The projections sentence of the earlier draft is withdrawn.)
+
+### 4.4 PG-SERIES (J3; the explorer)
+- C-SER-1 Controls (left rail on wide screens, closed `<details>` on compact, existing): indicator picker (grouped by domain, shows names, not identifiers, with the unit beside the name), countries (checkboxes, quick-select groups), transform (Level, Default, YoY, from `transform_options[]`), years, rebase, free y-axis. State is in the hash.
+- C-SER-2 Defaults: indicator and countries from the hash; with none, the first indicator of the first domain and no country selected, with the control hint "Choose up to 5 countries to compare." (no preselected multi-country overlay). Selection above 5 renders small multiples (existing rule, ADR-025 decision 6) with one short line giving the reason (existing text).
+- C-SER-3 Title: indicator name, unit, transform; subtitle: frequency, seasonal adjustment, source names (from `meta/series.json` for the selected series).
+- C-SER-4 Chart (Plot): existing lines, direct end labels with country, latest stored value and unit, estimate/revision/alert marks. NEW: hover/focus tip: country name, period label, value with unit, `value_status` mark, and `known_at` (vintage). The tip never shows a computed number (no change versus previous period). Tip implementation by Plot's own marks [UNVERIFIED for 0.6.18; check first].
+- C-SER-5 "View as table" (existing, latest 24 periods per series equal to plotted points) is the keyboard and screen-reader route to every value (section 5.6).
+- C-SER-6 "About these series" table (NEW, fields only): per selected series: country, source (linking `source_url`), `licence_attribution`, frequency, unit, seasonal adjustment, price basis, last observation period, `known_at` of that last point, and a "re-estimated" marker when `reestimating` is true (no sentence).
+- C-SER-7 Alerts list and download link (existing).
+- C-SER-8 One indicator per chart is shown by the chart title and the single unit in the subtitle; no separate sentence. Overlay of two indicators is not offered; the unit-mismatch warning pattern of [SURVEY #3] is therefore not needed.
+
+### 4.5 PG-DOMAINS, PG-DOMAIN, PG-REVISIONS
+- PG-DOMAINS: list of domains (name, `notices[]`, link to PG-DOMAIN). No data table.
+- PG-DOMAIN: V1 heatmap as built [REPO baseline Stage 1]. Additions: row header country name links to PG-COUNTRY; column header indicator name links to PG-INDICATOR.
+- PG-REVISIONS: unchanged (it keeps its existing vintage text, export spec section 7, verbatim). No link to a guide.
+- PG-STATUS and PG-GUIDE: withdrawn (section 2).
+
+## 5. Display rules
+
+### 5.1 Missing data and states
+Every cell and row that has no value or no percentile shows (a) the existing confirmed state code, (b) its non-colour signature (ADR-025 decision 3, AC-UX-2), and (c) one short plain sentence, in the row's reason cell or the cell's accessible description. The sentence is selected only by stored fields. With no Guide page, this sentence is the only explanation of a state:
+
+| Stored condition | Code (existing) | Sentence (DRAFT, to confirm) |
+|---|---|---|
+| `published = false` / `publish_scope = excluded` | `np` | "Not published on this site." (existing confirmed wording is reused if one exists, see 7) |
+| `value` null and `meta/series.json` has a row for the pair | `n/a` | "A series is defined for this country, but this export holds no value for it." |
+| `value` null and `meta/series.json` has no row for the pair | `n/a` | "No series is defined for this country and indicator." |
+| `value` not null, `is_stale = true` | `stale` | existing "stale: no rank" |
+| `alignment` = `lagging` | `lagging` | existing |
+| `alignment` = `unaligned` (with `alignment_reason = fiscal_year_basis`) | `unaligned` | existing plus the stored fiscal-year notice |
+| `alignment` = `ahead` | `ahead` tag | existing |
+| `rank_mode = descriptive_only` | existing "descriptive, not ranked" | existing |
+| entity is an aggregate | existing "not ranked" | existing |
+| `inherited = true` | existing flag | existing; value visible, no percentile (AC-EXP-15) |
+| domain `ranked = false` | `plain` | existing |
+| `percentile_rank` null because `n_available = 0` | `n/a` | "No indicator of this domain has a ranked value for this country." |
+`n/a` never appears without its sentence. When the stored fields do not say why a value is missing (for example a source not loaded yet versus a series that returned nothing), the page says only what the table says; an explicit stored reason is CR-3. The row group "Indicators without a value in this export" keeps these rows visible; Eurostat's practice of keeping coded missing values visible with a legend is the precedent [SURVEY #13]; hiding them by default was rejected (ADR-030 option 5c; Q4).
+
+### 5.2 Units
+- Source of unit text: `meta/indicators.json` `unit_label` for indicator-level views; for a series-level view (PG-SERIES, "About this value") `meta/series.json` `unit_code` with `unit_mult` stated as text ("values in <unit_code> x 10^<unit_mult>") only when `unit_mult` is not 0; the page does not rescale.
+- A unit appears in: the table column header or each value cell; the chart axis title; the end label; the hover tip; the "View as table" headers. A value without a unit text is a defect (AC-RD-42). Percentiles carry the column label "percentile vs all ranked countries" and are unitless.
+- Rebased series (display-only rebase to 100, existing) show the unit "index, <base period> = 100" in place of the unit.
+- `transformed_value` is shown only with its transform label (section 4.3) until CR-6 supplies its unit. Whether `unit_label` includes the scale (for example "millions") is not confirmed by the specs read; CR-5.
+Survey precedents for the failure being avoided: mixed scales in one column [SURVEY #1], "(Millions)" against current US$ [SURVEY #2], a bare number [SURVEY #12]; the precedent for the fix is a unit field plus subtitle [SURVEY #4, #5] and per-row units [SURVEY #7].
+
+### 5.3 Reference dates
+- Each value row shows the period it refers to, formatted from `ref_period_end` and the series `frequency` (for example "2026-08" for monthly, "2026 Q3" for quarterly, "2025" for annual; exact format fixed in the first implementation task and pinned in `copy.js`). `known_at` and `source_release_at` appear in "About this value", not in the main row.
+- Offsets: `ref_offset_days` is shown as stored (header "Reference offset (days)", existing label).
+- The page-level freshness line (`known_cutoff`) is not a substitute and is labelled "Data cut-off".
+Precedent: period per value rather than per page [SURVEY #12, #1, #7]; failure: reference month without a header [SURVEY #7].
+
+### 5.4 Forecasts and estimates
+No projection exists in any export file (export spec principle 4, section 7; EXP-02). Pages therefore render no forecast and no forecast styling, and, under the data-only rule, carry no sentence about projections (ADR-030 Decision 7). Estimated or provisional values are marked with the existing hollow marker and "e": on PG-COUNTRY and PG-INDICATOR from the scorecard `value_kind = estimate` (scorecards do not carry `value_status`); on PG-SERIES from `value_status` `EST` or `PROV` in the series Parquet file. If projections are later exported (CR-2) the display rule must be a new decision; survey precedents differ (a separate forecast column [SURVEY #6]; unmarked years [SURVEY #8, #2]) and are text-level only.
+
+### 5.5 "About this value" (H4, cross-cutting)
+A `<details>` on every value row of PG-COUNTRY and PG-INDICATOR, a field list from stored data, no prose: indicator and country names; series id; source name and link; attribution; frequency; unit; seasonal adjustment; price basis; reference period; `known_at`; `source_release_at`; `age_days` and `stale_limit_days` as stored; transform; flags (the short sentences of section 5.1); "re-estimated" marker when `reestimating`. It does not compute. Not tooltip-only.
+
+### 5.6 Hover and keyboard
+Pointer hover on a chart point shows the tip of C-SER-4 (PG-SERIES) and a minimal tip (name, value, unit, period) on the PG-INDICATOR value chart. Keyboard and screen-reader users read the same values through the "Read a value" point reader, a form control placed directly after the chart and before "View as table", outside the `role="img"` figure. The tip, the reader output and the "View as table" row for the same point are produced from one text function and are identical in content. Tips are an aid, never the only access: every plotted value is also in a table (ADR-025 decision 6, AC-UX-5). No drag-only interaction (WCAG 2.5.7). Hover behaviour on other dashboards was not verified in the survey [ANALYSIS §4], so this is design, not imitation. (Replaces the earlier "keyboard focus on a chart point": Plot 0.6.18's tip is pointer-only and focusable descendants of `role="img"` are not allowed; point-reader amendment section 1, decisions record item 1.)
+
+Point reader specification (normative):
+1. Container: `<fieldset class="mm-point-reader" id="...">` with `<legend>Read a value</legend>`.
+2. PG-SERIES: a `<label>Country <select>` listing the plotted series in legend order; a `<label>Reference period <input type="range" min="0" max="n-1" step="1">` over that series' plotted points, `aria-valuetext` = the period label; arrow keys step one period, Home and End go to the ends, a click on the track works without dragging; default = latest plotted point. In small multiples (more than 5 countries) the list holds every selected country.
+3. PG-INDICATOR: one `<label>Country <select>` of the drawn bars in bar order. This select is the existing country-in-focus control (it sets the focus state, outlines the bar, highlights the table row, writes `#c=`): one concept, not two.
+4. `<output aria-live="polite">` holds the text of the current choice (the tip lines joined with "; ").
+5. While focus is inside the fieldset, the chart shows a static highlight of the selected point (ring plus a static tip; in small multiples inside that country's facet). The highlight is visual only; the figure's `aria-label` is unchanged.
+6. The text of the tip, the reader output and the table row is the same `valueText` (stored value with unit and estimate mark, or the display-only rebased value with its unit under rebase). No difference, change, rank or other arithmetic in the tip or reader code.
+7. Dismissal (WCAG 1.4.13): both tips are dismissible with Escape. The pointer tip: Escape hides it; the next pointer move on the figure restores it. The static highlight tip: Escape hides it while focus stays in the reader, without changing the reader's value or its `<output>`; the next change of the reader's selection, or the next focus entry into the fieldset, restores it.
+
+## 6. Traceability: user complaint to fix
+
+| Complaint (2026-11-06) | Fix | Where |
+|---|---|---|
+| Too many series on one chart | Default: nothing or the URL country; at most 5 overlaid; more become small multiples; one indicator per chart | C-SER-2, C-SER-8, AC-RD-31 (Q2: proposed to keep 5) |
+| Unclear naming | Names first, identifiers secondary; direction labels; state codes paired with a plain sentence; optional short names (CR-7) | section 1.2, C-CTRY-3, section 5.1, Q3 |
+| Units not shown | Unit on every value, axis, end label, tip, table header | section 5.2, AC-RD-42 |
+| n/a everywhere | Code plus a sentence per state; rows with values first; the second group stays visible; explicit reason via CR-3 | section 5.1, C-CTRY-4, AC-RD-40, AC-RD-41. Partly a data-coverage fact: 3 of 42 countries have a percentile in the real export [REPO baseline (e)] |
+| No hover values | Tip on PG-SERIES and PG-INDICATOR; point reader and table alternative | section 5.6, AC-RD-30 |
+| Scorecards are tables only | Country dot strip per domain; indicator value chart and percentile dot plot | C-CTRY-2, C-IND-3, C-IND-4 |
+| No way to pick one country and see all its data | PG-COUNTRY, one click from home | C-HOME-2, 4.2, AC-RD-03 |
+| No way to compare one indicator across countries | PG-INDICATOR, one click from home | C-HOME-3, 4.3, AC-RD-03 |
+| Dashboard should show only data (2026-11-06) | Guide and Status pages withdrawn; explanation limited to inline markers and one line each for caveat and orientation | section 1.6, section 2, AC-RD-62 |
+
+## 7. New strings (all DRAFT until the user confirms them, ADR-025 decision 11; placed in `site/src/lib/copy.js`)
+Page and control labels: "Choose a country", "Choose an indicator", "Filter the list", "Look at one series over time", "Domain overviews", "Show: all indicators", "Show: only indicators with a value", "Indicators without a value in this export", "Show history", "Compare with other countries", "Compare countries", "About this value", "About these series", "Open as time series", "Data cut-off". Sentences: the three new missing-data sentences of section 5.1 (rows 2, 3 and the `n_available = 0` row, and "Not published on this site." unless an existing confirmed string covers it); "Choose up to 5 countries to compare."; the ranking-period line of C-IND-2 reuses the existing wording. Page `h1` forms: the entity name; the indicator name. Existing confirmed strings (caveat, orientation note, direction labels, state codes, vintage text, "earliest stored version") are reused verbatim.
+Point reader and tip (section 5.6; point-reader amendment 3.3): `DRAFT_POINT_READER_LEGEND = "Read a value"`; the reader labels reuse `COUNTRY_HEADER` ("Country") and `DRAFT_FACT_LABELS.refPeriod` ("Reference period"); `DRAFT_TIP_STATUS` (EST: "estimate", PROV: "provisional"; other `value_status`: no status line); `DRAFT_TIP_KNOWN_AT = (date) => "Known at " + date`.
+Hash notes (section 1.5; decisions record item 3): `DRAFT_HASH_FALLBACK_NOTE = "Part of this link was not recognised and was ignored."`; `DRAFT_HASH_NO_ROWS_NOTE = (names) => "Not selected: this export has no values of this indicator for " + names.join(", ") + "."`.
+Confirmed by the user on 2026-11-08: "Choose a country"; with the confirmation of all open items of the point-reader amendment (section 5) and of decisions record items 1 and 3, also the point-reader, tip and hash-note strings of the two lines above. The `DRAFT_` prefix of the constant names is an implementation matter (AC-RD-55).
+Withdrawn with the removed pages and prose: "Guide", "Data status", "Projections are not shown in this version.", "A chart shows one indicator, so all lines share one unit."
+
+## 8. Journey validation protocol (before and after the plan)
+The journeys are hypotheses (ADR-030). Before the implementation plan is approved, the user confirms or corrects the proposed answers to ADR-030 Q1-Q12 (or names those that may wait). After a first build on a fixture or real export, validate with the user or named students and teachers of economics (the number is the user's choice, Q1) using these tasks, each on a clean browser, recording success, steps and time:
+- T-J1: "Find the latest unemployment rate for <country> and say when it refers to." Success: found from home in at most 3 interactions; unit and reference period stated correctly.
+- T-J1b: "Name one indicator for <country> that has no value, and say why." Success: reads the sentence.
+- T-J2: "Which countries have a value for <indicator>, which reference period does the ranking use, and where does <country> stand?" Success: from home in at most 3 interactions.
+- T-J3: "Show <indicator> for <country> and one other and read the value in <month>." Success: tip or table used, unit stated.
+- T-H4: "Where does this number come from and when was it fetched?" Success: opens "About this value".
+Record results in `docs/ops/` (not an acceptance gate for the build; an input to the next design round). Not automatable.
+
+## 9. Export change requests (none made here; each needs the user's approval and a separate export-spec change)
+| ID | Needed by | Request | Status |
+|---|---|---|---|
+| CR-1 | C-CTRY-3 (optional) | Per entity-indicator row, a short array of recent stored values for an inline sparkline, so the profile can show a trend without fetching `series/*` | Optional; not required by any AC. Adds size to scorecards |
+| CR-2 | section 5.4 | Projection output (dashboard forecast values and a marker) | Blocked by ADR-011 (v2 forecast store) and by export spec principle 4; Q5 (proposed: not in this version) |
+| CR-3 | section 5.1 | A stored `missing_reason` per (indicator, entity) pair produced by analytics (for example no series defined, not yet loaded, source returned no value, not ranked), copied by the export | Follow-up if the two-way sentence proves insufficient (Q4); interim: derived from `meta/series.json` presence only |
+| CR-4 | section 3 rule 2 | `profile/<entity_id>.json` (all domains for one entity) if the measured PG-COUNTRY payload exceeds AC-RD-53 | Conditional on measurement |
+| CR-5 | section 5.2 | Confirm, or add to `meta/indicators.json`, that `unit_label` states the scale (millions, billions, per cent) | To confirm |
+| CR-6 | C-IND-5 | A unit label for `transformed_value` (the unit of the ranked quantity) | Requested |
+| CR-7 | ADR-030 Decision 10 | `short_name` per indicator in `meta/indicators.json` (no `definition`: data-only rule, Q3) | Only if long names break layout |
+| CR-8 | C-IND-5 (optional) | A stored per-indicator rank position (the scorecard has `percentile` and `n_ranked` only; `rank_position` is domain-level). Not derivable in the browser (D6) | Optional |
+| CR-9 | PG-COUNTRY order | A configured display order for domains (`meta/domains.json` is sorted by id); the order itself is the user's choice | Q8 (proposed) |
+| CR-10 | C-IND-7, PG-SERIES | CSV download of a series (export Parquet and JSON only today); generated by the export, not by the browser | Q9 (proposed); not built until approved |
+
+## 10. Acceptance criteria
+Each criterion names the test layer of section 11. "Fixture" means the fixture export of `tests/fixtures/site_spike/` [REPO baseline]; "sparse fixture" means a fixture shaped like the real Eurostat-only export (44 entities, one domain with 3 percentiles, all other scorecards empty), to be created for these tests.
+
+Structure and navigation
+- AC-RD-01 The build produces exactly the pages of section 2: PG-HOME, one PG-COUNTRY per non-global entity, one PG-INDICATOR per indicator in `meta/indicators.json`, PG-SERIES, PG-DOMAINS, one PG-DOMAIN per domain, PG-REVISIONS, and no `peers/*`, no `status` and no `guide`. The header navigation lists Home, Time series, Domains, Revisions only. (build test)
+- AC-RD-02 Link integrity: every internal link resolves to a built page; every non-global entity and every indicator has a link on PG-HOME; no built page is unreachable from PG-HOME. (build test)
+- AC-RD-03 From PG-HOME, one click on a link reaches a country profile and one click reaches an indicator page. (smoke)
+- AC-RD-04 Cross-links: country names on PG-DOMAIN, PG-INDICATOR and PG-REVISIONS link to PG-COUNTRY; indicator names on PG-DOMAIN, PG-COUNTRY and PG-REVISIONS link to PG-INDICATOR; every value row on PG-COUNTRY and PG-INDICATOR has a link to PG-SERIES with `#i=` and `#c=` set, and PG-SERIES applies them. (smoke)
+- AC-RD-05 Without JavaScript: the static `h1`, the no-JS notice and (on PG-HOME) the full country and indicator link lists are present in the built HTML, and the links work. (static test, extends AC-UX-8)
+
+Country profile (J1)
+- AC-RD-10 For a fixture country, every indicator listed in the `indicator_ids` of each non-global domain appears exactly once on PG-COUNTRY, with name, value or reason sentence, unit, reference period, percentile or state, and source. (smoke)
+- AC-RD-11 The value, percentile, bin, `ref_period_end`, `ref_offset_days`, `n_available`, `n_defined`, `percentile_rank` and `rank_position` shown for sampled rows equal the stored JSON; the bin follows ADR-026 decision 6. (unit and smoke)
+- AC-RD-12 A ranked domain shows the stored `percentile_rank_label`; a `ranked = false` domain shows no percentile or position; a `low_coverage` entity shows no position; an aggregate shows the "not ranked" wording; no figure combines domains. (smoke, static scan)
+- AC-RD-13 The profile chart plots only entries with a stored `percentile`, has `role="img"` and a generated label, and a table beneath lists every plotted value; indicators without a stored percentile are not drawn and are listed in the table. (smoke)
+- AC-RD-14 "Show history" fetches nothing until activated, then exactly one `series/<indicator_id>.parquet`; the chart shows only the page's entity, with the unit on the axis; a failed fetch shows an inline error block and leaves the rest of the page intact (extends AC-UX-8). (smoke with route interception)
+- AC-RD-15 The "only indicators with a value" filter hides rows without a value and hides nothing else; no count of hidden rows is displayed. (smoke)
+
+Indicator comparison (J2)
+- AC-RD-20 On PG-INDICATOR the table has one row per entity of the scorecard file, nothing dropped; an entity without a value is in the second group with its reason sentence; the value chart draws only entities with a value. (smoke)
+- AC-RD-21 The stored `reference_period_spread_days` and `rank_reference_period` are printed above the table; `ref_offset_days` is shown per row; an unranked indicator says it is not ranked. (smoke)
+- AC-RD-22 Sort options Country (A-Z, default), Value, Percentile, Reference period order rows by the stored field, nulls last, ties by name; `aria-sort` reflects the state; no rank is displayed or computed. (unit and smoke)
+- AC-RD-23 The peer-group control only filters and sorts; the standing caveat string and the filter note are present verbatim; the percentile column header is "percentile vs all ranked countries" with the orientation note once at the top (extends AC-UX-15). (smoke)
+- AC-RD-24 For an indicator listed in two domains, PG-INDICATOR reads the first domain's scorecard; a test compares the two files and the build or the smoke test fails when the stored percentile of the same entity differs between them. (fixture test)
+- AC-RD-25 Direction label, units and `notes[]` appear in the header; the value chart has an axis title with name and unit. (smoke)
+
+Series over time (J3)
+- AC-RD-30 Pointer hover on a chart point shows a tip with country name, period label, value with unit, status mark and `known_at`. For keyboard users, "Read a value" (a) is reachable by Tab, (b) changes its `<output>` text when the country or reference period is changed with the arrow, Home and End keys, (c) shows the static highlight while focused, and (d) yields text equal to the matching "View as table" row. The tip and reader text contain no computed number. Escape hides the pointer tip and the static highlight tip. The figure itself has no focusable descendant. (unit test of the text function, smoke, static scan)
+  - AC-RD-30a (unit, `tip-text`): line contents for OBS, EST and PROV; rebased value; a null unit must fail (AC-RD-42); tip `valueText` equals table `valueText`.
+  - AC-RD-30b (smoke): hover shows the tip; Tab reaches the reader; ArrowLeft changes the `<output>` to the previous period's text, equal to the matching table row; Escape hides the pointer tip; with focus in the reader, Escape hides the static highlight tip and leaves the `<output>` unchanged.
+  - AC-RD-30c (static scan): no arithmetic in `tip.js` or `point-reader.js` (extends AC-RD-50); `figure[role=img]` contains no element with `tabindex`.
+- AC-RD-31 With no countries in the hash, no multi-country overlay is drawn; at most 5 lines are overlaid; above 5 the page renders one chart per country with the stated reason. (smoke)
+- AC-RD-32 The title, axis title, every end label, tip and table header carry the unit; no label consists of an identifier alone. (smoke)
+- AC-RD-33 "About these series" lists source (with link), attribution, frequency, unit, seasonal adjustment, last observation period and its `known_at` for every selected series. (smoke)
+- AC-RD-34 Hash parameters `#i`, `#c` set indicator and countries; invalid ones fall back to the default with a visible note and no error. (unit and smoke)
+
+Data states, units, dates, sources
+- AC-RD-40 On the sparse fixture every state of section 5.1 renders its code, signature and sentence; the string `n/a` never occurs without an adjacent sentence; all states are distinct in the grayscale test (extends AC-UX-2). (smoke)
+- AC-RD-41 The two `n/a` sentences are selected by presence of the pair in `meta/series.json` and by nothing else (fixture with a defined-but-empty pair and an undefined pair). (unit)
+- AC-RD-42 No numeric value is rendered without a unit text in the cell, header, axis, label or tip; percentiles carry the percentile label. (static scan of render modules plus DOM check on all new pages)
+- AC-RD-43 Every value row shows a reference period formatted from `ref_period_end` and `frequency`; formats match the pinned examples for M, Q and A. (unit)
+- AC-RD-44 No forecast element exists: no page code reads a `PROJ` status as a drawn element, and no page carries a projections sentence (revised from the earlier "sentence present" wording; data-only rule). (smoke, static scan)
+- AC-RD-45 Estimates carry the hollow marker and "e" next to the value: on PG-COUNTRY and PG-INDICATOR when `value_kind = estimate`; on PG-SERIES when `value_status` is `EST` or `PROV`. (smoke)
+- AC-RD-46 "About this value" opens by keyboard, shows the fields of section 5.5 from stored data, and is not tooltip-only. (smoke)
+
+Constraints
+- AC-RD-50 D6 and fidelity: the static scan of AC-UX-10 covers all new modules (no mean, rank, percentile, count of entities, composite; banned judgement words outside the allowed strings); the single added lookup is the presence check of AC-RD-41. (static scan)
+- AC-RD-51 No off-origin request or URL in `dist/` for the new pages (AC-UX-11, AC-NPM-3); the pages fetch only files named in manifest `files[]` (a test records requests and compares with section 3). (smoke)
+- AC-RD-52 No new npm dependency (AC-NPM-1); no new export file read. (unit)
+- AC-RD-53 Weight and build: first-load transfer of PG-HOME, PG-COUNTRY (before any history activation) and PG-INDICATOR each at most 600 KB gzipped (internal target) and always under 1.5 MB (ADR-023 decision 6); one history or series interaction at most 5 MB gzipped; CSS at most 20 KB gzipped; CLS at most 0.1; the build with about 125 additional pages stays within the CI time budget and the site-size budgets of the export spec section 8 (record the numbers). Measured on the sparse fixture AND, when it exists, the real export; CR-4 is raised if PG-COUNTRY exceeds the target. The 1.5 MB limit of ADR-023 decision 6 applies to every new page type, which is stricter than the 600 KB target on the landing page alone; this is intended. (measure script, smoke)
+- AC-RD-54 Accessibility and preferences: AC-UX-1 to AC-UX-9 are run on every new page type (contrast, non-colour, themes, keyboard and focus, semantics, responsive 320 to 1920, states, print and preferences); the country table keeps a sticky header and works at 320 px inside its scroll container. (smoke)
+- AC-RD-55 Copy: every new string of section 7 is in `copy.js`, listed as DRAFT until confirmed; confirmed strings are unchanged; "first release" and "first stored release" appear nowhere (extends AC-UX-13). (unit)
+- AC-RD-56 Export unchanged: the export spec and schemas have no diff from this work unless a CR is approved first (review check, not automated).
+
+Journeys
+- AC-RD-60 The user has confirmed or corrected J1-J3 and the proposed answers to ADR-030 Q1-Q12 before the implementation plan is approved; any answer the user does not confirm is listed as open in the plan. (document gate)
+- AC-RD-61 The validation tasks of section 8 are run after the first build and the record is stored in `docs/ops/`. (manual; pending the user)
+
+Data only (added with the data-only rule; IDs of earlier criteria unchanged)
+- AC-RD-62 The built site has no Guide or Status page or link to one; no page has a prose block beyond the allowed items of section 1.6 (a static scan lists every text node longer than one sentence outside the closed allow-list of section 1.6, each entry a `copy.js` string of at most 160 characters, and fails on an unlisted one); the caveat appears once per page and the orientation note once on each page that shows percentiles, one line each. (build test, static scan)
+
+## 11. Test plan
+| Layer | Tool (already approved) | What it covers | New fixtures |
+|---|---|---|---|
+| Unit | `node:test` in `site/tests` | state-to-sentence mapping (AC-RD-41), sort rules (22), period labels (43), hash parsing (34), unit text selection (42), bin edges (11), row-model builders for country and indicator pages (10, 20) | tables of stored-field combinations |
+| Static scans | existing scripts of AC-UX-10/11, AC-NPM-1 | computation and banned-word rules over new modules (50), unit presence in renderers (42), no dependency (52), no `@import` or off-origin string (51), data-only prose scan (62) | seeded negatives, as for AC-UX-10 |
+| Build tests | `observable build` on fixture exports | page set and link integrity (01, 02, 05), absence of `status` and `guide` (01, 62), page count, build time and size (53) | fixture export with an indicator in two domains (24) |
+| Smoke | Playwright (Chromium, existing harness) | journeys end to end on fixture and sparse fixture: home to country (03), country rows (10-15), indicator page (20-25), series tip and defaults (30-34), states (40, 45, 46), absence of forecast elements (44), requests list (51), AC-UX-1 to 9 on new pages (54), weight and CLS (53) | sparse fixture (44 entities, one domain with 3 percentiles); a fixture with a defined-but-empty pair and an undefined pair; seven-country M09 Parquet already in `site/tests/fixtures/` [REPO baseline, Stage 4] |
+| Contract | pytest, existing export tests | no export change (56); if a CR is approved, its AC-EXP-style test is added with it | per CR |
+| Manual | the user or named reviewer | validation tasks (61); screen reader, Firefox and Safari, real Print dialog (AC-UX-14, ADR-023 C5), review of the unverified Plot tip behaviour | none |
+Order of work for the planner (not a plan): sparse fixture and states (section 5.1) first; PG-COUNTRY; PG-INDICATOR with removal of `peers/*`; PG-SERIES changes; PG-HOME, PG-DOMAINS and navigation (with removal of `status`); weight measurement on the real export when it exists. Limits carried from the baseline: all browser evidence is Chromium emulation, and no real export of 44 entities has been measured [REPO baseline, close-out items 7 and 8].
+
+## Change log
+- 2026-11-08: folded in `docs/specs/dashboard-redesign-point-reader-amendment.md` (approved by the user 2026-11-07) and `docs/ops/dashboard-redesign-decisions.md` items 1 and 3 (approved 2026-11-07; open items confirmed by the user 2026-11-08): section 1.5 hash notes and PG-INDICATOR `#c`/`#g` write-back and `hashchange`; section 1.6 allow-list (hash notes; reader labels "Read a value", "Country", "Reference period"); section 5.6 point reader with Escape dismissal of both the pointer tip and the static highlight tip (WCAG 1.4.13); section 6 row "No hover values"; section 7 strings and the confirmed "Choose a country"; AC-RD-30 replaced, AC-RD-30a-c added. Status left unchanged.

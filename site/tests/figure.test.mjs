@@ -33,7 +33,7 @@ test("latestPoints is a slice: the last 24 points that have a value, in date ord
 
 test("viewAsTable: a details with the confirmed summary, caption, th scope, the rows given and an optional download link", () => {
   const rows = [{entity: "DEU", name: "Germany", date: "2025-03-31", valueText: "24", status: "EST"}, {entity: "FRA", name: "France", date: "2025-03-31", valueText: "34", status: null}];
-  const out = viewAsTable(html, {id: "t", title: "Unemployment rate: Level", rows, href: "/_file/x.parquet"}).s;
+  const out = viewAsTable(html, {id: "t", title: "Unemployment rate: Level", rows, href: "/_file/x.parquet", valueUnit: "u"}).s;
   assert.match(out, /<details class="mm-view-table" id="t"><summary>View as table<\/summary>/);
   assert.ok(!/<details[^>]* open/.test(out), "closed by default");
   assert.ok(out.includes("<caption>Unemployment rate: Level: plotted values, latest 24 periods of each series</caption>"));
@@ -41,7 +41,11 @@ test("viewAsTable: a details with the confirmed summary, caption, th scope, the 
   assert.equal(out.match(/<th scope="row">/g).length, 2);
   assert.ok(out.includes('<td class="mm-num">24</td><td>EST</td>') && out.includes("<td>n/a</td>"));
   assert.ok(out.includes('href="/_file/x.parquet" download'));
-  assert.ok(!viewAsTable(html, {id: "t", title: "x", rows}).s.includes("download"));
+  assert.ok(!viewAsTable(html, {id: "t", title: "x", rows, valueUnit: "u"}).s.includes("download"));
+  // n: null lists every plotted period (spec 5.6); a cell without any unit states the defect instead of a bare value (AC-RD-42)
+  const all = viewAsTable(html, {id: "t", title: "x", rows, n: null}).s;
+  assert.ok(all.includes("<caption>x: plotted values, every plotted period of each series</caption>"));
+  assert.ok(!all.includes('<td class="mm-num">24</td>') && all.includes('<td class="mm-num">24 This export holds no unit for this value.</td>'), "the value is kept, the defect sentence follows (AC-RD-30, AC-RD-42)");
 });
 
 test("figure.js computes nothing (static scan) and imports only local modules", () => {

@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "alerts.schema.json",
+  "title": "alerts.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "analysis_run_id",
+    "alerts"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "analysis_run_id": {
+      "type": "integer"
+    },
+    "alerts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "indicator_id",
+          "entity_id",
+          "series_id",
+          "ref_period_end",
+          "method",
+          "z",
+          "level",
+          "confidence",
+          "reason",
+          "label",
+          "override_rule"
+        ],
+        "properties": {
+          "indicator_id": {
+            "type": "string"
+          },
+          "entity_id": {
+            "type": "string"
+          },
+          "series_id": {
+            "type": "integer"
+          },
+          "ref_period_end": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          },
+          "z": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "level": {
+            "enum": [
+              "watch",
+              "alert"
+            ]
+          },
+          "confidence": {
+            "enum": [
+              "full",
+              "low",
+              "none"
+            ]
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "override_rule": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

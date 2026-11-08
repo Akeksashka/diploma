@@ -1,0 +1,33 @@
+---
+status: approved   # approved by the user on 2026-10-25 (stated in session) after read-only review
+---
+# ADR-015: The public database dump is per-view gzipped CSV plus a schema SQL file and a hashed manifest; restore is psql plus `\copy` (amends ADR-003 recovery points (b) and (c))
+
+Date: 2026-10-25 (Phase 2 amendment batch). Facts about this repository come from ADR-003, ADR-008, ADR-012, `docs/specs/ddl-neon-schema.md`, `docs/specs/workflows-spec.md` (read 2026-10-25). No external fact is relied on except where marked; the user's decision of 2026-10-25 (item 4 of the amendment batch) fixes the format.
+
+## Context
+- ADR-003 (b) specifies a monthly "public dump" containing `ref`, the `ingest` manifest tables, redacted `ops` decision tables, `*_published` analytics tables and `curated` observations "only through `curated.v_observation_public`". The workflows spec and the design say the dump is made with `pg_dump` and restored with `pg_restore` (`restore-test`, black box BB19).
+- `pg_dump` dumps tables, not query results. The public dump must contain a filtered view (`curated.v_observation_public`: only `archive = public` AND `publish_site = public` sources) and redacted columns (`ops.drift_event.old/new`, `ingest.raw_load.detail`, `ops.quality_override.reason` of other sources). A `pg_dump` of the base tables would contain the restricted values; the plan (BL-06) found the format and the restore method undefined.
+- Further constraints found in the documents: the backup step runs under `mm_ingest` (workflows spec section 2), and ADR-012 gives `mm_ingest` no privilege on `analytics.*`, so the `*_published` tables of ADR-003 (b) cannot be read by the backup step. The schema uses identity columns, stored generated columns, append-only triggers and a trigger-fed `ref.config_history`, all of which matter when rows are loaded back.
+
+## Options considered
+1. `pg_dump` of the whole database. Cannot filter or redact; leaks restricted values. Rejected.
+2. Build a temporary database holding only the public subset, then `pg_dump` it. Needs a second database on the runner (a service container is possible), still couples the dump to the `pg_dump` major version (BB19), and adds a copy step whose correctness is itself a test target.
+3. Per-view CSV (gzip) of views that already contain the filter and the redaction, plus a schema SQL file and a manifest with content hashes; restore is `psql` for the schema and `\copy` for the data. One mechanism, plain tools on both sides, filter and redaction live in SQL views that are tested, no `pg_dump`/`pg_restore` version coupling.
+4. Parquet per view. Compact and typed, but restoring needs a program (pyarrow or DuckDB), not `psql`; no advantage for a database of this size.
+
+## Decision
+Option 3 (user decision 2026-10-25). Normative detail is in `docs/specs/public-dump-spec.md`; summary:
+1. Views: a schema `pubdump` holds one view per dumped table. Each view applies the partition predicate `P-public` (`ref.source.archive_mode = 'public' AND publish_site = 'public'`, unchanged from ADR-003) and the redactions. The dump exports only `pubdump.v_*`; the owner `mm_owner` owns them, `mm_ingest` has SELECT, no other role does.
+2. Files: one gzipped RFC 4180 CSV per view (split into parts above a row limit), a `schema.sql` that is the concatenation of the applied migration files, and `manifest.json` with the format version, schema version, snapshot time, per-file row counts, column lists, load order, sequences to reset, and sha256 of every file. Published as assets of the immutable release `db-dump-public-<YYYY-MM>`.
+3. Consistency: one `REPEATABLE READ READ ONLY` transaction for all views.
+4. Restore: create an empty database; `psql -f schema.sql`; per table, in manifest load order, with user triggers disabled, `\copy <table> (<columns>) FROM STDIN WITH (FORMAT csv, HEADER true)` fed from `gzip -dc`; reset identity sequences; verify counts and hashes. No tool other than `psql`, `gzip` and `sha256sum` is needed.
+5. Scope change relative to ADR-003 (b): the dump does NOT contain `analytics.*` tables. `mm_ingest` cannot read them (ADR-012) and giving it that right, or adding a second dump step under `mm_reader` with a second secret, was not chosen here. They are derived outputs reproducible by `analyze` from the restored `curated`, `ref.config_history` and the recorded `git_sha` (AC-AN-1), but the recorded run list (`analytics.run`) and past published ranks are not backed up. This is a decision for the user (see Consequences).
+6. Everything else of ADR-003 stays: the partition rule, the output self-check that fails the job and publishes nothing, the leak test (AC-BKP-GATE), the absence of a restricted or full dump, the quarterly `restore-test`.
+
+## Consequences
+- Pro: the filter and the redaction are testable SQL objects; the restore uses `psql` only; the dump no longer depends on the `pg_dump` major version (BB19 shrinks to `psql` compatibility); the manifest hashes give an integrity check and a round-trip test (restore, dump again, compare hashes).
+- Con: more code than `pg_dump` (the dump writer, the view set, a completeness test that every table is either dumped or explicitly excluded); loading generated and identity columns needs care (columns lists exclude stored generated columns; sequences are reset after load); the restore must disable user triggers (append-only guards, `ref.config_history` feeders) while loading, which needs table ownership (`mm_owner`), not superuser [the identity-column behaviour of `COPY` is relied on from how `pg_dump` itself restores data, UNVERIFIED in the PostgreSQL documentation read here; the restore test is the proof].
+- Cost to the user: historical analytics runs and published ranks (`analytics.*`) have no backup in v1. Mitigation: they are recomputable per run from the restored data and the config at the recorded `git_sha` only for runs whose cutoffs are known, and the cutoffs are in the lost `analytics.run`; recomputation therefore gives the current ranks, not a replay of past runs. Alternative if the user wants them: a second dump leg under `mm_reader` over `analytics.*_published` and `analytics.v_run_published` (adds one secret to the backup step and breaks "one secret per step" unless split into two steps). Not decided.
+- `pg_restore` and `pg_dump` references in ADR-003, the workflows spec section 8 and design BB19 are superseded by this ADR for the public dump; ADR-003 stays `approved` and its text unchanged. This ADR amends only ADR-003 recovery points (b) (dump mechanism and content list) and (c) (restore method).
+- Reversal: switching to `pg_dump` later (for example after a private repository exists) needs no schema change; the CSV format can coexist.

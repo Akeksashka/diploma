@@ -1,0 +1,77 @@
+name: ingest-manual
+
+on:
+  push:
+    branches: [main]
+    paths: ["manual_inbox/**"]
+  workflow_dispatch:
+    inputs:
+      path:
+        description: "manual_inbox/<source_id>/<YYYY-MM>/<file>; empty = whole inbox of every manual source"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mm-manual
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  MM_ENV: production
+  MM_RAW_STORE: release_public
+  MM_REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+
+jobs:
+  ingest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: write # raw release drafts, commit comment
+      issues: write # failure issue
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - name: Validate path and resolve manual groups
+        env:
+          MM_INPUT_PATH: ${{ inputs.path }}
+          MM_EVENT_NAME: ${{ github.event_name }}
+          MM_BEFORE_SHA: ${{ github.event.before }}
+          MM_AFTER_SHA: ${{ github.sha }}
+        run: scripts/ci/ingest_manual.sh plan
+      - name: Import inbox files and drain the manual group (ingest role)
+        id: ingest
+        env:
+          DATABASE_URL: ${{ secrets.NEON_URL_MM_INGEST }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: scripts/ci/ingest_manual.sh run
+      - name: Comment on the commit with the summary
+        if: always() && steps.ingest.conclusion != 'skipped'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          MM_AFTER_SHA: ${{ github.sha }}
+        run: |
+          scripts/ci/ingest_manual.sh summary > "$RUNNER_TEMP/summary.md"
+          cat "$RUNNER_TEMP/summary.md" >> "$GITHUB_STEP_SUMMARY"
+          gh api "repos/${GH_REPO}/commits/${MM_AFTER_SHA}/comments" -F "body=@${RUNNER_TEMP}/summary.md" > /dev/null \
+            || echo "::warning::commit comment failed"
+      - name: Open a failure issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          MM_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          body="ingest-manual failed: ${MM_RUN_URL}"
+          gh issue create --title "ingest-manual failed (run ${GITHUB_RUN_ID})" --label pipeline --body "$body" \
+            || gh issue create --title "ingest-manual failed (run ${GITHUB_RUN_ID})" --body "$body" \
+            || echo "::warning::could not open a failure issue"

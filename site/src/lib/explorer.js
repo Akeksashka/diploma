@@ -3,8 +3,12 @@
 // selectors (country, transform, date range, rebase) and returns what to draw. D6: nothing here
 // computes a rank, a percentile or a transform; Level / Default / YoY are the stored columns, and the
 // only arithmetic is the display-only rebase (rebase.js). Alert markers come from the stored alerts.json.
-import {NOT_SHOWN_NO_BASE, NOT_SHOWN_NO_VALUES, NOT_SHOWN_TRANSFORM, NO_SERIES_FILE, REBASED_UNIT, REBASED_Y_LABEL, TRANSFORM_LABELS} from "./copy.js";
+import {DRAFT_OTHER_INDICATORS_GROUP, DRAFT_UNIT_MISSING_SENTENCE, NOT_SHOWN_NO_BASE, NOT_SHOWN_NO_VALUES, NOT_SHOWN_TRANSFORM, NO_SERIES_FILE, REBASED_UNIT, REBASED_Y_LABEL, TRANSFORM_LABELS} from "./copy.js";
+import {parseHash, serializeHash} from "./hash.js";
 import {groupLabel, groupMembers} from "./peers.js";
+import {indicatorUnit, rebaseUnit} from "./units.js";
+import {isLevelDefault, shortUnit} from "./series-meta.js";
+import {transformLabel} from "./indicator-model.js";
 import {isRebasable, rebase} from "./rebase.js";
 
 export const INTERACTION_LIMIT_BYTES = 5_000_000; // spec section 8: data fetched by one interaction
@@ -92,7 +96,7 @@ export async function loadSeries(entry, attachment, limit = INTERACTION_LIMIT_BY
   }
 }
 
-export function explorerContext({manifest, seriesMeta, entities, indicators, alerts, groups = [], knownCutoff = null}) {
+export function explorerContext({manifest, seriesMeta, entities, indicators, alerts, groups = [], knownCutoff = null, domains = []}) {
   const files = seriesFileEntries(manifest);
   const indicatorList = indicators.filter((i) => files.has(i.indicator_id));
   return {
@@ -103,11 +107,69 @@ export function explorerContext({manifest, seriesMeta, entities, indicators, ale
     seriesById: new Map(seriesMeta.map((s) => [s.series_id, s])),
     alerts,
     groups,
+    domains,
     knownCutoff
   };
 }
 
-export const indicatorChoices = (ctx) => ctx.indicators.map((i) => ({id: i.indicator_id, label: `${i.indicator_id} ${i.name}`}));
+// Picker entry (C-SER-1): the name with the stored unit beside it, never the identifier alone.
+const choiceOf = (i) => {
+  const unit = indicatorUnit(i);
+  return {id: i.indicator_id, label: unit ? `${i.name} (${unit})` : i.name};
+};
+export const indicatorChoices = (ctx) => ctx.indicators.map(choiceOf);
+
+// Picker groups: one per domain in meta/domains.json order; an indicator sits in the first domain that lists it (once).
+// Indicators with a series file that no domain lists go last. Empty groups are dropped. No domains: one group without a label.
+export function indicatorGroups(ctx) {
+  const byId = new Map(ctx.indicators.map((i) => [i.indicator_id, i]));
+  const used = new Set();
+  const out = [];
+  for (const d of ctx.domains ?? []) {
+    const options = [];
+    for (const id of d.indicator_ids ?? []) {
+      if (!byId.has(id) || used.has(id)) continue;
+      used.add(id);
+      options.push(choiceOf(byId.get(id)));
+    }
+    if (options.length) out.push({id: d.domain_id, label: d.name ?? d.domain_id, options});
+  }
+  const rest = ctx.indicators.filter((i) => !used.has(i.indicator_id)).map(choiceOf);
+  if (rest.length) out.push({id: out.length ? "other" : "all", label: out.length ? DRAFT_OTHER_INDICATORS_GROUP : null, options: rest});
+  return out;
+}
+
+// C-SER-2: the first indicator of the first domain.
+export const firstIndicatorId = (ctx) => indicatorGroups(ctx)[0]?.options[0]?.id ?? null;
+
+// The state read from the address (#i, #c): a valid indicator (one with a series file) and valid countries, else the default
+// (first indicator, no country). `note` is true when any part was invalid and fell back. Never throws.
+export function initialSelection(ctx, hash) {
+  const h = parseHash(hash, {indicators: new Set(ctx.indicators.map((i) => i.indicator_id)), entities: new Set(ctx.entityName.keys())});
+  return {indicator: h.i ?? firstIndicatorId(ctx), entities: h.c, note: h.note};
+}
+
+// Countries to check for `indicatorId` (R13 follow-up): the wanted countries (from the address, or the current selection when the
+// indicator changes) that have rows in its series file, in the wanted order. `missing` lists the valid ids with no rows in this
+// export (shown as a separate note); `dropped` is true when there are any.
+export function selectedEntities(initial, indicatorId, choices) {
+  const present = new Set(choices.map((c) => c.id));
+  const entities = initial.entities.filter((id) => present.has(id));
+  const missing = initial.entities.filter((id) => !present.has(id));
+  return {entities, missing, dropped: missing.length > 0};
+}
+
+// The address that describes a selection: #i=<indicator>&c=<countries in picker order>. Only i and c are written (spec 1.5).
+export function selectionHash(indicatorId, entities, order) {
+  return serializeHash({i: indicatorId, c: order.filter((id) => entities.includes(id))});
+}
+
+// replaceState (not pushState, so Back leaves the page) and only when the address would change. replaceState fires no hashchange.
+export function replaceHash(loc, hist, hash) {
+  if (loc.hash === hash) return false;
+  hist.replaceState(hist.state, "", `${loc.pathname}${loc.search}${hash}`);
+  return true;
+}
 export const nameOf = (ctx, entity) => ctx.entityName.get(entity) ?? entity;
 
 // The default transform needs a seasonally adjusted series when its id is MoM/QoQ-like (NSA: not offered).
@@ -146,7 +208,6 @@ export function groupChoices(ctx, choices) {
     .filter((g) => g.members.length > 0);
 }
 
-export const defaultEntities = (choices, n = 5) => choices.slice(0, n).map((c) => c.id);
 export const yearOf = (ms) => new Date(ms).getUTCFullYear();
 export const yearsOf = (rows) => [...new Set(rows.map((r) => yearOf(r.end)))].sort((a, b) => a - b);
 export const periodsOf = (rows) => [...new Set(rows.map((r) => r.end))].sort((a, b) => a - b).map((ms) => ({id: isoDate(ms), label: isoDate(ms)}));
@@ -162,13 +223,21 @@ export function autoBase(seriesList) {
   return Math.min(...sets.flatMap((s) => [...s]));
 }
 
-function unitText(ctx, ind, meta, column, rebased) {
-  if (rebased) return REBASED_UNIT;
+function unitText(ctx, ind, meta, column, rebaseBase) {
+  if (rebaseBase != null) return rebaseUnit(rebaseBase) ?? REBASED_UNIT;
   if (column === "value_yoy") return "% change on the same period a year earlier";
   const label = ind?.unit_label ?? null;
-  if (column === "value_default_tf") return label ? `${label} (indicator default transform ${ind?.default_transform})` : `indicator default transform ${ind?.default_transform}`;
+  // CR-6: transformed_value has no stored unit, so the default transform is named, never given the level's unit_label.
+  if (column === "value_default_tf" && !isLevelDefault(ind)) return `indicator default transform ${transformLabel(ind, null)}`;
   if (meta?.unit_code) return `${meta.unit_code}${meta.unit_mult ? ` x 10^${meta.unit_mult}` : ""}${label ? ` (${label})` : ""}`;
-  return label ?? "n/a";
+  return label;
+}
+
+// Title and axis unit when the indicator stores none: the units of the drawn series (the same source as end labels and table),
+// joined when they differ; the stated defect only when no series has one either.
+function distinctText(units) {
+  const have = [...new Set(units.filter((u) => u && u !== DRAFT_UNIT_MISSING_SENTENCE))];
+  return have.length > 0 ? have.join("; ") : DRAFT_UNIT_MISSING_SENTENCE;
 }
 
 // Display text of a stored value: the stored number without float noise; a rebased (derived) value to one decimal.
@@ -177,12 +246,6 @@ export function valueText(v, rebased = false) {
   return rebased ? v.toFixed(1) : String(Number(v.toPrecision(10)));
 }
 
-// Short unit for labels (the long text stays in the caption table and the y-axis label).
-function unitShort(ind, meta, column, rebased) {
-  if (rebased) return "index";
-  if (column === "value_yoy") return "%";
-  return ind?.unit_label ?? meta?.unit_code ?? "";
-}
 
 // state: {entities: string[], transform: column, from, to (years or ""), rebase: boolean, base: "auto" | "YYYY-MM-DD"}
 export function buildModel(ctx, indicatorId, rows, state) {
@@ -227,11 +290,12 @@ export function buildModel(ctx, indicatorId, rows, state) {
     series = kept;
   }
   const rebased = Boolean(state.rebase);
+  const rebaseBase = rebased && baseMs !== null ? isoDate(baseMs) : null;
   // Each series keeps its null points: a missing period stays a gap in the line (D16); nothing is filled or interpolated.
   series = series.map((s) => {
-    const lines = s.points.map((p) => ({entity: s.entity, name: s.name, frequency: s.frequency, ms: p.ms, date: p.date, value: p.value, status: p.row.status, loadKind: p.row.loadKind, text: p.value === null ? null : valueText(p.value, rebased)}));
+    const lines = s.points.map((p) => ({entity: s.entity, name: s.name, frequency: s.frequency, ms: p.ms, date: p.date, value: p.value, status: p.row.status, knownAt: p.row.knownAt, loadKind: p.row.loadKind, text: p.value === null ? null : valueText(p.value, rebased)}));
     const lastPt = lines.filter((p) => p.value !== null).at(-1) ?? null;
-    return {...s, lines, unit: unitShort(ind, s.meta, column, rebased), latest: lastPt};
+    return {...s, lines, unit: shortUnit({indicator: ind, series: s.meta, column, rebaseBase}), latest: lastPt};
   });
   const plotted = series.flatMap((s) => s.lines.filter((p) => p.value !== null));
   const markers = [];
@@ -250,7 +314,7 @@ export function buildModel(ctx, indicatorId, rows, state) {
     return {
       entity: s.entity,
       name: s.name,
-      unit: unitText(ctx, ind, s.meta, column, Boolean(state.rebase)),
+      unit: unitText(ctx, ind, s.meta, column, rebaseBase) ?? DRAFT_UNIT_MISSING_SENTENCE,
       frequency: s.frequency ?? s.meta?.frequency ?? "n/a",
       sa: s.sa ?? "n/a",
       basePeriod: s.meta?.base_period ?? "n/a",
@@ -268,7 +332,8 @@ export function buildModel(ctx, indicatorId, rows, state) {
     baseDate: baseMs === null ? null : isoDate(baseMs),
     baseMs,
     facets: series.length > FACET_ABOVE,
-    yLabel: state.rebase ? REBASED_Y_LABEL : unitText(ctx, ind, null, column, false),
+    yLabel: state.rebase ? (rebaseBase ? rebaseUnit(rebaseBase) : REBASED_Y_LABEL) : unitText(ctx, ind, null, column, null) ?? distinctText(captions.map((c) => c.unit)),
+    titleUnit: state.rebase ? (rebaseBase ? rebaseUnit(rebaseBase) : REBASED_Y_LABEL) : shortUnit({indicator: ind, series: null, column, rebaseBase: null}) ?? distinctText(series.map((s) => s.unit)),
     series,
     plotted,
     markers,

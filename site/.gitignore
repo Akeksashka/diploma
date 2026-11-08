@@ -5,6 +5,10 @@ src/.observablehq/
 .observablehq/
 src/domain/
 src/peers/
+src/country/
+src/indicator/
 src/explorer.md
 src/revisions.md
 test-artifacts/
+src/domains.md
+src/index.md

@@ -1,0 +1,8 @@
+# Sidecar of a SYNTHETIC fixture (hand-built zip with one workbook); no live capture; not real data.
+# Layout, names and URL are [UNVERIFIED]. Member dates are fixed so the bytes are stable.
+synthetic: true
+source_url: https://economy-finance.ec.europa.eu/ (business and consumer survey ZIP) [UNVERIFIED]
+fetched_on: 2026-11-05
+sha256: af81c8b381c3c5f583ad85977f8b588357c091c7b01aa158091861f6be859053
+parser_id: ecsurvey_v1@1
+licence: Synthetic test data, project-authored (no third-party content).

@@ -1,0 +1,8 @@
+# Sidecar of the recorded-bytes fixture. SYNTHETIC: hand-built to the JSON-stat 2.0 structure
+# (plan T22 fallback while OP-04 capture has not been run); not real Eurostat data.
+synthetic: true
+source_url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?freq=M&s_adj=SA&age=TOTAL&unit=PC_ACT&sex=T&geo=DE&geo=FR&geo=ES [UNVERIFIED]
+fetched_on: 2026-11-01
+sha256: 86a4a69179659ed1e3e602d177936b560a8fd2b505d95fe7ce5f5058d569be8b
+parser_id: jsonstat_v1@1
+licence: Synthetic test data, project-authored (no third-party content).

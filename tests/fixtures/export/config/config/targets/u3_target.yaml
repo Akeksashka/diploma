@@ -1,0 +1,5 @@
+indicator: U3
+target:
+  value: 0.0
+  unit: "% of potential"
+  source_note: "Fixture target: zero by definition."

@@ -1,0 +1,77 @@
+[
+  {
+    "format": "json",
+    "path": "alerts.json",
+    "rows": 2
+  },
+  {
+    "format": "json",
+    "path": "meta/domains.json",
+    "rows": 1
+  },
+  {
+    "format": "json",
+    "path": "meta/entities.json",
+    "rows": 5
+  },
+  {
+    "format": "json",
+    "path": "meta/groups.json",
+    "rows": 0
+  },
+  {
+    "format": "json",
+    "path": "meta/indicators.json",
+    "rows": 4
+  },
+  {
+    "format": "json",
+    "path": "meta/series.json",
+    "rows": 12
+  },
+  {
+    "format": "parquet",
+    "path": "revisions/A05.parquet",
+    "rows": 22
+  },
+  {
+    "format": "parquet",
+    "path": "revisions/U1.parquet",
+    "rows": 2
+  },
+  {
+    "format": "json",
+    "path": "revisions_recent.json",
+    "rows": null
+  },
+  {
+    "format": "json",
+    "path": "scorecard/D1.json",
+    "rows": 5
+  },
+  {
+    "format": "parquet",
+    "path": "series/A05.parquet",
+    "rows": 11
+  },
+  {
+    "format": "parquet",
+    "path": "series/U1.parquet",
+    "rows": 330
+  },
+  {
+    "format": "parquet",
+    "path": "series/U2.parquet",
+    "rows": 198
+  },
+  {
+    "format": "json",
+    "path": "status.json",
+    "rows": null
+  },
+  {
+    "format": "json",
+    "path": "manifest.json",
+    "rows": null
+  }
+]

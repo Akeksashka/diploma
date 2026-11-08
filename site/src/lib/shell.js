@@ -2,7 +2,7 @@
 // so this module has no imports and no off-origin dependency.
 import {bannerMessage, staleness} from "./stale.js";
 import {sourceAttributions} from "./attribution.js";
-import {DRAFT_CONSEQUENCE, NAV_LABEL, SKIP_LINK_TEXT} from "./copy.js";
+import {DRAFT_CONSEQUENCE, DRAFT_FRESHNESS_LINE, NAV_LABEL, SKIP_LINK_TEXT} from "./copy.js";
 import {failureBlocks, noscriptHtml} from "./state-blocks.js";
 
 const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"})[c]);
@@ -18,9 +18,12 @@ export function headerHtml({title, pages, path}) {
   return `<a class="mm-skip" href="#observablehq-main">${esc(SKIP_LINK_TEXT)}</a>\n<div class="mm-header"><a class="mm-site-title" href="${esc(pages[0]?.path ?? "/")}">${esc(title)}</a>\n<nav class="mm-nav" aria-label="${esc(NAV_LABEL)}"><ul>${items}</ul></nav></div>\n${noscriptHtml()}`;
 }
 
+// Formatting only: the UTC date (YYYY-MM-DD) of the stored cut-off timestamp; anything else is shown as stored.
+const cutoffDate = (v) => (typeof v === "string" ? (/^\d{4}-\d{2}-\d{2}(?:[T ]|$)/.test(v) ? v.slice(0, 10) : v) : null);
+
 export function statusBlock(html, manifest, now = Date.now()) {
   const msg = bannerMessage(staleness(manifest.known_cutoff, now));
-  return html`<div class="mm-status">${msg ? html`<p class="mm-banner" id="stale-banner" role="alert">${msg}</p>` : ""}<p class="mm-asof">Data as of ${manifest.known_cutoff ?? "unknown"} (build ${manifest.build_id ?? "unknown"}).</p></div>`;
+  return html`<div class="mm-status">${msg ? html`<p class="mm-banner" id="stale-banner" role="alert">${msg}</p>` : ""}<p class="mm-asof">${DRAFT_FRESHNESS_LINE(cutoffDate(manifest.known_cutoff), manifest.build_id)}</p></div>`;
 }
 
 // Top of every page after loading (T105): the freshness line and stale banner when the manifest loaded, then one alert per

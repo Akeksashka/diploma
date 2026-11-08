@@ -64,6 +64,8 @@ test("AC-UX-3: the scan fails on a seeded literal in a script, in a second style
 //   {file: "lib/revisions-view.js", rule: "multiply, divide, modulo, power", contains: "<the bar width line>", clause: "ADR-025 D6 bar scale"}
 const ORDERING = "ADR-025 decision 4 / brief 1.1: a sort order is a function of one stored field; comparators order, they do not rank";
 const ALLOW = [
+  // Plain index arithmetic (positions in a list or string, never a value).
+  {file: "lib/point-reader.js", rule: "subtraction", contains: "entry.texts.length - 1", clause: "index of the last plotted point of a list; an index, not a statistic"},
   // Ordering of stored values (comparators). Not a computation of a statistic.
   {file: "lib/explorer.js", rule: "subtraction", contains: ".sort((a, b) =>", clause: ORDERING},
   {file: "lib/explorer.js", rule: "subtraction", contains: "rs[rs.length - 1]", clause: "last element of a date-sorted list (latest stored point, ADR-025 decision 6 visible vintage of the last point); an index, not a statistic"},
@@ -221,4 +223,97 @@ test("AC-UX-12: landingBudget enforces 20 KB CSS gzip, the 600 KB target and the
   } finally {
     rmSync(dir, {recursive: true, force: true});
   }
+});
+
+// ------------------------------------------------------------------------------------------ R5 (AC-RD-50, 51, 52)
+// The redesign modules (spec 1.1, 5.1-5.3; plan R2-R4) are scanned by name, so removing one from src/lib or from the scan fails.
+const NEW_LIB = ["hash", "period", "units", "sort", "missing", "copy", "country-view", "profile-chart", "indicator-view", "value-chart"].map((n) => `lib/${n}.js`);
+const BASELINE_DEPS = {"@observablehq/framework": "1.13.4", "@observablehq/plot": "0.6.18", d3: "7.9.2"};
+const BASELINE_DEV = {playwright: "1.64.1"};
+
+// Import specifiers of a module (static `import ... from "x"`, `export ... from "x"`, `import("x")`).
+const importSpecifiers = (code) => [...code.matchAll(/(?:\bfrom\s*|\bimport\s*\(\s*|\bimport\s+)["']([^"']+)["']/g)].map((m) => m[1]);
+const nonRelativeImports = (code) => importSpecifiers(code).filter((s) => !/^\.{1,2}\//.test(s));
+
+test("AC-RD-50: each redesign module is scanned, computes nothing, and needs no allow-list entry", () => {
+  const {hits} = moduleHits(src);
+  for (const m of NEW_LIB) {
+    assert.ok(m in hits, `${m} is not scanned`);
+    assert.deepEqual(hits[m], [], `${m} computes something: ${JSON.stringify(hits[m])}`);
+    assert.ok(!ALLOW.some((a) => a.file === m), `${m} must not be allow-listed`);
+  }
+  const words = NEW_LIB.flatMap((m) => computeHits(readFileSync(join(src, m), "utf8")).filter((h) => h.rule in BANNED_WORDS));
+  assert.deepEqual(words, []);
+});
+
+test("AC-RD-50: a seeded computation or judgement word in a redesign module fails", () => {
+  const dir = mkdtempSync(join(tmpdir(), "mm-rd50-"));
+  try {
+    mkdirSync(join(dir, "lib"));
+    for (const m of NEW_LIB) writeFileSync(join(dir, m), "export const f = (xs) => xs.length / 2; // " + m + "\n");
+    const {hits} = moduleHits(dir);
+    for (const m of NEW_LIB) assert.ok(hits[m].some((h) => h.rule === "multiply, divide, modulo, power"), m);
+    for (const m of NEW_LIB) {
+      assert.deepEqual(applyAllowList({[m]: hits[m]}, ALLOW).violations.length, 1, `${m} not reported as a violation`);
+      assert.ok(computeHits("export const t = 'a good result';").some((h) => h.rule === "judgement word"));
+    }
+  } finally {
+    rmSync(dir, {recursive: true, force: true});
+  }
+});
+
+test("AC-RD-51 (static part): no off-origin URL, remote @import or font in the redesign modules or pages", () => {
+  const files = listFiles(src, (n) => /\.(js|md)$/.test(n));
+  const hits = files.flatMap((f) => distFindings(f, readFileSync(f, "utf8")).map((x) => `${rel(src, f)}: ${x}`));
+  assert.deepEqual(hits, []);
+  for (const m of NEW_LIB) assert.ok(files.some((f) => rel(src, f) === m), `${m} is not scanned`);
+});
+
+test("AC-RD-51 (static part): a seeded off-origin string or remote @import fails", () => {
+  assert.ok(distFindings("lib/hash.js", 'export const u = "' + 'https://cdn.example.org/x.js";').length > 0);
+  assert.ok(distFindings("lib/units.js", 'fetch("' + '//api.example.org/v1")').length > 0);
+  assert.ok(distFindings("lib/copy.js", "@import url(" + "https://fonts.googleapis.com/css);").length > 0);
+});
+
+test("AC-RD-52: no new npm dependency, and the redesign modules import only relative files", () => {
+  const pkg = JSON.parse(readFileSync(join(site, "package.json"), "utf8"));
+  assert.deepEqual(pkg.dependencies, BASELINE_DEPS);
+  assert.deepEqual(pkg.devDependencies, BASELINE_DEV);
+  for (const m of NEW_LIB) assert.deepEqual(nonRelativeImports(readFileSync(join(src, m), "utf8")), [], `${m} imports a package`);
+});
+
+test("AC-RD-52: a seeded package import fails", () => {
+  for (const code of ['import {mean} from "d3";', 'import * as P from "@observablehq/plot";', 'const m = await import("lodash");', 'export {x} from "d3-array";']) {
+    assert.ok(nonRelativeImports(code).length > 0, code);
+  }
+  assert.deepEqual(nonRelativeImports('import {PERCENTILE_LABEL} from "./units.js"; export * from "../lib/x.js";'), []);
+});
+
+// ------------------------------------------------------------------------------------------ R5 (AC-RD-42)
+// Unit presence in render modules: a module under src/lib that renders a value (reads `.value` / `transformed_value` or calls a
+// value formatter) must reference a unit source: units.js, a stored unit field or the percentile label. A renderer that shows a
+// number and names no unit source is a defect. This is a presence check on the module; the DOM check on pages is in the smoke tests.
+const VALUE_USE = /\.(?:value|transformed_value)\b|formatValue|fmtValue/;
+const UNIT_SOURCE = /unitText|indicatorUnit|seriesUnit|rebaseUnit|multText|unit_label|unit_code|\.unit\b|\bunit:|PERCENTILE_LABEL|PERCENTILE_COLUMN_LABEL|REBASED_UNIT/;
+const isRenderer = (name) => /-view\.js$|chart\.js$/.test(name);
+const unitFindings = (name, code) => {
+  const c = stripNoise(code);
+  const text = code.replace(/\/\/.*$/gm, "");
+  return isRenderer(name) && VALUE_USE.test(c) && !UNIT_SOURCE.test(text) ? [`${name}: renders a value, names no unit source`] : [];
+};
+
+test("AC-RD-42: every render module that shows a value references a unit source", () => {
+  const files = listFiles(join(src, "lib"), (n) => isRenderer(n));
+  assert.ok(files.length >= 5, `found only ${files.length} render modules`);
+  assert.deepEqual(files.flatMap((f) => unitFindings(f, readFileSync(f, "utf8"))), []);
+});
+
+test("AC-RD-42: a seeded renderer that shows a value without a unit fails, and the unit helpers are exposed", () => {
+  assert.equal(unitFindings("lib/country-view.js", "export const cell = (r) => html`<td>${r.value}</td>`;").length, 1);
+  assert.equal(unitFindings("lib/profile-chart.js", "const y = (r) => formatValue(r);").length, 1);
+  assert.deepEqual(unitFindings("lib/country-view.js", 'import {unitText} from "./units.js"; const c = (r) => `${r.value} ${unitText(r).unit}`;'), []);
+  assert.equal(unitFindings("lib/country-view.js", "// the unit is shown\nconst c = (r) => `${r.value} per unit of time`;").length, 1, "the bare word unit in prose or a string is not a unit source");
+  assert.deepEqual(unitFindings("lib/units.js", "const v = r.value;"), [], "units.js is a helper, not a renderer");
+  const units = readFileSync(join(src, "lib", "units.js"), "utf8");
+  for (const fn of ["indicatorUnit", "seriesUnit", "rebaseUnit", "unitText", "multText", "PERCENTILE_LABEL"]) assert.ok(units.includes(`export ${fn === "PERCENTILE_LABEL" ? "const" : "function"} ${fn}`), fn);
 });

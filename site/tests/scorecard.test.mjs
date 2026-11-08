@@ -4,7 +4,7 @@ import {test} from "node:test";
 import {listOf} from "../src/lib/meta.js";
 import {CAVEAT, ScorecardError, domainView, entitySummary, indicatorCell, peerSetNote, validateScorecard} from "../src/lib/scorecard.js";
 import {domainBlock} from "../src/lib/scorecard-view.js";
-import {DOMAIN_ID_RE, domainPageSource} from "../scripts/lib.mjs";
+import {DOMAIN_ID_RE, domainPageSource, homePageSource} from "../scripts/lib.mjs";
 
 const LABEL = "mean percentile of the domain's indicators";
 const ind = (o = {}) => ({indicator_id: "M09", value: 3.1, rank_mode: "monotone_good", is_stale: false, alignment: "aligned", inherited: false, published: true, publish_scope: "ranked", percentile: 0.9, ref_period_end: "2026-09-30", ...o});
@@ -147,7 +147,7 @@ test("rendered fixture domains show label, caveat, flags, and the right rows (ge
 });
 
 test("the landing page repeats the standing caveat verbatim", () => {
-  assert.ok(readFileSync(new URL("../src/index.md", import.meta.url), "utf8").includes(CAVEAT));
+  assert.ok(homePageSource({entities: [], indicators: [], domains: []}).includes(CAVEAT));
 });
 
 test("domain page source is built from a validated id only", () => {

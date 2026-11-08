@@ -1,0 +1,8 @@
+# Sidecar of a SYNTHETIC fixture (hand-built CSV); no live capture; not real data.
+# Layout, names and URL are [UNVERIFIED]. Member dates are fixed so the bytes are stable.
+synthetic: true
+source_url: https://www.fao.org/media/docs/worldfoodsituationlibraries/default-document-library/food_price_indices_data.csv [UNVERIFIED]
+fetched_on: 2026-11-05
+sha256: a56b18636c20591f285fd8d12a136db35986a983d5eeeeda71a995ce8bba6d79
+parser_id: fao_ffpi_v1@1
+licence: Synthetic test data, project-authored (no third-party content).

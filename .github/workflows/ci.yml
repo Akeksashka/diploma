@@ -1,0 +1,134 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - run: scripts/ci/lint.sh
+
+  unit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - run: scripts/ci/unit.sh
+
+  db:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        # PostgreSQL 17 is a WORKING ASSUMPTION, UNVERIFIED against Neon (plan OQ-08/OP-11).
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      MM_TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/postgres
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - run: scripts/ci/db.sh
+
+  actionlint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: scripts/ci/actionlint.sh
+
+  site:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      EXPORT_DIR: ${{ github.workspace }}/site-export
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      # OP-07 OPEN: actions/setup-node has no verified commit SHA in this repository, so it is not
+      # used. The runner image's preinstalled Node is used and only its major version is checked
+      # against site/.nvmrc. Replace this step with a SHA-pinned setup-node once OP-07 supplies it.
+      - name: Check the Node major version
+        run: |
+          want="$(cut -d. -f1 site/.nvmrc)"
+          have="$(node --version | sed 's/^v//' | cut -d. -f1)"
+          echo "node $(node --version), site/.nvmrc wants major ${want}"
+          test "${have}" = "${want}"
+      - name: Fixture export (no database)
+        run: |
+          uv sync --frozen
+          uv run python tests/fixtures/site_spike/make_export.py "${EXPORT_DIR}"
+      - name: Install site dependencies
+        working-directory: site
+        run: npm ci --ignore-scripts
+      - name: JS unit tests
+        working-directory: site
+        run: npm test
+      - name: Build
+        working-directory: site
+        run: npm run build
+      - name: Landing size (AC-DASH-2)
+        working-directory: site
+        run: npm run measure:landing
+      - name: Npm imports lock (ADR-023 P2)
+        working-directory: site
+        run: npm run check:imports
+      - name: Audit gate
+        working-directory: site
+        run: |
+          npm audit --json > "${RUNNER_TEMP}/npm-audit.json" || true
+          node scripts/audit-gate.mjs "${RUNNER_TEMP}/npm-audit.json"
+      - name: Whole-site size budget
+        run: uv run macro-monitor check-site --site-dir site/dist
+      - name: Smoke tests (Playwright CLI installs Chromium)
+        run: scripts/ci/site-smoke.sh
+      # The country and indicator smoke states need the synthetic sparse fixture (site/tests/fixtures/sparse_export, a complete export); on the
+      # fixture above they skip. Second build from it, then only the country and indicator smoke (the browser is already installed).
+      - name: Build from the synthetic sparse fixture
+        working-directory: site
+        env:
+          EXPORT_DIR: ${{ github.workspace }}/site/tests/fixtures/sparse_export
+        run: npm run build
+      - name: Country and indicator smoke on the synthetic sparse fixture
+        working-directory: site
+        env:
+          EXPORT_DIR: ${{ github.workspace }}/site/tests/fixtures/sparse_export
+          MM_SMOKE_REQUIRE_BROWSER: "1"
+        run: node --test tests/smoke/country.smoke.mjs tests/smoke/indicator.smoke.mjs

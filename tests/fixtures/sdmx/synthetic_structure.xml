@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC FIXTURE: hand-written for the T04 compatibility spike. Not real source data. -->
+<mes:Structure xmlns:mes="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message"
+               xmlns:str="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/structure"
+               xmlns:com="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common">
+  <mes:Header>
+    <mes:ID>SYNTHETIC-2</mes:ID>
+    <mes:Test>true</mes:Test>
+    <mes:Prepared>2026-01-01T00:00:00Z</mes:Prepared>
+    <mes:Sender id="SYNTHETIC"/>
+  </mes:Header>
+  <mes:Structures>
+    <str:Codelists>
+      <str:Codelist id="CL_FREQ" agencyID="SYN" version="1.0">
+        <com:Name xml:lang="en">Synthetic frequency</com:Name>
+        <str:Code id="M"><com:Name xml:lang="en">Monthly</com:Name></str:Code>
+        <str:Code id="Q"><com:Name xml:lang="en">Quarterly</com:Name></str:Code>
+      </str:Codelist>
+    </str:Codelists>
+  </mes:Structures>
+</mes:Structure>

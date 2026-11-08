@@ -26,7 +26,6 @@ export const PAIRS = [
   ui("--mm-alert-alert", "--mm-surface"),
   text("--mm-alert-watch-ink", "--mm-alert-watch"),
   text("--mm-alert-alert-ink", "--mm-alert-alert"),
-  ...["fresh", "late", "stale", "broken"].map((s) => ui(`--mm-feed-${s}`, "--mm-surface")),
   text("--mm-warn-ink", "--mm-warn-bg"),
   ui("--mm-warn-border", "--mm-warn-bg"),
   ui("--mm-warn-border", "--mm-bg"),

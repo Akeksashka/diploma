@@ -1,0 +1,25 @@
+# Fixture config tree for the T83 export tests (not the production config).
+sources:
+  - id: S
+    name: Fixture public source
+    kind: rest
+    licence: {id: l, url: "https://example.org/public-source", attribution: a}
+    publish_site: public
+    groups:
+      - {id: G, series_map: config/series_map/s_g.yaml, published_precision: 1}
+  - id: W
+    name: Fixture withheld source
+    kind: rest
+    licence: {id: l, url: "https://example.org/withheld-source", attribution: a}
+    publish_site: withheld
+    groups:
+      - {id: G, series_map: config/series_map/w_g.yaml}
+  - id: MAN
+    name: Fixture manual source
+    kind: manual
+    licence: {id: l, url: "https://example.org/manual", attribution: a}
+    publish_site: public
+    reminders:
+      - {expected_window: {month: 4, from_day: 10, to_day: 24}, remind_on: {month: 4, day: 25}, text: x}
+      - {expected_window: {month: 10, from_day: 10, to_day: 24}, remind_on: {month: 10, day: 25}, text: y}
+    groups: []

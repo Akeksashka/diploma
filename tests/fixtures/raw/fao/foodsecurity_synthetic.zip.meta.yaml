@@ -1,0 +1,8 @@
+# Sidecar of a SYNTHETIC fixture (hand-built zip); no live capture; not real data.
+# Layout, names and URL are [UNVERIFIED]. Member dates are fixed so the bytes are stable.
+synthetic: true
+source_url: https://bulks-faostat.fao.org/production/Food_Security_Data_E_All_Data_(Normalized).zip [UNVERIFIED]
+fetched_on: 2026-11-05
+sha256: 152ebf32b489326361e58f85a84b39b5cbb47be6500c1b7c17871e72d6ca37f7
+parser_id: fao_stat_v1@1
+licence: Synthetic test data, project-authored (no third-party content).

@@ -1,0 +1,10 @@
+# Sidecar of the recorded-bytes fixture. REAL Eurostat response, captured unmodified (OP-04, verified live syntax).
+synthetic: false
+source_url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?age=TOTAL&format=JSON&freq=M&geo=DE&geo=ES&geo=FR&s_adj=SA&sex=T&sinceTimePeriod=1991-01&unit=PC_ACT
+fetched_at: 2026-11-04T19:21:05Z
+http_status: 200
+source_updated: "2026-10-30T11:00:00+0100"
+sha256: f7779496809f511d5196530aa4a87c210b69d39b3e54fd494730e21067b9908a
+parser_id: jsonstat_v1@1
+notes: "JSON-stat 2.0; dimension ids freq,s_adj,age,unit,sex,geo,time; no ETag/Last-Modified headers returned."
+licence: "Source: Eurostat, reuse per https://ec.europa.eu/eurostat/web/main/help/copyright-notice"

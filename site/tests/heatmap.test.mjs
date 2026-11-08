@@ -101,6 +101,21 @@ test("table markup: caption, th scope, a tbody per group, text in every cell, ag
   assert.match(out, /aria-sort="none"[^>]*><button type="button" class="mm-sort" data-sort="mean">/);
 });
 
+test("R11: row headers link to the country page, column headers to the indicator page; full names stay accessible; no peers/ link", () => {
+  const model = heatmapModel(synthetic());
+  const out = heatmapTable(html, model).s;
+  assert.match(out, /<th scope="row" class="mm-hm-country"><a href="\.\.\/country\/AAA" data-link="country">Aaa<\/a><\/th>/);
+  assert.equal((out.match(/data-link="country"/g) ?? []).length, 4, "every row incl. the aggregate has a country page");
+  assert.match(out, /<a class="mm-hm-open" href="\.\.\/indicator\/I1" data-link="indicator" aria-label="Indicator page: Unemployment">Indicator page<\/a>/);
+  assert.equal((out.match(/data-link="indicator"/g) ?? []).length, model.columns.length);
+  assert.ok(out.includes('title="Unemployment') && out.includes('<span class="mm-hm-name">Unemployment</span>'), "full name still in the header");
+  assert.ok(!out.includes("peers/"));
+  // a global entity has no country page: its name stays plain text
+  const g = heatmapModel(domainView(sc([ent("AAA", 0.9, 1, [ind("I1")]), ent("GGG", null, null, [])]), {...meta, entities: [...meta.entities, {entity_id: "GGG", name: "Globe", kind: "aggregate", is_global: true}]}));
+  const gout = heatmapTable(html, g).s;
+  assert.ok(gout.includes('class="mm-hm-country">Globe</th>') && !gout.includes("country/GGG"));
+});
+
 test("cell names carry the state wording, the bin label and the direction", () => {
   const out = heatmapTable(html, heatmapModel(synthetic())).s;
   assert.ok(out.includes('aria-label="Aaa, Unemployment: 0.90, percentile vs all ranked countries; highest fifth of the panel; lower is better"'));

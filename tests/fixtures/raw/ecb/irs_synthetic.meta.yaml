@@ -1,0 +1,8 @@
+# Sidecar of the recorded-bytes-style fixture. SYNTHETIC: hand-built SDMX-CSV (format=csvdata)
+# layout; no live capture; not real ECB data. Key positions and OBS_STATUS codes are [UNVERIFIED].
+synthetic: true
+source_url: https://data-api.ecb.europa.eu/service/data/IRS/M.DE+U2.L.L40.CI.0000.EUR.N.Z?format=csvdata&startPeriod=1991-01 [UNVERIFIED]
+fetched_on: 2026-11-03
+sha256: 1272b34836fae2ee136d9c43ead2a017c3269887904e5b168e01d2f47c4c9186
+parser_id: ecb_csv_v1@1
+licence: Synthetic test data, project-authored (no third-party content).

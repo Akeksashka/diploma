@@ -1,0 +1,8 @@
+# Sidecar of a SYNTHETIC fixture (hand-built workbook, sheet 'Monthly Prices'); no live capture; not real data.
+# Layout, names and URL are [UNVERIFIED]. Member dates are fixed so the bytes are stable.
+synthetic: true
+source_url: https://thedocs.worldbank.org/en/doc/HASH/related/CMO-Historical-Data-Monthly.xlsx [UNVERIFIED]
+fetched_on: 2026-11-05
+sha256: 6847f76c1ad9818a0f602215f3ffeea37367729cfbe13a5047f3fdbcaae3dc0a
+parser_id: pinksheet_v1@1
+licence: Synthetic test data, project-authored (no third-party content).

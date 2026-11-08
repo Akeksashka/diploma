@@ -110,12 +110,12 @@ test("noscript notice is static markup in the header of every page", () => {
 test("pageHead: status line when the manifest loaded, alerts for failures, nothing else", () => {
   const manifest = {known_cutoff: "2026-11-01T00:00:00Z", build_id: "b1", schema_version: "1.0", files: []};
   const NOW = Date.parse("2026-11-04T00:00:00Z");
-  const fine = pageHead(html, {ok: true, data: {manifest}, failures: []}, "status", NOW).s;
-  assert.ok(fine.includes("Data as of") && !fine.includes("mm-state"));
-  const part_ = pageHead(html, {ok: false, data: {manifest}, failures: [{key: "status", region: DRAFT_REGIONS.status, kind: "missing"}]}, "status", NOW).s;
-  assert.ok(part_.includes("Data as of") && part_.includes('role="alert"') && part_.includes(DRAFT_CONSEQUENCE.status));
-  const none = pageHead(html, {ok: false, data: {}, failures: [{key: "manifest", region: DRAFT_REGIONS.manifest, kind: "version"}]}, "landing", NOW).s;
-  assert.ok(!none.includes("Data as of") && none.includes("not supported") && none.includes(DRAFT_CONSEQUENCE.landing));
-  const stale = pageHead(html, {ok: true, data: {manifest: {...manifest, known_cutoff: "2026-01-01T00:00:00Z"}}, failures: []}, "status", NOW).s;
+  const fine = pageHead(html, {ok: true, data: {manifest}, failures: []}, "lists", NOW).s;
+  assert.ok(fine.includes("Data cut-off") && !fine.includes("mm-state"));
+  const part_ = pageHead(html, {ok: false, data: {manifest}, failures: [{key: "alerts", region: DRAFT_REGIONS.alerts, kind: "missing"}]}, "lists", NOW).s;
+  assert.ok(part_.includes("Data cut-off") && part_.includes('role="alert"') && part_.includes(DRAFT_CONSEQUENCE.lists));
+  const none = pageHead(html, {ok: false, data: {}, failures: [{key: "manifest", region: DRAFT_REGIONS.manifest, kind: "version"}]}, "lists", NOW).s;
+  assert.ok(!none.includes("Data cut-off") && none.includes("not supported") && none.includes(DRAFT_CONSEQUENCE.lists));
+  const stale = pageHead(html, {ok: true, data: {manifest: {...manifest, known_cutoff: "2026-01-01T00:00:00Z"}}, failures: []}, "lists", NOW).s;
   assert.ok(stale.includes('id="stale-banner"') && stale.includes('role="alert"'));
 });

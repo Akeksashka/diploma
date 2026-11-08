@@ -26,11 +26,10 @@ export const DRAFT_ERROR_TITLE = (region) => `Could not load ${region}.`;
 export const DRAFT_ERROR_VERSION = (region) => `This page cannot read ${region}: its data version is not supported by this front-end.`;
 export const DRAFT_ERROR_INVALID = (region) => `The data of ${region} did not pass the format check, so it is not used.`;
 export const DRAFT_CONSEQUENCE = Object.freeze({
-  landing: "The list of domains is not shown.",
+  lists: "The lists on this page are still shown.",
   scorecard: "The tables and charts on this page are not shown.",
   explorer: "The chart and tables on this page are not shown.",
-  revisions: "The revision lists on this page are not shown.",
-  status: "The status tables on this page are not shown."
+  revisions: "The revision lists on this page are not shown."
 });
 export const DRAFT_SUBREGION_CONSEQUENCE = "The rest of this page is still shown. Choose another indicator to try again.";
 export const DRAFT_NOSCRIPT = "This dashboard needs JavaScript to show its tables and charts. Enable JavaScript and reload the page.";
@@ -43,7 +42,6 @@ export const DRAFT_REGIONS = Object.freeze({
   domains: "the list of domains",
   alerts: "the current alerts",
   recent: "the list of recent revisions",
-  status: "the data status",
   series: "the series file of this indicator",
   revisionFile: "the revision file of this indicator",
   loadingData: "the dashboard data",
@@ -150,20 +148,13 @@ export const VINTAGE_EMPTY = "No stored versions of this series for that referen
 export const NAMED_EDITION_MARK = " (named edition)";
 export const REVISED_DATA_HISTORY_MARK = " (revised-data history)";
 
-// --- V5 status ----------------------------------------------------------------------------------------
-export const STATE_LABELS = Object.freeze({fresh: "fresh", late: "late", stale: "stale", broken: "broken"});
-export const LOAD_LABELS = Object.freeze({ok: "ok", warn: "warnings", failed: "failed", skipped: "skipped"});
-export const NOT_EXPORTED = "not exported";
-export const UNKNOWN_STATE = "unrecognised state";
-export const COV01_NOT_YET = "not yet measurable";
-export const NO_ANALYSIS_RUN = "no analysis run for this ingest run";
-export const NO_WINDOW = "no expected window configured";
-export const NOT_SHOWN = "not shown";
-export const WINDOW_NOTE = "Expected release windows come from the source configuration; the release months are not verified against the publisher.";
-export const COUNTS_NOTE = "Counts cover the published scope only (withheld sources are not counted). They are shown as exported.";
-export const COV01_NOTE = "COV-01 reports, per indicator, how many entities qualify and whether the check can be measured yet. The share of entities that were stale on arrival is not part of the export.";
-export const LOAD_NOTE = "The load result of a group is not part of the export yet; the column is empty until it is.";
-export const BACKLOG_NOTE = "One figure for all sources together; the export has no backlog per group.";
+// --- Global freshness line (G-STR2, decisions record section 4). CONFIRMED by the user (R20); replaces "Data as of". ---
+export const FRESHNESS_LABEL = "Data cut-off";
+export const DRAFT_FRESHNESS_LINE = (date, buildId) => `${FRESHNESS_LABEL}: ${date ?? "unknown"} (build ${buildId ?? "unknown"}).`;
+
+// --- Stale banner (G-STALE, ADR-031). CONFIRMED by the user (R20); never prints the manifest field name. `date` is YYYY-MM-DD (UTC). ---
+export const STALE_BANNER = (date, days, limit) => `Data may be out of date: the data cut-off (${date}) is ${days} days old, more than ${limit} days.`;
+export const STALE_BANNER_UNREADABLE = "Data freshness unknown: this build has no readable data cut-off. Treat the data as out of date.";
 
 // --- Stage 1: state vocabulary, percentile bins, legend, heatmap (T108-T112) --------------------------
 // APPROVED (G2, 2026-11-05). Bin labels carry no judgement words. The brief fixes the first and the last label
@@ -227,6 +218,7 @@ export const DRAFT_Y_MODE = (free) => (free
   : "All charts share one y-axis scale, so the levels of the countries can be compared.");
 export const DRAFT_SERIES_LABEL_PART = (name, from, to, latestText) => `${name}, ${from} to ${to}, latest stored value ${latestText}`;
 export const DRAFT_EXPLORER_FIGURE_LABEL = (title, yLabel, parts) => `Line chart of ${title}, y-axis ${yLabel}. ${parts.join("; ")}. The table under the chart lists the plotted points.`;
+export const DRAFT_TABLE_CAPTION_ALL = (title) => `${title}: plotted values, every plotted period of each series`; // spec 5.6: every plotted value is in a table
 export const DRAFT_TABLE_CAPTION = (title, n) => `${title}: plotted values, latest ${n} periods of each series`;
 export const DRAFT_TABLE_HEADERS = Object.freeze({value: "Value", status: "Status"});
 export const DRAFT_DOWNLOAD = "Download the data file of this indicator";
@@ -244,3 +236,135 @@ export const DRAFT_STEP_REMOVED = "removed";
 export const DRAFT_STEP_FIGURE_LABEL = (title, country, period, yLabel, parts) => `Step chart of ${title} for ${country}, reference period ${period}, y-axis ${yLabel}. ${parts.join("; ")}. The version table below lists the same points.`;
 export const DRAFT_STEP_FIGURE_PART = (known, valueText) => `${known}: ${valueText}`;
 export const DRAFT_STEP_SKIP = "Skip to version table";
+
+// --- Redesign R3: missing-data sentences (spec 5.1 and 7). DRAFT: written from the spec, not confirmed by the user. ---
+export const DRAFT_NOT_PUBLISHED_SENTENCE = "Not published on this site.";
+export const DRAFT_NA_DEFINED_SENTENCE = "A series is defined for this country, but this export holds no value for it.";
+// G-STR1 (docs/ops/dashboard-redesign-decisions.md section 4): the test (pair absent from meta/series.json) only shows
+// "not in this export's series list", so the sentence says that.
+export const DRAFT_G_STR1_NO_SERIES = "This export lists no series for this country and indicator.";
+// DRAFT: a value (or domain row) is stored without a percentile and no stored field states why.
+export const DRAFT_NA_NO_PERCENTILE_SENTENCE = "This export holds a value but no percentile for it.";
+export const DRAFT_NA_NO_RANKED_SENTENCE = "No indicator of this domain has a ranked value for this country.";
+
+// DRAFT (not confirmed): Redesign R6 country page labels and figure-line wording (spec C-CTRY-1, 4.2 header, section 2 breadcrumb).
+export const DRAFT_CRUMB_LABEL = "Breadcrumb";
+export const DRAFT_CRUMB_HOME = "Home";
+export const DRAFT_CRUMB_COUNTRIES = "Countries";
+export const DRAFT_COUNTRY_KIND_LABEL = "Kind";
+export const DRAFT_COUNTRY_GROUPS_LABEL = "Groups";
+export const DRAFT_COUNTRY_NO_GROUPS = "none";
+export const DRAFT_WITHOUT_VALUE_GROUP = "Indicators without a value in this export";
+export const DRAFT_FIGURE_COVERAGE = (nAvailable, nDefined) => `${nAvailable} of ${nDefined} indicators available`;
+export const DRAFT_FIGURE_POSITION = (position, nRanked) => `position ${position} of ${nRanked}`;
+
+// DRAFT (not confirmed): Redesign R7 country page rendering (spec C-CTRY-2, C-CTRY-3, 4.2 controls).
+export const DRAFT_COUNTRY_SWITCHER_LABEL = "Switch country";
+export const DRAFT_COUNTRY_SWITCHER_GO = "Go";
+export const DRAFT_COUNTRY_FILTER_LEGEND = "Show";
+export const DRAFT_COUNTRY_FILTER_ALL = "All indicators";
+export const DRAFT_COUNTRY_FILTER_VALUE = "Only indicators with a value";
+export const DRAFT_COUNTRY_COLUMNS = Object.freeze({indicator: "Indicator", value: "Latest value", period: "Reference period", percentile: PERCENTILE_COLUMN_LABEL, source: "Source", actions: "Actions", reason: "Why there is no value"});
+export const DRAFT_COUNTRY_TABLE_CAPTION = (domainName, countryName) => `${domainName}: indicators of ${countryName}`;
+export const DRAFT_PROFILE_FIGURE_LABEL = (countryName, domainName) => `percentile of each indicator for ${countryName}, domain ${domainName}; table below lists the same values`;
+export const DRAFT_PROFILE_DOT_LABEL = (name, percentileText) => `${name}: ${percentileText}`;
+export const DRAFT_OFFSET_FLAG = (days) => `offset ${days} days`;
+// G-STR3 (decisions record section 4): one label per target. "Compare with other countries" is dropped.
+export const DRAFT_COMPARE_COUNTRIES = "Compare countries"; // to PG-INDICATOR
+export const DRAFT_COMPARE_COUNTRIES_LABEL = (indicatorName) => `Compare countries: ${indicatorName}`;
+export const DRAFT_SERIES_LINK_LABEL = (indicatorName, countryName) => `Time series: ${indicatorName}, ${countryName}`;
+export const DRAFT_HEATMAP_INDICATOR_LINK = "Indicator page"; // DRAFT (not confirmed): visible text of the column-header link (R11)
+export const DRAFT_HEATMAP_INDICATOR_LINK_LABEL = (name) => `Indicator page: ${name}`; // DRAFT (not confirmed): full name for assistive tech, starts with the visible text
+
+// DRAFT (not confirmed): Redesign R8 "About this value" field list (spec 5.5) and "Show history" (C-CTRY-3, AC-RD-14). Labels only; no prose.
+export const DRAFT_ABOUT_SUMMARY = "About this value";
+export const DRAFT_ABOUT_LABELS = Object.freeze({
+  indicator: "Indicator",
+  country: "Country",
+  seriesId: "Series id",
+  source: "Source",
+  attribution: "Attribution",
+  frequency: "Frequency",
+  unit: "Unit",
+  seasonal: "Seasonal adjustment",
+  priceBasis: "Price basis",
+  refPeriod: "Reference period",
+  knownAt: "Known at",
+  sourceRelease: "Source release at",
+  age: "Age (days)",
+  staleLimit: "Staleness limit (days)",
+  transform: "Transform",
+  flags: "Flags",
+  reestimating: "Re-estimation"
+});
+export const DRAFT_REESTIMATED_MARK = "re-estimated";
+export const DRAFT_HISTORY_SHOW = "Show history";
+export const DRAFT_HISTORY_HIDE = "Hide history";
+export const DRAFT_HISTORY_REGION = "the history of this indicator";
+export const DRAFT_HISTORY_CONSEQUENCE = "No history chart is shown for this indicator.";
+export const DRAFT_HISTORY_FIGURE_LABEL = (indicatorName, countryName, unit) => `history of ${indicatorName} for ${countryName}, in ${unit}; table below lists the latest values`;
+export const DRAFT_HISTORY_TABLE_TITLE = (indicatorName, countryName) => `${indicatorName}: ${countryName}`;
+
+// DRAFT (not confirmed): Redesign R9 indicator page header and row table labels (spec 4.3 header, C-IND-5). Labels only; no prose.
+export const DRAFT_CRUMB_INDICATORS = "Indicators";
+export const DRAFT_INDICATOR_FACT_LABELS = Object.freeze({id: "Identifier", domains: "Domains", unit: "Unit", frequency: "Frequency", direction: "Direction", notes: "Notes", transform: "Transform"});
+export const DRAFT_INDICATOR_COLUMNS = Object.freeze({country: "Country", value: "Latest value", period: "Reference period", offset: "Offset (days)", percentile: PERCENTILE_COLUMN_LABEL});
+export const DRAFT_INDICATOR_TABLE_CAPTION = (indicatorName) => `${indicatorName}: latest values by country`;
+
+// DRAFT (not confirmed): Redesign R10 indicator page controls, table and charts (spec C-IND-1 to C-IND-7). Labels only. The reference-period line (C-IND-2)
+// reuses the confirmed spreadText() sentence of peers.js (decisions record 2b).
+export const DRAFT_INDICATOR_GROUP_LEGEND = "Peer group (filter)";
+export const DRAFT_INDICATOR_SORT_LABEL = "Sort by";
+export const DRAFT_INDICATOR_SORT_LABELS = Object.freeze({name: "Country", value: "Value", percentile: "Percentile", period: "Reference period"});
+export const DRAFT_INDICATOR_SWITCHER_LABEL = "Switch indicator";
+export const DRAFT_INDICATOR_SWITCHER_GO = "Go";
+export const DRAFT_INDICATOR_COLUMNS_MORE = Object.freeze({flags: "Flags", source: "Source", actions: "Actions", reason: "Why there is no value"});
+export const DRAFT_TRANSFORMED_HEADER = (transformLabel) => `Transformed value (${transformLabel})`;
+export const DRAFT_OPEN_AS_SERIES = "Open as time series";
+export const DRAFT_INDICATOR_SERIES_LINK = "Time series"; // row link to PG-SERIES (also used on the country page, G-STR3)
+// DRAFT (AC-RD-42): a value with no stored unit is a defect; it is stated, never shown as a bare number or "n/a".
+export const DRAFT_UNIT_MISSING_SENTENCE = "This export holds no unit for this value.";
+export const DRAFT_VALUE_AXIS_TITLE = (indicatorName, unit) => `${indicatorName} (${unit || DRAFT_UNIT_MISSING_SENTENCE})`;
+export const DRAFT_VALUE_FIGURE_LABEL = (indicatorName, unit, n) => `Bar chart of ${indicatorName}, ${unit ? `in ${unit}` : DRAFT_UNIT_MISSING_SENTENCE}, ${n} ${n === 1 ? "country" : "countries"}; table below lists the same values`;
+export const DRAFT_VALUE_ESTIMATE_MARK = "e";
+export const DRAFT_VALUE_NEUTRAL_LEGEND = "No percentile";
+
+// DRAFT (not confirmed): Redesign R13 PG-SERIES defaults (spec C-SER-1, C-SER-2, AC-RD-31, AC-RD-34).
+export const DRAFT_CHOOSE_COUNTRIES_HINT = "Choose up to 5 countries to compare.";
+// Visible notes (AC-RD-34; decisions record section 3): unrecognised parts, and valid countries with no rows in this export.
+export const DRAFT_HASH_FALLBACK_NOTE = "Part of this link was not recognised and was ignored.";
+export const DRAFT_HASH_NO_ROWS_NOTE = (names) => `Not selected: this export has no values of this indicator for ${names.join(", ")}.`;
+export const DRAFT_OTHER_INDICATORS_GROUP = "Other indicators";
+
+// DRAFT (not confirmed): Redesign R14 PG-SERIES "About these series" table (spec C-SER-6) and the unit in the title and table header (AC-RD-32).
+export const DRAFT_ABOUT_SERIES_HEADING = "About these series";
+export const DRAFT_ABOUT_SERIES_COLUMNS = Object.freeze({
+  country: "Country",
+  source: "Source",
+  attribution: "Attribution",
+  frequency: "Frequency",
+  unit: "Unit",
+  seasonal: "Seasonal adjustment",
+  priceBasis: "Price basis",
+  lastPeriod: "Last period",
+  knownAt: "Known at (last period)",
+  reestimating: "Re-estimation"
+});
+export const DRAFT_TITLE_UNIT = (unit) => ` (${unit})`;
+export const DRAFT_VALUE_HEADER_UNIT = (unit) => `Value (${unit})`;
+
+// DRAFT (not confirmed): Redesign R16 point reader and tip (amendment 3.3). Labels reuse COUNTRY_HEADER and DRAFT_FACT_LABELS.refPeriod.
+export const DRAFT_POINT_READER_LEGEND = "Read a value";
+export const DRAFT_TIP_STATUS = Object.freeze({EST: "estimate", PROV: "provisional"}); // any other value_status: no status line
+export const DRAFT_TIP_KNOWN_AT = (date) => `Known at ${date}`;
+export const DRAFT_READER_NONE = "Choose a country"; // confirmed by the user 2026-11-08; first option of the PG-INDICATOR reader select while no country is in focus
+
+// DRAFT (not confirmed): Redesign R17/R18 home and domains pages (spec 4.1 C-HOME-2..4, 4.5; decisions record G-STR4). Labels only.
+export const DRAFT_HOME_LINKS = Object.freeze({series: "Time series", domains: "Domains", revisions: "Revisions"}); // equal to the nav page names (G-STR4)
+export const DRAFT_HOME_COUNTRIES_HEADING = "Choose a country";
+export const DRAFT_HOME_AGGREGATES_HEADING = "Aggregates";
+export const DRAFT_HOME_INDICATORS_HEADING = "Choose an indicator";
+export const DRAFT_HOME_FILTER_LABEL = Object.freeze({countries: "Filter countries", indicators: "Filter indicators"});
+export const DRAFT_HOME_FILTER_COUNT = (n) => `${n} shown`;
+export const DRAFT_HOME_FILTER_NONE = "No match.";
+export const DRAFT_HOME_DOMAINS_TITLE = "Domains"; // DRAFT (not confirmed): title and h1 of PG-DOMAINS (R17)

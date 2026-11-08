@@ -1,0 +1,75 @@
+{
+ "series": {
+  "docs": [
+   {
+    "@frequency": "annual",
+    "provider_code": "AMECO",
+    "dataset_code": "AVGDGP",
+    "series_code": "DEU.1.0.0.0.AVGDGP",
+    "series_name": "Germany - Output gap",
+    "period": [
+     "2023",
+     "2024",
+     "2025"
+    ],
+    "period_start_day": [
+     "2023-01-01",
+     "2024-01-01",
+     "2025-01-01"
+    ],
+    "value": [
+     -0.4,
+     -1.1,
+     -1.6
+    ]
+   },
+   {
+    "@frequency": "annual",
+    "provider_code": "AMECO",
+    "dataset_code": "AVGDGP",
+    "series_code": "FRA.1.0.0.0.AVGDGP",
+    "series_name": "France - Output gap",
+    "period": [
+     "2023",
+     "2024",
+     "2025"
+    ],
+    "period_start_day": [
+     "2023-01-01",
+     "2024-01-01",
+     "2025-01-01"
+    ],
+    "value": [
+     0.2,
+     -0.3,
+     "NA"
+    ]
+   },
+   {
+    "@frequency": "annual",
+    "provider_code": "AMECO",
+    "dataset_code": "AVGDGP",
+    "series_code": "USA.1.0.0.0.AVGDGP",
+    "series_name": "United States - Output gap",
+    "period": [
+     "2023",
+     "2024",
+     "2025"
+    ],
+    "period_start_day": [
+     "2023-01-01",
+     "2024-01-01",
+     "2025-01-01"
+    ],
+    "value": [
+     0.9,
+     1.2,
+     0.7
+    ]
+   }
+  ],
+  "limit": 1000,
+  "num_found": 3,
+  "offset": 0
+ }
+}

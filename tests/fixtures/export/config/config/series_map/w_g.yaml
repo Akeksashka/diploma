@@ -1,0 +1,30 @@
+# Fixture series map for the withheld source W.
+series:
+  - dataset: d
+    key: "U2.DEU"
+    entity: DEU
+    indicator: U2
+    role: headline
+    valid_from: 1991-01-01
+    rationale: fixture
+  - dataset: d
+    key: "U2.USA"
+    entity: USA
+    indicator: U2
+    role: headline
+    valid_from: 1991-01-01
+    rationale: fixture
+  - dataset: d
+    key: "U2.FRA"
+    entity: FRA
+    indicator: U2
+    role: headline
+    valid_from: 1991-01-01
+    rationale: fixture
+  - dataset: d
+    key: "U2.ITA"
+    entity: ITA
+    indicator: U2
+    role: headline
+    valid_from: 1991-01-01
+    rationale: fixture

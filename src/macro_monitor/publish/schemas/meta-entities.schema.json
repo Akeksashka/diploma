@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "meta-entities.schema.json",
+  "title": "meta/entities.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "entities"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "entity_id",
+          "name",
+          "iso3",
+          "kind",
+          "is_ranked",
+          "is_global",
+          "group_ids"
+        ],
+        "properties": {
+          "entity_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "iso3": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kind": {
+            "enum": [
+              "country",
+              "aggregate"
+            ]
+          },
+          "is_ranked": {
+            "type": "boolean"
+          },
+          "is_global": {
+            "type": "boolean"
+          },
+          "group_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

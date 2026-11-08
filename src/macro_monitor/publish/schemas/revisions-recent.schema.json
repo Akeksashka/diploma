@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "revisions-recent.schema.json",
+  "title": "revisions_recent.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "known_cutoff", "revisions", "edition_summaries"],
+  "$defs": {
+    "revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "indicator_id", "entity_id", "series_id", "ref_period_start", "known_at",
+        "previous_value", "value", "revision_abs", "revision_pct", "load_kind", "revision_class"
+      ],
+      "properties": {
+        "indicator_id": {"type": "string"},
+        "entity_id": {"type": "string"},
+        "series_id": {"type": "integer"},
+        "ref_period_start": {"type": "string"},
+        "known_at": {"type": "string"},
+        "previous_value": {"type": ["number", "null"]},
+        "value": {"type": ["number", "null"]},
+        "revision_abs": {"type": ["number", "null"]},
+        "revision_pct": {"type": ["number", "null"]},
+        "load_kind": {"enum": ["revision", "tombstone"]},
+        "revision_class": {"enum": ["regular", "reestimation"]}
+      }
+    }
+  },
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "known_cutoff": {"type": "string"},
+    "revisions": {"type": "array", "maxItems": 2000, "items": {"$ref": "#/$defs/revision"}},
+    "edition_summaries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_id", "vintage_label", "first_known_at", "n_series", "n_keys_revised",
+          "max_abs_pct", "median_abs_pct", "top_revisions"
+        ],
+        "properties": {
+          "source_id": {"type": "string"},
+          "vintage_label": {"type": "string"},
+          "first_known_at": {"type": "string"},
+          "n_series": {"type": "integer"},
+          "n_keys_revised": {"type": "integer"},
+          "max_abs_pct": {"type": ["number", "null"]},
+          "median_abs_pct": {"type": ["number", "null"]},
+          "top_revisions": {"type": "array", "maxItems": 10, "items": {"$ref": "#/$defs/revision"}}
+        }
+      }
+    }
+  }
+}

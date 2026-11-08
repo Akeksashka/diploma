@@ -1,0 +1,8 @@
+# Sidecar of a SYNTHETIC fixture (hand-built JSON); no live capture; not real data.
+# Layout, names and URL are [UNVERIFIED]. Member dates are fixed so the bytes are stable.
+synthetic: true
+source_url: https://api.db.nomics.world/v22/series/AMECO/AVGDGP?observations=1&format=json&limit=1000 [UNVERIFIED]
+fetched_on: 2026-11-05
+sha256: a7435f07616f6cf0320c231a27fcb4ec0beb717fcdfe6da8c8f0ac2ad2f70b40
+parser_id: ameco_v1@1
+licence: Synthetic test data, project-authored (no third-party content).

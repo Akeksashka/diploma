@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://macro-monitor.invalid/schemas/indicators.schema.json",
+  "title": "indicator_defaults.yaml and indicators.yaml (source-config section 3 and 3a, ADR-014)",
+  "$defs": {
+    "tier": {"enum": ["M", "Q", "A"]},
+    "staleness_class": {"enum": ["MKT45", "SURV75", "ACT120", "Q270", "A730", "TRI1460", "EVENT"]},
+    "stationarity_class": {"enum": ["stationary", "trending_level", "rate_of_change"]},
+    "alert_method": {"enum": ["z", "robust_z", "percentile", "fixed_only", "none"]},
+    "tier_map": {
+      "type": "object",
+      "properties": {
+        "M": {"type": "integer", "minimum": 0},
+        "Q": {"type": "integer", "minimum": 0},
+        "A": {"type": "integer", "minimum": 0}
+      },
+      "required": ["M", "Q", "A"],
+      "additionalProperties": false
+    },
+    "int_or_tier_map": {
+      "oneOf": [{"type": "integer", "minimum": 0}, {"$ref": "#/$defs/tier_map"}]
+    },
+    "default_alert": {
+      "type": "object",
+      "properties": {
+        "method": {"$ref": "#/$defs/alert_method"},
+        "alert_z": {"type": "number", "exclusiveMinimum": 0},
+        "watch_z": {"type": "number", "exclusiveMinimum": 0},
+        "window_obs": {"$ref": "#/$defs/int_or_tier_map"},
+        "min_obs": {"$ref": "#/$defs/int_or_tier_map"}
+      },
+      "additionalProperties": false
+    },
+    "global_defaults": {
+      "type": "object",
+      "properties": {
+        "alert": {"$ref": "#/$defs/default_alert"},
+        "max_ref_spread_days": {"$ref": "#/$defs/int_or_tier_map"},
+        "release_lag_aware": {"type": "boolean"},
+        "stationarity_class": {"$ref": "#/$defs/stationarity_class"},
+        "rank_period_coverage_pct": {"type": "number", "minimum": 0, "maximum": 100},
+        "cov_min_entities": {"type": "integer", "minimum": 1},
+        "hi_inflation_threshold": {"type": "number", "minimum": 0, "maximum": 1},
+        "max_denominator_age_days": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "family_defaults": {
+      "type": "object",
+      "properties": {
+        "staleness_class": {"$ref": "#/$defs/staleness_class"},
+        "alert": {"$ref": "#/$defs/default_alert"},
+        "stationarity_class": {"$ref": "#/$defs/stationarity_class"},
+        "max_ref_spread_days": {"$ref": "#/$defs/int_or_tier_map"},
+        "release_lag_aware": {"type": "boolean"},
+        "note": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "defaults_file": {
+      "type": "object",
+      "properties": {
+        "global": {"$ref": "#/$defs/global_defaults"},
+        "families": {
+          "type": "object",
+          "additionalProperties": {"$ref": "#/$defs/family_defaults"}
+        }
+      },
+      "required": ["global", "families"],
+      "additionalProperties": false
+    },
+    "domain": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string"},
+        "name": {"type": "string"},
+        "ranked": {"type": "boolean"},
+        "min_coverage_for_rank": {"type": "number", "minimum": 0, "maximum": 1},
+        "notice": {"type": "string"},
+        "core_pillars": {"type": "array", "items": {"type": "string"}}
+      },
+      "required": ["id", "name", "ranked"],
+      "additionalProperties": false
+    },
+    "override_entry": {
+      "type": "object",
+      "properties": {
+        "entity_group": {"type": "string"},
+        "watch": {"type": "number"},
+        "alert": {"type": "number"},
+        "rationale": {"type": "string"},
+        "source_note": {"type": "string"}
+      },
+      "required": ["entity_group", "watch", "alert"],
+      "additionalProperties": false
+    },
+    "entry_alert": {
+      "type": "object",
+      "properties": {
+        "method": {"$ref": "#/$defs/alert_method"},
+        "adverse": {"enum": [-1, 0, 1]},
+        "override": {"oneOf": [{"type": "null"}, {"type": "array", "items": {"$ref": "#/$defs/override_entry"}}]},
+        "alert_z": {"type": "number", "exclusiveMinimum": 0},
+        "watch_z": {"type": "number", "exclusiveMinimum": 0},
+        "window_obs": {"type": "integer", "minimum": 1},
+        "min_obs": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    },
+    "entry_rank": {
+      "type": "object",
+      "properties": {
+        "mode": {"enum": ["monotone_good", "target_distance", "descriptive_only"]},
+        "good_dir": {"enum": [-1, 0, 1]},
+        "display_dir": {"enum": [-1, 0, 1, null]},
+        "targets": {"type": ["object", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "entry_domain": {
+      "type": "object",
+      "properties": {"id": {"type": "string"}, "ranked": {"type": "boolean"}},
+      "required": ["id", "ranked"],
+      "additionalProperties": false
+    },
+    "entry_input": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string"},
+        "usage": {"type": "string"},
+        "currency_match": {"enum": ["numerator", "lcu", "usd"]},
+        "annualised_policy": {"type": "string"},
+        "max_denominator_age_days": {"type": "integer", "minimum": 0}
+      },
+      "required": ["id", "usage", "currency_match"],
+      "additionalProperties": false
+    },
+    "review": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "by": {"type": "string"},
+        "on": {"type": "string", "format": "date"}
+      },
+      "required": ["status"],
+      "additionalProperties": false
+    },
+    "indicator": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string", "pattern": "^[A-Z][0-9]{2}[a-z]?$"},
+        "name": {"type": "string", "minLength": 1},
+        "kind": {"enum": ["indicator", "input"]},
+        "scope": {"enum": ["country", "global"]},
+        "tier": {"$ref": "#/$defs/tier"},
+        "priority": {"enum": ["core", "ext", "opt", "dropped"]},
+        "currency_basis": {"enum": ["B1", "B2", "B3", "NA"]},
+        "family": {"type": "string"},
+        "staleness_class": {"$ref": "#/$defs/staleness_class"},
+        "stationarity_class": {"$ref": "#/$defs/stationarity_class"},
+        "release_lag_aware": {"type": "boolean"},
+        "review": {"$ref": "#/$defs/review"},
+        "transform": {"type": "string", "minLength": 1},
+        "alert": {"$ref": "#/$defs/entry_alert"},
+        "rank": {"$ref": "#/$defs/entry_rank"},
+        "max_ref_spread_days": {"type": "integer", "minimum": 0},
+        "rank_period_coverage_pct": {"type": "number", "minimum": 0, "maximum": 100},
+        "domains": {"type": "array", "items": {"$ref": "#/$defs/entry_domain"}},
+        "inputs": {"type": "array", "items": {"$ref": "#/$defs/entry_input"}},
+        "requires_flow_basis": {"enum": ["PERIOD_FLOW"]},
+        "calendar_basis": {"type": "string"},
+        "notes": {"type": ["string", "null"]},
+        "is_comparison": {"type": "boolean"},
+        "concept_id": {"type": "string"},
+        "concept_priority": {"type": "integer"}
+      },
+      "required": ["id", "name"],
+      "additionalProperties": false
+    },
+    "indicators_file": {
+      "type": "object",
+      "properties": {
+        "domains": {"type": "array", "items": {"$ref": "#/$defs/domain"}},
+        "indicators": {"type": "array", "items": {"$ref": "#/$defs/indicator"}}
+      },
+      "required": ["domains", "indicators"],
+      "additionalProperties": false
+    }
+  }
+}
