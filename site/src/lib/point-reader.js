@@ -1,6 +1,6 @@
 // Redesign R16 (spec 5.6 items 1-5): the "Read a value" form control placed after a chart, outside its role="img" figure. `html` (htl)
 // is passed in; imports local modules only. Display only: the text of a choice is given by the caller (tip.js); nothing is computed here.
-import {COUNTRY_HEADER, DRAFT_FACT_LABELS, DRAFT_POINT_READER_LEGEND} from "./copy.js";
+import {COUNTRY_HEADER, DRAFT_FACT_LABELS, POINT_READER_LEGEND} from "./copy.js";
 
 // entries: [{id, name, texts: [string]}] one per country; `texts` are the output texts of its plotted points, in date order, with
 // `periods` [string] the period labels (aria-valuetext). With `range: false` (PG-INDICATOR) there is only the country select, whose
@@ -13,7 +13,7 @@ export function pointReader(html, {id, entries, range = true, none = null, value
   const select = html`<select id="${id}-country">${options}</select>`;
   const slider = range ? html`<input type="range" id="${id}-period" min="0" max="0" step="1" value="0">` : null;
   const output = html`<output id="${id}-output" aria-live="polite" for="${id}-country"></output>`;
-  const root = html`<fieldset class="mm-point-reader" id="${id}"><legend>${DRAFT_POINT_READER_LEGEND}</legend><label>${COUNTRY_HEADER} ${select}</label>${range ? html` <label>${DRAFT_FACT_LABELS.refPeriod} ${slider}</label>` : ""} ${output}</fieldset>`;
+  const root = html`<fieldset class="mm-point-reader" id="${id}"><legend>${POINT_READER_LEGEND}</legend><label>${COUNTRY_HEADER} ${select}</label>${range ? html` <label>${DRAFT_FACT_LABELS.refPeriod} ${slider}</label>` : ""} ${output}</fieldset>`;
   const current = () => entries.find((e) => e.id === select.value) ?? null;
   // WCAG 1.4.13: Escape hid the static highlight tip (class on the figures); a new choice or re-entering focus brings it back.
   const restoreStatic = () => {

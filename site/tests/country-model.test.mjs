@@ -90,7 +90,7 @@ test("states come from the missing-data mapping (spec 5.1)", () => {
   const defined = dom(build("SY07"), "growth").rows.find((r) => r.indicatorId === "T04");
   assert.equal(defined.state.sentence, copy.DRAFT_NA_DEFINED_SENTENCE);
   const undef = dom(build("SY08"), "growth").rows.find((r) => r.indicatorId === "T04");
-  assert.equal(undef.state.sentence, copy.DRAFT_G_STR1_NO_SERIES);
+  assert.equal(undef.state.sentence, copy.G_STR1_NO_SERIES);
   for (const e of entities.filter((x) => !x.is_global)) for (const d of build(e.entity_id).domains) for (const r of d.rows) {
     if (r.state.key === "na") assert.ok(r.state.sentence, `${e.entity_id} ${r.indicatorId}`);
     if (!r.hasValue) assert.ok(r.state.sentence);

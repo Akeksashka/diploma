@@ -4,8 +4,8 @@
 // field formatted by indicator-model.js. R16: pointer tip on the value chart; "Read a value" (the country in focus select) for the keyboard.
 import {
   BIN_LABELS, DRAFT_DOWNLOAD, DRAFT_INDICATOR_COLUMNS as ICOL, DRAFT_INDICATOR_COLUMNS_MORE as MORE, DRAFT_INDICATOR_GROUP_LEGEND,
-  DRAFT_INDICATOR_SERIES_LINK, DRAFT_INDICATOR_SORT_LABEL, DRAFT_INDICATOR_SORT_LABELS, DRAFT_INDICATOR_SWITCHER_GO, DRAFT_INDICATOR_SWITCHER_LABEL, DRAFT_LEGEND_BINS,
-  DRAFT_NEXT_GROUP, DRAFT_OFFSET_FLAG, DRAFT_OPEN_AS_SERIES, DRAFT_PEER_FIGURE_LABEL, DRAFT_READER_NONE, DRAFT_SERIES_LINK_LABEL, DRAFT_TRANSFORMED_HEADER, DRAFT_VALUE_NEUTRAL_LEGEND, EMPTY_GROUP,
+  INDICATOR_SERIES_LINK, DRAFT_INDICATOR_SORT_LABEL, DRAFT_INDICATOR_SORT_LABELS, DRAFT_INDICATOR_SWITCHER_GO, DRAFT_INDICATOR_SWITCHER_LABEL, DRAFT_LEGEND_BINS,
+  DRAFT_NEXT_GROUP, DRAFT_OFFSET_FLAG, DRAFT_OPEN_AS_SERIES, DRAFT_PEER_FIGURE_LABEL, READER_NONE, SERIES_LINK_LABEL, DRAFT_TRANSFORMED_HEADER, DRAFT_VALUE_NEUTRAL_LEGEND, EMPTY_GROUP,
   FILTER_NOTE, FLAG_AHEAD, FLAG_INHERITED, FLAG_LAGGING, FLAG_UNALIGNED, NO_RANKING_SPREAD, PERCENTILE_COLUMN_LABEL
 } from "./copy.js";
 import {aboutDetails} from "./about-value.js";
@@ -124,7 +124,7 @@ function transformedCell(html, r, label) {
 function valueRow(html, r, ctx) {
   const about = {...r, indicatorId: ctx.indicatorId, name: ctx.indicatorName};
   const id = `about-${ctx.indicatorId}-${r.entityId}`;
-  return html`<tr role="row" data-entity="${r.entityId}" data-has-value="true" data-state="${r.state.key}" data-focus="${ctx.focus === r.entityId}">${countryCell(html, r)}${valueCell(html, r)}${periodCell(html, r)}${offsetCell(html, r)}${ctx.transformed ? transformedCell(html, r, ctx.transformLabel) : ""}${chip(html, r)}${flagsCell(html, r)}${sourceCell(html, r)}<td class="mm-actions" data-label="${MORE.actions}"><a href="${seriesHref(ctx.indicatorId, [r.entityId])}" data-link="series" aria-label="${DRAFT_SERIES_LINK_LABEL(ctx.indicatorName, r.name)}">${DRAFT_INDICATOR_SERIES_LINK}</a></td></tr><tr class="mm-sub-row" data-for-entity="${r.entityId}"><td colspan="${ctx.columns}">${aboutDetails(html, about, r.name, id)}</td></tr>`;
+  return html`<tr role="row" data-entity="${r.entityId}" data-has-value="true" data-state="${r.state.key}" data-focus="${ctx.focus === r.entityId}">${countryCell(html, r)}${valueCell(html, r)}${periodCell(html, r)}${offsetCell(html, r)}${ctx.transformed ? transformedCell(html, r, ctx.transformLabel) : ""}${chip(html, r)}${flagsCell(html, r)}${sourceCell(html, r)}<td class="mm-actions" data-label="${MORE.actions}"><a href="${seriesHref(ctx.indicatorId, [r.entityId])}" data-link="series" aria-label="${SERIES_LINK_LABEL(ctx.indicatorName, r.name)}">${INDICATOR_SERIES_LINK}</a></td></tr><tr class="mm-sub-row" data-for-entity="${r.entityId}"><td colspan="${ctx.columns}">${aboutDetails(html, about, r.name, id)}</td></tr>`;
 }
 
 // A row without a value: the code, its signature and the one reason sentence of spec 5.1, in one cell that spans the other columns.
@@ -189,7 +189,7 @@ function valueReader(html, Plot, bars, state, h, hooks, figureId) {
     id: "value-reader",
     entries,
     range: false,
-    none: DRAFT_READER_NONE,
+    none: READER_NONE,
     value: inFocus ? state.focus : null,
     // Only the figure (outline and static tip), the table's focus marks and the output text change; the reader fieldset, its live
     // <output> and the keyboard focus are never rebuilt (so the new text is announced).

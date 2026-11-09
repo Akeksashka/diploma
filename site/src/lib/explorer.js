@@ -3,7 +3,7 @@
 // selectors (country, transform, date range, rebase) and returns what to draw. D6: nothing here
 // computes a rank, a percentile or a transform; Level / Default / YoY are the stored columns, and the
 // only arithmetic is the display-only rebase (rebase.js). Alert markers come from the stored alerts.json.
-import {DRAFT_OTHER_INDICATORS_GROUP, DRAFT_UNIT_MISSING_SENTENCE, NOT_SHOWN_NO_BASE, NOT_SHOWN_NO_VALUES, NOT_SHOWN_TRANSFORM, NO_SERIES_FILE, REBASED_UNIT, REBASED_Y_LABEL, TRANSFORM_LABELS} from "./copy.js";
+import {OTHER_INDICATORS_GROUP, DRAFT_UNIT_MISSING_SENTENCE, NOT_SHOWN_NO_BASE, NOT_SHOWN_NO_VALUES, NOT_SHOWN_TRANSFORM, NO_SERIES_FILE, REBASED_UNIT, REBASED_Y_LABEL, TRANSFORM_LABELS} from "./copy.js";
 import {parseHash, serializeHash} from "./hash.js";
 import {groupLabel, groupMembers} from "./peers.js";
 import {indicatorUnit, rebaseUnit} from "./units.js";
@@ -135,7 +135,7 @@ export function indicatorGroups(ctx) {
     if (options.length) out.push({id: d.domain_id, label: d.name ?? d.domain_id, options});
   }
   const rest = ctx.indicators.filter((i) => !used.has(i.indicator_id)).map(choiceOf);
-  if (rest.length) out.push({id: out.length ? "other" : "all", label: out.length ? DRAFT_OTHER_INDICATORS_GROUP : null, options: rest});
+  if (rest.length) out.push({id: out.length ? "other" : "all", label: out.length ? OTHER_INDICATORS_GROUP : null, options: rest});
   return out;
 }
 

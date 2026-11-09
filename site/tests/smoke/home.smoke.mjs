@@ -5,7 +5,7 @@ import {existsSync, readFileSync, statSync} from "node:fs";
 import {join} from "node:path";
 import {after, before, describe, test} from "node:test";
 import {walk} from "../../scripts/lib.mjs";
-import {DRAFT_HOME_LINKS} from "../../src/lib/copy.js";
+import {HOME_LINKS} from "../../src/lib/copy.js";
 import {installCls, readCls} from "./ux-support.mjs";
 import {DIST, REQUIRE_BROWSER, distBuilt, launchBrowser, openPage, serve} from "./support.mjs";
 
@@ -102,7 +102,7 @@ describe("R18 PG-HOME", () => {
   test("home link labels equal the nav labels (G-STR4)", async (t) => {
     await withPage(t, "/", "#home-links a", async ({page}) => {
       const labels = await page.$$eval("#home-links a", (as) => as.map((a) => a.textContent));
-      assert.deepEqual(labels, [DRAFT_HOME_LINKS.series, DRAFT_HOME_LINKS.domains, DRAFT_HOME_LINKS.revisions]);
+      assert.deepEqual(labels, [HOME_LINKS.series, HOME_LINKS.domains, HOME_LINKS.revisions]);
     });
   });
 

@@ -133,28 +133,60 @@ const DRAFT = [
   "DRAFT_EXPLORER_FIGURE_LABEL", "DRAFT_TABLE_CAPTION", "DRAFT_TABLE_CAPTION_ALL", "DRAFT_UNIT_MISSING_SENTENCE", "DRAFT_TABLE_HEADERS", "DRAFT_DOWNLOAD", "DRAFT_BAR_LABEL",
   "DRAFT_STEP_CHOOSE_PERIOD", "DRAFT_STEP_NOTE", "DRAFT_STEP_REMOVED", "DRAFT_STEP_FIGURE_LABEL", "DRAFT_STEP_FIGURE_PART", "DRAFT_STEP_SKIP",
   // Redesign R3 (exact text is pinned in missing.test.mjs)
-  "DRAFT_NOT_PUBLISHED_SENTENCE", "DRAFT_NA_DEFINED_SENTENCE", "DRAFT_G_STR1_NO_SERIES", "DRAFT_NA_NO_RANKED_SENTENCE", "DRAFT_NA_NO_PERCENTILE_SENTENCE",
+  "DRAFT_NOT_PUBLISHED_SENTENCE", "DRAFT_NA_DEFINED_SENTENCE", "DRAFT_NA_NO_RANKED_SENTENCE", "DRAFT_NA_NO_PERCENTILE_SENTENCE",
   // Redesign R6: country page labels and figure line
   "DRAFT_CRUMB_LABEL", "DRAFT_CRUMB_HOME", "DRAFT_CRUMB_COUNTRIES", "DRAFT_COUNTRY_KIND_LABEL", "DRAFT_COUNTRY_GROUPS_LABEL", "DRAFT_COUNTRY_NO_GROUPS", "DRAFT_WITHOUT_VALUE_GROUP", "DRAFT_FIGURE_COVERAGE", "DRAFT_FIGURE_POSITION",
   // Redesign R7: country page rendering; G-STR3 labels stay DRAFT
   "DRAFT_COUNTRY_SWITCHER_LABEL", "DRAFT_COUNTRY_SWITCHER_GO", "DRAFT_COUNTRY_FILTER_LEGEND", "DRAFT_COUNTRY_FILTER_ALL", "DRAFT_COUNTRY_FILTER_VALUE", "DRAFT_COUNTRY_COLUMNS", "DRAFT_COUNTRY_TABLE_CAPTION",
-  "DRAFT_PROFILE_FIGURE_LABEL", "DRAFT_PROFILE_DOT_LABEL", "DRAFT_OFFSET_FLAG", "DRAFT_COMPARE_COUNTRIES", "DRAFT_COMPARE_COUNTRIES_LABEL", "DRAFT_SERIES_LINK_LABEL", "DRAFT_FRESHNESS_LINE", "DRAFT_HEATMAP_INDICATOR_LINK", "DRAFT_HEATMAP_INDICATOR_LINK_LABEL",
+  "DRAFT_PROFILE_FIGURE_LABEL", "DRAFT_PROFILE_DOT_LABEL", "DRAFT_OFFSET_FLAG",
   // Redesign R8: About this value and Show history
   "DRAFT_ABOUT_SUMMARY", "DRAFT_ABOUT_LABELS", "DRAFT_REESTIMATED_MARK", "DRAFT_HISTORY_SHOW", "DRAFT_HISTORY_HIDE", "DRAFT_HISTORY_REGION", "DRAFT_HISTORY_CONSEQUENCE", "DRAFT_HISTORY_FIGURE_LABEL", "DRAFT_HISTORY_TABLE_TITLE",
   // Redesign R9: indicator page header and row table labels
   "DRAFT_CRUMB_INDICATORS", "DRAFT_INDICATOR_FACT_LABELS", "DRAFT_INDICATOR_COLUMNS", "DRAFT_INDICATOR_TABLE_CAPTION",
   // Redesign R10: indicator page controls, table and charts; G-STR3 labels stay DRAFT
   "DRAFT_INDICATOR_GROUP_LEGEND", "DRAFT_INDICATOR_SORT_LABEL", "DRAFT_INDICATOR_SORT_LABELS", "DRAFT_INDICATOR_SWITCHER_LABEL", "DRAFT_INDICATOR_SWITCHER_GO", "DRAFT_INDICATOR_COLUMNS_MORE",
-  "DRAFT_TRANSFORMED_HEADER", "DRAFT_OPEN_AS_SERIES", "DRAFT_INDICATOR_SERIES_LINK", "DRAFT_VALUE_AXIS_TITLE", "DRAFT_VALUE_FIGURE_LABEL", "DRAFT_VALUE_ESTIMATE_MARK", "DRAFT_VALUE_NEUTRAL_LEGEND",
-  "DRAFT_CHOOSE_COUNTRIES_HINT", "DRAFT_HASH_FALLBACK_NOTE", "DRAFT_HASH_NO_ROWS_NOTE", "DRAFT_OTHER_INDICATORS_GROUP",
+  "DRAFT_TRANSFORMED_HEADER", "DRAFT_OPEN_AS_SERIES", "DRAFT_VALUE_AXIS_TITLE", "DRAFT_VALUE_FIGURE_LABEL", "DRAFT_VALUE_ESTIMATE_MARK", "DRAFT_VALUE_NEUTRAL_LEGEND",
+  "DRAFT_CHOOSE_COUNTRIES_HINT",
   // Redesign R14: PG-SERIES about table and units; DRAFT
   "DRAFT_ABOUT_SERIES_HEADING", "DRAFT_ABOUT_SERIES_COLUMNS", "DRAFT_TITLE_UNIT", "DRAFT_VALUE_HEADER_UNIT",
   // Redesign R16: point reader and tip
-  "DRAFT_POINT_READER_LEGEND", "DRAFT_TIP_STATUS", "DRAFT_TIP_KNOWN_AT", "DRAFT_READER_NONE",
+  
   // Redesign R17/R18: home and domains pages
-  "DRAFT_HOME_LINKS", "DRAFT_HOME_COUNTRIES_HEADING", "DRAFT_HOME_AGGREGATES_HEADING", "DRAFT_HOME_INDICATORS_HEADING", "DRAFT_HOME_FILTER_LABEL", "DRAFT_HOME_FILTER_COUNT",
+  "DRAFT_HOME_FILTER_COUNT",
   "DRAFT_HOME_FILTER_NONE", "DRAFT_HOME_DOMAINS_TITLE"
 ];
+
+// Confirmed by the user (2026-11-08, and 2026-11-09 for the home filter label): exact text pinned; each must keep its annotation.
+const CONFIRMED_NAMES = [
+  "FRESHNESS_LINE", "G_STR1_NO_SERIES", "COMPARE_COUNTRIES", "COMPARE_COUNTRIES_LABEL", "SERIES_LINK_LABEL", "HEATMAP_INDICATOR_LINK", "HEATMAP_INDICATOR_LINK_LABEL", "INDICATOR_SERIES_LINK", "HASH_FALLBACK_NOTE", "HASH_NO_ROWS_NOTE", "OTHER_INDICATORS_GROUP", "POINT_READER_LEGEND", "TIP_STATUS", "TIP_KNOWN_AT", "READER_NONE", "HOME_LINKS", "HOME_COUNTRIES_HEADING", "HOME_AGGREGATES_HEADING", "HOME_INDICATORS_HEADING", "HOME_FILTER_LABEL"
+];
+
+test("confirmed strings: exact text, and every confirmed export keeps its annotation", () => {
+  assert.deepEqual({...copy.HOME_LINKS}, {series: "Time series", domains: "Domains", revisions: "Revisions"});
+  assert.equal(copy.HOME_COUNTRIES_HEADING, "Choose a country");
+  assert.equal(copy.HOME_AGGREGATES_HEADING, "Aggregates");
+  assert.equal(copy.HOME_INDICATORS_HEADING, "Choose an indicator");
+  assert.deepEqual({...copy.HOME_FILTER_LABEL}, {countries: "Filter countries", indicators: "Filter indicators"});
+  assert.equal(copy.COMPARE_COUNTRIES, "Compare countries");
+  assert.equal(copy.COMPARE_COUNTRIES_LABEL("GDP"), "Compare countries: GDP");
+  assert.equal(copy.SERIES_LINK_LABEL("GDP", "Germany"), "Time series: GDP, Germany");
+  assert.equal(copy.G_STR1_NO_SERIES, "This export lists no series for this country and indicator.");
+  assert.equal(copy.FRESHNESS_LINE("2026-11-01", "b1"), "Data cut-off: 2026-11-01 (build b1).");
+  assert.equal(copy.FRESHNESS_LINE(null, undefined), "Data cut-off: unknown (build unknown).");
+  assert.ok(![copy.STALE_BANNER("d", 1, 2), copy.STALE_BANNER_UNREADABLE, copy.FRESHNESS_LINE("d", "b")].some((t) => t.includes("known_cutoff")));
+  assert.equal(copy.INDICATOR_SERIES_LINK, "Time series");
+  assert.equal(copy.HASH_FALLBACK_NOTE, "Part of this link was not recognised and was ignored.");
+  assert.equal(copy.HASH_NO_ROWS_NOTE(["Germany", "France"]), "Not selected: this export has no values of this indicator for Germany, France.");
+  assert.equal(copy.OTHER_INDICATORS_GROUP, "Other indicators");
+  assert.equal(copy.POINT_READER_LEGEND, "Read a value");
+  assert.deepEqual({...copy.TIP_STATUS}, {EST: "estimate", PROV: "provisional"});
+  assert.equal(copy.TIP_KNOWN_AT("2026-10-01"), "Known at 2026-10-01");
+  assert.equal(copy.READER_NONE, "Choose a country");
+  for (const n of CONFIRMED_NAMES) {
+    assert.ok(n in copy, `${n} is exported`);
+    assert.ok(isConfirmed(n), `${n} lost its confirmed annotation`);
+  }
+});
 
 test("DRAFT strings: exact text, and every DRAFT_ export is pinned here", () => {
   assert.equal(copy.DRAFT_LOADING("the dashboard data"), "Loading the dashboard data...");
@@ -164,11 +196,6 @@ test("DRAFT strings: exact text, and every DRAFT_ export is pinned here", () => 
   assert.equal(copy.DRAFT_CONSEQUENCE.scorecard, "The tables and charts on this page are not shown.");
   assert.equal(copy.DRAFT_SUBREGION_CONSEQUENCE, "The rest of this page is still shown. Choose another indicator to try again.");
   assert.equal(copy.DRAFT_NOSCRIPT, "This dashboard needs JavaScript to show its tables and charts. Enable JavaScript and reload the page.");
-  assert.deepEqual({...copy.DRAFT_HOME_LINKS}, {series: "Time series", domains: "Domains", revisions: "Revisions"});
-  assert.equal(copy.DRAFT_HOME_COUNTRIES_HEADING, "Choose a country");
-  assert.equal(copy.DRAFT_HOME_AGGREGATES_HEADING, "Aggregates");
-  assert.equal(copy.DRAFT_HOME_INDICATORS_HEADING, "Choose an indicator");
-  assert.deepEqual({...copy.DRAFT_HOME_FILTER_LABEL}, {countries: "Filter countries", indicators: "Filter indicators"});
   assert.equal(copy.DRAFT_HOME_FILTER_COUNT(3), "3 shown");
   assert.equal(copy.DRAFT_HOME_FILTER_NONE, "No match.");
   assert.equal(copy.DRAFT_HOME_DOMAINS_TITLE, "Domains");
@@ -232,16 +259,9 @@ test("DRAFT strings: exact text, and every DRAFT_ export is pinned here", () => 
   assert.equal(copy.DRAFT_PROFILE_FIGURE_LABEL("Germany", "Growth"), "percentile of each indicator for Germany, domain Growth; table below lists the same values");
   assert.equal(copy.DRAFT_PROFILE_DOT_LABEL("GDP", "0.50"), "GDP: 0.50");
   assert.equal(copy.DRAFT_OFFSET_FLAG(3), "offset 3 days");
-  assert.equal(copy.DRAFT_COMPARE_COUNTRIES, "Compare countries");
-  assert.equal(copy.DRAFT_COMPARE_COUNTRIES_LABEL("GDP"), "Compare countries: GDP");
-  assert.equal(copy.DRAFT_SERIES_LINK_LABEL("GDP", "Germany"), "Time series: GDP, Germany");
-  assert.equal(copy.DRAFT_G_STR1_NO_SERIES, "This export lists no series for this country and indicator.");
   assert.equal(copy.FRESHNESS_LABEL, "Data cut-off");
-  assert.equal(copy.DRAFT_FRESHNESS_LINE("2026-11-01", "b1"), "Data cut-off: 2026-11-01 (build b1).");
-  assert.equal(copy.DRAFT_FRESHNESS_LINE(null, undefined), "Data cut-off: unknown (build unknown).");
   assert.equal(copy.STALE_BANNER("2026-09-01", 64, 45), "Data may be out of date: the data cut-off (2026-09-01) is 64 days old, more than 45 days.");
   assert.equal(copy.STALE_BANNER_UNREADABLE, "Data freshness unknown: this build has no readable data cut-off. Treat the data as out of date.");
-  assert.ok(![copy.STALE_BANNER("d", 1, 2), copy.STALE_BANNER_UNREADABLE, copy.DRAFT_FRESHNESS_LINE("d", "b")].some((t) => t.includes("known_cutoff")));
   assert.equal(copy.DRAFT_RANKING_PERIOD_LINE, undefined, "deleted: the confirmed spreadText() wording is used");
   assert.equal(copy.DRAFT_COMPARE_WITH_OTHERS, undefined, "dropped (G-STR3)");
   assert.equal(copy.DRAFT_ABOUT_SUMMARY, "About this value");
@@ -265,38 +285,30 @@ test("DRAFT strings: exact text, and every DRAFT_ export is pinned here", () => 
   assert.deepEqual({...copy.DRAFT_INDICATOR_COLUMNS_MORE}, {flags: "Flags", source: "Source", actions: "Actions", reason: "Why there is no value"});
   assert.equal(copy.DRAFT_TRANSFORMED_HEADER("YOY"), "Transformed value (YOY)");
   assert.equal(copy.DRAFT_OPEN_AS_SERIES, "Open as time series");
-  assert.equal(copy.DRAFT_INDICATOR_SERIES_LINK, "Time series");
   assert.equal(copy.DRAFT_VALUE_AXIS_TITLE("GDP", "%"), "GDP (%)");
   assert.equal(copy.DRAFT_VALUE_FIGURE_LABEL("GDP", "%", 3), "Bar chart of GDP, in %, 3 countries; table below lists the same values");
   assert.equal(copy.DRAFT_VALUE_FIGURE_LABEL("GDP", "%", 1), "Bar chart of GDP, in %, 1 country; table below lists the same values");
   assert.equal(copy.DRAFT_VALUE_ESTIMATE_MARK, "e");
   assert.equal(copy.DRAFT_VALUE_NEUTRAL_LEGEND, "No percentile");
   assert.equal(copy.DRAFT_CHOOSE_COUNTRIES_HINT, "Choose up to 5 countries to compare."); // spec C-SER-2, verbatim
-  assert.equal(copy.DRAFT_HASH_FALLBACK_NOTE, "Part of this link was not recognised and was ignored.");
-  assert.equal(copy.DRAFT_HASH_NO_ROWS_NOTE(["Germany", "France"]), "Not selected: this export has no values of this indicator for Germany, France.");
-  assert.equal(copy.DRAFT_OTHER_INDICATORS_GROUP, "Other indicators");
   assert.equal(copy.DRAFT_ABOUT_SERIES_HEADING, "About these series");
   assert.deepEqual(Object.keys(copy.DRAFT_ABOUT_SERIES_COLUMNS), ["country", "source", "attribution", "frequency", "unit", "seasonal", "priceBasis", "lastPeriod", "knownAt", "reestimating"]);
   assert.equal(copy.DRAFT_ABOUT_SERIES_COLUMNS.knownAt, "Known at (last period)");
   assert.equal(copy.DRAFT_TITLE_UNIT("%"), " (%)");
   assert.equal(copy.DRAFT_VALUE_HEADER_UNIT("%"), "Value (%)");
-  assert.equal(copy.DRAFT_POINT_READER_LEGEND, "Read a value");
-  assert.deepEqual({...copy.DRAFT_TIP_STATUS}, {EST: "estimate", PROV: "provisional"});
-  assert.equal(copy.DRAFT_TIP_KNOWN_AT("2026-10-01"), "Known at 2026-10-01");
-  assert.equal(copy.DRAFT_READER_NONE, "Choose a country");
   assert.deepEqual(Object.keys(copy).filter((k) => k.startsWith("DRAFT_")).sort(), [...DRAFT].sort());
   // a region name is a logical name: no URL, no path, no digit
   for (const r of Object.values(copy.DRAFT_REGIONS)) assert.ok(!/[/:.\d]|https?/.test(r), r);
 });
 
 test("R11: the heatmap column link has the full indicator name in its accessible name, starting with the visible text", () => {
-  assert.equal(copy.DRAFT_HEATMAP_INDICATOR_LINK, "Indicator page");
-  assert.equal(copy.DRAFT_HEATMAP_INDICATOR_LINK_LABEL("Unemployment rate"), "Indicator page: Unemployment rate");
-  assert.ok(copy.DRAFT_HEATMAP_INDICATOR_LINK_LABEL("x").startsWith(copy.DRAFT_HEATMAP_INDICATOR_LINK));
+  assert.equal(copy.HEATMAP_INDICATOR_LINK, "Indicator page");
+  assert.equal(copy.HEATMAP_INDICATOR_LINK_LABEL("Unemployment rate"), "Indicator page: Unemployment rate");
+  assert.ok(copy.HEATMAP_INDICATOR_LINK_LABEL("x").startsWith(copy.HEATMAP_INDICATOR_LINK));
 });
 
 test("copy.js exports nothing that is not covered above (a new string needs a verbatim assertion)", () => {
-  const known = new Set(["BIN_LABELS", "FRESHNESS_LABEL", "STALE_BANNER", "STALE_BANNER_UNREADABLE", ...Object.keys(VERBATIM), ...Object.keys(OBJECTS), "notRankedCell", "directionWithTarget", ...DRAFT]);
+  const known = new Set(["BIN_LABELS", "FRESHNESS_LABEL", "STALE_BANNER", "STALE_BANNER_UNREADABLE", ...Object.keys(VERBATIM), ...Object.keys(OBJECTS), "notRankedCell", "directionWithTarget", ...CONFIRMED_NAMES, ...DRAFT]);
   assert.deepEqual(Object.keys(copy).filter((k) => !known.has(k)), []);
 });
 
@@ -356,31 +368,31 @@ test("no judgement word in a string that renders next to a percentile", () => {
 });
 
 // --- Redesign R21 / AC-RD-55, AC-RD-62: spec section 7 strings -----------------------------------------------------------
-const CONFIRMED_NOTE = "confirmed by the user 2026-11-08";
+const CONFIRMED_NOTE = "confirmed by the user 2026-11-08 or 2026-11-09";
 const copySource = readFileSync(join(src, "lib", "copy.js"), "utf8");
 const exportLine = (name) => copySource.split("\n").find((l) => l.startsWith(`export const ${name} `) || l.startsWith(`export const ${name}=`));
-const isConfirmed = (name) => (exportLine(name) ?? "").includes(CONFIRMED_NOTE);
+const isConfirmed = (name) => /confirmed by the user 2026-11-0[89]/.test(exportLine(name) ?? "");
 const valueOf = (v) => (typeof v === "function" ? v : typeof v === "object" ? {...v} : v);
 
 // Spec section 7 string -> [constant, accessor]. Strings that a later user decision renamed or dropped are listed in SECTION7_SUPERSEDED.
 const SECTION7 = {
-  "Choose a country": ["DRAFT_HOME_COUNTRIES_HEADING", (v) => v],
-  "Choose an indicator": ["DRAFT_HOME_INDICATORS_HEADING", (v) => v],
+  "Choose a country": ["HOME_COUNTRIES_HEADING", (v) => v],
+  "Choose an indicator": ["HOME_INDICATORS_HEADING", (v) => v],
   "Indicators without a value in this export": ["DRAFT_WITHOUT_VALUE_GROUP", (v) => v],
   "Show history": ["DRAFT_HISTORY_SHOW", (v) => v],
-  "Compare countries": ["DRAFT_COMPARE_COUNTRIES", (v) => v],
+  "Compare countries": ["COMPARE_COUNTRIES", (v) => v],
   "About this value": ["DRAFT_ABOUT_SUMMARY", (v) => v],
   "About these series": ["DRAFT_ABOUT_SERIES_HEADING", (v) => v],
   "Open as time series": ["DRAFT_OPEN_AS_SERIES", (v) => v],
   "Data cut-off": ["FRESHNESS_LABEL", (v) => v],
   "Not published on this site.": ["DRAFT_NOT_PUBLISHED_SENTENCE", (v) => v],
   "Choose up to 5 countries to compare.": ["DRAFT_CHOOSE_COUNTRIES_HINT", (v) => v],
-  "Read a value": ["DRAFT_POINT_READER_LEGEND", (v) => v],
-  "Known at 2026-01-31": ["DRAFT_TIP_KNOWN_AT", (v) => v("2026-01-31")],
-  "estimate": ["DRAFT_TIP_STATUS", (v) => v.EST],
-  "provisional": ["DRAFT_TIP_STATUS", (v) => v.PROV],
-  "Part of this link was not recognised and was ignored.": ["DRAFT_HASH_FALLBACK_NOTE", (v) => v],
-  "Not selected: this export has no values of this indicator for A, B.": ["DRAFT_HASH_NO_ROWS_NOTE", (v) => v(["A", "B"])],
+  "Read a value": ["POINT_READER_LEGEND", (v) => v],
+  "Known at 2026-01-31": ["TIP_KNOWN_AT", (v) => v("2026-01-31")],
+  "estimate": ["TIP_STATUS", (v) => v.EST],
+  "provisional": ["TIP_STATUS", (v) => v.PROV],
+  "Part of this link was not recognised and was ignored.": ["HASH_FALLBACK_NOTE", (v) => v],
+  "Not selected: this export has no values of this indicator for A, B.": ["HASH_NO_ROWS_NOTE", (v) => v(["A", "B"])],
   // the three new missing-data sentences of section 5.1
   "A series is defined for this country, but this export holds no value for it.": ["DRAFT_NA_DEFINED_SENTENCE", (v) => v],
   "This export holds a value but no percentile for it.": ["DRAFT_NA_NO_PERCENTILE_SENTENCE", (v) => v],
@@ -388,21 +400,21 @@ const SECTION7 = {
 };
 // Section 7 labels that user decisions G-STR3, G-STR4 and the R6/R7 wording replaced (docs/ops/dashboard-redesign-decisions.md).
 const SECTION7_REPLACED = {
-  "Filter the list": ["DRAFT_HOME_FILTER_LABEL", {countries: "Filter countries", indicators: "Filter indicators"}],
+  "Filter the list": ["HOME_FILTER_LABEL", {countries: "Filter countries", indicators: "Filter indicators"}],
   "Show: all indicators": ["DRAFT_COUNTRY_FILTER_ALL", "All indicators"],
   "Show: only indicators with a value": ["DRAFT_COUNTRY_FILTER_VALUE", "Only indicators with a value"]
 };
 // Confirmed on 2026-11-08 (spec section 7): these strings must keep exactly this text.
 const CONFIRMED = {
-  DRAFT_READER_NONE: "Choose a country",
-  DRAFT_HOME_COUNTRIES_HEADING: "Choose a country",
-  DRAFT_POINT_READER_LEGEND: "Read a value",
-  DRAFT_HASH_FALLBACK_NOTE: "Part of this link was not recognised and was ignored.",
-  DRAFT_G_STR1_NO_SERIES: "This export lists no series for this country and indicator.",
-  DRAFT_COMPARE_COUNTRIES: "Compare countries",
+  READER_NONE: "Choose a country",
+  HOME_COUNTRIES_HEADING: "Choose a country",
+  POINT_READER_LEGEND: "Read a value",
+  HASH_FALLBACK_NOTE: "Part of this link was not recognised and was ignored.",
+  G_STR1_NO_SERIES: "This export lists no series for this country and indicator.",
+  COMPARE_COUNTRIES: "Compare countries",
   FRESHNESS_LABEL: "Data cut-off",
-  DRAFT_HOME_AGGREGATES_HEADING: "Aggregates",
-  DRAFT_HOME_INDICATORS_HEADING: "Choose an indicator"
+  HOME_AGGREGATES_HEADING: "Aggregates",
+  HOME_INDICATORS_HEADING: "Choose an indicator"
 };
 
 test("AC-RD-55: every section 7 string is in copy.js with its exact text, and is DRAFT-marked unless annotated as confirmed", () => {
@@ -412,7 +424,7 @@ test("AC-RD-55: every section 7 string is in copy.js with its exact text, and is
     assert.ok(name.startsWith("DRAFT_") || isConfirmed(name), `${name} is neither DRAFT_ nor annotated "${CONFIRMED_NOTE}"`);
   }
   for (const [text, [name, expected]] of Object.entries(SECTION7_REPLACED)) {
-    assert.ok(name.startsWith("DRAFT_"), `${name} (replaces "${text}") is DRAFT-marked`);
+    assert.ok(name.startsWith("DRAFT_") || isConfirmed(name), `${name} (replaces "${text}") is DRAFT-marked or annotated confirmed`);
     assert.deepEqual(valueOf(copy[name]), expected, name);
   }
 });
@@ -423,10 +435,10 @@ test("AC-RD-55: confirmed strings are unchanged and keep their annotation", () =
     assert.equal(copy[name], text, name);
     assert.ok(isConfirmed(name), `${name} lost its confirmed annotation`);
   }
-  assert.equal(copy.DRAFT_HOME_COUNTRIES_HEADING, CONFIRMED.DRAFT_READER_NONE);
-  assert.equal(copy.DRAFT_TIP_KNOWN_AT("2026-01-31"), "Known at 2026-01-31");
-  assert.deepEqual({...copy.DRAFT_TIP_STATUS}, {EST: "estimate", PROV: "provisional"});
-  assert.equal(copy.DRAFT_HASH_NO_ROWS_NOTE(["A", "B"]), "Not selected: this export has no values of this indicator for A, B.");
+  assert.equal(copy.HOME_COUNTRIES_HEADING, CONFIRMED.READER_NONE);
+  assert.equal(copy.TIP_KNOWN_AT("2026-01-31"), "Known at 2026-01-31");
+  assert.deepEqual({...copy.TIP_STATUS}, {EST: "estimate", PROV: "provisional"});
+  assert.equal(copy.HASH_NO_ROWS_NOTE(["A", "B"]), "Not selected: this export has no values of this indicator for A, B.");
 });
 
 test("AC-RD-55, 62: withdrawn strings are absent from copy.js, src and the built pages", () => {

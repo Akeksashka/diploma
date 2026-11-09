@@ -1,7 +1,7 @@
 // Redesign R16 (spec 5.6, AC-RD-30, 30a): the ONE text source of the pointer tip, the "Read a value" output and the "View as table"
 // value cell. Stored fields only, joined as text; no difference, change, rank or other arithmetic belongs here (static scan in
 // tests/tip-text.test.mjs). Imports local modules only.
-import {DRAFT_TIP_KNOWN_AT, DRAFT_TIP_STATUS, DRAFT_UNIT_MISSING_SENTENCE} from "./copy.js";
+import {TIP_KNOWN_AT, TIP_STATUS, DRAFT_UNIT_MISSING_SENTENCE} from "./copy.js";
 import {periodLabel} from "./period.js";
 import {markedValue} from "./series-meta.js";
 
@@ -20,13 +20,13 @@ export function valueWithUnit(valueText, unit) {
 // PG-SERIES: [country, period label, value with unit, status line (only EST and PROV), known_at line].
 // point: {name, ms, text, status, knownAt}; series: {name, frequency, unit}.
 export function seriesTipLines(point, series) {
-  const status = DRAFT_TIP_STATUS[point.status] ?? null;
+  const status = TIP_STATUS[point.status] ?? null;
   return [
     series.name,
     periodLabel(isoDay(point.ms), series.frequency) ?? isoDay(point.ms),
     valueWithUnit(pointValueText(point), series.unit),
     ...(status === null ? [] : [status]),
-    DRAFT_TIP_KNOWN_AT(isoDay(point.knownAt))
+    TIP_KNOWN_AT(isoDay(point.knownAt))
   ];
 }
 

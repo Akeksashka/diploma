@@ -1,10 +1,10 @@
 import {headerHtml} from "./src/lib/shell.js";
-import {DRAFT_CRUMB_HOME, DRAFT_HOME_LINKS} from "./src/lib/copy.js";
+import {DRAFT_CRUMB_HOME, HOME_LINKS} from "./src/lib/copy.js";
 
 // Macro Monitor dashboard site (ADR-010, ADR-023). Static build; no request may leave the origin.
 const title = "Macro Monitor";
 // Header navigation (AC-RD-01, decisions G-STR4): exactly these four, in this order.
-const pages = [{name: DRAFT_CRUMB_HOME, path: "/"}, {name: DRAFT_HOME_LINKS.series, path: "/explorer"}, {name: DRAFT_HOME_LINKS.domains, path: "/domains"}, {name: DRAFT_HOME_LINKS.revisions, path: "/revisions"}];
+const pages = [{name: DRAFT_CRUMB_HOME, path: "/"}, {name: HOME_LINKS.series, path: "/explorer"}, {name: HOME_LINKS.domains, path: "/domains"}, {name: HOME_LINKS.revisions, path: "/revisions"}];
 
 export default {
   title,

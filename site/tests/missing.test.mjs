@@ -75,8 +75,8 @@ test("the test would fail if an n/a had no sentence (guard is real)", () => {
 });
 
 test("the two n/a sentences differ and G-STR1 is its own named, DRAFT constant", () => {
-  assert.notEqual(copy.DRAFT_NA_DEFINED_SENTENCE, copy.DRAFT_G_STR1_NO_SERIES);
-  assert.equal(copy.DRAFT_G_STR1_NO_SERIES, "This export lists no series for this country and indicator.");
+  assert.notEqual(copy.DRAFT_NA_DEFINED_SENTENCE, copy.G_STR1_NO_SERIES);
+  assert.equal(copy.G_STR1_NO_SERIES, "This export lists no series for this country and indicator.");
   assert.equal(copy.DRAFT_NOT_PUBLISHED_SENTENCE, "Not published on this site.");
 });
 

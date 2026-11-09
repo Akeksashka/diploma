@@ -6,7 +6,7 @@
 // or (no percentile: alignment, inherited, info only, n/a) or (percentile: alignment, ahead, ranked). Aggregate entities are not
 // in scorecard.js cells; they are placed after alignment and inherited, before the rank-dependent states. A test pins the order
 // against states.js cellState on the same stored fields.
-import {AGGREGATE_NOT_RANKED, AHEAD_NAME, DESCRIPTIVE_CELL, DRAFT_G_STR1_NO_SERIES, DRAFT_NA_DEFINED_SENTENCE, DRAFT_NA_NO_PERCENTILE_SENTENCE, DRAFT_NA_NO_RANKED_SENTENCE, DRAFT_NOT_PUBLISHED_SENTENCE, FLAG_UNALIGNED_FISCAL, NOT_RANKED_INFO_ONLY, NOT_RANKED_INHERITED, STALE_NAME, UNRANKED_DOMAIN_CELL, notRankedCell} from "./copy.js";
+import {AGGREGATE_NOT_RANKED, AHEAD_NAME, DESCRIPTIVE_CELL, G_STR1_NO_SERIES, DRAFT_NA_DEFINED_SENTENCE, DRAFT_NA_NO_PERCENTILE_SENTENCE, DRAFT_NA_NO_RANKED_SENTENCE, DRAFT_NOT_PUBLISHED_SENTENCE, FLAG_UNALIGNED_FISCAL, NOT_RANKED_INFO_ONLY, NOT_RANKED_INHERITED, STALE_NAME, UNRANKED_DOMAIN_CELL, notRankedCell} from "./copy.js";
 import {STATES} from "./states.js";
 
 const out = (key, sentence) => Object.freeze({key, code: STATES[key].code, signature: STATES[key].signature, sentence});
@@ -21,7 +21,7 @@ export function mapCellState(cell, ctx) {
   if (cell.published === false || cell.publish_scope === "excluded") return out("not_published", DRAFT_NOT_PUBLISHED_SENTENCE);
   if (cell.value === null || cell.value === undefined) {
     const defined = ctx.seriesDefined.has(`${cell.indicator_id}|${ctx.entityId}`);
-    return out("na", defined ? DRAFT_NA_DEFINED_SENTENCE : DRAFT_G_STR1_NO_SERIES);
+    return out("na", defined ? DRAFT_NA_DEFINED_SENTENCE : G_STR1_NO_SERIES);
   }
   if (cell.is_stale === true) return out("stale", STALE_NAME);
   const hasPct = typeof cell.percentile === "number" && Number.isFinite(cell.percentile);

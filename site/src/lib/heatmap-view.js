@@ -2,7 +2,7 @@
 // `html` is htl's tag, passed in. The table has a caption, th scope on rows and columns, text in every cell, one tbody per row
 // group (aggregates have their own, with no colour), a sticky header and first column inside its own scroll container with a
 // visible hint. Colours and patterns come from style.css through data-bin, data-state and data-signature; no colour here.
-import {AGGREGATE_NOT_RANKED, AHEAD_TAG, COUNTRY_HEADER, COVERAGE_HEADER, DRAFT_FACT_LABELS as FACT, DRAFT_HEATMAP_CAPTION, DRAFT_HEATMAP_CAPTION_INFO, DRAFT_SCROLL_HINT, DRAFT_HEATMAP_INDICATOR_LINK, DRAFT_HEATMAP_INDICATOR_LINK_LABEL, INFORMATIONAL_NOTICE, NA, ORIENTATION_NOTE, POSITION_HEADER} from "./copy.js";
+import {AGGREGATE_NOT_RANKED, AHEAD_TAG, COUNTRY_HEADER, COVERAGE_HEADER, DRAFT_FACT_LABELS as FACT, DRAFT_HEATMAP_CAPTION, DRAFT_HEATMAP_CAPTION_INFO, DRAFT_SCROLL_HINT, HEATMAP_INDICATOR_LINK, HEATMAP_INDICATOR_LINK_LABEL, INFORMATIONAL_NOTICE, NA, ORIENTATION_NOTE, POSITION_HEADER} from "./copy.js";
 import {glyph} from "./glyphs.js";
 import {nextSort, sortRows} from "./heatmap.js";
 
@@ -90,7 +90,7 @@ function headCells(html, model, ids, sortState) {
         html`<th scope="col" class="mm-hm-pos">${POSITION_HEADER}</th>`
       ];
   const indicators = model.columns.map(
-    (c) => html`<th scope="col" class="mm-hm-ind" data-indicator="${c.indicatorId}" aria-sort="${model.informational ? "none" : aria(c.indicatorId)}" title="${c.name}${c.unit ? ` (${c.unit})` : ""}">${head(c.indicatorId, html`<span class="mm-hm-name">${c.name}</span>`)}${c.unit ? html`<span class="mm-hm-unit">${c.unit}</span>` : ""}${c.direction ? html`<span class="mm-hm-dir" data-direction="${c.direction.key}">${c.direction.text}</span>` : ""}<a class="mm-hm-open" href="${indicatorPageHref(c.indicatorId)}" data-link="indicator" aria-label="${DRAFT_HEATMAP_INDICATOR_LINK_LABEL(c.name)}">${DRAFT_HEATMAP_INDICATOR_LINK}</a></th>`
+    (c) => html`<th scope="col" class="mm-hm-ind" data-indicator="${c.indicatorId}" aria-sort="${model.informational ? "none" : aria(c.indicatorId)}" title="${c.name}${c.unit ? ` (${c.unit})` : ""}">${head(c.indicatorId, html`<span class="mm-hm-name">${c.name}</span>`)}${c.unit ? html`<span class="mm-hm-unit">${c.unit}</span>` : ""}${c.direction ? html`<span class="mm-hm-dir" data-direction="${c.direction.key}">${c.direction.text}</span>` : ""}<a class="mm-hm-open" href="${indicatorPageHref(c.indicatorId)}" data-link="indicator" aria-label="${HEATMAP_INDICATOR_LINK_LABEL(c.name)}">${HEATMAP_INDICATOR_LINK}</a></th>`
   );
   return [country, ...figure, ...indicators];
 }

@@ -23,13 +23,13 @@ const ALLOW = {
   filterNote: "FILTER_NOTE", // C-IND-1
   vintageText: "VINTAGE_TEXT", // PG-REVISIONS
   smallMultiples: "DRAFT_FACET_STATEMENT", // C-SER-2 small-multiples reason
-  pointReader: "DRAFT_POINT_READER_LEGEND" // amendment 3.1 (R16): the "Read a value" control label
+  pointReader: "POINT_READER_LEGEND" // amendment 3.1 (R16): the "Read a value" control label
 };
 // Spec 1.6 entries with no copy.js export yet: the C-IND-2 reference-period line, "Choose up to 5 countries to compare.",
 // and the stale-banner wording. They are allowed by name once added; any other new name is not.
 const PENDING = ["DRAFT_CHOOSE_COUNTRIES_HINT", "STALE_BANNER", "STALE_BANNER_UNREADABLE"];
 // Per-value missing-data sentences (spec 5.1): one short sentence each, selected by stored fields.
-const MISSING_SENTENCES = ["DRAFT_NOT_PUBLISHED_SENTENCE", "DRAFT_NA_DEFINED_SENTENCE", "DRAFT_G_STR1_NO_SERIES", "DRAFT_NA_NO_RANKED_SENTENCE"];
+const MISSING_SENTENCES = ["DRAFT_NOT_PUBLISHED_SENTENCE", "DRAFT_NA_DEFINED_SENTENCE", "G_STR1_NO_SERIES", "DRAFT_NA_NO_RANKED_SENTENCE"];
 // The spec's own longer fixed texts (VINTAGE_TEXT is 300+ characters in the confirmed wording; see report).
 const SPEC_LONG = new Set(["VINTAGE_TEXT"]);
 

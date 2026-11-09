@@ -2,8 +2,8 @@
 // written into the generated page, so every country and indicator link is in the built HTML without JavaScript; `mountFilters` (browser
 // only) then adds one labelled text filter per list, which only sets `hidden`. Display only: no value is computed here.
 import {
-  DRAFT_HOME_AGGREGATES_HEADING, DRAFT_HOME_COUNTRIES_HEADING, DRAFT_HOME_FILTER_COUNT, DRAFT_HOME_FILTER_LABEL, DRAFT_HOME_FILTER_NONE,
-  DRAFT_HOME_INDICATORS_HEADING, DRAFT_HOME_LINKS, DRAFT_OTHER_INDICATORS_GROUP
+  HOME_AGGREGATES_HEADING, HOME_COUNTRIES_HEADING, DRAFT_HOME_FILTER_COUNT, HOME_FILTER_LABEL, DRAFT_HOME_FILTER_NONE,
+  HOME_INDICATORS_HEADING, HOME_LINKS, OTHER_INDICATORS_GROUP
 } from "./copy.js";
 import {SAFE_ID} from "./domains-list.js";
 
@@ -27,7 +27,7 @@ export function indicatorGroups(indicators, domains) {
   const rows = indicators.map((i) => ({id: safe(i.indicator_id, "indicator_id"), name: i.name ?? i.indicator_id, domainIds: Array.isArray(i.domain_ids) ? i.domain_ids : []}));
   const groups = domains.map((d) => ({id: d.domain_id, name: d.name ?? d.domain_id, items: rows.filter((r) => r.domainIds.includes(d.domain_id)).sort(byName)}));
   const other = rows.filter((r) => !r.domainIds.some((x) => known.has(x))).sort(byName);
-  if (other.length) groups.push({id: "other", name: DRAFT_OTHER_INDICATORS_GROUP, items: other});
+  if (other.length) groups.push({id: "other", name: OTHER_INDICATORS_GROUP, items: other});
   return groups.filter((g) => g.items.length > 0);
 }
 
@@ -37,23 +37,23 @@ export function homeListsHtml({entities, indicators, domains}) {
   const c = countryGroups(entities);
   const groups = indicatorGroups(indicators, domains);
   const aggregates = c.aggregates.length
-    ? `<div data-filter-group><h3 id="aggregates">${esc(DRAFT_HOME_AGGREGATES_HEADING)}</h3><ul id="aggregate-list">${c.aggregates.map((r) => li("country", r)).join("")}</ul></div>`
+    ? `<div data-filter-group><h3 id="aggregates">${esc(HOME_AGGREGATES_HEADING)}</h3><ul id="aggregate-list">${c.aggregates.map((r) => li("country", r)).join("")}</ul></div>`
     : "";
   const details = groups.map((g) => `<details data-filter-group id="indicators-${esc(g.id)}"><summary>${esc(g.name)}</summary><ul>${g.items.map((r) => li("indicator", r)).join("")}</ul></details>`).join("\n");
   return `<section id="countries" class="mm-home-list" data-filter="countries" aria-labelledby="countries-heading">
-<h2 id="countries-heading">${esc(DRAFT_HOME_COUNTRIES_HEADING)}</h2>
+<h2 id="countries-heading">${esc(HOME_COUNTRIES_HEADING)}</h2>
 <div class="mm-filter" data-filter-slot></div>
 <ul id="country-list">${c.countries.map((r) => li("country", r)).join("")}</ul>
 ${aggregates}
 </section>
 
 <section id="indicators" class="mm-home-list" data-filter="indicators" aria-labelledby="indicators-heading">
-<h2 id="indicators-heading">${esc(DRAFT_HOME_INDICATORS_HEADING)}</h2>
+<h2 id="indicators-heading">${esc(HOME_INDICATORS_HEADING)}</h2>
 <div class="mm-filter" data-filter-slot></div>
 ${details}
 </section>
 
-<ul class="mm-home-links" id="home-links"><li><a href="./explorer">${esc(DRAFT_HOME_LINKS.series)}</a></li><li><a href="./domains">${esc(DRAFT_HOME_LINKS.domains)}</a></li><li><a href="./revisions">${esc(DRAFT_HOME_LINKS.revisions)}</a></li></ul>`;
+<ul class="mm-home-links" id="home-links"><li><a href="./explorer">${esc(HOME_LINKS.series)}</a></li><li><a href="./domains">${esc(HOME_LINKS.domains)}</a></li><li><a href="./revisions">${esc(HOME_LINKS.revisions)}</a></li></ul>`;
 }
 
 // Case-insensitive substring match; an empty query matches everything.
@@ -86,7 +86,7 @@ export function mountFilters(doc) {
     const id = `filter-${key}`;
     const wrap = section.querySelector("[data-filter-slot]") ?? doc.createElement("div");
     wrap.className = "mm-filter";
-    wrap.innerHTML = `<label for="${id}">${esc(DRAFT_HOME_FILTER_LABEL[key])}</label> <input type="search" id="${id}" autocomplete="off"><p class="mm-filter-status" role="status" id="${id}-status"></p>`;
+    wrap.innerHTML = `<label for="${id}">${esc(HOME_FILTER_LABEL[key])}</label> <input type="search" id="${id}" autocomplete="off"><p class="mm-filter-status" role="status" id="${id}-status"></p>`;
     if (!wrap.parentNode) section.querySelector("h2").after(wrap);
     for (const d of section.querySelectorAll("details")) d.dataset.open = d.open ? "1" : "0";
     const input = wrap.querySelector("input");

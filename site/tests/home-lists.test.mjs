@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {domainsPageSource, homePageSource} from "../scripts/lib.mjs";
-import {CAVEAT, DRAFT_HOME_LINKS} from "../src/lib/copy.js";
+import {CAVEAT, HOME_LINKS} from "../src/lib/copy.js";
 import {domainsListHtml} from "../src/lib/domains-list.js";
 import {applyFilter, countryGroups, homeListsHtml, indicatorGroups, matches} from "../src/lib/home-lists.js";
 
@@ -47,7 +47,7 @@ test("home lists: every non-global entity and every indicator is a link; anchors
   assert.equal((h.match(/<details /g) ?? []).length, 3);
   assert.ok(h.includes("Agri &amp; food") && !h.includes("Agri & food"));
   assert.ok(h.indexOf("country-list") < h.indexOf('id="aggregates"'));
-  for (const [k, href] of [["series", "./explorer"], ["domains", "./domains"], ["revisions", "./revisions"]]) assert.ok(h.includes(`<a href="${href}">${DRAFT_HOME_LINKS[k]}</a>`), k);
+  for (const [k, href] of [["series", "./explorer"], ["domains", "./domains"], ["revisions", "./revisions"]]) assert.ok(h.includes(`<a href="${href}">${HOME_LINKS[k]}</a>`), k);
 });
 
 test("unsafe ids are refused", () => {

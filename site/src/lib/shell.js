@@ -2,7 +2,7 @@
 // so this module has no imports and no off-origin dependency.
 import {bannerMessage, staleness, utcDate} from "./stale.js";
 import {sourceAttributions} from "./attribution.js";
-import {DRAFT_CONSEQUENCE, DRAFT_FRESHNESS_LINE, NAV_LABEL, SKIP_LINK_TEXT} from "./copy.js";
+import {DRAFT_CONSEQUENCE, FRESHNESS_LINE, NAV_LABEL, SKIP_LINK_TEXT} from "./copy.js";
 import {failureBlocks, noscriptHtml} from "./state-blocks.js";
 
 const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"})[c]);
@@ -20,7 +20,7 @@ export function headerHtml({title, pages, path}) {
 
 export function statusBlock(html, manifest, now = Date.now()) {
   const msg = bannerMessage(staleness(manifest.known_cutoff, now));
-  return html`<div class="mm-status">${msg ? html`<p class="mm-banner" id="stale-banner" role="alert">${msg}</p>` : ""}<p class="mm-asof">${DRAFT_FRESHNESS_LINE(utcDate(manifest.known_cutoff), manifest.build_id)}</p></div>`;
+  return html`<div class="mm-status">${msg ? html`<p class="mm-banner" id="stale-banner" role="alert">${msg}</p>` : ""}<p class="mm-asof">${FRESHNESS_LINE(utcDate(manifest.known_cutoff), manifest.build_id)}</p></div>`;
 }
 
 // Top of every page after loading (T105): the freshness line and stale banner when the manifest loaded, then one alert per

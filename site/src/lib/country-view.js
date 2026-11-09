@@ -2,7 +2,7 @@
 // file imports only local modules. Display only: nothing is computed here (D6). Every number printed is a stored field formatted
 // by country-model.js; the filter only hides rows; no count of hidden rows exists anywhere on the page.
 import {
-  AGGREGATE_NOT_RANKED, AHEAD_TAG, DRAFT_COMPARE_COUNTRIES, DRAFT_COMPARE_COUNTRIES_LABEL, DRAFT_INDICATOR_SERIES_LINK, DRAFT_SERIES_LINK_LABEL, DRAFT_COUNTRY_COLUMNS as COL, DRAFT_COUNTRY_FILTER_ALL, DRAFT_COUNTRY_FILTER_LEGEND,
+  AGGREGATE_NOT_RANKED, AHEAD_TAG, COMPARE_COUNTRIES, COMPARE_COUNTRIES_LABEL, INDICATOR_SERIES_LINK, SERIES_LINK_LABEL, DRAFT_COUNTRY_COLUMNS as COL, DRAFT_COUNTRY_FILTER_ALL, DRAFT_COUNTRY_FILTER_LEGEND,
   DRAFT_COUNTRY_FILTER_VALUE, DRAFT_COUNTRY_SWITCHER_GO, DRAFT_COUNTRY_SWITCHER_LABEL, DRAFT_COUNTRY_TABLE_CAPTION, DRAFT_OFFSET_FLAG, FLAG_AHEAD, FLAG_ESTIMATE, FLAG_LAGGING, FLAG_LOW_COVERAGE, FLAG_UNALIGNED,
   DRAFT_UNIT_MISSING_SENTENCE, NA, NO_POSITION_LOW_COVERAGE, PERCENTILE_COLUMN_LABEL
 } from "./copy.js";
@@ -98,7 +98,7 @@ export function sourceCell(html, r) {
 }
 
 function actionsCell(html, r, entityId, countryName, history = null, domainId = "") {
-  return html`<td class="mm-actions" data-label="${COL.actions}">${history ? historyButton(html, history, domainId, r) : ""}<a href="${indicatorHref(r.indicatorId, entityId)}" data-link="indicator" aria-label="${DRAFT_COMPARE_COUNTRIES_LABEL(r.name)}">${DRAFT_COMPARE_COUNTRIES}</a> <a href="${seriesHref(r.indicatorId, entityId)}" data-link="series" aria-label="${DRAFT_SERIES_LINK_LABEL(r.name, countryName)}">${DRAFT_INDICATOR_SERIES_LINK}</a></td>`;
+  return html`<td class="mm-actions" data-label="${COL.actions}">${history ? historyButton(html, history, domainId, r) : ""}<a href="${indicatorHref(r.indicatorId, entityId)}" data-link="indicator" aria-label="${COMPARE_COUNTRIES_LABEL(r.name)}">${COMPARE_COUNTRIES}</a> <a href="${seriesHref(r.indicatorId, entityId)}" data-link="series" aria-label="${SERIES_LINK_LABEL(r.name, countryName)}">${INDICATOR_SERIES_LINK}</a></td>`;
 }
 
 function indicatorHead(html, r) {

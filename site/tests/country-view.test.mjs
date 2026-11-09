@@ -86,8 +86,8 @@ test("every indicator of a domain is in its table exactly once; links carry #i= 
   assert.equal(domainHref("growth"), "../domain/growth");
   assert.match(out, /href="\.\.\/domain\/growth"/);
   assert.match(out, /href="\.\.\/explorer#i=T01&amp;c=SY01"/);
-  assert.match(out, new RegExp(`>${copy.DRAFT_INDICATOR_SERIES_LINK}<`));
-  assert.match(out, new RegExp(`>${copy.DRAFT_COMPARE_COUNTRIES}<`));
+  assert.match(out, new RegExp(`>${copy.INDICATOR_SERIES_LINK}<`));
+  assert.match(out, new RegExp(`>${copy.COMPARE_COUNTRIES}<`));
 });
 
 test("values carry their unit, the estimate mark, and the stored percentile with its bin (AC-RD-11, 42, 45)", () => {

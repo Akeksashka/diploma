@@ -3,7 +3,7 @@
 // D6: every number drawn or printed is a stored column (or the display-only rebase of one); no statistic is computed here.
 import {entityChoices, groupChoices, isoDate, nameOf, periodsOf, selectedEntities, transformChoices, yearsOf} from "./explorer.js";
 import {
-  ALERTS_HEADING, ALERT_NOT_DRAWN, DRAFT_CHART_MARKS, DRAFT_CHART_SHOWS, DRAFT_CHOOSE_COUNTRIES_HINT, DRAFT_HASH_FALLBACK_NOTE, DRAFT_HASH_NO_ROWS_NOTE, DRAFT_FACET_STATEMENT, DRAFT_FREE_Y_LABEL, DRAFT_NEXT_SERIES, DRAFT_REBASE_MARKS, DRAFT_REGIONS,
+  ALERTS_HEADING, ALERT_NOT_DRAWN, DRAFT_CHART_MARKS, DRAFT_CHART_SHOWS, DRAFT_CHOOSE_COUNTRIES_HINT, HASH_FALLBACK_NOTE, HASH_NO_ROWS_NOTE, DRAFT_FACET_STATEMENT, DRAFT_FREE_Y_LABEL, DRAFT_NEXT_SERIES, DRAFT_REBASE_MARKS, DRAFT_REGIONS,
   DRAFT_SELECT_GROUP, DRAFT_SUBREGION_CONSEQUENCE, DRAFT_TITLE_UNIT, DRAFT_Y_MODE, NO_SERIES, NO_SERIES_FILE, REBASE_NOTE, REBASE_TOGGLE_LABEL, SELECTION_LABEL
 } from "./copy.js";
 import {chartFigure, seriesFigureLabel, viewAsTable} from "./figure.js";
@@ -90,8 +90,8 @@ export function explorerControls(html, ctx, indicatorId, rows, initial = {indica
 // Left rail on wide screens, a `<details>` "Selection" above the chart on compact ones. The rail is open from 40 rem up and
 // closed below (and follows a change of the window); the chart goes into `main`. No data is read here.
 export function explorerLayout(html, {indicator, box}) {
-  const note = box.note ? html`<p class="mm-note" id="explorer-hash-note" role="status">${DRAFT_HASH_FALLBACK_NOTE}</p>` : "";
-  const noRows = box.noRows?.length ? html`<p class="mm-note" id="explorer-norows-note" role="status">${DRAFT_HASH_NO_ROWS_NOTE(box.noRows)}</p>` : "";
+  const note = box.note ? html`<p class="mm-note" id="explorer-hash-note" role="status">${HASH_FALLBACK_NOTE}</p>` : "";
+  const noRows = box.noRows?.length ? html`<p class="mm-note" id="explorer-norows-note" role="status">${HASH_NO_ROWS_NOTE(box.noRows)}</p>` : "";
   const rail = html`<details class="mm-selection" id="explorer-selection" open><summary>${SELECTION_LABEL}</summary>${note}${noRows}<div class="mm-controls">${indicator}${box.transform}${box.from}${box.to}${box.rebase}${box.base}${box.free}</div><div class="mm-controls">${box.entities}</div></details>`;
   const main = html`<div class="mm-explorer-main" id="explorer-main"></div>`;
   const el = html`<div class="mm-explorer mm-explorer-layout">${rail}${main}</div>`;
