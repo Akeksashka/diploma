@@ -104,6 +104,11 @@ jobs:
       - name: Build
         working-directory: site
         run: npm run build
+      - name: Build-page and dist-scan tests (R21)
+        working-directory: site
+        env:
+          MM_REQUIRE_DIST: "1"
+        run: node --test tests/build-pages.test.mjs tests/copy.test.mjs
       - name: Landing size (AC-DASH-2)
         working-directory: site
         run: npm run measure:landing
@@ -126,6 +131,11 @@ jobs:
         env:
           EXPORT_DIR: ${{ github.workspace }}/site/tests/fixtures/sparse_export
         run: npm run build
+      - name: Build-page and dist-scan tests on the synthetic sparse fixture (R21)
+        working-directory: site
+        env:
+          MM_REQUIRE_DIST: "1"
+        run: node --test tests/build-pages.test.mjs tests/copy.test.mjs
       - name: Country and indicator smoke on the synthetic sparse fixture
         working-directory: site
         env:

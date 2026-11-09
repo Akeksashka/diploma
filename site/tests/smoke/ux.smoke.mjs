@@ -1047,7 +1047,7 @@ describe("T130 AC-UX-9: print stylesheet", () => {
           return {
             bg: root.getPropertyValue("--mm-bg").trim(), bodyBg: getComputedStyle(document.body).backgroundColor,
             adjust: getComputedStyle(document.body).printColorAdjust || getComputedStyle(document.body).webkitPrintColorAdjust,
-            visibleControls: [...document.querySelectorAll("select, nav.mm-nav, .mm-skip, fieldset.mm-radios, .mm-group-btn, .mm-selection, .mm-facts")].filter(vis).map((e) => e.tagName + "." + e.className),
+            visibleControls: [...document.querySelectorAll("select, input, nav.mm-nav, .mm-skip, fieldset.mm-radios, fieldset.mm-point-reader, .mm-filter, .mm-group-btn, .mm-selection, .mm-facts, button.mm-history-btn, button.mm-country-go")].filter(vis).map((e) => e.tagName + "." + e.className),
             closedHidden: [...document.querySelectorAll("details:not([open])")].filter((d) => [...d.children].some((c) => c.tagName !== "SUMMARY" && !vis(c) && c.textContent.trim())).length,
             closedCount: document.querySelectorAll("details:not([open])").length,
             asof: document.querySelector(".mm-asof") && vis(document.querySelector(".mm-asof")) ? document.querySelector(".mm-asof").textContent : "",
@@ -1344,4 +1344,175 @@ describe("T132 AC-UX-6: responsive matrix and the WCAG 1.4.12 text-spacing overr
       });
     });
   }
+});
+
+// R22 (AC-RD-54, AC-RD-40 grayscale, AC-RD-05): AC-UX-1..9 on the redesign page types in their interactive states. Pages come from the
+// built home page, so the block runs on either fixture: a country, the indicator with a value chart, the home with the filter in use.
+describe("R22 AC-RD-54: redesign page types, interactive states", () => {
+  const home = readFileSync(join(DIST, "index.html"), "utf8");
+  const firstOf = (re, prefer) => {
+    const ids = [...home.matchAll(re)].map((m) => m[1]);
+    return ids.find((i) => prefer.includes(i)) ?? ids[0];
+  };
+  const COUNTRY = firstOf(/\.\/country\/([A-Za-z0-9_]+)"/g, ["DEU", "SY01"]);
+  const INDICATOR = firstOf(/\.\/indicator\/([A-Za-z0-9_]+)"/g, ["M09", "T02"]);
+  const luminanceRatio = (a, b) => contrastRatio(a, b);
+
+  // Computed colour of a mark (stroke or fill) against the page colour, 3:1 (WCAG 1.4.11). Marks with fill/stroke none or a band tint are skipped.
+  const markColours = (page, selector) => page.evaluate((sel) => {
+    const cv = document.createElement("canvas"); cv.width = cv.height = 1;
+    const ctx = cv.getContext("2d", {willReadFrequently: true});
+    const rgb = (css) => { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = "#000"; ctx.fillStyle = css; ctx.fillRect(0, 0, 1, 1); const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data; return {hex: "#" + [r, g, b].map((v) => v.toString(16).padStart(2, "0")).join(""), a: a / 255}; };
+    const bg = rgb(getComputedStyle(document.documentElement).getPropertyValue("--mm-bg").trim()).hex;
+    return [...document.querySelectorAll(sel)].filter((e) => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0; }).map((e) => {
+      const cs = getComputedStyle(e);
+      return {el: e.localName, stroke: cs.stroke === "none" ? null : rgb(cs.stroke), strokeWidth: parseFloat(cs.strokeWidth), fill: cs.fill === "none" ? null : rgb(cs.fill), bg};
+    });
+  }, selector);
+
+  for (const scheme of SCHEMES) {
+    test(`home with the filter in use (no match), ${scheme}: text contrast, status sentence, focus ring on the input`, async (t) => {
+      await withPage(t, "/", "#country-list li", async ({page}) => {
+        await setTheme(page, scheme);
+        const input = page.locator("#countries input[type=search]");
+        await input.fill("zzzzqq");
+        await page.waitForFunction(() => document.querySelector("#countries .mm-filter-status")?.textContent.trim() !== "");
+        const samples = await sampleTextColours(page);
+        const bad = samples.filter((s) => { const f = cssToHex(s.color), b = s.bg && cssToHex(s.bg); return f && b && contrastRatio(f.hex, b.hex) < requiredTextRatio(s); }).map((s) => `${s.el} ${s.text}`);
+        assert.deepEqual(bad, [], "low-contrast text");
+        const status = (await page.textContent("#countries .mm-filter-status")).trim();
+        assert.ok(status.length > 5 && !/^n\/a$/i.test(status), `status sentence: ${status}`);
+        await input.focus();
+        const ring = await input.evaluate((e) => { const cs = getComputedStyle(e); return {style: cs.outlineStyle, width: parseFloat(cs.outlineWidth), color: cs.outlineColor}; });
+        assert.ok(ring.style !== "none" && ring.width >= 2, `input focus ring: ${JSON.stringify(ring)}`);
+        const border = await input.evaluate((e) => { const cs = getComputedStyle(e); return {w: parseFloat(cs.borderTopWidth), c: cs.borderTopColor, bg: cs.backgroundColor}; });
+        t.diagnostic(`${scheme} filter input border ${border.w}px ${border.c} on ${border.bg}`);
+        // the typed text of the control itself (not a text node, so the page sampler never sees it) against its own fill
+        const typed = await input.evaluate((e) => { const cs = getComputedStyle(e); return {fg: cs.color, bg: cs.backgroundColor}; });
+        const fg = cssToHex(typed.fg), bgc = cssToHex(typed.bg);
+        assert.ok(fg && bgc && contrastRatio(fg.hex, bgc.hex) >= 4.5, `filter input text ${typed.fg} on ${typed.bg}`);
+      });
+    });
+
+    test(`indicator ${INDICATOR} with the reader focused and the static tip drawn, ${scheme}: tip text 4.5:1 on its box, chart edge and focus ring 3:1 on the page`, async (t) => {
+      await withPage(t, `/indicator/${INDICATOR}`, "#indicator-table tbody tr", async ({page}) => {
+        await setTheme(page, scheme);
+        if ((await page.locator("#value-reader-country").count()) === 0) return t.skip("no value chart on this indicator in this export");
+        const id = await page.$eval("#value-reader-country option:nth-child(2)", (o) => o.value);
+        await page.focus("#value-reader-country");
+        await page.selectOption("#value-reader-country", id);
+        const tip = page.locator("#value-figure g.mm-static-tip");
+        await tip.waitFor({state: "visible", timeout: 5000});
+        const pair = await tip.evaluate((g) => {
+          const cv = document.createElement("canvas"); cv.width = cv.height = 1;
+          const ctx = cv.getContext("2d", {willReadFrequently: true});
+          const rgb = (css) => { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = "#000"; ctx.fillStyle = css; ctx.fillRect(0, 0, 1, 1); const [r, g2, b, a] = ctx.getImageData(0, 0, 1, 1).data; return {hex: "#" + [r, g2, b].map((v) => v.toString(16).padStart(2, "0")).join(""), a: a / 255}; };
+          const box = g.querySelector("path, rect"), text = g.querySelector("text");
+          return {box: rgb(getComputedStyle(box).fill), text: rgb(getComputedStyle(text).fill), page: rgb(getComputedStyle(document.documentElement).getPropertyValue("--mm-bg").trim())};
+        });
+        const under = pair.box.a < 1 ? pair.page.hex : pair.box.hex; // a transparent box sits on the page colour
+        assert.ok(contrastRatio(pair.text.hex, under) >= 4.5, `tip text ${pair.text.hex} on ${under} (${scheme})`);
+        const marks = await markColours(page, "#value-figure g[aria-label=bar] rect, #value-figure g.mm-static-tip ~ * rect");
+        assert.ok(marks.length > 0, "bars found (the loop below is not vacuous)");
+        assert.ok(marks.some((m) => m.stroke && m.stroke.a === 1), "at least one bar has an opaque stroke to check");
+        for (const m of marks) if (m.stroke && m.stroke.a === 1) assert.ok(contrastRatio(m.stroke.hex, m.bg) >= 3, `bar edge ${m.stroke.hex} on ${m.bg}`);
+        const ringRects = await markColours(page, '#value-figure g[aria-label=bar][stroke-width="4"] rect');
+        assert.ok(ringRects.length >= 1, "the country in focus is outlined with a 4 px ring (a non-colour cue)");
+        for (const m of ringRects) assert.ok(m.stroke && contrastRatio(m.stroke.hex, m.bg) >= 3, `focus ring on the chart ${m.stroke?.hex} on ${m.bg}`);
+        await screenshot(page, `r22-indicator-${INDICATOR}`, `reader-tip-${scheme}`);
+      });
+    });
+
+    test(`country ${COUNTRY} with a history chart open, ${scheme}: text contrast, profile dots and history line 3:1 on the page`, async (t) => {
+      await withPage(t, `/country/${COUNTRY}`, ".mm-country-domain table tbody tr", async ({page}) => {
+        await setTheme(page, scheme);
+        const dots = await markColours(page, "figure[id^=profile-] circle");
+        assert.ok(dots.length > 0, "profile dots found (the loop below is not vacuous)");
+        for (const m of dots) assert.ok(m.stroke && contrastRatio(m.stroke.hex, m.bg) >= 3, `profile dot ${m.stroke?.hex} on ${m.bg}`);
+        const btn = page.locator("button.mm-history-btn").first();
+        if ((await btn.count()) > 0) {
+          await btn.click();
+          await page.waitForSelector('[id^="history-"][data-state="loaded"], [id^="history-"][data-state="error"], [id^="history-"][data-state="empty"]', {timeout: TIMEOUT});
+          const lines = await markColours(page, '[id^="history-"] svg path');
+          const stroked = lines.filter((m) => m.stroke && m.stroke.a === 1 && m.strokeWidth > 0);
+          assert.ok(stroked.length > 0, "the history line is found by its computed stroke (the check is not vacuous)");
+          for (const m of stroked) assert.ok(contrastRatio(m.stroke.hex, m.bg) >= 3, `history line ${m.stroke.hex} (${m.strokeWidth}px) on ${m.bg}`);
+          const dotsH = await markColours(page, '[id^="history-"] svg circle');
+          for (const m of dotsH) if (m.stroke && m.stroke.a === 1) assert.ok(contrastRatio(m.stroke.hex, m.bg) >= 3, `history dot ${m.stroke.hex} on ${m.bg}`);
+        }
+        const samples = await sampleTextColours(page);
+        const bad = samples.filter((s) => { const f = cssToHex(s.color), b = s.bg && cssToHex(s.bg); return f && b && contrastRatio(f.hex, b.hex) < requiredTextRatio(s); }).map((s) => `${s.el} ${s.text}`);
+        assert.deepEqual(bad, [], "low-contrast text");
+      });
+    });
+  }
+
+  test("every country and indicator page of this build (up to 12 each): text contrast in both schemes, no page scroll at 320 and 1920, no unlabelled n/a", async (t) => {
+    const ids = (re) => [...new Set([...home.matchAll(re)].map((m) => m[1]))].slice(0, 12);
+    const paths = [...ids(/\.\/country\/([A-Za-z0-9_]+)"/g).map((i) => [`/country/${i}`, ".mm-country-domain table tbody tr"]), ...ids(/\.\/indicator\/([A-Za-z0-9_]+)"/g).map((i) => [`/indicator/${i}`, "#indicator-table tbody tr"])];
+    assert.ok(paths.length > 0);
+    const failures = [];
+    for (const [path, ready] of paths) {
+      await withPage(t, path, ready, async ({page}) => {
+        for (const scheme of SCHEMES) {
+          await setTheme(page, scheme);
+          for (const s of await sampleTextColours(page)) {
+            const f = cssToHex(s.color), b = s.bg && cssToHex(s.bg);
+            if (f && b && contrastRatio(f.hex, b.hex) < requiredTextRatio(s)) failures.push(`${path} ${scheme}: ${s.el} "${s.text}" ${contrastRatio(f.hex, b.hex).toFixed(2)}`);
+          }
+        }
+        for (const w of [320, 1920]) {
+          await setViewport(page, w);
+          const o = await horizontalOverflow(page);
+          if (o.scrollW > o.vw) failures.push(`${path} ${w}px scrolls: ${o.offenders.join("; ")}`);
+        }
+        const bare = await page.evaluate(() => [...document.querySelectorAll("main td, main li, main p")].filter((e) => e.textContent.trim().toLowerCase() === "n/a").map((e) => e.localName));
+        if (bare.length) failures.push(`${path}: bare n/a in ${bare.join(",")}`);
+      });
+    }
+    assert.deepEqual(failures, []);
+  });
+
+  test("AC-RD-05: with JavaScript off, home has the h1, the no-JS notice, the full country and indicator lists, no filter input and no reserved filter slot", async (t) => {
+    if (!browser) return t.skip(reason);
+    const context = await browser.newContext({javaScriptEnabled: false});
+    try {
+      const page = await context.newPage();
+      await page.route((u) => u.origin !== site.origin, (r) => r.abort());
+      await page.goto(`${site.origin}/`);
+      assert.equal(await page.locator("h1").count(), 1);
+      assert.ok((await page.locator("#country-list li a, #countries li a").count()) > 0);
+      assert.ok((await page.locator("#indicators li a").count()) > 0);
+      assert.equal(await page.locator("input").count(), 0, "no filter input without scripts");
+      const notice = page.locator("p.mm-noscript[role=note]");
+      assert.equal(await notice.count(), 1, "one no-JS notice element");
+      assert.ok(await notice.isVisible(), "the no-JS notice is visible");
+      assert.match(await notice.textContent(), /needs JavaScript to show its tables and charts/);
+      const print = await page.evaluate(() => getComputedStyle(document.querySelector(".mm-filter")).minHeight);
+      assert.equal(print, "0px", "no reserved filter slot without scripts");
+    } finally {
+      await context.close();
+    }
+  });
+
+  test("AC-RD-40 grayscale: the new charts carry non-colour cues (position on a labelled axis, hollow dots, thick focus ring, estimate mark); bin tones are not the only cue", async (t) => {
+    await withPage(t, `/country/${COUNTRY}`, ".mm-country-domain table tbody tr", async ({page}) => {
+      await page.addStyleTag({content: "html { filter: grayscale(1); }"});
+      const prof = await page.evaluate(() => [...document.querySelectorAll("figure[id^=profile-]")].map((f) => ({label: f.getAttribute("aria-label"), role: f.getAttribute("role"), dots: f.querySelectorAll("circle").length, hollow: [...f.querySelectorAll("circle")].filter((c) => getComputedStyle(c).fill === "none" || c.getAttribute("fill") === "none").length, ticks: f.querySelectorAll('g[aria-label="x-axis tick label"] text').length})));
+      for (const f of prof) { assert.equal(f.role, "img"); assert.ok(f.label && f.label.length > 10, "figure label"); assert.ok(f.ticks > 0, "x axis ticks are written"); }
+      t.diagnostic(`profile figures: ${prof.length}; dots ${prof.reduce((a, f) => a + f.dots, 0)}, hollow ${prof.reduce((a, f) => a + f.hollow, 0)}`);
+    });
+    await withPage(t, `/indicator/${INDICATOR}`, "#indicator-table tbody tr", async ({page}) => {
+      await page.addStyleTag({content: "html { filter: grayscale(1); }"});
+      const v = await page.evaluate(() => { const f = document.querySelector("#value-figure"); return f ? {label: f.getAttribute("aria-label"), bars: f.querySelectorAll("g[aria-label=bar] rect").length, ticks: f.querySelectorAll('g[aria-label="x-axis tick label"] text').length, marks: f.querySelectorAll("text").length} : null; });
+      if (v) { assert.ok(v.bars > 0 && v.ticks > 0, JSON.stringify(v)); assert.ok(v.label, "figure label"); }
+    });
+    // diagnostic: tone separation of adjacent bins in grayscale (the bins are also written as words and glyphs in every table)
+    const css = readFileSync(join(here, "..", "..", "src", "style.css"), "utf8");
+    const themes = resolveThemes(css, NON_COLOUR_PREFIXES);
+    for (const scheme of SCHEMES) {
+      const lum = [1, 2, 3, 4, 5].map((n) => themes[scheme][`--mm-pct-${n}`]);
+      t.diagnostic(`${scheme} adjacent bin fill ratios: ${lum.slice(1).map((c, i) => luminanceRatio(lum[i], c).toFixed(2)).join(", ")}`);
+    }
+  });
 });

@@ -1,0 +1,127 @@
+// Redesign R21 / AC-RD-51: per page type, the data files a page requests equal the files spec section 3 says it needs, every one is
+// listed in manifest files[] (with the content hash of its file name), and nothing goes off origin.
+// Each page is awaited on a data-dependent selector (a rendered data row or control), not on the static h1.
+// Runs against a built site (npm run build). Localhost only. Skips without a browser unless MM_SMOKE_REQUIRE_BROWSER=1 (CI).
+// MM_EXPECT_BUILD_ID, when set, must equal the built manifest build_id (guards against running against the wrong fixture).
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+import {after, before, describe, test} from "node:test";
+import {DIST, REQUIRE_BROWSER, builtManifestPath, distBuilt, launchBrowser, openPage, serve} from "./support.mjs";
+
+let browser = null;
+let reason = distBuilt() ? "browser not started" : `no built site at ${DIST} (run npm run build with a fixture export first)`;
+let site = null;
+let manifest = null;
+const metaIndex = {};
+
+before(async () => {
+  if (!distBuilt()) {
+    if (REQUIRE_BROWSER) assert.fail(reason);
+    return;
+  }
+  ({browser, reason} = await launchBrowser());
+  if (!browser) {
+    if (REQUIRE_BROWSER) assert.fail(reason);
+    return;
+  }
+  site = await serve();
+  const mp = builtManifestPath();
+  manifest = JSON.parse(readFileSync(mp, "utf8"));
+  if (process.env.MM_EXPECT_BUILD_ID) assert.equal(manifest.build_id, process.env.MM_EXPECT_BUILD_ID, "built manifest is not the expected fixture");
+  for (const f of manifest.files) {
+    if (f.path.startsWith("meta/")) metaIndex[f.path.replace(/^meta\//, "").replace(/\.json$/, "")] = `${f.path.replace(/^meta\//, "").replace(/\.json$/, "")}.${f.sha256.slice(0, 8)}.json`;
+  }
+});
+
+after(async () => {
+  await browser?.close();
+  await site?.close();
+});
+
+const meta = (stem) => JSON.parse(readFileSync(`${DIST}/_file/data/meta/${metaIndex[stem]}`, "utf8"));
+
+// Requested data files as manifest paths: /_file/data/<path-without-ext>.<sha8>.<ext> -> <path>.<ext>. The manifest itself is "manifest.json".
+function dataRequests(urls) {
+  const out = new Set();
+  for (const u of urls) {
+    const {pathname} = new URL(u);
+    const m = pathname.match(/^\/_file\/data\/(.+)\.([0-9a-f]{8,64})\.([a-z]+)$/);
+    if (pathname.startsWith("/_file/data/")) assert.ok(m, `unparseable data request ${pathname}`);
+    if (!m) continue;
+    const path = `${m[1]}.${m[3]}`;
+    if (path !== "manifest.json") {
+      const entry = manifest.files.find((f) => f.path === path);
+      assert.ok(entry, `${path} is requested but not listed in manifest files[]`);
+      assert.ok(entry.sha256.startsWith(m[2]), `${path}: file name hash ${m[2]} is not the manifest sha256`);
+    }
+    out.add(path);
+  }
+  return [...out].sort();
+}
+
+async function load(t, path, ready) {
+  if (!browser) return t.skip(reason), null;
+  const {page, context, log} = await openPage(browser, site.origin);
+  await page.goto(`${site.origin}${path}`);
+  await page.waitForSelector(ready, {timeout: 20000});
+  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(1000);
+  const reqs = [...log.requests];
+  await context.close();
+  assert.deepEqual(log.offOrigin, [], "off-origin requests");
+  assert.deepEqual(log.failed, [], "failed requests");
+  assert.deepEqual(log.errors, [], "page or console errors");
+  return dataRequests(reqs);
+}
+
+const metaPaths = (...stems) => stems.map((s) => `meta/${s}.json`);
+const sorted = (a) => [...a].sort();
+
+describe("AC-RD-51 requests per page type equal the files of spec section 3", () => {
+  test("PG-HOME and PG-DOMAINS read no data file but the manifest (lists are built at build time)", async (t) => {
+    // .mm-asof is rendered after the manifest loads, so waiting for it means the manifest request has happened.
+    for (const [p, sel] of [["/", ".mm-asof"], ["/domains", ".mm-asof"]]) {
+      const r = await load(t, p, sel);
+      if (r) assert.deepEqual(r, ["manifest.json"], p);
+    }
+  });
+
+  test("PG-COUNTRY: meta/*, one scorecard per domain except global, no series file before 'Show history'", async (t) => {
+    const r = await load(t, `/country/${firstCountry()}`, ".mm-country-domain table tbody tr");
+    if (!r) return;
+    const domains = meta("domains").domains.map((d) => d.domain_id).filter((d) => d !== "global");
+    assert.deepEqual(r, sorted(["manifest.json", ...metaPaths("entities", "groups", "domains", "indicators", "series"), ...domains.map((d) => `scorecard/${d}.json`)]));
+  });
+
+  test("PG-INDICATOR: meta/* and the scorecard of the first domain of the indicator only", async (t) => {
+    const ind = meta("indicators").indicators[0];
+    const r = await load(t, `/indicator/${ind.indicator_id}`, ".mm-indicator-table tbody tr");
+    if (!r) return;
+    assert.deepEqual(r, sorted(["manifest.json", ...metaPaths("entities", "indicators", "domains", "groups", "series"), `scorecard/${ind.domain_ids[0]}.json`]));
+  });
+
+  test("PG-SERIES: meta/*, alerts and one series file; never a revisions file", async (t) => {
+    const r = await load(t, "/explorer", "#explorer-entities");
+    if (!r) return;
+    const series = r.filter((p) => p.startsWith("series/"));
+    assert.equal(series.length, 1, `one series file, got ${series}`);
+    assert.deepEqual(r, sorted(["manifest.json", "alerts.json", ...metaPaths("entities", "indicators", "domains", "groups", "series"), ...series]));
+  });
+
+  test("PG-DOMAIN: its scorecard and meta/*", async (t) => {
+    const d = meta("domains").domains.find((x) => x.domain_id !== "global") ?? meta("domains").domains[0];
+    const r = await load(t, `/domain/${d.domain_id}`, "#domain-heatmap tbody tr");
+    if (!r) return;
+    assert.deepEqual(r, sorted(["manifest.json", `scorecard/${d.domain_id}.json`, ...metaPaths("entities", "indicators", "domains", "series")]));
+  });
+
+  test("PG-REVISIONS: the recent-revisions file and meta/*, no per-indicator revisions file before a choice", async (t) => {
+    const r = await load(t, "/revisions", "#recent-revisions tbody tr");
+    if (!r) return;
+    assert.deepEqual(r, sorted(["manifest.json", "revisions_recent.json", ...metaPaths("entities", "indicators", "series")]));
+  });
+});
+
+function firstCountry() {
+  return meta("entities").entities.find((e) => e.is_global !== true).entity_id;
+}

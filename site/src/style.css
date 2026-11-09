@@ -518,10 +518,21 @@ h1[data-indicator] { overflow-wrap: anywhere; }
 .mm-home-list details { margin: var(--mm-space-2, 0.5rem) 0; }
 .mm-home-list summary { cursor: pointer; font-weight: 600; }
 .mm-home-list [hidden] { display: none; }
-.mm-filter { margin: var(--mm-space-2, 0.5rem) 0; }
-.mm-filter input { min-width: 14rem; max-width: 100%; }
+.mm-filter { margin: var(--mm-space-2, 0.5rem) 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0 0.5rem; }
+@media print { .mm-filter { display: none; } } /* R22: a control; after the rule above so that its display: flex does not win */
+.mm-filter input { flex: 1 1 6rem; min-width: 0; max-width: 20rem; }
+/* Layout reservations (gate E finding 4), measured with the Playwright smoke on the fixture export, 16 px root
+   (docs/ops/dashboard-redesign-measurements.md): the mounted filter block (label + input + status line) is 56 px = 3.5rem at 360, 768 and 1280 px;
+   the label and input stay on one line (the status line takes its own row), so there is no taller wrapped height to reserve.
+   The home shell holds the busy line, then the freshness line: 20.4 px (one line) from 410 px up, 40.8 px (two lines) at 400 px and below
+   (measured at 320-700 px); 1.275rem (20.4 px) is reserved from 26rem (416 px) up and 2.55rem (40.8 px) below. (An earlier 2.25rem over-reserved
+   by 15.6 px: the 1rem margin under the line collapses into the next block's margin.) A stale banner (rare: only when known_cutoff is older than 45 days) adds a block above the
+   freshness line and shifts the page once; that shift is accepted. */
 .mm-filter[data-filter-slot] { min-height: 3.5rem; }
-.mm-home-shell { min-height: 2.25rem; }
+.mm-home-shell { min-height: 2.55rem; }
+@media (min-width: 26rem) { .mm-home-shell { min-height: 1.275rem; } }
+/* Without JavaScript nothing mounts into the slots and nothing fills the shell, so no space is reserved (AC-RD-05 lists stay; no input). */
+@media (scripting: none) { .mm-filter[data-filter-slot], .mm-home-shell { min-height: 0; } }
 .mm-home-shell .mm-loading { min-height: 0; margin: 0 0 1rem; padding: 0; border: 0; background: none; }
-.mm-filter-status { margin: 0.25rem 0 0; min-height: 1.5em; color: var(--mm-text-muted); }
+.mm-filter-status { flex: 1 0 100%; max-width: none; margin: 0.25rem 0 0; min-height: 1.5em; color: var(--mm-text-muted); }
 .mm-home-links { display: flex; flex-wrap: wrap; gap: 1rem; list-style: none; padding: 0; margin: 1.5rem 0; }

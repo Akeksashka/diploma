@@ -317,3 +317,30 @@ test("AC-RD-42: a seeded renderer that shows a value without a unit fails, and t
   const units = readFileSync(join(src, "lib", "units.js"), "utf8");
   for (const fn of ["indicatorUnit", "seriesUnit", "rebaseUnit", "unitText", "multText", "PERCENTILE_LABEL"]) assert.ok(units.includes(`export ${fn === "PERCENTILE_LABEL" ? "const" : "function"} ${fn}`), fn);
 });
+
+// R22 AC-UX-9: a control that is shown with display: flex outside print must be hidden by a print rule that comes AFTER that rule
+// (the first R22 sweep found the home filter printing because the hiding rule sat earlier in the file and lost the cascade).
+test("R22: the print rule hiding .mm-filter comes after its screen display rule", () => {
+  const css = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "..", "src", "style.css"), "utf8");
+  const screenAt = css.indexOf(".mm-filter { margin:");
+  const printAt = css.indexOf("@media print { .mm-filter { display: none; } }");
+  assert.ok(screenAt > 0 && printAt > screenAt, `screen rule at ${screenAt}, print rule at ${printAt}`);
+});
+
+// No rule after the print hide may set display on the .mm-filter element itself (a later screen rule would beat the print rule).
+// Rules are read flat (innermost braces); `display: none` after the print block is harmless.
+test("R22: no rule after the print hide re-shows .mm-filter", () => {
+  const css = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "..", "src", "style.css"), "utf8");
+  const marker = "@media print { .mm-filter { display: none; } }";
+  const after = css.slice(css.indexOf(marker) + marker.length).replace(/\/\*[\s\S]*?\*\//g, "");
+  const offenders = [];
+  for (const [, selector, body] of after.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    const targetsFilter = selector.split(",").some((part) => {
+      const last = part.trim().split(/\s*[\s>+~]\s*/).pop() ?? "";
+      return /(^|[^\w-])\.mm-filter(?![\w-])/.test(last) || /^\.mm-filter(?![\w-])/.test(last);
+    });
+    const display = /(?:^|;)\s*display\s*:\s*([^;]+)/.exec(body);
+    if (targetsFilter && display && display[1].trim() !== "none") offenders.push(`${selector.trim()} { display: ${display[1].trim()} }`);
+  }
+  assert.deepEqual(offenders, []);
+});

@@ -1,12 +1,44 @@
-// Copies an export tree (default ../data, or EXPORT_DIR) into src/data (git-ignored).
+// Copies the manifest-listed files of an export tree (default ../data, or EXPORT_DIR) into src/data (git-ignored).
 // The export contract is unchanged by the toolkit; this is the only coupling.
-import {cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync} from "node:fs";
-import {dirname, join, resolve} from "node:path";
+import {copyFileSync, existsSync, lstatSync, mkdirSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync} from "node:fs";
+import {createHash} from "node:crypto";
+import {dirname, isAbsolute, join, resolve, sep} from "node:path";
 import {fileURLToPath} from "node:url";
 import {firstDomainId, storedPercentileDifferences, storedTransformId} from "../src/lib/indicator-model.js";
 import {indicatorPageSource, countryPageSource, domainPageSource, explorerPageSource,revisionsPageSource, homePageSource, domainsPageSource} from "./lib.mjs";
 
+// Copies manifest.json plus every manifest.files[].path from the export into dst (after clearing dst); nothing else
+// (a README or status.json in the export dir would become a page). Throws on an unsafe path, a missing file or a sha256 mismatch.
+export function copyExport(src, dst) {
+  const manifest = JSON.parse(readFileSync(join(src, "manifest.json"), "utf8"));
+  if (!Array.isArray(manifest.files)) throw new Error("manifest.json has no files list");
+  const listed = [];
+  for (const f of manifest.files) {
+    const p = f?.path;
+    if (typeof p !== "string" || p === "" || isAbsolute(p) || p.startsWith("/") || p.includes("\\") || p.includes("..")) {
+      throw new Error(`manifest file path is not a safe relative path: ${JSON.stringify(p)}`);
+    }
+    const full = join(src, p);
+    if (!existsSync(full)) throw new Error(`manifest lists ${p} but it is missing from ${src}`);
+    if (lstatSync(full).isSymbolicLink()) throw new Error(`${p}: a symlink is not allowed`);
+    if (!realpathSync(full).startsWith(realpathSync(src) + sep)) throw new Error(`${p}: resolves outside the export`);
+    if (!statSync(full).isFile()) throw new Error(`${p}: not a regular file`);
+    if (typeof f.sha256 !== "string" || f.sha256 === "") throw new Error(`${p}: manifest entry has no sha256`);
+    const got = createHash("sha256").update(readFileSync(full)).digest("hex");
+    if (got !== f.sha256) throw new Error(`${p}: sha256 ${got} differs from the manifest ${f.sha256}`);
+    listed.push(p);
+  }
+  rmSync(dst, {recursive: true, force: true});
+  mkdirSync(dst, {recursive: true});
+  for (const p of ["manifest.json", ...listed]) {
+    mkdirSync(dirname(join(dst, p)), {recursive: true});
+    copyFileSync(join(src, p), join(dst, p));
+  }
+  return listed.length + 1;
+}
+
 const here = dirname(fileURLToPath(import.meta.url));
+function main() {
 const src = resolve(process.env.EXPORT_DIR ?? join(here, "..", "..", "data"));
 const dst = join(here, "..", "src", "data");
 if (!existsSync(join(src, "manifest.json"))) {
@@ -18,9 +50,13 @@ if (major !== "1") {
   console.error(`prepare-data: unsupported manifest major version ${major}`);
   process.exit(1);
 }
-rmSync(dst, {recursive: true, force: true});
-cpSync(src, dst, {recursive: true});
-console.log(`prepare-data: ${src} -> ${dst}`);
+try {
+  const n = copyExport(src, dst);
+  console.log(`prepare-data: ${src} -> ${dst} (${n} files)`);
+} catch (e) {
+  console.error(`prepare-data: ${e.message}`);
+  process.exit(1);
+}
 
 // One page per domain of meta/domains.json (a missing or malformed file is an error, not a skip).
 const pages = join(here, "..", "src", "domain");
@@ -108,3 +144,6 @@ const metaList = (file, key) => {
 writeFileSync(join(here, "..", "src", "domains.md"), domainsPageSource(domains));
 writeFileSync(join(here, "..", "src", "index.md"), homePageSource({entities: metaList("entities", "entities"), indicators: metaList("indicators", "indicators"), domains}));
 console.log("prepare-data: home and domains pages written");
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();

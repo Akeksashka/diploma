@@ -72,7 +72,10 @@ export function applyFilter(section, query) {
       else g.open = g.dataset.open === "1";
     }
   }
-  return [...section.querySelectorAll("li")].filter((x) => !x.hidden).length;
+  // Unique links: an indicator listed under two domains counts once.
+  const hrefs = new Set();
+  for (const x of section.querySelectorAll("li")) if (!x.hidden) hrefs.add(x.querySelector?.("a")?.getAttribute("href") ?? x.textContent);
+  return hrefs.size;
 }
 
 // Browser only: one labelled search input and a polite status line per `section[data-filter]` (inserted after the heading).

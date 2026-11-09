@@ -34,12 +34,14 @@ display(pageHead(html, boot, "lists"));
 
 <section id="countries" class="mm-home-list" data-filter="countries" aria-labelledby="countries-heading">
 <h2 id="countries-heading">Choose a country</h2>
+<div class="mm-filter" data-filter-slot></div>
 <ul id="country-list"><li><a href="./country/FRA">France</a></li><li><a href="./country/DEU">Germany</a></li><li><a href="./country/IND">India</a></li><li><a href="./country/ITA">Italy</a></li><li><a href="./country/JPN">Japan</a></li><li><a href="./country/POL">Poland</a></li><li><a href="./country/USA">United States</a></li></ul>
 <div data-filter-group><h3 id="aggregates">Aggregates</h3><ul id="aggregate-list"><li><a href="./country/EA">Euro area</a></li></ul></div>
 </section>
 
 <section id="indicators" class="mm-home-list" data-filter="indicators" aria-labelledby="indicators-heading">
 <h2 id="indicators-heading">Choose an indicator</h2>
+<div class="mm-filter" data-filter-slot></div>
 <details data-filter-group id="indicators-labour"><summary>Labour</summary><ul><li><a href="./indicator/M10">Employment rate</a></li><li><a href="./indicator/M11">Population 15-64</a></li><li><a href="./indicator/M09">Unemployment rate</a></li></ul></details>
 <details data-filter-group id="indicators-prices"><summary>Prices</summary><ul><li><a href="./indicator/P01">CPI inflation</a></li></ul></details>
 <details data-filter-group id="indicators-agri"><summary>Agriculture</summary><ul><li><a href="./indicator/A01">Cereal price index</a></li></ul></details>

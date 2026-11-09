@@ -149,8 +149,8 @@ export const NAMED_EDITION_MARK = " (named edition)";
 export const REVISED_DATA_HISTORY_MARK = " (revised-data history)";
 
 // --- Global freshness line (G-STR2, decisions record section 4). CONFIRMED by the user (R20); replaces "Data as of". ---
-export const FRESHNESS_LABEL = "Data cut-off";
-export const DRAFT_FRESHNESS_LINE = (date, buildId) => `${FRESHNESS_LABEL}: ${date ?? "unknown"} (build ${buildId ?? "unknown"}).`;
+export const FRESHNESS_LABEL = "Data cut-off"; // confirmed by the user 2026-11-08
+export const DRAFT_FRESHNESS_LINE = (date, buildId) => `${FRESHNESS_LABEL}: ${date ?? "unknown"} (build ${buildId ?? "unknown"}).`; // confirmed by the user 2026-11-08
 
 // --- Stale banner (G-STALE, ADR-031). CONFIRMED by the user (R20); never prints the manifest field name. `date` is YYYY-MM-DD (UTC). ---
 export const STALE_BANNER = (date, days, limit) => `Data may be out of date: the data cut-off (${date}) is ${days} days old, more than ${limit} days.`;
@@ -242,7 +242,7 @@ export const DRAFT_NOT_PUBLISHED_SENTENCE = "Not published on this site.";
 export const DRAFT_NA_DEFINED_SENTENCE = "A series is defined for this country, but this export holds no value for it.";
 // G-STR1 (docs/ops/dashboard-redesign-decisions.md section 4): the test (pair absent from meta/series.json) only shows
 // "not in this export's series list", so the sentence says that.
-export const DRAFT_G_STR1_NO_SERIES = "This export lists no series for this country and indicator.";
+export const DRAFT_G_STR1_NO_SERIES = "This export lists no series for this country and indicator."; // confirmed by the user 2026-11-08
 // DRAFT: a value (or domain row) is stored without a percentile and no stored field states why.
 export const DRAFT_NA_NO_PERCENTILE_SENTENCE = "This export holds a value but no percentile for it.";
 export const DRAFT_NA_NO_RANKED_SENTENCE = "No indicator of this domain has a ranked value for this country.";
@@ -270,11 +270,11 @@ export const DRAFT_PROFILE_FIGURE_LABEL = (countryName, domainName) => `percenti
 export const DRAFT_PROFILE_DOT_LABEL = (name, percentileText) => `${name}: ${percentileText}`;
 export const DRAFT_OFFSET_FLAG = (days) => `offset ${days} days`;
 // G-STR3 (decisions record section 4): one label per target. "Compare with other countries" is dropped.
-export const DRAFT_COMPARE_COUNTRIES = "Compare countries"; // to PG-INDICATOR
-export const DRAFT_COMPARE_COUNTRIES_LABEL = (indicatorName) => `Compare countries: ${indicatorName}`;
-export const DRAFT_SERIES_LINK_LABEL = (indicatorName, countryName) => `Time series: ${indicatorName}, ${countryName}`;
-export const DRAFT_HEATMAP_INDICATOR_LINK = "Indicator page"; // DRAFT (not confirmed): visible text of the column-header link (R11)
-export const DRAFT_HEATMAP_INDICATOR_LINK_LABEL = (name) => `Indicator page: ${name}`; // DRAFT (not confirmed): full name for assistive tech, starts with the visible text
+export const DRAFT_COMPARE_COUNTRIES = "Compare countries"; // to PG-INDICATOR // confirmed by the user 2026-11-08
+export const DRAFT_COMPARE_COUNTRIES_LABEL = (indicatorName) => `Compare countries: ${indicatorName}`; // confirmed by the user 2026-11-08
+export const DRAFT_SERIES_LINK_LABEL = (indicatorName, countryName) => `Time series: ${indicatorName}, ${countryName}`; // confirmed by the user 2026-11-08
+export const DRAFT_HEATMAP_INDICATOR_LINK = "Indicator page"; // visible text of the column-header link (R11); confirmed by the user 2026-11-08
+export const DRAFT_HEATMAP_INDICATOR_LINK_LABEL = (name) => `Indicator page: ${name}`; // full name for assistive tech, starts with the visible text; confirmed by the user 2026-11-08
 
 // DRAFT (not confirmed): Redesign R8 "About this value" field list (spec 5.5) and "Show history" (C-CTRY-3, AC-RD-14). Labels only; no prose.
 export const DRAFT_ABOUT_SUMMARY = "About this value";
@@ -321,7 +321,7 @@ export const DRAFT_INDICATOR_SWITCHER_GO = "Go";
 export const DRAFT_INDICATOR_COLUMNS_MORE = Object.freeze({flags: "Flags", source: "Source", actions: "Actions", reason: "Why there is no value"});
 export const DRAFT_TRANSFORMED_HEADER = (transformLabel) => `Transformed value (${transformLabel})`;
 export const DRAFT_OPEN_AS_SERIES = "Open as time series";
-export const DRAFT_INDICATOR_SERIES_LINK = "Time series"; // row link to PG-SERIES (also used on the country page, G-STR3)
+export const DRAFT_INDICATOR_SERIES_LINK = "Time series"; // row link to PG-SERIES (also used on the country page, G-STR3) // confirmed by the user 2026-11-08
 // DRAFT (AC-RD-42): a value with no stored unit is a defect; it is stated, never shown as a bare number or "n/a".
 export const DRAFT_UNIT_MISSING_SENTENCE = "This export holds no unit for this value.";
 export const DRAFT_VALUE_AXIS_TITLE = (indicatorName, unit) => `${indicatorName} (${unit || DRAFT_UNIT_MISSING_SENTENCE})`;
@@ -332,9 +332,9 @@ export const DRAFT_VALUE_NEUTRAL_LEGEND = "No percentile";
 // DRAFT (not confirmed): Redesign R13 PG-SERIES defaults (spec C-SER-1, C-SER-2, AC-RD-31, AC-RD-34).
 export const DRAFT_CHOOSE_COUNTRIES_HINT = "Choose up to 5 countries to compare.";
 // Visible notes (AC-RD-34; decisions record section 3): unrecognised parts, and valid countries with no rows in this export.
-export const DRAFT_HASH_FALLBACK_NOTE = "Part of this link was not recognised and was ignored.";
-export const DRAFT_HASH_NO_ROWS_NOTE = (names) => `Not selected: this export has no values of this indicator for ${names.join(", ")}.`;
-export const DRAFT_OTHER_INDICATORS_GROUP = "Other indicators";
+export const DRAFT_HASH_FALLBACK_NOTE = "Part of this link was not recognised and was ignored."; // confirmed by the user 2026-11-08
+export const DRAFT_HASH_NO_ROWS_NOTE = (names) => `Not selected: this export has no values of this indicator for ${names.join(", ")}.`; // confirmed by the user 2026-11-08
+export const DRAFT_OTHER_INDICATORS_GROUP = "Other indicators"; // confirmed by the user 2026-11-08
 
 // DRAFT (not confirmed): Redesign R14 PG-SERIES "About these series" table (spec C-SER-6) and the unit in the title and table header (AC-RD-32).
 export const DRAFT_ABOUT_SERIES_HEADING = "About these series";
@@ -354,17 +354,17 @@ export const DRAFT_TITLE_UNIT = (unit) => ` (${unit})`;
 export const DRAFT_VALUE_HEADER_UNIT = (unit) => `Value (${unit})`;
 
 // DRAFT (not confirmed): Redesign R16 point reader and tip (amendment 3.3). Labels reuse COUNTRY_HEADER and DRAFT_FACT_LABELS.refPeriod.
-export const DRAFT_POINT_READER_LEGEND = "Read a value";
-export const DRAFT_TIP_STATUS = Object.freeze({EST: "estimate", PROV: "provisional"}); // any other value_status: no status line
-export const DRAFT_TIP_KNOWN_AT = (date) => `Known at ${date}`;
+export const DRAFT_POINT_READER_LEGEND = "Read a value"; // confirmed by the user 2026-11-08
+export const DRAFT_TIP_STATUS = Object.freeze({EST: "estimate", PROV: "provisional"}); // any other value_status: no status line // confirmed by the user 2026-11-08
+export const DRAFT_TIP_KNOWN_AT = (date) => `Known at ${date}`; // confirmed by the user 2026-11-08
 export const DRAFT_READER_NONE = "Choose a country"; // confirmed by the user 2026-11-08; first option of the PG-INDICATOR reader select while no country is in focus
 
 // DRAFT (not confirmed): Redesign R17/R18 home and domains pages (spec 4.1 C-HOME-2..4, 4.5; decisions record G-STR4). Labels only.
-export const DRAFT_HOME_LINKS = Object.freeze({series: "Time series", domains: "Domains", revisions: "Revisions"}); // equal to the nav page names (G-STR4)
-export const DRAFT_HOME_COUNTRIES_HEADING = "Choose a country";
-export const DRAFT_HOME_AGGREGATES_HEADING = "Aggregates";
-export const DRAFT_HOME_INDICATORS_HEADING = "Choose an indicator";
-export const DRAFT_HOME_FILTER_LABEL = Object.freeze({countries: "Filter countries", indicators: "Filter indicators"});
+export const DRAFT_HOME_LINKS = Object.freeze({series: "Time series", domains: "Domains", revisions: "Revisions"}); // equal to the nav page names (G-STR4) // confirmed by the user 2026-11-08
+export const DRAFT_HOME_COUNTRIES_HEADING = "Choose a country"; // confirmed by the user 2026-11-08
+export const DRAFT_HOME_AGGREGATES_HEADING = "Aggregates"; // confirmed by the user 2026-11-08
+export const DRAFT_HOME_INDICATORS_HEADING = "Choose an indicator"; // confirmed by the user 2026-11-08
+export const DRAFT_HOME_FILTER_LABEL = Object.freeze({countries: "Filter countries", indicators: "Filter indicators"}); // confirmed by the user 2026-11-09 (spec re-approval)
 export const DRAFT_HOME_FILTER_COUNT = (n) => `${n} shown`;
 export const DRAFT_HOME_FILTER_NONE = "No match.";
-export const DRAFT_HOME_DOMAINS_TITLE = "Domains"; // DRAFT (not confirmed): title and h1 of PG-DOMAINS (R17)
+export const DRAFT_HOME_DOMAINS_TITLE = DRAFT_HOME_LINKS.domains; // title and h1 of PG-DOMAINS (R17); the confirmed home-link text

@@ -103,3 +103,78 @@ test("landing set does not count lazily read Parquet files; the interaction budg
   assert.equal(b.largest.path, "_file/data/revisions/M09.1.parquet");
   assert.equal(b.laterInteraction.raw, 900);
 });
+
+test("measure-pages: firstLoadSizes counts each URL once, sorts by kind and computes gzip locally", async () => {
+  const {firstLoadSizes, gzipBytes} = await import("../scripts/lib.mjs");
+  const html = Buffer.from("<html>" + "a".repeat(500) + "</html>");
+  const css = Buffer.from("body{color:red}".repeat(50));
+  const js = Buffer.from("export const x = 1;".repeat(20));
+  const data = Buffer.from(JSON.stringify({rows: [1, 2, 3]}));
+  const o = "http://127.0.0.1:1";
+  const r = firstLoadSizes([
+    {url: `${o}/country/DEU`, body: html},
+    {url: `${o}/_observablehq/theme.css`, body: css},
+    {url: `${o}/_observablehq/stdlib.js`, body: js},
+    {url: `${o}/_file/data/manifest.abc.json`, body: data},
+    {url: `${o}/_file/data/manifest.abc.json`, body: data}
+  ]);
+  assert.equal(r.files, 4);
+  assert.equal(r.raw, html.length + css.length + js.length + data.length);
+  assert.equal(r.byKind.html, gzipBytes(html));
+  assert.equal(r.byKind.data, gzipBytes(data));
+  assert.equal(r.css, gzipBytes(css));
+  assert.equal(r.gzip, gzipBytes(html) + gzipBytes(css) + gzipBytes(js) + gzipBytes(data));
+});
+
+test("measure-pages: evaluateTargets marks PASS/FAIL/N/A and only a hard-limit miss is a breach", async () => {
+  const {evaluateTargets, hardBreach} = await import("../scripts/lib.mjs");
+  const ok = evaluateTargets({pages: {home: {gzip: 600_000, css: 20_000, cls: 0.1}}, history: {gzip: 5_000_000}});
+  assert.ok(ok.every((r) => r.status === "PASS"), "limits are inclusive");
+  assert.equal(hardBreach(ok), false);
+  const miss = evaluateTargets({pages: {country: {gzip: 700_000, css: 25_000, cls: 0.2}}, history: null});
+  const by = Object.fromEntries(miss.map((r) => [r.id, r.status]));
+  assert.equal(by["first-load:country"], "FAIL");
+  assert.equal(by["limit:country"], "PASS");
+  assert.equal(by["css:country"], "FAIL");
+  assert.equal(by["cls:country"], "FAIL");
+  assert.equal(by.history, "N/A");
+  assert.equal(hardBreach(miss), false, "target misses do not fail the run");
+  const over = evaluateTargets({pages: {home: {gzip: 1_500_001, css: 1, cls: 0}}, history: null});
+  assert.equal(hardBreach(over), true);
+});
+
+test("measure-pages: reader and series file are split from the page-own files (AC-RD-53 amendment)", async () => {
+  const {evaluateTargets, hardBreach, firstLoadSizes} = await import("../scripts/lib.mjs");
+  const body = (n) => Buffer.alloc(n, 7);
+  const r = firstLoadSizes([
+    {url: "http://x/explorer", body: Buffer.from("<html>explorer</html>")},
+    {url: "http://x/_npm/parquet-wasm@0.9.0/esm/a.wasm", body: Buffer.from(Array.from({length: 4000}, (_, i) => (i * 7919) % 251))},
+    {url: "http://x/_npm/apache-arrow@21.2.0/a.js", body: body(100)},
+    {url: "http://x/_npm/htl@1.0.0/h.js", body: body(100)},
+    {url: "http://x/_file/data/series/M09.abc.parquet", body: body(100)},
+    {url: "http://x/_file/data/meta/series.json", body: body(100)},
+  ]);
+  assert.equal(r.own + r.reader, r.gzip);
+  assert.ok(r.reader > r.own, "wasm, Arrow and the series file are reader bytes; htl, meta and HTML are page-own");
+  const by = (m) => Object.fromEntries(evaluateTargets({pages: {"series (explorer)": m}, history: null}).map((x) => [x.id, x]));
+  const ok = by({gzip: 5_300_000, own: 600_000, reader: 4_700_000, css: 1, cls: 0});
+  assert.equal(ok["first-load:series (explorer)"].status, "PASS");
+  assert.equal(ok["reader:series (explorer)"].status, "PASS");
+  assert.equal(hardBreach(Object.values(ok)), false);
+  const ownMiss = by({gzip: 2_100_000, own: 700_000, reader: 1_400_000, css: 1, cls: 0});
+  assert.equal(ownMiss["first-load:series (explorer)"].status, "FAIL");
+  assert.equal(hardBreach(Object.values(ownMiss)), false, "a target miss is not a breach");
+  assert.equal(hardBreach(Object.values(by({gzip: 1, own: 1_500_001, reader: 0, css: 1, cls: 0}))), true);
+  assert.equal(hardBreach(Object.values(by({gzip: 1, own: 1, reader: 5_000_001, css: 1, cls: 0}))), true);
+});
+
+test("measure-pages: formatReport prints status, value, limit and the hard flag", async () => {
+  const {evaluateTargets, formatReport} = await import("../scripts/lib.mjs");
+  const rows = evaluateTargets({pages: {home: {gzip: 650_000, css: 1000, cls: 0.0123456}}, history: null});
+  const text = formatReport(rows, {buildId: "b1", buildSeconds: 12.34, distBytes: 99});
+  assert.match(text, /^build_id: b1\nbuild time: 12\.3 s\ndist size: 99 B raw/);
+  assert.match(text, /FAIL home first load \(target\): 650000 B gz \(limit 600000 B gz\)\n/);
+  assert.match(text, /PASS home first load \(hard limit\): 650000 B gz \(limit 1500000 B gz\) \[hard\]/);
+  assert.match(text, /PASS home CLS: 0\.0123 \(limit 0\.1\)/);
+  assert.match(text, /N\/A  one history interaction \(country page\): n\/a/);
+});

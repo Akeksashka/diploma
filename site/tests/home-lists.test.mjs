@@ -94,6 +94,16 @@ test("filter: matches is case-insensitive substring; applyFilter hides non-match
   assert.equal(applyFilter(section, "zzz"), 0);
 });
 
+test("filter: an indicator listed under two domains is counted once (unique hrefs)", () => {
+  const link = (h) => ({querySelector: () => ({getAttribute: () => h})});
+  const a = el("li", "Employment rate", [], link("./indicator/M10")), b = el("li", "Employment rate", [], link("./indicator/M10")), c = el("li", "Prices", [], link("./indicator/P01"));
+  const d1 = el("details", "", [a], {dataset: {open: "0"}}), d2 = el("details", "", [b, c], {dataset: {open: "0"}});
+  const section = {querySelectorAll: (sel) => (sel === "li" ? [a, b, c] : [d1, d2])};
+  for (const d of [d1, d2]) d.querySelectorAll = () => d.children;
+  assert.equal(applyFilter(section, ""), 2);
+  assert.equal(applyFilter(section, "employ"), 1);
+});
+
 test("sparse fixture: every page-bearing entity and every indicator has a link in the static HTML (AC-RD-02)", async () => {
   const {readFileSync} = await import("node:fs");
   const {join, dirname} = await import("node:path");

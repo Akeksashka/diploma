@@ -14,6 +14,7 @@
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:imports": "node scripts/check-npm-imports.mjs",
     "measure:landing": "node scripts/measure-landing.mjs",
+    "measure:pages": "node scripts/measure-pages.mjs",
     "smoke": "node --test tests/smoke/*.smoke.mjs"
   },
   "dependencies": {

@@ -1,11 +1,12 @@
 // Redesign R17/R18 browser smoke of PG-HOME and PG-DOMAINS (AC-RD-02, 03, 05, 62 home/domains part, a11y basics).
 // Runs against a built site (npm run build). Localhost only; off-origin requests abort. Skips without a browser unless MM_SMOKE_REQUIRE_BROWSER=1 (CI).
 import assert from "node:assert/strict";
-import {existsSync, readFileSync} from "node:fs";
+import {existsSync, readFileSync, statSync} from "node:fs";
 import {join} from "node:path";
 import {after, before, describe, test} from "node:test";
 import {walk} from "../../scripts/lib.mjs";
 import {DRAFT_HOME_LINKS} from "../../src/lib/copy.js";
+import {installCls, readCls} from "./ux-support.mjs";
 import {DIST, REQUIRE_BROWSER, distBuilt, launchBrowser, openPage, serve} from "./support.mjs";
 
 const NOW = "2026-11-04T12:00:00Z";
@@ -69,9 +70,11 @@ async function withPage(t, path, ready, fn) {
 // Built page file of a clean URL path.
 const builtFile = (p) => {
   const rel = p.replace(/^\/+/, "").replace(/\/$/, "");
-  for (const c of [rel === "" ? "index.html" : `${rel}.html`, join(rel, "index.html")]) if (existsSync(join(DIST, c))) return c;
+  const isFile = (c) => existsSync(join(DIST, c)) && statSync(join(DIST, c)).isFile();
+  for (const c of [rel === "" ? "index.html" : `${rel}.html`, join(rel, "index.html")]) if (isFile(c)) return c;
   return null;
 };
+const isDistFile = (p) => existsSync(join(DIST, p.replace(/^\//, ""))) && statSync(join(DIST, p.replace(/^\//, ""))).isFile();
 const hrefs = (html) => [...html.matchAll(/<a [^>]*href="([^"#][^"]*)"/g)].map((m) => m[1]).filter((h) => !/^[a-z]+:/.test(h));
 const resolvePath = (from, href) => new URL(href.split("#")[0].split("?")[0], `http://x${from}`).pathname.replace(/\/$/, "") || "/";
 
@@ -145,6 +148,84 @@ describe("R18 PG-HOME", () => {
     });
   });
 
+  // Gate E finding 4: reservations come from measured heights (docs/ops/dashboard-redesign-measurements.md). A stale banner (manifest older than
+  // 45 days) is not reserved and its single shift is accepted; this test uses the fresh fixture time.
+  for (const width of [360, 1280]) {
+    test(`layout: CLS <= 0.1 on / at ${width}px and each mounted filter block equals its reserved slot height (1px)`, async (t) => {
+      if (!browser) return t.skip(reason);
+      const {page, context, log} = await openPage(browser, site.origin, {fixedTime: NOW});
+      try {
+        await page.setViewportSize({width, height: 800});
+        await installCls(page);
+        await page.goto(`${site.origin}/`);
+        await page.waitForSelector(".mm-asof", {timeout: TIMEOUT});
+        await page.waitForSelector(".mm-filter input", {timeout: TIMEOUT});
+        await page.waitForLoadState("networkidle");
+        await page.waitForTimeout(500);
+        const {cls, unsupported} = await readCls(page);
+        if (unsupported) return t.skip("layout-shift entries unsupported in this browser");
+        assert.ok(cls <= 0.1, `CLS ${cls} at ${width}px`);
+        const blocks = await page.$$eval(".mm-filter[data-filter-slot]", (els) =>
+          els.map((e) => ({h: e.getBoundingClientRect().height, reserved: parseFloat(getComputedStyle(e).minHeight), kids: e.querySelectorAll("label, input, .mm-filter-status").length}))
+        );
+        assert.equal(blocks.length, 2);
+        for (const b of blocks) {
+          assert.equal(b.kids, 3, "label, input and status line are mounted");
+          assert.ok(Math.abs(b.h - b.reserved) <= 1, `mounted ${b.h}px vs reserved ${b.reserved}px at ${width}px`);
+        }
+        clean(log);
+      } finally {
+        await context.close();
+      }
+    });
+  }
+
+  // Natural (content) height versus reservation: min-height is cleared on the element while it is measured (for the shell: the top of the next sibling, which is what shifts), so the check is not
+  // vacuous (a reservation compared with itself always passes). The home shell reserves 40.8px (two-line freshness line) below 416px and 20.4px from 416px;
+  // 400 and 420 straddle the wrap point measured on the fixture, 700 is in the 640-768 band.
+  for (const path of ["/", "/domains"]) {
+    for (const width of [360, 400, 420, 700, 768, 1280]) {
+      test(`layout: natural height equals the reservation on ${path} at ${width}px (1px)`, async (t) => {
+        if (!browser) return t.skip(reason);
+        const {page, context, log} = await openPage(browser, site.origin, {fixedTime: NOW});
+        try {
+          await page.setViewportSize({width, height: 800});
+          await page.goto(`${site.origin}${path}`);
+          await page.waitForSelector(".mm-asof", {timeout: TIMEOUT});
+          if (path === "/") await page.waitForSelector(".mm-filter input", {timeout: TIMEOUT});
+          await page.waitForLoadState("networkidle");
+          const m = await page.evaluate(() => {
+            // Shell: the content after it must sit at the same place with the reservation as without it (margins collapse through the
+            // Observable blocks, so the box height alone is not the content height). Filters: the box height with min-height cleared.
+            const measure = (sel, byNext) => [...document.querySelectorAll(sel)].map((el) => {
+              const reserved = parseFloat(getComputedStyle(el).minHeight);
+              const at = () => (byNext ? el.nextElementSibling.getBoundingClientRect().top : el.getBoundingClientRect().height);
+              const mounted = at();
+              const prev = el.style.minHeight;
+              el.style.minHeight = "0px";
+              const natural = at();
+              el.style.minHeight = prev;
+              return {natural, reserved, mounted};
+            });
+            return {shell: measure(".mm-home-shell", true), filters: measure(".mm-filter[data-filter-slot]", false)};
+          });
+          assert.equal(m.shell.length, 1);
+          const expectedShell = width < 416 ? 40.8 : 20.4;
+          assert.ok(Math.abs(m.shell[0].reserved - expectedShell) <= 0.1, `shell reserves ${m.shell[0].reserved}px at ${width}px, expected ${expectedShell}`);
+          assert.ok(Math.abs(m.shell[0].natural - m.shell[0].mounted) <= 1, `next content top without reservation ${m.shell[0].natural}px vs with ${m.shell[0].mounted}px at ${width}px (reserved ${m.shell[0].reserved}px)`);
+          assert.equal(m.filters.length, path === "/" ? 2 : 0);
+          for (const f of m.filters) {
+            assert.ok(Math.abs(f.reserved - 56) <= 0.1, `filter reserves ${f.reserved}px`);
+            assert.ok(Math.abs(f.natural - f.reserved) <= 1, `filter natural ${f.natural}px vs reserved ${f.reserved}px at ${width}px`);
+          }
+          clean(log);
+        } finally {
+          await context.close();
+        }
+      });
+    }
+  }
+
   test("AC-RD-03: one click reaches a country page and an indicator page", async (t) => {
     await withPage(t, "/", "#country-list li a", async ({page}) => {
       await page.locator("#country-list li a").first().click();
@@ -204,7 +285,7 @@ describe("R17 PG-DOMAINS", () => {
       assert.ok(f, from);
       for (const h of hrefs(readFileSync(join(DIST, f), "utf8"))) {
         const p = resolvePath(from, h);
-        assert.ok(builtFile(p) || existsSync(join(DIST, p.replace(/^\//, ""))), `${from}: broken link ${h} -> ${p}`);
+        assert.ok(builtFile(p) || isDistFile(p), `${from}: broken link ${h} -> ${p}`);
       }
     }
   });

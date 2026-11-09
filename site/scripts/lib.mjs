@@ -744,3 +744,77 @@ ${SHELL_CELLS("./lib/", false)}
 ${domainsListHtml(domains)}
 `;
 }
+
+// ---- measure-pages helpers (R23, AC-RD-53) -----------------------------------------------------------------------------
+export const PAGE_TARGET_BYTES = 600_000; // internal target per page type, gzipped
+export const PAGE_LIMIT_BYTES = 1_500_000; // ADR-023 decision 6, hard limit
+export const HISTORY_TARGET_BYTES = 5_000_000; // one history or series interaction, gzipped
+export const CSS_TARGET_BYTES = 20_000;
+export const CLS_TARGET = 0.1;
+
+const READER_PATH_RE = /^\/_npm\/(apache-arrow|parquet-wasm|flatbuffers|tslib)@|^\/_file\/data\/series\//;
+export const isReaderPath = (pathname) => READER_PATH_RE.test(pathname);
+
+// responses: [{url, body: Buffer, status?}]. Counts each URL once. Kind comes from the path: html, css, js (incl. wasm), data
+// (/_file/data/), other. gzip is computed locally (level 9, as measure-landing does), not read from the wire.
+export function firstLoadSizes(responses) {
+  const seen = new Set();
+  const out = {files: 0, raw: 0, gzip: 0, css: 0, reader: 0, own: 0, byKind: {html: 0, css: 0, js: 0, data: 0, other: 0}};
+  for (const r of responses) {
+    if (seen.has(r.url)) continue;
+    seen.add(r.url);
+    const {pathname} = new URL(r.url);
+    const kind = pathname.startsWith("/_file/data/") ? "data" : /\.css$/.test(pathname) ? "css" : /\.(m?js|wasm)$/.test(pathname) ? "js" : /(\.html$|\/$|^\/[^.]*$)/.test(pathname) ? "html" : "other";
+    const gz = gzipBytes(r.body);
+    out.files += 1;
+    out.raw += r.body.length;
+    out.gzip += gz;
+    out.byKind[kind] += gz;
+    // AC-RD-53 (amended 2026-11-09): the Parquet reader (parquet-wasm, Arrow and their deps) and a series file are one interaction.
+    if (isReaderPath(pathname)) out.reader += gz;
+    else out.own += gz;
+    if (kind === "css") out.css += gz;
+  }
+  return out;
+}
+
+// measured: {pages: {<name>: {gzip, css, cls, own?, reader?}}, history: {gzip}|null, buildSeconds, distBytes}. Returns rows
+// {id, label, value, limit, unit, status: PASS|FAIL|N/A, hard}. hard rows are the only ones that make the script exit non-zero.
+export function evaluateTargets(measured) {
+  const rows = [];
+  const row = (id, label, value, limit, unit, hard = false) => {
+    const status = value === null || value === undefined ? "N/A" : value <= limit ? "PASS" : "FAIL";
+    rows.push({id, label, value: value ?? null, limit, unit, status, hard});
+  };
+  for (const [name, p] of Object.entries(measured.pages)) {
+    if (/explorer/.test(name)) {
+      // PG-SERIES: page-own files vs the reader plus series file (one series interaction, 5 MB).
+      const own = p.own ?? p.gzip;
+      row(`first-load:${name}`, `${name} page-own files (target)`, own, PAGE_TARGET_BYTES, "B gz");
+      row(`limit:${name}`, `${name} page-own files (hard limit)`, own, PAGE_LIMIT_BYTES, "B gz", true);
+      row(`reader:${name}`, `${name} reader plus series file`, p.reader ?? 0, HISTORY_TARGET_BYTES, "B gz", true);
+    } else {
+      row(`first-load:${name}`, `${name} first load (target)`, p.gzip, PAGE_TARGET_BYTES, "B gz");
+      row(`limit:${name}`, `${name} first load (hard limit)`, p.gzip, PAGE_LIMIT_BYTES, "B gz", true);
+    }
+    row(`css:${name}`, `${name} CSS`, p.css, CSS_TARGET_BYTES, "B gz");
+    row(`cls:${name}`, `${name} CLS`, p.cls ?? null, CLS_TARGET, "");
+  }
+  row("history", "one history interaction (country page)", measured.history ? measured.history.gzip : null, HISTORY_TARGET_BYTES, "B gz");
+  return rows;
+}
+
+export const hardBreach = (rows) => rows.some((r) => r.hard && r.status === "FAIL");
+
+export function formatReport(rows, meta = {}) {
+  const lines = [];
+  if (meta.buildId) lines.push(`build_id: ${meta.buildId}`);
+  if (meta.buildSeconds !== undefined && meta.buildSeconds !== null) lines.push(`build time: ${Number(meta.buildSeconds).toFixed(1)} s`);
+  if (meta.distBytes !== undefined) lines.push(`dist size: ${meta.distBytes} B raw`);
+  for (const r of rows) {
+    const v = r.value === null ? "n/a" : r.unit ? `${r.value} ${r.unit}` : String(Number(r.value.toFixed(4)));
+    const l = r.unit ? `${r.limit} ${r.unit}` : String(r.limit);
+    lines.push(`${r.status.padEnd(4)} ${r.label}: ${v} (limit ${l})${r.hard ? " [hard]" : ""}`);
+  }
+  return lines.join("\n");
+}

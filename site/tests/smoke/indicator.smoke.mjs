@@ -460,10 +460,12 @@ describe("R16 PG-INDICATOR point reader (AC-RD-30)", () => {
   test("Escape hides the static highlight tip while focus is in the reader; a select change or re-entering focus restores it; the output stays", async (t) => {
     await withPage(t, "/indicator/T02", async ({page}) => {
       const stat = page.locator("#value-figure g.mm-static-tip");
+      // The figure is redrawn on the change and Plot sizes the tip after it is attached: wait for it rather than checking at once.
+      const shown = async (loc, msg) => loc.waitFor({state: "visible", timeout: 5000}).catch(() => assert.fail(msg));
       const id = await page.$eval("#value-reader-country option:nth-child(2)", (o) => o.value);
       await page.focus("#value-reader-country");
       await page.selectOption("#value-reader-country", id);
-      assert.ok(await stat.isVisible(), "static tip shown for the chosen country");
+      await shown(stat, "static tip shown for the chosen country");
       const text = await page.textContent("#value-reader-output");
       await page.keyboard.press("Escape");
       assert.ok(!(await stat.isVisible()), "Escape hides the static tip");
@@ -471,11 +473,11 @@ describe("R16 PG-INDICATOR point reader (AC-RD-30)", () => {
       assert.ok(await page.locator("#value-reader-output").isVisible());
       await page.focus("#indicator-switcher");
       await page.focus("#value-reader-country");
-      assert.ok(await stat.isVisible(), "re-entering focus restores it");
+      await shown(stat, "re-entering focus restores it");
       await page.keyboard.press("Escape");
       const third = await page.$eval("#value-reader-country option:nth-child(3)", (o) => o.value);
       await page.selectOption("#value-reader-country", third);
-      assert.ok(await stat.isVisible(), "a select change restores it");
+      await shown(stat, "a select change restores it");
     }, {sparse: true});
   });
 });

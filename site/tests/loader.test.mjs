@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {ManifestError, manifestMajor, parseManifest} from "../src/lib/manifest.js";
-import {STALE_DAYS, bannerMessage, staleness} from "../src/lib/stale.js";
+import {STALE_DAYS, bannerMessage, staleness, utcDate} from "../src/lib/stale.js";
 import {safeUrl, sourceAttributions} from "../src/lib/attribution.js";
 
 const ok = {schema_version: "1.0", known_cutoff: "2026-11-01T04:23:41Z", files: []};
@@ -79,4 +79,21 @@ test("attribution: dedupe per source, public only, sorted, indicator filter", ()
   assert.deepEqual(sourceAttributions(rows, ["M09"]).map((s) => s.sourceId), ["B"]);
   assert.equal(safeUrl("ftp://x"), null);
   assert.equal(safeUrl("not a url"), null);
+});
+
+test("utcDate: ISO timestamps give the UTC calendar date; unparsable strings are returned as stored; non-strings give null", () => {
+  assert.equal(utcDate("2026-09-20T23:30:00-02:00"), "2026-09-21");
+  assert.equal(utcDate("2026-09-20"), "2026-09-20");
+  assert.equal(utcDate("not a date"), "not a date");
+  assert.equal(utcDate(""), "");
+  for (const v of [undefined, null, 12345, {}, new Date(0)]) assert.equal(utcDate(v), null);
+});
+
+test("utcDate and staleness: a zone-less date-time ('YYYY-MM-DD HH:MM' or with T) is read as UTC in any timezone", () => {
+  assert.equal(utcDate("2026-09-20 23:30"), "2026-09-20");
+  assert.equal(utcDate("2026-09-20T23:30:15"), "2026-09-20");
+  assert.equal(utcDate("2026-09-20 00:10"), "2026-09-20");
+  const st = staleness("2026-09-20 12:00", Date.parse("2026-09-21T12:00:00Z"));
+  assert.equal(st.ageDays, 1);
+  assert.equal(staleness("2026-09-20 12:00", Date.parse("2026-09-20T12:00:00Z")).ageDays, 0);
 });

@@ -10,6 +10,8 @@ import {domainView, peerSetNote} from "../src/lib/scorecard.js";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const src = join(root, "src");
 const dist = join(root, "dist");
+// MM_REQUIRE_DIST=1 (CI): the dist scans must not be skipped silently.
+if (process.env.MM_REQUIRE_DIST === "1" && !existsSync(join(dist, "index.html"))) throw new Error(`MM_REQUIRE_DIST=1 but no built site at ${dist}`);
 const spec = readFileSync(join(root, "..", "docs", "specs", "dashboard-export-spec.md"), "utf8");
 
 const VERBATIM = {
@@ -351,4 +353,108 @@ test("no judgement word in a string that renders next to a percentile", () => {
   assert.ok(strings.every((s) => typeof s === "string" && s !== ""));
   assert.deepEqual(strings.filter((s) => re.test(s)), []);
   assert.ok(re.test("a good result"), "the check can fail");
+});
+
+// --- Redesign R21 / AC-RD-55, AC-RD-62: spec section 7 strings -----------------------------------------------------------
+const CONFIRMED_NOTE = "confirmed by the user 2026-11-08";
+const copySource = readFileSync(join(src, "lib", "copy.js"), "utf8");
+const exportLine = (name) => copySource.split("\n").find((l) => l.startsWith(`export const ${name} `) || l.startsWith(`export const ${name}=`));
+const isConfirmed = (name) => (exportLine(name) ?? "").includes(CONFIRMED_NOTE);
+const valueOf = (v) => (typeof v === "function" ? v : typeof v === "object" ? {...v} : v);
+
+// Spec section 7 string -> [constant, accessor]. Strings that a later user decision renamed or dropped are listed in SECTION7_SUPERSEDED.
+const SECTION7 = {
+  "Choose a country": ["DRAFT_HOME_COUNTRIES_HEADING", (v) => v],
+  "Choose an indicator": ["DRAFT_HOME_INDICATORS_HEADING", (v) => v],
+  "Indicators without a value in this export": ["DRAFT_WITHOUT_VALUE_GROUP", (v) => v],
+  "Show history": ["DRAFT_HISTORY_SHOW", (v) => v],
+  "Compare countries": ["DRAFT_COMPARE_COUNTRIES", (v) => v],
+  "About this value": ["DRAFT_ABOUT_SUMMARY", (v) => v],
+  "About these series": ["DRAFT_ABOUT_SERIES_HEADING", (v) => v],
+  "Open as time series": ["DRAFT_OPEN_AS_SERIES", (v) => v],
+  "Data cut-off": ["FRESHNESS_LABEL", (v) => v],
+  "Not published on this site.": ["DRAFT_NOT_PUBLISHED_SENTENCE", (v) => v],
+  "Choose up to 5 countries to compare.": ["DRAFT_CHOOSE_COUNTRIES_HINT", (v) => v],
+  "Read a value": ["DRAFT_POINT_READER_LEGEND", (v) => v],
+  "Known at 2026-01-31": ["DRAFT_TIP_KNOWN_AT", (v) => v("2026-01-31")],
+  "estimate": ["DRAFT_TIP_STATUS", (v) => v.EST],
+  "provisional": ["DRAFT_TIP_STATUS", (v) => v.PROV],
+  "Part of this link was not recognised and was ignored.": ["DRAFT_HASH_FALLBACK_NOTE", (v) => v],
+  "Not selected: this export has no values of this indicator for A, B.": ["DRAFT_HASH_NO_ROWS_NOTE", (v) => v(["A", "B"])],
+  // the three new missing-data sentences of section 5.1
+  "A series is defined for this country, but this export holds no value for it.": ["DRAFT_NA_DEFINED_SENTENCE", (v) => v],
+  "This export holds a value but no percentile for it.": ["DRAFT_NA_NO_PERCENTILE_SENTENCE", (v) => v],
+  "No indicator of this domain has a ranked value for this country.": ["DRAFT_NA_NO_RANKED_SENTENCE", (v) => v]
+};
+// Section 7 labels that user decisions G-STR3, G-STR4 and the R6/R7 wording replaced (docs/ops/dashboard-redesign-decisions.md).
+const SECTION7_REPLACED = {
+  "Filter the list": ["DRAFT_HOME_FILTER_LABEL", {countries: "Filter countries", indicators: "Filter indicators"}],
+  "Show: all indicators": ["DRAFT_COUNTRY_FILTER_ALL", "All indicators"],
+  "Show: only indicators with a value": ["DRAFT_COUNTRY_FILTER_VALUE", "Only indicators with a value"]
+};
+// Confirmed on 2026-11-08 (spec section 7): these strings must keep exactly this text.
+const CONFIRMED = {
+  DRAFT_READER_NONE: "Choose a country",
+  DRAFT_HOME_COUNTRIES_HEADING: "Choose a country",
+  DRAFT_POINT_READER_LEGEND: "Read a value",
+  DRAFT_HASH_FALLBACK_NOTE: "Part of this link was not recognised and was ignored.",
+  DRAFT_G_STR1_NO_SERIES: "This export lists no series for this country and indicator.",
+  DRAFT_COMPARE_COUNTRIES: "Compare countries",
+  FRESHNESS_LABEL: "Data cut-off",
+  DRAFT_HOME_AGGREGATES_HEADING: "Aggregates",
+  DRAFT_HOME_INDICATORS_HEADING: "Choose an indicator"
+};
+
+test("AC-RD-55: every section 7 string is in copy.js with its exact text, and is DRAFT-marked unless annotated as confirmed", () => {
+  for (const [text, [name, get]] of Object.entries(SECTION7)) {
+    assert.ok(name in copy, `${name} is exported by copy.js`);
+    assert.equal(get(copy[name]), text, name);
+    assert.ok(name.startsWith("DRAFT_") || isConfirmed(name), `${name} is neither DRAFT_ nor annotated "${CONFIRMED_NOTE}"`);
+  }
+  for (const [text, [name, expected]] of Object.entries(SECTION7_REPLACED)) {
+    assert.ok(name.startsWith("DRAFT_"), `${name} (replaces "${text}") is DRAFT-marked`);
+    assert.deepEqual(valueOf(copy[name]), expected, name);
+  }
+});
+
+test("AC-RD-55: confirmed strings are unchanged and keep their annotation", () => {
+  // Every export is already pinned to its exact text by the tests above, so an annotated constant cannot change unnoticed.
+  for (const [name, text] of Object.entries(CONFIRMED)) {
+    assert.equal(copy[name], text, name);
+    assert.ok(isConfirmed(name), `${name} lost its confirmed annotation`);
+  }
+  assert.equal(copy.DRAFT_HOME_COUNTRIES_HEADING, CONFIRMED.DRAFT_READER_NONE);
+  assert.equal(copy.DRAFT_TIP_KNOWN_AT("2026-01-31"), "Known at 2026-01-31");
+  assert.deepEqual({...copy.DRAFT_TIP_STATUS}, {EST: "estimate", PROV: "provisional"});
+  assert.equal(copy.DRAFT_HASH_NO_ROWS_NOTE(["A", "B"]), "Not selected: this export has no values of this indicator for A, B.");
+});
+
+test("AC-RD-55, 62: withdrawn strings are absent from copy.js, src and the built pages", () => {
+  const withdrawn = [
+    /\bGuide\b/,
+    /\bData status\b/,
+    /Projections are not shown in this version/,
+    /A chart shows one indicator, so all lines share one unit/,
+    /all lines share one unit/,
+    /Look at one series over time/,
+    /Domain overviews/,
+    /Compare with other countries/,
+    new RegExp(["first", "release"].join(" "), "i"),
+    new RegExp(["first", "stored", "release"].join(" "), "i")
+  ];
+  const copyCode = copySource.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
+  for (const re of withdrawn) assert.ok(!re.test(copyCode), `copy.js contains ${re}`);
+  for (const v of Object.values(copy)) {
+    const s = typeof v === "string" ? v : typeof v === "object" && v ? JSON.stringify(v) : "";
+    for (const re of withdrawn) assert.ok(!re.test(s), `a copy.js string matches ${re}`);
+  }
+  const files = [...walk(src, (n) => /\.(js|md)$/.test(n)).filter((f) => !f.endsWith(join("lib", "copy.js"))), ...(existsSync(dist) ? walk(dist, (n) => /\.html$/.test(n)) : [])];
+  const hits = [];
+  for (const f of files) {
+    const t = readFileSync(f, "utf8");
+    // Strip comments in sources: the removed-page names may still appear in explanatory comments, never in text.
+    const body = f.startsWith(dist) ? t : t.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1").replace(/<!--[\s\S]*?-->/g, "");
+    for (const re of withdrawn) if (re.test(body)) hits.push(`${f}: ${re}`);
+  }
+  assert.deepEqual(hits, []);
 });

@@ -122,3 +122,11 @@ test("hand-written pages have exactly one static h1", async () => {
   const gen = [["home", homePageSource({entities: [], indicators: [], domains: []})], ["domains", domainsPageSource([])]];
   for (const [n, src] of gen) assert.equal((src.replace(/```[\s\S]*?```/g, "").match(/<h1>/g) ?? []).length, 1, n);
 });
+
+test("offset cut-off: freshness line and stale banner show the same UTC date", () => {
+  const m = {known_cutoff: "2026-10-01T23:00:00-05:00", build_id: "b1"}; // UTC 2026-10-02T04:00Z
+  const out = text(statusBlock(html, m, Date.parse("2026-11-20T00:00:00Z"))); // 49 days later: stale
+  assert.ok(out.includes("Data cut-off: 2026-10-02 (build b1)."), out);
+  assert.ok(out.includes('id="stale-banner"') && out.includes("2026-10-02") && !out.includes("2026-10-01"), out);
+  assert.ok(text(statusBlock(html, m, Date.parse("2026-10-05T00:00:00Z"))).includes("Data cut-off: 2026-10-02"));
+});
