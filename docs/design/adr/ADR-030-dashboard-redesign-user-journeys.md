@@ -3,6 +3,8 @@ status: approved   # proposed | approved | superseded. Drafted 2026-11-06, revis
 ---
 # ADR-030: Dashboard redesign around user journeys (country profile, indicator comparison, series over time); page structure, missing-data, unit, forecast and source display (amends ADR-010, ADR-025, ADR-026)
 
+Amended by ADR-034 and docs/specs/dashboard-layout-amendment.md (2026-11-10).
+
 Date: 2026-11-06. Companion spec: `docs/specs/dashboard-redesign-spec.md` (page list, components, data per page, export change requests, acceptance criteria AC-RD-*, test plan).
 
 Labels: [REPO] read in this repository this session; [SURVEY #n] entry n of the web survey; [ANALYSIS §n] section n of the survey analysis; [UNVERIFIED] not checked. The survey and analysis are session working files, not approved research (see "Evidence status"). Access date of every survey entry: 2026-11-06, method WebFetch (page text, not rendered views).

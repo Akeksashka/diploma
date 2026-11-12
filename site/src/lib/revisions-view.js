@@ -1,12 +1,17 @@
 // Renders the V4 vintage and revision view. `html` (htl) is passed in, so this file imports only the
 // pure view-model. Display only (D6): every number is the stored value as exported.
 import {EARLIEST_LABEL, EDITIONS_INTRO, NAMED_EDITION_MARK, NO_EDITIONS, NO_ORDINARY, NO_ORDINARY_CLASS, REESTIMATION_NOTE, REVISED_DATA_HISTORY_MARK, REVISED_DATA_NOTICE, VINTAGE_CHOOSE, VINTAGE_EMPTY, VINTAGE_NONE, VINTAGE_TEXT} from "./copy.js";
-import {DRAFT_BAR_LABEL, DRAFT_REGIONS, DRAFT_STEP_CHOOSE_PERIOD, DRAFT_STEP_FIGURE_LABEL, DRAFT_STEP_FIGURE_PART, DRAFT_STEP_NOTE, DRAFT_STEP_REMOVED, DRAFT_STEP_SKIP, DRAFT_SUBREGION_CONSEQUENCE} from "./copy.js";
+import {DRAFT_BAND_REVISIONS, DRAFT_BAR_LABEL, DRAFT_CARD_REVISIONS, DRAFT_REGIONS, DRAFT_STEP_CHOOSE_PERIOD, DRAFT_STEP_FIGURE_LABEL, DRAFT_STEP_FIGURE_PART, DRAFT_STEP_NOTE, DRAFT_STEP_REMOVED, DRAFT_STEP_SKIP, DRAFT_SUBREGION_CONSEQUENCE} from "./copy.js";
 import {chartFigure} from "./figure.js";
 import {token} from "./tokens.js";
 import {glyph, glyphSprite} from "./glyphs.js";
 import {errorBlock} from "./state-blocks.js";
 import {periodChoices, seriesChoices} from "./revisions.js";
+
+const escText = (v) => String(v).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"})[c]);
+
+// L24: the opening markup of the PG-REVISIONS band and card (band h2, card h3); the generated page closes it with </div></div></section>.
+export const revisionsBandOpen = () => `<section class="mm-dband" id="band-revisions"><div class="mm-band"><h2>${escText(DRAFT_BAND_REVISIONS)}</h2></div><div class="mm-grid"><div class="mm-card mm-card--span-12 mm-card--revisions" id="revisions-card"><h3>${escText(DRAFT_CARD_REVISIONS)}</h3>`;
 
 export function selectBox(html, {id, label, options, value}) {
   const el = html`<label>${label} <select id="${id}">${options.map((o) => html`<option value="${o.id}">${o.label}</option>`)}</select></label>`;

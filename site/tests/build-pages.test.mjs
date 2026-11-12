@@ -102,6 +102,20 @@ describe("R21 build pages", {skip: skip || !built ? skip || "no built site (repo
     for (const h of ["./explorer", "./domains", "./revisions"]) assert.ok(hs.has(h), h);
   });
 
+  test("L11 (AC-DB-13, AC-RD-02, 05): built index holds h1, no-JS notice, caveat and the full link lists inside a collapsed Browse details", () => {
+    const h = readFileSync(pageFile("/"), "utf8");
+    assert.equal((h.match(/<h1[ >]/g) ?? []).length, 1);
+    assert.ok(h.includes("mm-noscript") && h.includes('id="caveat"'));
+    const start = h.indexOf('<details class="mm-browse" id="browse">');
+    assert.ok(start > 0, "Browse details is in the built HTML");
+    assert.ok(!/<details[^>]*id="browse"[^>]*\sopen/.test(h), "Browse is collapsed");
+    const browse = h.slice(start, h.indexOf("</details>\n</section>", start) > 0 ? h.lastIndexOf("</section>") : undefined);
+    for (const e of countries) assert.ok(browse.includes(`href="./country/${e.entity_id}"`), e.entity_id);
+    for (const i of indicators) assert.ok(browse.includes(`href="./indicator/${i.indicator_id}"`), i.indicator_id);
+    for (const l of ["./explorer", "./domains", "./revisions"]) assert.ok(browse.includes(`href="${l}"`), l);
+    assert.ok(!h.includes("filter-proof"), "the L6 proof card is gone");
+  });
+
   test("AC-RD-02: no built page is unreachable from the home page", () => {
     const pages = new Set(builtPages());
     const seen = new Set(["/"]);

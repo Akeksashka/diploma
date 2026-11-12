@@ -6,6 +6,10 @@ import {ManifestError, parseManifest} from "../src/lib/manifest.js";
 import {listOf} from "../src/lib/meta.js";
 import {DRAFT_CONSEQUENCE, DRAFT_NOSCRIPT, DRAFT_REGIONS, EMPTY_GROUP, NO_SERIES} from "../src/lib/copy.js";
 import config from "../observablehq.config.js";
+import {readFileSync} from "node:fs";
+import {createScorecardLoader, mountHomeDashboard, mountHomeFailure} from "../src/lib/home-dashboard.js";
+import {hiddenRowsBlock} from "../src/lib/rank-view.js";
+import {DRAFT_EMPTY_CARD, DRAFT_HIDDEN_ROWS} from "../src/lib/copy.js";
 
 // Minimal stand-in for htl's `html` (see shell.test.mjs).
 class Raw {
@@ -14,7 +18,7 @@ class Raw {
   }
 }
 const esc = (v) => String(v).replace(/[&<>"]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"})[c]);
-const part = (v) => (v instanceof Raw ? v.s : Array.isArray(v) ? v.map(part).join("") : esc(v));
+const part = (v) => (v instanceof Raw || v instanceof Lazy ? v.s : Array.isArray(v) ? v.map(part).join("") : esc(v));
 const html = (strings, ...vals) => new Raw(strings.reduce((a, s, i) => a + s + (i < vals.length ? part(vals[i]) : ""), ""));
 
 const URLISH = /https?:|\/_file|\.json|\.parquet|data\/|undefined|\[object|Error:|ENOENT|404|fetch/i;
@@ -118,4 +122,121 @@ test("pageHead: status line when the manifest loaded, alerts for failures, nothi
   assert.ok(!none.includes("Data cut-off") && none.includes("not supported") && none.includes(DRAFT_CONSEQUENCE.lists));
   const stale = pageHead(html, {ok: true, data: {manifest: {...manifest, known_cutoff: "2026-01-01T00:00:00Z"}}, failures: []}, "lists", NOW).s;
   assert.ok(stale.includes('id="stale-banner"') && stale.includes('role="alert"'));
+});
+
+// ---- L15: card-level states (layout amendment 5, AC-DB-03, AC-DB-12, AC-RD-14, ADR-036) -----------------------------------------------
+
+// A just-enough element for mountHomeDashboard / mountHomeFailure: serialises to markup, so the page structure can be asserted offline.
+class FakeEl {
+  constructor(tag) {
+    this.tag = tag;
+    this.className = "";
+    this.dataset = {};
+    this.attrs = {};
+    this.kids = [];
+    this.textContent = "";
+    this.hidden = false;
+  }
+  setAttribute(k, v) {
+    this.attrs[k] = String(v);
+  }
+  getAttribute(k) {
+    return this.attrs[k] ?? null;
+  }
+  replaceChildren(...n) {
+    this.kids = n;
+  }
+  get markup() {
+    const data = Object.entries(this.dataset).map(([k, v]) => ` data-${k}="${v}"`).join("");
+    const attrs = Object.entries(this.attrs).map(([k, v]) => ` ${k}="${v}"`).join("");
+    return `<${this.tag} class="${this.className}"${data}${attrs}>${this.textContent}${this.kids.map(inner).join("")}</${this.tag}>`;
+  }
+}
+const inner = (v) => (v instanceof FakeEl ? v.markup : v instanceof Raw || v instanceof Lazy ? v.s : Array.isArray(v) ? v.map(inner).join("") : esc(v));
+// Lazy: the slots are filled after the template is built, so the markup is assembled when it is read.
+class Lazy {
+  constructor(strings, vals) {
+    this.dataset = {};
+    this.strings = strings;
+    this.vals = vals;
+  }
+  get s() {
+    return this.strings.reduce((a, s, i) => a + s + (i < this.vals.length ? inner(this.vals[i]) : ""), "");
+  }
+}
+const fhtml = (strings, ...vals) => new Lazy(strings, vals);
+const fakeDoc = {createElement: (tag) => new FakeEl(tag)};
+
+test("mountHomeFailure: every card slot holds exactly one alert of the failed region, nothing is busy, no table, chart or number", () => {
+  const root = mountHomeFailure(fhtml, {failures: [{key: "manifest", region: DRAFT_REGIONS.manifest, kind: "version"}], doc: fakeDoc});
+  const out = root.s;
+  assert.equal((out.match(/role="alert"/g) ?? []).length, 6, "one alert per slot, six slots");
+  for (const name of ["overview", "compare", "facts", "domain", "indicators", "overTime"]) {
+    assert.ok(out.includes(`data-slot="${name}"`) && out.includes(`id="mm-error-card-${name}"`), name);
+  }
+  assert.ok(!out.includes('aria-busy="true"'), "nothing left busy");
+  assert.ok(out.includes("not supported") && out.includes(DRAFT_REGIONS.manifest) && out.includes(DRAFT_CONSEQUENCE.scorecard));
+  assert.ok(!/<table|<svg/.test(out) && !URLISH.test(out));
+  assert.ok(!/\d/.test(out.replace(/mm-(?:error-card|dashboard|dband|grid|card|band)[\w-]*|band-[\w-]+|span-\d+|h2|<h[1-6]/g, "")), "no digit in the visible text");
+  const none = mountHomeFailure(fhtml, {failures: [], doc: fakeDoc}).s;
+  assert.ok(none.includes(DRAFT_REGIONS.meta), "no failure given: the generic meta region is named");
+});
+
+test("a card that throws does not stop the other cards of the dashboard", () => {
+  let tick = null;
+  const store = {get: () => ({}), subscribe: (fn) => (tick = fn), attach() {}};
+  const data = {domains: [{domain_id: "a", name: "A", ranked: true, indicator_ids: []}], indicators: []};
+  const dash = mountHomeDashboard(fhtml, {store, data, loadScorecard: () => new Promise(() => {}), doc: fakeDoc});
+  let before = 0;
+  let after = 0;
+  let fail = false;
+  dash.onChange(() => before++);
+  dash.onChange(() => { if (fail) throw new Error("card bug"); });
+  dash.onChange(() => after++);
+  fail = true;
+  assert.doesNotThrow(() => tick());
+  assert.equal(before, 2);
+  assert.equal(after, 2, "the card after the failing one still rendered");
+});
+
+test("scorecard loader: a failed domain does not poison the next Domain change nor its own retry", async () => {
+  const calls = [];
+  let aFails = true;
+  const load = createScorecardLoader({
+    a: async () => { calls.push("a"); if (aFails) throw new Error("404"); return {id: "a"}; },
+    b: async () => { calls.push("b"); return {id: "b"}; }
+  });
+  await assert.rejects(load("a"));
+  assert.deepEqual(await load("b"), {id: "b"});
+  aFails = false;
+  assert.deepEqual(await load("a"), {id: "a"}, "the retry reaches the loader again");
+  assert.deepEqual(await load("b"), {id: "b"});
+  assert.deepEqual(calls, ["a", "b", "a"], "a successful domain is requested once, a failed one again");
+});
+
+test("busy block: a status region with aria-busy and the reserved height in style.css; a hidden idle form", () => {
+  const out = busyBlock(html, DRAFT_REGIONS.scorecard, {id: "rank-loading"}).s;
+  assert.ok(out.includes('role="status"') && out.includes('aria-busy="true"') && out.includes('id="rank-loading"') && out.includes("mm-loading"));
+  const css = readFileSync(new URL("../src/style.css", import.meta.url), "utf8");
+  const m = /\.mm-loading\s*\{[^}]*min-height:\s*([\d.]+)rem/.exec(css);
+  assert.ok(m && Number(m[1]) >= 8, "the loading block reserves at least 8rem");
+  assert.ok(busyBlock(html, "x", {visible: false}).s.includes('aria-busy="false"'));
+});
+
+test("empty card sentence is the confirmed copy and carries no number", () => {
+  assert.equal(DRAFT_EMPTY_CARD, "No values for this selection.");
+  const out = emptyBlock(html, {id: "rank-empty", text: DRAFT_EMPTY_CARD, next: ""}).s;
+  assert.ok(out.includes(DRAFT_EMPTY_CARD) && out.includes('data-state="empty"') && !/\d/.test(out));
+});
+
+test("hidden-rows disclosure (ADR-036): shown only by the sentence, list and carried links; heatmap and KPI modules do not use it", () => {
+  assert.equal(hiddenRowsBlock(html, {hiddenSentence: "", hiddenRows: []}), "");
+  const model = {hiddenSentence: DRAFT_HIDDEN_ROWS(2), hiddenRows: [{entityId: "DEU", hasCountryPage: true, text: "Germany: latest value 2019 Q4"}, {entityId: "XX", hasCountryPage: false, text: "Xland: latest value 2018"}]};
+  const out = hiddenRowsBlock(html, model).s;
+  assert.ok(out.includes("<summary>2 rows hidden by the period filter</summary>") && out.includes("data-carry") && out.includes('data-entity="XX"'));
+  const src = (f) => readFileSync(new URL(`../src/lib/${f}`, import.meta.url), "utf8");
+  for (const f of ["rank-view.js", "heatmap-card.js", "kpi-view.js", "state-blocks.js"]) {
+    assert.ok(!/hidden(?:Rows)?\.length|countPeriodHiddenRows|splitByPeriod/.test(src(f)), `${f} neither counts nor splits rows by Period (the count comes from rank-model through countPeriodHiddenRows)`);
+  }
+  for (const f of ["heatmap-card.js", "kpi-view.js"]) assert.ok(!/hiddenRowsBlock|hiddenSentence|DRAFT_HIDDEN_ROWS/.test(src(f)), `${f}: Period hides no rows here`);
 });

@@ -1,7 +1,8 @@
 # Series map of group fao_csdb. Key = parser series_ref: column A of the CSDB worksheet. [UNVERIFIED]
-# against a real brief: the name follows the synthetic fixture. World aggregate only (research F11:
-# per-country ratios exist only in AMIS); G03 is a scope: country indicator, so the 42 country pairs
-# stay unmapped (known-gap decision for T63). Our stored copy is the only vintage of each brief.
+# Parsed by fao_csdb_v2 from block title and item header (real layout); this one series keeps its v1 name. The marketing-year
+# status (OBS/EST/PROJ) is INFERRED from row position, not stated in the file; observations carry source_flags=status-inferred. World aggregate only (research F11:
+# per-country ratios exist only in AMIS); G03 is a scope: global indicator (WLD only), so no country
+# pairs exist. Our stored copy is the only vintage of each brief.
 series:
   - dataset: csdb
     key: "World cereals stocks-to-use ratio (%)"

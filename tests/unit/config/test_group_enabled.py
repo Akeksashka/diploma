@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import dataclasses
 import json
+import shutil
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
@@ -32,10 +33,53 @@ PARKED = (
 pytestmark = pytest.mark.unit
 
 
-def raw_doc() -> dict[str, Any]:
+PARKED_SOURCES = ("ecb",)
+
+
+def real_doc() -> dict[str, Any]:
     d = load_yaml(ROOT / "config" / "sources.yaml")
     assert isinstance(d, dict)
     return d
+
+
+def park(d: dict[str, Any]) -> dict[str, Any]:
+    """Force the PARKED groups and sources off, independent of the real config."""
+    for gid in PARKED:
+        g = group(d, gid)
+        g["enabled"] = False
+        g.setdefault("note", "parked fixture")
+    for sid in PARKED_SOURCES:
+        source(d, sid)["enabled"] = False
+    return d
+
+
+def raw_doc() -> dict[str, Any]:
+    """The real sources.yaml with the parked state these tests exercise forced on."""
+    return park(real_doc())
+
+
+def make_parked_root(base: Path) -> Path:
+    """A root whose config/ is a copy of the real one with sources.yaml parked."""
+    root = base / "parked_root"
+    root.mkdir()
+    for child in ROOT.iterdir():
+        if child.name in {"config", ".git", ".venv", "data", "site", "node_modules"}:
+            continue
+        if child.name in {"ops", "manual_inbox", "src"}:
+            # copied, never linked: nothing a test does here can write to the real repo
+            shutil.copytree(
+                child, root / child.name, ignore=shutil.ignore_patterns("__pycache__", "*.pyc")
+            )
+        else:
+            (root / child.name).symlink_to(child)
+    shutil.copytree(ROOT / "config", root / "config")
+    (root / "config" / "sources.yaml").write_text(yaml.safe_dump(raw_doc()), encoding="utf-8")
+    return root
+
+
+@pytest.fixture(scope="module")
+def parked_root(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    return make_parked_root(tmp_path_factory.mktemp("parked"))
 
 
 def source(d: dict[str, Any], sid: str) -> dict[str, Any]:
@@ -205,7 +249,7 @@ def test_warning_enabled_source_without_enabled_group(tmp_path: Path) -> None:
 
 
 def test_real_config_has_no_warnings(tmp_path: Path) -> None:
-    assert load(raw_doc(), tmp_path).warnings == ()
+    assert load(real_doc(), tmp_path).warnings == ()
 
 
 # --------------------------------------------------------------------- rule 3 (g)
@@ -226,6 +270,7 @@ def test_rule3_applies_only_with_an_enabled_group(tmp_path: Path) -> None:
 
 
 def test_group_without_key_keeps_sha_and_row_carries_own_flag() -> None:
+    # parked state comes from the fixture (park), not from the real config
     d = raw_doc()
     g = group(d, "eurostat_labour")
     assert "enabled" not in g
@@ -244,8 +289,24 @@ def test_group_without_key_keeps_sha_and_row_carries_own_flag() -> None:
 # ----------------------------------------------------------------- real config / CLI
 
 
-def test_real_config_matrix_excludes_parked_groups() -> None:
-    conf = load_config(ROOT)
+@pytest.mark.parametrize("sid", ["dbnomics", "faostat", "worldbank_pinksheet"])
+def test_real_config_keeps_these_sources_and_groups_disabled(sid: str) -> None:
+    """ADR-035: dbnomics and faostat stay disabled; the pink sheet stays off too (real file)."""
+    src = source(real_doc(), sid)
+    assert src["enabled"] is False
+    assert src.get("groups")
+    for g in src["groups"]:
+        assert g.get("enabled", False) is False, g["id"]
+
+
+def test_parked_root_does_not_link_writable_repo_dirs(parked_root: Path) -> None:
+    for name in ("ops", "manual_inbox", "src"):
+        if (ROOT / name).exists():
+            assert not (parked_root / name).is_symlink(), name
+
+
+def test_parked_config_matrix_excludes_parked_groups(parked_root: Path) -> None:
+    conf = load_config(parked_root)
     matrix = {g["id"] for _, g in cli._groups_of(conf, enabled_only=True)}
     assert not matrix & set(PARKED)
     assert {"eurostat_labour", "worldbank_annual"} <= matrix
@@ -258,16 +319,16 @@ def test_real_config_matrix_excludes_parked_groups() -> None:
 
 
 def test_fetch_of_disabled_group_exits_20_naming_group_switch(
-    capsys: pytest.CaptureFixture[str],
+    capsys: pytest.CaptureFixture[str], parked_root: Path
 ) -> None:
-    assert cli.main(["fetch", "--group", "eurostat_sts", "--root", str(ROOT)]) == 20
+    assert cli.main(["fetch", "--group", "eurostat_sts", "--root", str(parked_root)]) == 20
     err = capsys.readouterr().err
     assert "eurostat_sts" in err
     assert "group switch" in err
 
 
-def test_fetch_names_source_switch(capsys: pytest.CaptureFixture[str]) -> None:
-    assert cli.main(["fetch", "--group", "ecb_yields", "--root", str(ROOT)]) == 20
+def test_fetch_names_source_switch(capsys: pytest.CaptureFixture[str], parked_root: Path) -> None:
+    assert cli.main(["fetch", "--group", "ecb_yields", "--root", str(parked_root)]) == 20
     assert "source switch" in capsys.readouterr().err
 
 
@@ -334,8 +395,8 @@ def test_record_freshness_skips_disabled_group_and_reenabling_evaluates() -> Non
 
 
 @pytest.fixture(scope="module")
-def loaded() -> LoadedConfig:
-    return load_config(ROOT)
+def loaded(parked_root: Path) -> LoadedConfig:
+    return load_config(parked_root)
 
 
 def test_report_disabled_bucket_is_not_mapped(loaded: LoadedConfig) -> None:

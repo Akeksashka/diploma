@@ -313,10 +313,8 @@ export const DRAFT_INDICATOR_TABLE_CAPTION = (indicatorName) => `${indicatorName
 
 // DRAFT (not confirmed): Redesign R10 indicator page controls, table and charts (spec C-IND-1 to C-IND-7). Labels only. The reference-period line (C-IND-2)
 // reuses the confirmed spreadText() sentence of peers.js (decisions record 2b).
-export const DRAFT_INDICATOR_GROUP_LEGEND = "Peer group (filter)";
 export const DRAFT_INDICATOR_SORT_LABEL = "Sort by";
 export const DRAFT_INDICATOR_SORT_LABELS = Object.freeze({name: "Country", value: "Value", percentile: "Percentile", period: "Reference period"});
-export const DRAFT_INDICATOR_SWITCHER_LABEL = "Switch indicator";
 export const DRAFT_INDICATOR_SWITCHER_GO = "Go";
 export const DRAFT_INDICATOR_COLUMNS_MORE = Object.freeze({flags: "Flags", source: "Source", actions: "Actions", reason: "Why there is no value"});
 export const DRAFT_TRANSFORMED_HEADER = (transformLabel) => `Transformed value (${transformLabel})`;
@@ -368,3 +366,43 @@ export const HOME_FILTER_LABEL = Object.freeze({countries: "Filter countries", i
 export const DRAFT_HOME_FILTER_COUNT = (n) => `${n} shown`;
 export const DRAFT_HOME_FILTER_NONE = "No match.";
 export const DRAFT_HOME_DOMAINS_TITLE = HOME_LINKS.domains; // title and h1 of PG-DOMAINS (R17); the confirmed home-link text
+
+// DRAFT (not confirmed): Layout L3 (layout amendment sections 6 and 7; ADR-025 decision 11). Labels and single sentences only.
+export const DRAFT_FILTER_LABELS = Object.freeze({filters: "Filters", group: "Group", country: "Country", domain: "Domain", indicator: "Indicator", period: "Period", frequency: "Frequency", from: "From", to: "To", all: "All", reset: "Reset filters"});
+export const DRAFT_FILTER_ALL = Object.freeze({countries: "All countries", domains: "All domains", frequencies: "All frequencies"});
+export const DRAFT_FREQUENCY_NAMES = Object.freeze({D: "Daily", M: "Monthly", Q: "Quarterly", A: "Annual"});
+export const DRAFT_PERIOD_PRESETS = Object.freeze({all: "All", last10: "Last 10 years", last5: "Last 5 years"});
+export const DRAFT_BAND_TITLES = Object.freeze({overview: "Overview", compare: "Compare", indicators: "Indicators", overTime: "Over time"});
+export const DRAFT_BAND_TABLE = "Table"; // L23: band title named in amendment 4.3 but absent from the section 7 string list (pending user confirmation)
+export const DRAFT_BAND_REVISIONS = "Revisions"; // L24: PG-REVISIONS band title (h2), previously a literal in scripts/lib.mjs (pending user confirmation)
+export const DRAFT_CARD_REVISIONS = "Revisions and vintages"; // L24: PG-REVISIONS card title (h3, amendment heading rule); not in the amendment string list (pending confirmation)
+export const DRAFT_DOMAINS_BAND = "All domains"; // L24: h2 of PG-DOMAINS; a constant of its own, no longer DRAFT_FILTER_ALL.domains (pending confirmation)
+export const DRAFT_ALL_DOMAINS_LINK = "All domains"; // L24: link from PG-DOMAIN to PG-DOMAINS (pending confirmation)
+export const DRAFT_GROUP_BROWSE = "Browse";
+export const DRAFT_BROWSE_SUMMARY = "Countries, indicators and other pages";
+export const DRAFT_GROUP_REFERENCE_ROWS = "Reference rows";
+export const DRAFT_LOAD_HISTORY = "Load history";
+export const DRAFT_SHOW_MORE = "Show more";
+export const DRAFT_CHART_MODES = Object.freeze({lines: "Lines", bars: "Bars"});
+export const DRAFT_CHART_TYPE_LEGEND = "Chart type"; // L20: legend of the Lines / Bars radio group; not in the amendment string list (pending confirmation)
+export const DRAFT_CHOOSE_COUNTRY_PLACEHOLDER = "Choose a country to see its key indicators.";
+export const DRAFT_EMPTY_CARD = "No values for this selection.";
+export const DRAFT_KPI_ERROR_CONSEQUENCE = "The key indicators are not shown."; // L14: shown inside the overview card only when its scorecard fails
+export const DRAFT_SPARKLINE_TOO_FEW = "Too few values in the selected period.";
+export const DRAFT_HOME_H1 = "Macro dashboard"; // pending user confirmation (ADR-034 A1 item 5); the home page h1 is not switched yet (B-H1)
+export const DRAFT_FILTER_CHIP_SUMMARY = (label, value) => `${label}: ${value}`; // chip summary, for example "Period: 2015 to 2025"
+export const DRAFT_PERIOD_VALUE = (from, to) => `${from} to ${to}`;
+export const DRAFT_PRINT_FILTERS = (parts) => `Filters: ${parts.length ? parts.join("; ") : "none"}`; // parts are "<control label>: <value>"
+// The one count sentence (amendment 2.2, AC-DB-36): shown only when n > 0, no percentage, share or total.
+export const DRAFT_HIDDEN_ROWS = (n) => (n > 1 ? `${n} rows hidden by the period filter` : n === 1 ? "1 row hidden by the period filter" : ""); // ADR-036 decision 5: singular fix
+export const DRAFT_HIDDEN_ROW_ITEM = (name, period) => `${name}: latest value ${period}`; // ADR-036 decision 5: one list item per hidden row
+// DRAFT (not confirmed): Layout L12, the ranked comparison card (layout amendment 4.7). Labels only.
+export const DRAFT_RANK_SORT_LABELS = Object.freeze({name: "Country (A to Z)", value: "Value", percentile: "Percentile"});
+export const DRAFT_RANK_COLUMNS = Object.freeze({bar: "Bar", dot: "Percentile position"});
+// DRAFT (not confirmed): Layout L8 and L9, the Country and Period chips (layout amendment 2.1, 2.5).
+export const DRAFT_COUNTRY_LIMIT = (n) => `You can select up to ${n} countries. Clear one to select another.`;
+export const DRAFT_COUNTRY_SELECTED = (n) => `${n} selected`;
+export const DRAFT_COUNTRY_CHIP_HELP = "Select up to 5 countries."; // visible help text inside the open Country chip
+export const DRAFT_PERIOD_INVALID = "The From year must not be after the To year. The period was not changed.";
+export const DRAFT_PERIOD_UNAVAILABLE_CONSEQUENCE = "The period filter is not available; all years are shown.";
+export const DRAFT_PERIOD_REGION = "the period range";

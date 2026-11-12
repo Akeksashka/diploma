@@ -70,7 +70,7 @@ def test_quarterly_is_headline_annual_x01_is_fallback(entries: list[MapEntry]) -
             assert e.role == "headline"
 
 
-def test_t62_groups_live_in_existing_sources_and_new_sources_are_not_enabled() -> None:
+def test_t62_groups_live_in_existing_sources_and_new_sources_are_enabled() -> None:
     src = load_yaml(ROOT / "config" / "sources.yaml")
     owners = {
         g["id"]: s["id"]
@@ -83,9 +83,8 @@ def test_t62_groups_live_in_existing_sources_and_new_sources_are_not_enabled() -
         for g in s.get("groups", []):
             if g["id"] in T62_GROUPS:
                 assert g["reestimating"] is False
-                # T137 (ADR-027): the unprobed T62 groups are parked by the group-level key
-                assert g["enabled"] is False
-                assert g["note"]
+                # user go-ahead: the T62 groups are enabled by the group-level key (ADR-027)
+                assert g["enabled"] is True
 
 
 def test_m14_and_x03_stay_known_gaps_without_a_monthly_route() -> None:

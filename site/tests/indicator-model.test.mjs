@@ -4,7 +4,7 @@ import {readFileSync} from "node:fs";
 import {dirname, join} from "node:path";
 import {test} from "node:test";
 import {fileURLToPath} from "node:url";
-import {firstDomainId, indicatorHeader, indicatorModel, storedPercentileDifferences, storedTransformId, transformLabel} from "../src/lib/indicator-model.js";
+import {firstDomainId, indicatorsWithoutDomain, indicatorHeader, indicatorModel, storedPercentileDifferences, storedTransformId, transformLabel} from "../src/lib/indicator-model.js";
 import {indicatorPageSource} from "../scripts/lib.mjs";
 
 const root = dirname(fileURLToPath(import.meta.url));
@@ -197,4 +197,9 @@ test("download link (C-IND-7): only a .parquet path is ever used, even when the 
   assert.ok(!src.includes("series/T01.json"));
   const jsonOnly = indicatorPageSource(ind("T01"), domains, "LEVEL", {files: [{path: "series/T01.json"}]});
   assert.ok(jsonOnly.includes("const seriesFile = null;") && !jsonOnly.includes("series/T01.json"));
+});
+
+test("indicatorsWithoutDomain lists entries with missing or empty domain_ids (the build fails on any)", () => {
+  assert.deepEqual(indicatorsWithoutDomain([{indicator_id: "A", domain_ids: ["growth"]}, {indicator_id: "B", domain_ids: []}, {indicator_id: "C"}]), ["B", "C"]);
+  assert.deepEqual(indicatorsWithoutDomain([{indicator_id: "A", domain_ids: ["growth"]}]), []);
 });

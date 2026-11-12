@@ -45,3 +45,12 @@ test("empty and missing notices do not throw", () => {
   assert.ok(domainsListHtml([]).includes('id="domain-list"'));
   assert.ok(domainsListHtml([{domain_id: "x", ranked: false}]).includes(">x</a>"));
 });
+
+test("L24: a card grid under one band: h2 band, one h3 card per domain with the link as its title, no table, no filter bar", () => {
+  const h = domainsListHtml(sparse);
+  assert.equal((h.match(/<h2 /g) ?? []).length, 1);
+  assert.match(h, /<h2 id="band-domains-heading">All domains<\/h2>/);
+  assert.equal((h.match(/<li class="mm-card mm-card--span-4"/g) ?? []).length, sparse.length);
+  assert.equal((h.match(/<h3><a href="\.\/domain\//g) ?? []).length, sparse.length);
+  assert.ok(!/<table|filterbar/.test(h + domainsPageSource(sparse)));
+});

@@ -22,7 +22,7 @@ class ResolveSpec:
     link_pattern: str  # anchored regex over the resolved absolute URL
     expect_matches: int
     allowed_hosts: tuple[str, ...]
-    expect_format: str | None = None  # "xlsx": the fetched bytes must be a workbook
+    expect_format: str | None = None  # "xlsx": a workbook; "zip": a zip archive
 
     @property
     def pattern_id(self) -> str:

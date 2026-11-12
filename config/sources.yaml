@@ -59,13 +59,13 @@ sources:
       # order and codes are verified by probe 2026-11-06 for sts_trtu_m, prc_hicp_minr and gov_10q_ggdebt
       # (gov_10q_ggdebt key order corrected to freq.na_item.sector.unit.geo). sts_inpr_m indic_bt=PROD
       # returned an EMPTY cube: that code is wrong and its replacement is still [UNVERIFIED]; the
-      # other countries' keys are unprobed. The fixtures of the original T53 run are synthetic. Each is parked with a group-level `enabled: false`
+      # other countries' keys are unprobed. The fixtures of the original T53 run are synthetic. Each was parked with a group-level `enabled: false`; all are enabled as of 2026-11-09
       # (ADR-027) while the source stays enabled for eurostat_labour: they stay validated but are out of the
       # fetch matrix. After the operator probe of a group, remove its `enabled: false` (or set true) and
       # its pending-probe note. Sizing (ADR-004): the connector refuses a request of
       # 500,000 cells or more; these are about 15,000 cells (28 countries x 45 years x 12 months).
       - id: eurostat_sts
-        enabled: false
+        enabled: true
         description: Short-term business statistics, seasonally and calendar adjusted (M01 industrial production, M02 retail volume)
         request_template:
           path: statistics/1.0/data/{dataset}
@@ -89,8 +89,8 @@ sources:
         published_precision: null
         on_failure: alert
       - id: eurostat_hicp
-        enabled: false
-        note: "DE-only probe done 2026-11-06 (see docs/ops/spike-results.md, section OP-04); group stays parked (enabled: false) until the user decides to enable it. Non-DE geos, expected_series_min, freshness lag and revisions remain UNVERIFIED."
+        enabled: true
+        note: "DE-only probe done 2026-11-06 (see docs/ops/spike-results.md, section OP-04); group enabled as of 2026-11-09. Non-DE geos, expected_series_min, freshness lag and revisions remain UNVERIFIED (not yet probed)."
         description: HICP monthly index, 2025=100, COICOP 2018 (M06 all-items, M07 core, G01 food); replaces prc_hicp_manr
         request_template:
           path: statistics/1.0/data/{dataset}
@@ -110,8 +110,8 @@ sources:
         published_precision: null
         on_failure: alert
       - id: eurostat_gov_debt
-        enabled: false
-        note: "DE-only probe done 2026-11-06 (see docs/ops/spike-results.md, section OP-04); group stays parked (enabled: false) until the user decides to enable it. Non-DE geos, expected_series_min, freshness lag and revisions remain UNVERIFIED."
+        enabled: true
+        note: "DE-only probe done 2026-11-06 (see docs/ops/spike-results.md, section OP-04); group enabled as of 2026-11-09. Non-DE geos, expected_series_min, freshness lag and revisions remain UNVERIFIED (not yet probed)."
         description: Quarterly general government gross debt, % of GDP (Q08), EU27 members
         request_template:
           path: statistics/1.0/data/{dataset}
@@ -131,10 +131,10 @@ sources:
         published_precision: null
         on_failure: alert
       # T62 group. Key order and codes verified by probe 2026-11-06 (geo=DE, namq_10_gdp: freq.unit.s_adj.na_item.geo,
-      # 2026-Q3 present); other countries are unprobed [UNVERIFIED]; the older fixture is synthetic. Parked with a group-level `enabled: false` (ADR-027) until the user decides to enable it.
+      # 2026-Q3 present); other countries are unprobed [UNVERIFIED]; the older fixture is synthetic. Group enabled as of 2026-11-09.
       - id: eurostat_gdp_q
-        enabled: false
-        note: "DE-only probe done 2026-11-06 (see docs/ops/spike-results.md, section OP-04); group stays parked (enabled: false) until the user decides to enable it. Non-DE geos, expected_series_min, freshness lag and revisions remain UNVERIFIED."
+        enabled: true
+        note: "DE-only probe done 2026-11-06 (see docs/ops/spike-results.md, section OP-04); group enabled as of 2026-11-09. Non-DE geos, expected_series_min, freshness lag and revisions remain UNVERIFIED (not yet probed)."
         description: Quarterly nominal GDP (B1GQ), current prices, million national currency, SCA (X01 headline, EU27); PERIOD_FLOW level, not a SAAR
         request_template:
           path: statistics/1.0/data/{dataset}
@@ -157,8 +157,8 @@ sources:
     name: ECB Data Portal (SDMX 2.1 REST)
     provider: European Central Bank
     kind: sdmx
-    # Disabled until an operator probe confirms keys and URL shape (fixture is synthetic).
-    enabled: false
+    # Enabled as of 2026-11-09; keys and URL shape: see the operator probe records in docs/ops.
+    enabled: true
     wave: 1
     base_url: https://data-api.ecb.europa.eu/service/
     auth: {type: none}
@@ -190,7 +190,7 @@ sources:
           path: data/{dataset}/{key}
           params: {format: csvdata, startPeriod: "1991-01"}
         format: csv
-        parser: macro_monitor.ingestion.parsers.ecb_csv_v1:parse
+        parser: macro_monitor.ingestion.parsers.ecb_csv_v2:parse
         missing_markers: [M, L]
         fetch_scope: complete
         mode_default: full
@@ -204,7 +204,7 @@ sources:
     name: World Bank Indicators API v2
     provider: World Bank
     kind: rest
-    # Disabled until an operator capture/probe confirms the query syntax and page metadata
+    # Enabled 2026-11-05; the query syntax and page metadata were probed on that date
     # (fixture is synthetic; [UNVERIFIED]).
     enabled: true   # 2026-11-05, user go-ahead; probed: 5 indicators x 42 countries, HTTP 200
     wave: 1
@@ -253,10 +253,10 @@ sources:
       # T62 group: X01 annual fallback (NY.GDP.MKTP.CN) and X02 headline (NY.GDP.MKTP.CD).
       # Unit and flow basis are parser-assigned (response `unit` is empty; LCU/USD and PERIOD_FLOW come from the parser table).
       # Probe 2026-11-06 (DEU) confirms the indicator labels 'GDP (current LCU)' / 'GDP (current US$)' and annual coverage 1991-2025 (lastupdated 2026-10-08);
-      # the other 41 countries are unprobed [UNVERIFIED]; parked with a group-level `enabled: false` (ADR-027).
+      # the other 41 countries are unprobed [UNVERIFIED]; group enabled as of 2026-11-09.
       - id: worldbank_support
-        enabled: false
-        note: "DE-only probe done 2026-11-06 (see docs/ops/spike-results.md, section OP-04); group stays parked (enabled: false) until the user decides to enable it. Other 41 countries, expected_series_min, freshness lag and revisions remain UNVERIFIED."
+        enabled: true
+        note: "DE-only probe done 2026-11-06 (see docs/ops/spike-results.md, section OP-04); group enabled as of 2026-11-09. Other 41 countries, expected_series_min, freshness lag and revisions remain UNVERIFIED (not yet probed)."
         description: "Annual nominal GDP, LCU and current USD (support inputs X01 fallback, X02)"
         request_template:
           path: country/{entities}/indicator/{indicator}
@@ -277,9 +277,9 @@ sources:
     name: BIS bulk downloads (flat CSV zip)
     provider: Bank for International Settlements
     kind: bulk
-    # Disabled until an operator probe confirms the file URL, zip layout and column names
+    # Enabled as of 2026-11-09; real-layout fixtures (bis_v2) cover the zip layout and column names
     # (fixtures are synthetic; [UNVERIFIED]).
-    enabled: false
+    enabled: true
     wave: 1
     base_url: https://data.bis.org/
     auth: {type: none}
@@ -311,7 +311,7 @@ sources:
           path: static/bulk/{dataset}_csv_flat.zip   # [UNVERIFIED] URL shape
           datasets: [WS_CBPOL]
         format: csv
-        parser: macro_monitor.ingestion.parsers.bis_v1:parse
+        parser: macro_monitor.ingestion.parsers.bis_v2:parse
         missing_markers: [M, L]
         fetch_scope: complete
         mode_default: full
@@ -328,7 +328,7 @@ sources:
           path: static/bulk/{dataset}_csv_flat.zip   # [UNVERIFIED] URL shape
           datasets: [WS_CREDIT_GAP]
         format: csv
-        parser: macro_monitor.ingestion.parsers.bis_v1:parse
+        parser: macro_monitor.ingestion.parsers.bis_v2:parse
         missing_markers: [M, L]
         fetch_scope: complete
         mode_default: full
@@ -347,10 +347,10 @@ sources:
     name: OECD Data API (SDMX REST, SDMX-CSV)
     provider: OECD
     kind: sdmx
-    # Disabled until an operator probe (at most one request) confirms the URL shape, format=csvfile, the
-    # column layout and the dataflow ids of oecd_cli (fixtures are synthetic; [UNVERIFIED]). All three
-    # groups stay off through this source-level flag (a group-level `enabled` exists, ADR-027).
-    enabled: false
+    # Enabled as of 2026-11-09 (sdmxcsv_v2, real-layout fixtures). Still UNVERIFIED live: the URL shape, format=csvfile, the
+    # column layout and the dataflow ids of oecd_cli beyond the fixtures. All three
+    # groups are on through this source-level flag (a group-level `enabled` exists, ADR-027).
+    enabled: true
     wave: 1
     base_url: https://sdmx.oecd.org/public/rest/
     auth: {type: none}
@@ -384,7 +384,7 @@ sources:
           params: {format: csvfile, startPeriod: "1991-01"}
           datasets: ["OECD.SDD.STES,DSD_KEI@DF_KEI"]
         format: csv
-        parser: macro_monitor.ingestion.parsers.sdmxcsv_v1:parse
+        parser: macro_monitor.ingestion.parsers.sdmxcsv_v2:parse
         missing_markers: [M]
         fetch_scope: complete
         mode_default: full
@@ -402,7 +402,7 @@ sources:
           params: {format: csvfile, startPeriod: "1991-01"}
           datasets: ["OECD.SDD.TPS,DSD_PRICES@DF_PRICES_ALL"]
         format: csv
-        parser: macro_monitor.ingestion.parsers.sdmxcsv_v1:parse
+        parser: macro_monitor.ingestion.parsers.sdmxcsv_v2:parse
         missing_markers: [M]
         fetch_scope: complete
         mode_default: full
@@ -421,7 +421,7 @@ sources:
           params: {format: csvfile, startPeriod: "1991-01"}
           datasets: ["OECD.SDD.STES,DSD_STES@DF_CLI"]   # [UNVERIFIED] dataflow id
         format: csv
-        parser: macro_monitor.ingestion.parsers.sdmxcsv_v1:parse
+        parser: macro_monitor.ingestion.parsers.sdmxcsv_v2:parse
         missing_markers: [M]
         fetch_scope: complete
         mode_default: full
@@ -491,9 +491,9 @@ sources:
     name: FAO Food Price Index and Cereal Supply and Demand Brief (www.fao.org)
     provider: Food and Agriculture Organization of the United Nations
     kind: bulk
-    # T58/T64. Disabled until an operator probe confirms the file URLs, layouts and the cereal brief
-    # discovery pattern (ADR-028) (fixtures are synthetic; [UNVERIFIED]).
-    enabled: false
+    # T58/T64. Enabled as of 2026-11-09 (fao_csdb_v2, real-layout workbook). Still UNVERIFIED: the cereal brief
+    # discovery pattern (ADR-028) live and the FAO season status (inferred, flagged in source_flags).
+    enabled: true
     wave: 1
     base_url: https://www.fao.org/
     auth: {type: none}
@@ -524,10 +524,10 @@ sources:
       - id: fao_ffpi
         description: "FAO Food Price Index and sub-indices, monthly (seed: G02 headline)"
         request_template:
-          path: media/docs/worldfoodsituationlibraries/default-document-library/{dataset}.csv   # [UNVERIFIED] URL shape
+          path: media/docs/worldfoodsituationlibraries/wfs-library/{dataset}.csv   # probed 2026-11-10 (the former default-document-library path is 404)
           datasets: [food_price_indices_data]
         format: csv
-        parser: macro_monitor.ingestion.parsers.fao_ffpi_v1:parse
+        parser: macro_monitor.ingestion.parsers.fao_ffpi_v2:parse
         missing_markers: [".."]
         fetch_scope: complete
         mode_default: full
@@ -547,7 +547,7 @@ sources:
             allowed_hosts: [www.fao.org]
           datasets: [csdb]   # the logical dataset (series_map key), not a file name
         format: xlsx
-        parser: macro_monitor.ingestion.parsers.fao_csdb_v1:parse
+        parser: macro_monitor.ingestion.parsers.fao_csdb_v2:parse
         missing_markers: []
         fetch_scope: complete
         mode_default: full
@@ -617,7 +617,7 @@ sources:
       - id: fao_csdb_manual
         description: "FAO cereal brief workbook, hand-downloaded (fallback for fao_csdb)"
         format: xlsx
-        parser: macro_monitor.ingestion.parsers.fao_csdb_v1:parse
+        parser: macro_monitor.ingestion.parsers.fao_csdb_v2:parse
         missing_markers: []
         fetch_scope: complete
         mode_default: full
@@ -680,9 +680,9 @@ sources:
     name: European Commission business and consumer surveys (ZIP)
     provider: European Commission, DG ECFIN
     kind: bulk
-    # T58. Disabled until an operator probe confirms the ZIP URL, member name and worksheet layout
-    # (fixture is synthetic; [UNVERIFIED]).
-    enabled: false
+    # T58. Enabled as of 2026-11-09. URL discovery and the MONTHLY workbook layout were probed on 2026-11-10
+    # (ecsurvey_v2); the manual inbox is the fallback if discovery fails (ADR-028 decision 6).
+    enabled: true
     wave: 1
     base_url: https://ec.europa.eu/
     auth: {type: none}
@@ -711,11 +711,15 @@ sources:
       - id: ec_bcs_monthly
         description: "EC survey balances, monthly, seasonally adjusted (seed: M03 industry confidence, M04 consumer confidence)"
         request_template:
-          path: economy_finance/db_indicators/surveys/documents/{dataset}.zip   # [UNVERIFIED] URL shape
-          datasets: [main_indicators_nace2]
-        format: xlsx
-        parser: macro_monitor.ingestion.parsers.ecsurvey_v1:parse
-        missing_markers: []
+          discover:   # ADR-028: the ZIP sits in a rotating nace2_ecfin_<yymm> folder; found on the landing page (probe 2026-11-10)
+            landing_url: https://economy-finance.ec.europa.eu/economic-forecast-and-surveys/business-and-consumer-surveys/download-business-and-consumer-survey-data/time-series_en
+            link_pattern: '^https://ec\.europa\.eu/economy_finance/db_indicators/surveys/documents/series/nace2_ecfin_\d{4}/main_indicators_sa_nace2\.zip$'
+            expect_matches: 1
+            allowed_hosts: [economy-finance.ec.europa.eu, ec.europa.eu]
+          datasets: [main_indicators_sa_nace2]   # the logical file name; also the series_map dataset key
+        format: zip   # the body is a ZIP holding the workbook, so the discovery check is "zip", not "xlsx"
+        parser: macro_monitor.ingestion.parsers.ecsurvey_v2:parse
+        missing_markers: ["NA"]
         fetch_scope: complete
         mode_default: full
         series_map: config/series_map/ec_bcs_monthly.yaml
@@ -774,3 +778,39 @@ sources:
         reestimating: false
         published_precision: null
         on_failure: alert
+  - id: imf_weo_manual
+    name: IMF World Economic Outlook (manual download)
+    provider: IMF
+    kind: manual                                # manual source: no http, rate_limit, change_detection, base_url or auth (rule 4)
+    automated_access: manual_only               # the IMF prohibits automated bulk download without permission (ADR-032 decision 2c)
+    enabled: true
+    licence: {id: imf-terms, url: https://www.imf.org/en/About/copyright-and-terms, checked_on: 2026-10-17,
+              non_commercial_ok: true, attribution: "Source: International Monetary Fund, World Economic Outlook",
+              redistribution_of_raw: allowed}   # statistical data may be copied and distributed with attribution (data-sources F2); confirm
+    archive: public
+    publish_site: public                        # per the spec example; user to confirm (design Q1/Q4, ADR-032 decision 2b)
+    terms_review: {decision: permitted, reviewed_on: 2026-10-17, url: https://www.imf.org/en/About/copyright-and-terms,
+                   clause: "statistical data: users may download, extract, copy, create derivative works, publish, distribute, and use Data, with attribution to the IMF [UNVERIFIED: ADR-032 quotes a page summary, not the full page text]"}
+    inbox: {path: manual_inbox/imf_weo_manual,
+            sidecar_required: [source_url, downloaded_on, downloaded_by, edition_label, edition_date],   # edition_date = publication date of the edition (round 5)
+            sidecar_optional: [licence_note, import_label]}                                             # import_label: archive_import (only allowed value; rule 18)
+    # Reminders fire AFTER the expected release window and ON a preflight day (A10, rule 11): remind_on.day is 25, the window ends on the 24th.
+    # The October 2026 edition was published 2026-10-13 (research F2); the April window is still [UNVERIFIED].
+    reminders:
+      - {expected_window: {month: 4,  from_day: 10, to_day: 24}, remind_on: {month: 4,  day: 25},
+         text: "April WEO should be out by now [UNVERIFIED window]: download it"}
+      - {expected_window: {month: 10, from_day: 10, to_day: 24}, remind_on: {month: 10, day: 25},
+         text: "October WEO should be out by now: download it"}
+    groups:
+      - id: imf_weo_files
+        description: "IMF WEO data-portal CSV export (IMF.RES:WEO), annual, named editions"
+        format: csv                     # the data-portal export is a wide CSV (first real file, 2026-10)
+        parser: macro_monitor.ingestion.parsers.weo_v1:parse
+        fetch_scope: complete
+        edition_ordered: true           # NAMED EDITIONS (ADR-017); an older edition_date than the latest loaded is refused unless import_label is archive_import
+        reestimating: false             # REV-01 does not apply to this group, REV-07 reports
+        series_map: config/series_map/imf_weo_files.yaml
+        expected_series_min: 100        # COMP-01 floor (rule 7); the seed map has 151 entries (25 + 42 x 3); the file has 8,202 series
+        freshness: {frequency: A, release_months: [4, 10], tolerance_days: 45}   # [UNVERIFIED release months]
+        published_precision: null
+        note: "IMF WEO: semi-annual named editions; each edition may revise and rebase history; revisions are loaded and labelled by edition, never blocked by the mass-revision rule (REV-07, report only)"

@@ -1,7 +1,8 @@
 # Series map of group ecb_yields (source-config-schema section 4). Key = parser series_ref: the
-# ECB series key without the dataflow prefix. [UNVERIFIED] against a live capture: keys follow the
-# synthetic fixture. Euro-area aggregates declare expect.composition; FIXED and CHANGING are never
-# spliced (the connector rejects a pair that mixes them).
+# ECB series key without the dataflow prefix. Verified against the live captures of 2026-11-09
+# (raw_id 23, 24): keys; UNIT=PC, mapped to PCT by ecb_csv_v2; no ADJUSTMENT column, so
+# seasonal_adjustment is NA. Euro-area aggregates declare expect.composition; FIXED and CHANGING
+# are never spliced (the connector rejects a pair that mixes them).
 series:
   - dataset: IRS
     key: "M.DE.L.L40.CI.0000.EUR.N.Z"
@@ -10,7 +11,7 @@ series:
     role: headline
     valid_from: 1991-01-01
     rationale: "ECB IRS long-term government bond yield (convergence criterion), Germany (data-sources research F13, M18)"
-    expect: {frequency: M, unit: PURE_NUMB, seasonal_adjustment: NSA, price_basis: NA}
+    expect: {frequency: M, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
   - dataset: IRS
     key: "M.U2.L.L40.CI.0000.EUR.N.Z"
     entity: EA
@@ -18,4 +19,4 @@ series:
     role: headline
     valid_from: 1991-01-01
     rationale: "ECB IRS long-term yield, euro area aggregate; composition declared, not spliced (data-sources research F13)"
-    expect: {frequency: M, unit: PURE_NUMB, seasonal_adjustment: NSA, price_basis: NA, composition: CHANGING}
+    expect: {frequency: M, unit: PCT, seasonal_adjustment: NA, price_basis: NA, composition: CHANGING}

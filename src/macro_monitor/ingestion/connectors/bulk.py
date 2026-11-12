@@ -61,7 +61,7 @@ BULK_SOURCES: dict[str, str | None] = {
     "worldbank_pinksheet": "pinksheet_v1@1",
     "fao": None,  # www.fao.org: FFPI csv and cereal brief xlsx, one parser per group
     "faostat": "fao_stat_v1@1",  # bulks-faostat.fao.org (own host: one host per source)
-    "ec_surveys": "ecsurvey_v1@1",
+    "ec_surveys": "ecsurvey_v2@2",
 }
 
 
@@ -224,6 +224,8 @@ class BulkConnector:
             return result
         if res.expect_format == "xlsx" and not is_xlsx(result.body):
             raise DiscoveryFailed("resolved file is not an xlsx workbook")
+        if res.expect_format == "zip" and not result.body.startswith(b"PK\x03\x04"):
+            raise DiscoveryFailed("resolved file is not a zip archive")
         marker = file_date(result.last_modified, result.body)
         return result if marker is None else replace(result, update_marker=marker)
 

@@ -8,8 +8,9 @@ import {fileURLToPath} from "node:url";
 import * as copy from "../src/lib/copy.js";
 import {indicatorModel} from "../src/lib/indicator-model.js";
 import {
-  DEFAULT_SORT, SORTS, SORT_OPTIONS, dotRows, indicatorBlock, indicatorOptions, indicatorTable, initialState, peerGroups, referenceLineText, resultsBlock, seriesCountries, stateHash, viewRows
+  DEFAULT_SORT, SORTS, dotCardBody, dotRows, indicatorBlock, indicatorTable, pageState, peerGroups, referenceLineText, resultsBlock, seriesCountries, viewRows
 } from "../src/lib/indicator-view.js";
+import {INDICATOR_SORT_OPTIONS, RANK_SORT_OPTIONS} from "../src/lib/rank-model.js";
 import {valueChart, valueFigure, valueRows} from "../src/lib/value-chart.js";
 import {indicatorPageSource} from "../scripts/lib.mjs";
 import {html} from "./support/html-standin.mjs";
@@ -37,10 +38,12 @@ const fakePlot = {
   pointerY: (o) => o
 };
 const groups = [{group_id: "g7", members: [{entity_id: "SY02", valid_from: "1999-01-01", valid_to: null}, {entity_id: "SY03", valid_from: "1999-01-01", valid_to: null}]}];
-const page = (id, opts = {}) => String(indicatorBlock(html, fakePlot, build(id), {options: indicatorOptions(indicators), groups, knownCutoff: "2026-11-01", ...opts}));
+const store = {get: () => ({c: [], g: null}), subscribe() {}};
+const page = (id, opts = {}) => String(indicatorBlock(html, fakePlot, build(id), {groups, knownCutoff: "2026-11-01", store, ...opts}));
 
 test("sort options are Country, Value, Percentile, Reference period; Country A-Z is the default (C-IND-1, AC-RD-22)", () => {
-  assert.deepEqual(SORT_OPTIONS.map((o) => o.label), ["Country", "Value", "Percentile", "Reference period"]);
+  assert.deepEqual(INDICATOR_SORT_OPTIONS.map((o) => o.label), ["Country", "Value", "Percentile", "Reference period"]);
+  assert.deepEqual(RANK_SORT_OPTIONS.map((o) => o.id), ["name", "value", "percentile"], "the PG-HOME card keeps three sorts");
   assert.equal(DEFAULT_SORT, "name");
   assert.deepEqual(Object.keys(SORTS), ["name", "value", "percentile", "period"]);
 });
@@ -85,7 +88,8 @@ test("the filter note and the percentile column label are present verbatim (AC-R
   const out = page("T01");
   assert.match(out, new RegExp(`<p class="mm-filter-note" id="filter-note">${copy.FILTER_NOTE.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}</p>`));
   assert.match(out, /percentile vs all ranked countries/);
-  assert.match(out, /<fieldset id="indicator-group" class="mm-radios"><legend>Peer group \(filter\)<\/legend>/);
+  assert.doesNotMatch(out, /id="indicator-group"/, "the peer group control is the Group select of the filter bar (L23)");
+  assert.doesNotMatch(out, /id="indicator-sort"/, "the sort select is in the C-RANK card header, which the unit stand-in does not mount");
   assert.equal(out.includes("<nav"), false, "the page keeps exactly one nav (the shell's)");
 });
 
@@ -116,7 +120,7 @@ test("every value carries its unit, the estimate mark, the stored percentile and
   const tr = (id) => new RegExp(`<tr role="row" data-entity="${id}"[\\s\\S]*?</tr>`).exec(out)[0];
   assert.match(tr("SY01"), /<span class="mm-unit">SYNTH_UNIT<\/span>/);
   assert.match(tr("SY01"), /data-mark="estimate"/);
-  assert.match(tr("SY01"), /<a href="\.\.\/country\/SY01" data-link="country">Synthetic SY01<\/a>/);
+  assert.match(tr("SY01"), /<a href="\.\.\/country\/SY01" data-link="country" data-carry>Synthetic SY01<\/a>/);
   assert.match(tr("SY01"), /<a href="\.\.\/explorer#i=T02&amp;c=SY01" data-link="series" aria-label="Time series: Synthetic indicator T02, Synthetic SY01">Time series<\/a>/);
   assert.match(tr("SY01"), /data-label="Offset \(days\)"/);
   assert.match(tr("SY03"), /data-state="stale"/);
@@ -156,7 +160,7 @@ test("Open as time series: the country in focus, else the first five A-Z, never 
     assert.deepEqual(seriesCountries(shown, "SY06"), ["SY06"], sort);
   }
   assert.match(page("T02"), /href="\.\.\/explorer#i=T02&amp;c=SY01,SY02,SY03,SY04,SY05" id="open-series" data-link="series-all">Open as time series</);
-  assert.match(String(resultsBlock(html, fakePlot, m, {group: "all", sort: "percentile", focus: "SY06"}, peerGroups(groups, null))), /href="\.\.\/explorer#i=T02&amp;c=SY06" id="open-series"/);
+  assert.match(String(resultsBlock(html, m, {group: "all", sort: "percentile", focus: "SY06"}, peerGroups(groups, null))), /href="\.\.\/explorer#i=T02&amp;c=SY06" id="open-series"/);
 });
 
 test("the Parquet download link is present only when an address is given (C-IND-7)", () => {
@@ -191,51 +195,47 @@ test("an estimate bar carries the e mark; the dot plot keeps the V2 drawing and 
   assert.ok(dots.every((r) => r.percentile !== null));
   assert.ok(!dots.some((r) => r.entityId === "SY03"), "stale: not plotted");
   assert.equal(dots.filter((r) => r.focus).length, 1);
-  const out = String(resultsBlock(html, fakePlot, m, {group: "all", sort: "name", focus: null}, peerGroups([], null)));
+  const out = String(dotCardBody(html, fakePlot, m, viewRows(m, {}), null));
   assert.match(out, /id="indicator-dot-figure" role="img"/);
   assert.match(out, /<ol class="mm-legend-bins">/);
   const unranked = build("T05");
-  assert.doesNotMatch(String(resultsBlock(html, fakePlot, unranked, {group: "all", sort: "name", focus: null}, peerGroups([], null))), /indicator-dot-figure/);
+  const none = String(dotCardBody(html, fakePlot, unranked, viewRows(unranked, {}), null));
+  assert.doesNotMatch(none, /indicator-dot-figure/);
+  assert.match(none, /id="indicator-dot-empty"[^>]*>No values for this selection\./);
+  assert.doesNotMatch(String(resultsBlock(html, m, {group: "all", sort: "name", focus: null}, peerGroups([], null))), /indicator-dot-figure/, "the dot plot is its own card, not part of the table body");
 });
 
 test("an empty peer group shows the empty state, not an empty table", () => {
-  const out = String(resultsBlock(html, fakePlot, build("T02"), {group: "g7", sort: "name", focus: null}, peerGroups([{group_id: "g7", members: []}], null)));
+  const out = String(resultsBlock(html, build("T02"), {group: "g7", sort: "name", focus: null}, peerGroups([{group_id: "g7", members: []}], null)));
   assert.match(out, /id="empty-group"/);
   assert.doesNotMatch(out, /<table/);
 });
 
-test("the switcher lists every indicator, has an explicit Go button and no change-triggered navigation (WCAG 3.2.2)", () => {
+test("the page renders no switcher of its own: the Indicator switcher with its explicit Go is the filter bar's (L23, WCAG 3.2.2)", () => {
   const out = page("T02");
-  assert.equal(out.split("<option value=\"T").length - 1, indicators.length + 0);
-  assert.match(out, /<option value="T02" selected=true>/);
-  assert.match(out, /<button type="button" id="indicator-switcher-go" class="mm-country-go">Go<\/button>/);
-  const src = readFileSync(join(root, "..", "src", "lib", "indicator-view.js"), "utf8");
-  const fn = /export function indicatorSwitcher[\s\S]*?\n}\n/.exec(src)[0];
+  assert.doesNotMatch(out, /<select|indicator-switcher-go/);
+  const bar = readFileSync(join(root, "..", "src", "lib", "filter-bar.js"), "utf8");
+  const fn = /const indicatorSwitcher = [\s\S]*?\n  };\n/.exec(bar)[0];
   assert.doesNotMatch(fn, /addEventListener\("change"/);
   assert.match(fn, /"click"/);
-  assert.match(fn, /e\.key === "Enter"/);
-  assert.deepEqual(indicatorOptions([{indicator_id: "B", name: "b"}, {indicator_id: "A", name: "a"}]).map((o) => o.id), ["A", "B"]);
+  assert.match(fn, /e\.key !== "Enter"/);
+  assert.match(fn, /id="indicator-switcher-go"/);
 });
 
-test("the address gives the country in focus and the group, only when they exist on the page", () => {
-  assert.deepEqual(initialState("#c=SY02", ["SY01", "SY02"], ["g7"]), {focus: "SY02", group: "all", sort: "name", reading: false});
-  assert.deepEqual(initialState("#c=NOPE&g=g7", ["SY01"], ["g7"]), {focus: null, group: "g7", sort: "name", reading: false});
-  assert.deepEqual(initialState("", ["SY01"], []), {focus: null, group: "all", sort: "name", reading: false});
+test("the page state reads the Group and the country in focus from the filter store, only for countries on the page", () => {
+  assert.deepEqual(pageState({c: ["SY02"], g: null}, ["SY01", "SY02"]), {group: "all", focus: "SY02", sort: "name", reading: false});
+  assert.deepEqual(pageState({c: ["NOPE"], g: "g7"}, ["SY01"]), {group: "g7", focus: null, sort: "name", reading: false});
+  assert.deepEqual(pageState({c: [], g: null}, ["SY01"], "value"), {group: "all", focus: null, sort: "value", reading: false});
 });
 
-test("stateHash writes the focus and the group; \"all\" and an empty focus are omitted; it round-trips through initialState", () => {
-  assert.equal(stateHash({focus: "SY02", group: "g7"}), "#c=SY02&g=g7");
-  assert.equal(stateHash({focus: "SY02", group: "all"}), "#c=SY02");
-  assert.equal(stateHash({focus: null, group: "g7"}), "#g=g7");
-  assert.equal(stateHash({focus: null, group: "all"}), "");
-  const s = initialState(stateHash({focus: "SY01", group: "g7"}), ["SY01"], ["g7"]);
-  assert.deepEqual([s.focus, s.group], ["SY01", "g7"]);
-});
-
-test("the group radio writes #g and the hashchange handler reads g as well as the focus (source check; behaviour in the smoke test)", () => {
-  const src = readFileSync(join(root, "..", "src", "lib", "indicator-view.js"), "utf8");
-  assert.match(src, /state\.group = groupBox\.value;\s*writeHash\(\);/);
-  assert.match(src, /state\.group = next\.group;/);
+test("the page is a Compare band (rank card slot, dot card beside it) and a Table band; an unranked domain has no dot card (L23, 4.3)", () => {
+  const out = page("T02");
+  assert.match(out, /<h2 id="band-compare-heading">Compare<\/h2>/);
+  assert.match(out, /<h2 id="band-table-heading">Table<\/h2>/);
+  assert.match(out, /id="indicator-compare" data-slot="compare"/);
+  assert.match(out, /mm-card--span-8" id="indicator-compare"[\s\S]*mm-card--span-4 mm-card--dot" id="indicator-dot-card"/);
+  assert.doesNotMatch(page("T05"), /indicator-dot-card/);
+  assert.match(page("T05"), /mm-card--span-12" id="indicator-compare"/);
 });
 
 test("the generated page names the series file only when the manifest lists it, and loads the groups", () => {
@@ -247,6 +247,9 @@ test("the generated page names the series file only when the manifest lists it, 
   assert.doesNotMatch(src, /series\/T01/);
   assert.match(src, /meta\/groups\.json/);
   assert.match(src, /indicatorBlock\(html, Plot, model,/);
+  assert.match(src, /id="indicator-header"/);
+  assert.match(src, /mountFilterBar\(html, \{page: "indicator"/);
+  assert.match(src, /maxEntities: 1/);
   assert.doesNotMatch(src, /R9 placeholder/);
 });
 
@@ -263,6 +266,6 @@ test("AC-RD-42: a PG-INDICATOR indicator with no unit_label states the defect on
   const tips = calls.at(-1).marks.filter((mk) => mk.type === "tip");
   assert.ok(tips.length > 0);
   for (const tip of tips) for (const r of rows) assert.ok(tip.o.title(r).split("\n")[1].endsWith(` ${stated}`) && tip.o.title(r).split("\n")[1].startsWith(r.estimate ? `${r.valueText} e` : r.valueText), "the tip keeps the value and states the defect");
-  const table = String(resultsBlock(html, fakePlot, m, {group: "all", sort: "name", focus: null}, peerGroups([], null)));
+  const table = String(resultsBlock(html, m, {group: "all", sort: "name", focus: null}, peerGroups([], null)));
   assert.ok(table.includes(stated));
 });

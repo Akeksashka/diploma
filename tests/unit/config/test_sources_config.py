@@ -191,6 +191,7 @@ def test_real_config_loads_and_has_archive_policy() -> None:
         "faostat",
         "ec_surveys",
         "dbnomics",
+        "imf_weo_manual",  # WEO October 2026
     ]  # T23, T52, T55/T56, T54, T57, T58
 
 

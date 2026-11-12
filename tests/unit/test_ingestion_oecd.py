@@ -16,7 +16,13 @@ import httpx
 import pytest
 
 from macro_monitor.ingestion import registry
-from macro_monitor.ingestion.base import GroupConfig, ParseError, RawObject, SeriesMapEntry
+from macro_monitor.ingestion.base import (
+    GroupConfig,
+    ParseError,
+    RawObject,
+    SeriesFilter,
+    SeriesMapEntry,
+)
 from macro_monitor.ingestion.connectors.sdmx import (
     MANUAL_FALLBACK_HINT,
     ConnectorConfigError,
@@ -32,7 +38,8 @@ from macro_monitor.storage.manifest import LatestState
 pytestmark = pytest.mark.unit
 
 ROOT = Path(__file__).resolve().parents[2]
-KEI_CSV = ROOT / "tests" / "fixtures" / "raw" / "oecd" / "kei_synthetic.csv"
+KEI_V1_CSV = ROOT / "tests" / "fixtures" / "raw" / "oecd" / "kei_synthetic.csv"
+KEI_CSV = ROOT / "tests" / "fixtures" / "raw" / "oecd" / "kei_real_layout.csv"
 KEI = "OECD.SDD.STES,DSD_KEI@DF_KEI"
 GROUPS = ("oecd_kei", "oecd_prices", "oecd_cli")
 
@@ -112,7 +119,7 @@ def _ok(request: httpx.Request) -> httpx.Response:
 
 def test_source_is_disabled_and_budget_and_timeout_are_set() -> None:
     source = _source()
-    assert source["enabled"] is False  # until probed
+    assert source["enabled"] is True  # enabled on the user go-ahead
     assert source["rate_limit"]["budget_per_hour"] == 8
     assert [g["id"] for g in source["groups"]] == list(GROUPS)
     assert {g["job_timeout_min"] for g in source["groups"]} == {300}
@@ -190,16 +197,62 @@ def _kei_raw() -> RawObject:
 
 def test_parser_registered() -> None:
     assert registry.resolve("sdmxcsv_v1@1") is not None
+    assert registry.resolve("sdmxcsv_v2@2") is not None
+
+
+def test_frozen_v1_golden_parse_of_original_synthetic_fixture() -> None:
+    usa_y = "USA.M.IRLT.PA._Z.N._Z._Z._Z"
+    jpn_y = "JPN.M.IRLT.PA._Z.N._Z._Z._Z"
+    usa_c = "USA.M.CCICP.IX._Z._Z._Z._Z._Z"
+    jpn_c = "JPN.M.CCICP.IX._Z._Z._Z._Z._Z"
+    flt = SeriesFilter(
+        series_refs=frozenset({usa_y, jpn_y, usa_c, jpn_c}),
+        discover=False,
+        missing_markers=frozenset({"M"}),
+    )
+    raw = RawObject(
+        body=KEI_V1_CSV.read_bytes(),
+        source_id="oecd",
+        group_id="oecd_kei",
+        fetched_at=datetime(2026, 11, 5, tzinfo=UTC),
+        parser_id="sdmxcsv_v1@1",
+    )
+    out = OecdConnector().parse(raw, flt)
+    meta = {m.series_ref: m for m in out.metas}
+    assert sorted(meta) == sorted([usa_y, jpn_y, usa_c, jpn_c])
+    assert meta[usa_y].seasonal_adjustment == "NSA"
+    assert meta[usa_y].published_decimals == 2
+    assert meta[usa_c].unit_code == "IDX"
+    assert meta[usa_c].base_period == "2015"
+    assert meta[usa_c].seasonal_adjustment == "NA"
+    got = [
+        (o.series_ref, str(o.ref_period_start), o.value, o.value_status, o.source_flags)
+        for o in out.observations
+    ]
+    assert got == [
+        (jpn_c, "2025-01-01", Decimal("100.4"), "OBS", "A"),
+        (jpn_y, "2025-01-01", Decimal("1.21"), "OBS", "A"),
+        (jpn_y, "2025-02-01", Decimal("1.35"), "PROV", "P"),
+        (usa_c, "2025-01-01", Decimal("99.1"), "OBS", "A"),
+        (usa_c, "2025-02-01", Decimal("98.7"), "OBS", "A"),
+        (usa_y, "2025-01-01", Decimal("4.62"), "OBS", "A"),
+        (usa_y, "2025-02-01", Decimal("4.50"), "OBS", "A"),
+        (usa_y, "2025-03-01", None, "MISS", "M"),
+    ]
+    assert [(r.series_ref, r.period, r.reason.split(":")[0]) for r in out.rejected] == [
+        (jpn_c, "2025-13", "PARSE-02"),
+        (jpn_c, "2025-02", "PARSE-03"),
+    ]
 
 
 def test_golden_parse_of_trimmed_kei_fixture() -> None:
     g = _group("oecd_kei")
     flt = series_filter_for(g.series, KEI, g.missing_markers)
     out = OecdConnector().parse(_kei_raw(), flt)
-    usa_y = "USA.M.IRLT.PA._Z.N._Z._Z._Z"
-    jpn_y = "JPN.M.IRLT.PA._Z.N._Z._Z._Z"
-    usa_c = "USA.M.CCICP.IX._Z._Z._Z._Z._Z"
-    jpn_c = "JPN.M.CCICP.IX._Z._Z._Z._Z._Z"
+    usa_y = "USA.M.IRLT.PA._Z._Z._Z"
+    jpn_y = "JPN.M.IRLT.PA._Z._Z._Z"
+    usa_c = "USA.M.CCICP.PB._Z.Y._Z"
+    jpn_c = "JPN.M.CCICP.PB._Z.Y._Z"
     assert [m.series_ref for m in out.metas] == sorted(
         [usa_y, jpn_y, usa_c, jpn_c]
     )  # DEU/Q dropped
@@ -209,11 +262,11 @@ def test_golden_parse_of_trimmed_kei_fixture() -> None:
         "M",
         "PCT",
     )
-    assert meta[usa_y].seasonal_adjustment == "NSA"
+    assert meta[usa_y].seasonal_adjustment == "NA"
     assert meta[usa_y].published_decimals == 2
-    assert meta[usa_c].unit_code == "IDX"
+    assert meta[usa_c].unit_code == "BALANCE"
     assert meta[usa_c].base_period == "2015"
-    assert meta[usa_c].seasonal_adjustment == "NA"
+    assert meta[usa_c].seasonal_adjustment == "SCA"
     got = [
         (o.series_ref, str(o.ref_period_start), o.value, o.value_status, o.source_flags)
         for o in out.observations
@@ -453,3 +506,34 @@ def test_probe_at_most_one_request_for_the_kei_dataflow() -> None:  # pragma: no
     assert result.outcome in {"new", "blocked", "rate_limited"}
     if result.body is not None:
         assert result.body.split(b"\n", 1)[0].count(b",") >= 5
+
+
+def test_real_layout_cli_and_prices_keys_and_adjustment_codes() -> None:
+    cli = (
+        "DATAFLOW,REF_AREA,FREQ,MEASURE,UNIT_MEASURE,ACTIVITY,ADJUSTMENT,TRANSFORMATION,"
+        "TIME_HORIZ,METHODOLOGY,TIME_PERIOD,OBS_VALUE,OBS_STATUS,UNIT_MULT,DECIMALS,BASE_PER\n"
+        "OECD.SDD.STES:DSD_STES@DF_CLI(4.1),USA,M,LI,IX,_Z,AA,IX,_Z,H,2026-08,100.8,A,0,2,\n"
+    )
+    prices = (
+        "DATAFLOW,REF_AREA,FREQ,METHODOLOGY,MEASURE,UNIT_MEASURE,EXPENDITURE,ADJUSTMENT,"
+        "TRANSFORMATION,TIME_PERIOD,OBS_VALUE,OBS_STATUS,UNIT_MULT,BASE_PER,DURABILITY,DECIMALS\n"
+        "OECD.SDD.TPS:DSD_PRICES@DF_PRICES_ALL(1.0),BRA,M,N,CPI,IX,_T,N,_Z,2026-08,177.1,A,,2015,,2\n"
+    )
+    for group, body, ref, adj in (
+        ("oecd_cli", cli, "USA.M.LI.IX._Z.AA.IX._Z.H", "NA"),
+        ("oecd_prices", prices, "BRA.M.N.CPI.IX._T.N._Z", "NSA"),
+    ):
+        g = _group(group)
+        flt = series_filter_for(g.series, g.series[0].dataset, g.missing_markers)
+        raw = RawObject(
+            body=body.encode(),
+            source_id="oecd",
+            group_id=group,
+            fetched_at=datetime(2026, 11, 9, tzinfo=UTC),
+            parser_id="sdmxcsv_v2@2",
+        )
+        out = OecdConnector().parse(raw, flt)
+        assert [m.series_ref for m in out.metas] == [ref]
+        assert out.metas[0].seasonal_adjustment == adj
+        assert out.metas[0].unit_code == "IDX"
+        assert out.rejected == ()

@@ -22,3 +22,4 @@ pinksheet_manual: {frequency: M, typical_lag_days: 5, tolerance_days: 10}   # fa
 faostat_sofi: {frequency: A, typical_lag_days: 300, tolerance_days: 120}   # PLACEHOLDER lag
 ec_bcs_monthly: {frequency: M, typical_lag_days: 2, tolerance_days: 7}   # [UNVERIFIED] lag
 dbnomics_ameco_gap: {frequency: A, typical_lag_days: 150, tolerance_days: 90}   # PLACEHOLDER lag; AMECO updated in spring and autumn
+imf_weo_files: {release_months: [4, 10], tolerance_days: 45}   # [UNVERIFIED release months]; manual named-edition group (spec section 5)

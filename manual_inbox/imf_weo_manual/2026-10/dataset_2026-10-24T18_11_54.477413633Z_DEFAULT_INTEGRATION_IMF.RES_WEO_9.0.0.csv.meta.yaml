@@ -1,0 +1,6 @@
+source_url: https://data.imf.org/datasets/WEO
+downloaded_on: 2026-10-24
+downloaded_by: Oleksandr Dziuba
+edition_label: WEO-2026-10
+edition_date: 2026-10-13   # PUBLICATION_DATE column of the file (2026-10-13T02:00:00Z) for every row
+licence_note: "Source: International Monetary Fund, World Economic Outlook (IMF data portal export, dataset IMF.RES:WEO 9.0.0)"

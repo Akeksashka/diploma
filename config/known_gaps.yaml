@@ -70,6 +70,11 @@ known_gaps:
   entity: ZAF
   reason: IMF WEO output gap not published for this country (docs/research/data-sources-g20-eu-cross-country.md
     F6)
+- indicator: M06
+  entity: ARG
+  reason: 'OECD DF_PRICES_ALL has no CPI index series for Argentina, only rate-of-change series (PC/PA);
+    probe 2026-11-10: key ARG.M.N.CPI.IX._T.N._Z returns HTTP 404. A rate-only M06 route or another source (e.g. INDEC)
+    needs a separate decision.'
 - indicator: M07
   entity: ARG
   reason: No core-inflation source found for non-EU country other than Turkiye (docs/research/data-sources-g20-eu-cross-country.md

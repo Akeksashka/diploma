@@ -3,9 +3,10 @@
 // D6: every number drawn or printed is a stored column (or the display-only rebase of one); no statistic is computed here.
 import {entityChoices, groupChoices, isoDate, nameOf, periodsOf, selectedEntities, transformChoices, yearsOf} from "./explorer.js";
 import {
-  ALERTS_HEADING, ALERT_NOT_DRAWN, DRAFT_CHART_MARKS, DRAFT_CHART_SHOWS, DRAFT_CHOOSE_COUNTRIES_HINT, HASH_FALLBACK_NOTE, HASH_NO_ROWS_NOTE, DRAFT_FACET_STATEMENT, DRAFT_FREE_Y_LABEL, DRAFT_NEXT_SERIES, DRAFT_REBASE_MARKS, DRAFT_REGIONS,
+  ALERTS_HEADING, ALERT_NOT_DRAWN, DRAFT_BAND_TITLES, DRAFT_CHART_MARKS, DRAFT_CHART_SHOWS, DRAFT_CHOOSE_COUNTRIES_HINT, HASH_FALLBACK_NOTE, HASH_NO_ROWS_NOTE, DRAFT_FACET_STATEMENT, DRAFT_FREE_Y_LABEL, DRAFT_NEXT_SERIES, DRAFT_REBASE_MARKS, DRAFT_REGIONS,
   DRAFT_SELECT_GROUP, DRAFT_SUBREGION_CONSEQUENCE, DRAFT_TITLE_UNIT, DRAFT_Y_MODE, NO_SERIES, NO_SERIES_FILE, REBASE_NOTE, REBASE_TOGGLE_LABEL, SELECTION_LABEL
 } from "./copy.js";
+import {barChart, barsAvailable, modeFor} from "./bar-chart.js";
 import {chartFigure, seriesFigureLabel, viewAsTable} from "./figure.js";
 import {installTipDismiss, pointReader} from "./point-reader.js";
 import {aboutSeriesTable} from "./series-meta.js";
@@ -167,8 +168,10 @@ const BASE_PLOT = {style: {fontSize: "13px", background: "transparent"}};
 
 // One line chart for up to 5 series; above that, one chart per country: a single faceted plot (shared y-axis) or one plot per
 // country (free y-axis, each its own scale). `free` only matters above 5 series. Returns null when there is nothing to draw.
-export function chart(Plot, model, {html = null, free = false, highlight = null} = {}) {
+// `mode: "bars"` (L20) draws the stored period values of a model with exactly one series as bars; any other model draws lines.
+export function chart(Plot, model, {html = null, free = false, highlight = null, mode = "lines"} = {}) {
   if (model.plotted.length === 0) return null;
+  if (mode === "bars" && model.series.length === 1) return barChart(Plot, model, {highlight});
   const ink = token("--mm-text");
   const bg = token("--mm-bg");
   const muted = token("--mm-text-muted");
@@ -239,8 +242,10 @@ export function figureLabel(model) {
 // The chart figure and the "Read a value" control after it (outside the figure). Pointer: Plot's tip. Keyboard: the reader's output
 // has the same words (tip.js); while focus is in the reader the chart is redrawn with a static highlight; Escape hides the pointer
 // tip until the next pointer move (WCAG 1.4.13). Without a DOM (unit tests with the htl stand-in) only the figure is built.
-function figureAndReader(html, Plot, model, c, label, free) {
-  const figure = chartFigure(html, {id: "explorer-figure", label, chart: c});
+// `ids` lets a second host (the home time-series card, L18) use its own element ids; the defaults are PG-SERIES's.
+// `mode` ("lines" | "bars", L20) is the chart type the redraw on a reader highlight keeps.
+export function figureAndReader(html, Plot, model, c, label, free, ids = {figure: "explorer-figure", reader: "explorer-reader"}, mode = "lines") {
+  const figure = chartFigure(html, {id: ids.figure, label, chart: c});
   if (typeof figure?.replaceChildren !== "function") return {figure, reader: ""};
   const entries = model.series.map((s) => {
     const live = s.lines.filter((p) => p.value !== null);
@@ -249,10 +254,10 @@ function figureAndReader(html, Plot, model, c, label, free) {
   const st = {active: false, sel: null};
   const redraw = () => {
     const hl = st.active && st.sel ? {entity: st.sel.entry.id, ms: st.sel.entry.points[st.sel.index].ms} : null;
-    figure.replaceChildren(chart(Plot, model, {html, free, highlight: hl}));
+    figure.replaceChildren(chart(Plot, model, {html, free, highlight: hl, mode}));
   };
   const reader = pointReader(html, {
-    id: "explorer-reader",
+    id: ids.reader,
     entries,
     onChange: (sel) => {
       st.sel = sel;
@@ -267,19 +272,24 @@ function figureAndReader(html, Plot, model, c, label, free) {
   return {figure, reader: reader.el};
 }
 
-// opts: {free: boolean (free y-axis checkbox), href: string | null (the data file of the indicator)}
-export function explorerBlock(html, Plot, model, error, {free = false, href = null} = {}) {
-  const c = chart(Plot, model, {html, free});
+// opts: {free: boolean (free y-axis checkbox), href: string | null (the data file of the indicator), selected: number of countries checked,
+// toggle: the Lines / Bars radio group (L20; shown only when exactly one series is selected), mode: its value}
+export function explorerBlock(html, Plot, model, error, {free = false, href = null, selected = null, toggle = null, mode = "lines"} = {}) {
+  const shownMode = modeFor(selected, mode);
+  const showToggle = toggle !== null && barsAvailable(selected);
+  const c = chart(Plot, model, {html, free, mode: shownMode});
   const title = `${model.indicatorName}: ${model.transformLabel}${model.rebase && model.baseDate ? `, rebased to 100 at ${model.baseDate}` : ""}${DRAFT_TITLE_UNIT(model.titleUnit)}`;
   const m = {...model, title};
-  const {figure, reader} = c ? figureAndReader(html, Plot, model, c, figureLabel(m), free) : {figure: "", reader: ""};
+  const {figure, reader} = c ? figureAndReader(html, Plot, model, c, figureLabel(m), free, undefined, shownMode) : {figure: "", reader: ""};
   return html`<div class="mm-explorer">
 ${error ? errorBlock(html, {region: DRAFT_REGIONS.series, kind: "missing", id: "explorer-error", consequence: error === NO_SERIES_FILE ? `${NO_SERIES_FILE} ${DRAFT_SUBREGION_CONSEQUENCE}` : DRAFT_SUBREGION_CONSEQUENCE}) : ""}
+<h2 class="mm-visually-hidden">${DRAFT_BAND_TITLES.overTime}</h2>
 <h3 id="explorer-title">${model.indicatorName}: ${model.transformLabel}${model.rebase && model.baseDate ? html`, rebased to 100 at ${model.baseDate}` : ""}${DRAFT_TITLE_UNIT(model.titleUnit)}</h3>
 ${model.rebase ? html`<p class="mm-note" id="rebase-note">${REBASE_NOTE}</p>` : ""}
 ${model.notShown.length ? html`<ul id="not-shown">${model.notShown.map((n) => html`<li data-entity="${n.entity}">${n.name}: not shown, ${n.reason}.</li>`)}</ul>` : ""}
 ${c ? html`<p class="mm-figure-note" id="chart-explain">${DRAFT_CHART_SHOWS} ${DRAFT_CHART_MARKS}${model.rebase ? ` ${DRAFT_REBASE_MARKS}` : ""}</p>
 ${model.facets ? html`<p class="mm-figure-note" id="y-mode" data-free="${free}">${DRAFT_FACET_STATEMENT} ${DRAFT_Y_MODE(free)}</p>` : ""}
+${showToggle ? toggle : ""}
 ${figure}
 ${reader}
 ${viewAsTable(html, {id: "explorer-view-table", title, rows: tableRowsOf(m), href, n: null, valueUnit: uniformUnit(m), lazy: true})}` : (error ? "" : emptyBlock(html, {id: "no-series", text: NO_SERIES, next: DRAFT_NEXT_SERIES}))}

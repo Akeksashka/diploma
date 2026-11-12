@@ -306,18 +306,13 @@ def test_site_builds_scorecard_and_explorer_without_off_origin_urls(tmp_path: Pa
     assert (dist / "explorer.html").is_file()
     for d in ("labour", "prices", "agri", "global", "fin"):
         assert (dist / "domain" / f"{d}.html").is_file()
-        assert (dist / "peers" / f"{d}.html").is_file()
-    peers_html = (dist / "peers" / "labour.html").read_text(encoding="utf-8")
-    assert "registerFile" in peers_html
-    assert "scorecard/labour" in peers_html
-    assert "meta/groups" in peers_html
-    assert "Compare countries" in (dist / "domain" / "labour.html").read_text(encoding="utf-8")
+        assert not (dist / "peers" / f"{d}.html").exists()  # peers pages removed in the redesign
     labour_html = (dist / "domain" / "labour.html").read_text(encoding="utf-8")
     assert "registerFile" in labour_html
     assert "scorecard/labour" in labour_html
     index_html = (dist / "index.html").read_text(encoding="utf-8")
     assert "Percentiles are relative position in the covered panel" in index_html
-    assert "domain-list" in index_html  # the list itself is rendered in the browser
+    assert "mm-home-list" in index_html  # the list itself is rendered in the browser
     assert list((dist / "_file" / "data" / "series").glob("M09.*.parquet"))
     assert list((dist / "_file" / "data" / "series").glob("P01.*.parquet"))
     explorer_html = (dist / "explorer.html").read_text(encoding="utf-8")
@@ -340,16 +335,7 @@ def test_site_builds_scorecard_and_explorer_without_off_origin_urls(tmp_path: Pa
     assert "Vintages are recorded from this system's first fetch" in built_js
     assert "History before the first fetch is revised data, not real time." in built_js
     assert "earliest stored version" in built_js
-    status_html = (dist / "status.html").read_text(encoding="utf-8")  # V5
-    assert "data/status.json" in status_html  # FileAttachment called in the page
-    assert list((dist / "_file" / "data").glob("status.*.json"))
-    status_js = "".join(
-        p.read_text(encoding="utf-8")
-        for pattern in ("status*.js", "copy*.js")
-        for p in (dist / "_import" / "lib").glob(pattern)
-    )
-    assert "not yet measurable" in status_js
-    assert "not part of the export" in status_js
+    assert not (dist / "status.html").exists()  # PG-STATUS withdrawn (ADR-030, redesign spec)
     forbidden = [" ".join(w) for w in (("first", "release"), ("first", "stored", "release"))]
     for p in [*dist.rglob("*"), *(f for f in SITE.rglob("*") if f.is_file())]:
         if (
@@ -369,8 +355,8 @@ def test_site_builds_scorecard_and_explorer_without_off_origin_urls(tmp_path: Pa
     measure = _run(node, ["scripts/measure-landing.mjs", str(dist)], export, tmp_path)
     assert measure.returncode == 0, measure.stdout[-2000:] + measure.stderr  # <= 1.5 MB gzip -9
     # the landing page and a domain page (scorecard JSON + meta) are each within the limit
-    pages = ("domain/labour.html", "domain/agri.html", "peers/labour.html", "peers/fin.html")
-    for page in (*pages, "explorer.html", "revisions.html", "status.html"):
+    pages = ("domain/labour.html", "domain/agri.html")
+    for page in (*pages, "explorer.html", "revisions.html"):
         m = _run(node, ["scripts/measure-landing.mjs", str(dist), page], export, tmp_path)
         assert m.returncode == 0, m.stdout[-2000:] + m.stderr
     imports = _run(node, ["scripts/check-npm-imports.mjs"], export, tmp_path)

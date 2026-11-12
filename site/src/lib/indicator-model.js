@@ -20,6 +20,11 @@ export function firstDomainId(indicator) {
   return id;
 }
 
+// Export spec section 4: every published indicator has at least one domain; an entry without one is a build error (AC-RD-01).
+export function indicatorsWithoutDomain(indicators) {
+  return indicators.filter((e) => !Array.isArray(e?.domain_ids) || e.domain_ids.length === 0).map((e) => e?.indicator_id);
+}
+
 // Transform label (spec 4.3): from `transform_options[]` when the matching entry carries a label (an object with `label` or
 // `name`); otherwise the stored transform_id itself. No name is invented.
 export function transformLabel(indicator, transformId) {

@@ -1,0 +1,1213 @@
+# Series map of group imf_weo_files (IMF WEO October 2026 data-portal CSV, parser weo_v1). Key = parser series_ref: SERIES_CODE <ISO3>.<INDICATOR>.A.
+# Seed set: the 42 panel countries (aggregates EA, EU27, WLD have no WEO row under those codes). A02 only for the 25 countries with a published gap (research F6; the other 17 are known_gaps).
+# Not mapped (decision needed): LUR, PCPIPCH, BCA_NGDPD, GGXONLB_NGDP (secondary A03/A04 variables: one headline per indicator and entity, ADR-009), A01 (PPPPC), A25 (NGDP_D index).
+# Years after LATEST_ACTUAL_ANNUAL_DATA are loaded as PROJ (weo_v1); vintage_label = WEO-<YYYY>-<MM>.
+series:
+  - dataset: IMF.RES:WEO
+    key: "AUS.NGAP_NPGDP.A"
+    entity: AUS
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); AUS"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "AUT.NGAP_NPGDP.A"
+    entity: AUT
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); AUT"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "BEL.NGAP_NPGDP.A"
+    entity: BEL
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); BEL"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "CAN.NGAP_NPGDP.A"
+    entity: CAN
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); CAN"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "CYP.NGAP_NPGDP.A"
+    entity: CYP
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); CYP"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "DEU.NGAP_NPGDP.A"
+    entity: DEU
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); DEU"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "DNK.NGAP_NPGDP.A"
+    entity: DNK
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); DNK"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "ESP.NGAP_NPGDP.A"
+    entity: ESP
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); ESP"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "EST.NGAP_NPGDP.A"
+    entity: EST
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); EST"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "FIN.NGAP_NPGDP.A"
+    entity: FIN
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); FIN"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "FRA.NGAP_NPGDP.A"
+    entity: FRA
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); FRA"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "GBR.NGAP_NPGDP.A"
+    entity: GBR
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); GBR"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "GRC.NGAP_NPGDP.A"
+    entity: GRC
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); GRC"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "IRL.NGAP_NPGDP.A"
+    entity: IRL
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); IRL"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "ITA.NGAP_NPGDP.A"
+    entity: ITA
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); ITA"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "JPN.NGAP_NPGDP.A"
+    entity: JPN
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); JPN"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "KOR.NGAP_NPGDP.A"
+    entity: KOR
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); KOR"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "LUX.NGAP_NPGDP.A"
+    entity: LUX
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); LUX"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "MLT.NGAP_NPGDP.A"
+    entity: MLT
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); MLT"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "NLD.NGAP_NPGDP.A"
+    entity: NLD
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); NLD"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "PRT.NGAP_NPGDP.A"
+    entity: PRT
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); PRT"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "SVK.NGAP_NPGDP.A"
+    entity: SVK
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); SVK"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "SVN.NGAP_NPGDP.A"
+    entity: SVN
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); SVN"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "SWE.NGAP_NPGDP.A"
+    entity: SWE
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); SWE"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "USA.NGAP_NPGDP.A"
+    entity: USA
+    indicator: A02
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO output gap, percent of potential GDP (IMF estimate, headline A02; data-sources F6); USA"
+    expect: {frequency: A, unit: PCT_POT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "ARG.NGDP_RPCH.A"
+    entity: ARG
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); ARG"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "AUS.NGDP_RPCH.A"
+    entity: AUS
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); AUS"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "AUT.NGDP_RPCH.A"
+    entity: AUT
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); AUT"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "BEL.NGDP_RPCH.A"
+    entity: BEL
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); BEL"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "BGR.NGDP_RPCH.A"
+    entity: BGR
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); BGR"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "BRA.NGDP_RPCH.A"
+    entity: BRA
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); BRA"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "CAN.NGDP_RPCH.A"
+    entity: CAN
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); CAN"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "CHN.NGDP_RPCH.A"
+    entity: CHN
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); CHN"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "CYP.NGDP_RPCH.A"
+    entity: CYP
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); CYP"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "CZE.NGDP_RPCH.A"
+    entity: CZE
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); CZE"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "DEU.NGDP_RPCH.A"
+    entity: DEU
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); DEU"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "DNK.NGDP_RPCH.A"
+    entity: DNK
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); DNK"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "ESP.NGDP_RPCH.A"
+    entity: ESP
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); ESP"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "EST.NGDP_RPCH.A"
+    entity: EST
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); EST"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "FIN.NGDP_RPCH.A"
+    entity: FIN
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); FIN"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "FRA.NGDP_RPCH.A"
+    entity: FRA
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); FRA"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "GBR.NGDP_RPCH.A"
+    entity: GBR
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); GBR"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "GRC.NGDP_RPCH.A"
+    entity: GRC
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); GRC"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "HRV.NGDP_RPCH.A"
+    entity: HRV
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); HRV"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "HUN.NGDP_RPCH.A"
+    entity: HUN
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); HUN"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "IDN.NGDP_RPCH.A"
+    entity: IDN
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); IDN"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "IND.NGDP_RPCH.A"
+    entity: IND
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); IND"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "IRL.NGDP_RPCH.A"
+    entity: IRL
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); IRL"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "ITA.NGDP_RPCH.A"
+    entity: ITA
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); ITA"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "JPN.NGDP_RPCH.A"
+    entity: JPN
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); JPN"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "KOR.NGDP_RPCH.A"
+    entity: KOR
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); KOR"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "LTU.NGDP_RPCH.A"
+    entity: LTU
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); LTU"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "LUX.NGDP_RPCH.A"
+    entity: LUX
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); LUX"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "LVA.NGDP_RPCH.A"
+    entity: LVA
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); LVA"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "MEX.NGDP_RPCH.A"
+    entity: MEX
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); MEX"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "MLT.NGDP_RPCH.A"
+    entity: MLT
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); MLT"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "NLD.NGDP_RPCH.A"
+    entity: NLD
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); NLD"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "POL.NGDP_RPCH.A"
+    entity: POL
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); POL"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "PRT.NGDP_RPCH.A"
+    entity: PRT
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); PRT"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "ROU.NGDP_RPCH.A"
+    entity: ROU
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); ROU"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "SAU.NGDP_RPCH.A"
+    entity: SAU
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); SAU"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "SVK.NGDP_RPCH.A"
+    entity: SVK
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); SVK"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "SVN.NGDP_RPCH.A"
+    entity: SVN
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); SVN"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "SWE.NGDP_RPCH.A"
+    entity: SWE
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); SWE"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "TUR.NGDP_RPCH.A"
+    entity: TUR
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); TUR"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "USA.NGDP_RPCH.A"
+    entity: USA
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); USA"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "ZAF.NGDP_RPCH.A"
+    entity: ZAF
+    indicator: A03
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO real GDP growth, percent change (WEO NGDP_RPCH; projection years are PROJ, A03); ZAF"
+    expect: {frequency: A, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "ARG.GGXCNL_NGDP.A"
+    entity: ARG
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); ARG"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "AUS.GGXCNL_NGDP.A"
+    entity: AUS
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); AUS"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "AUT.GGXCNL_NGDP.A"
+    entity: AUT
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); AUT"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "BEL.GGXCNL_NGDP.A"
+    entity: BEL
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); BEL"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "BGR.GGXCNL_NGDP.A"
+    entity: BGR
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); BGR"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "BRA.GGXCNL_NGDP.A"
+    entity: BRA
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); BRA"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "CAN.GGXCNL_NGDP.A"
+    entity: CAN
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); CAN"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "CHN.GGXCNL_NGDP.A"
+    entity: CHN
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); CHN"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "CYP.GGXCNL_NGDP.A"
+    entity: CYP
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); CYP"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "CZE.GGXCNL_NGDP.A"
+    entity: CZE
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); CZE"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "DEU.GGXCNL_NGDP.A"
+    entity: DEU
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); DEU"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "DNK.GGXCNL_NGDP.A"
+    entity: DNK
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); DNK"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "ESP.GGXCNL_NGDP.A"
+    entity: ESP
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); ESP"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "EST.GGXCNL_NGDP.A"
+    entity: EST
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); EST"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "FIN.GGXCNL_NGDP.A"
+    entity: FIN
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); FIN"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "FRA.GGXCNL_NGDP.A"
+    entity: FRA
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); FRA"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "GBR.GGXCNL_NGDP.A"
+    entity: GBR
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); GBR"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "GRC.GGXCNL_NGDP.A"
+    entity: GRC
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); GRC"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "HRV.GGXCNL_NGDP.A"
+    entity: HRV
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); HRV"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "HUN.GGXCNL_NGDP.A"
+    entity: HUN
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); HUN"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "IDN.GGXCNL_NGDP.A"
+    entity: IDN
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); IDN"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "IND.GGXCNL_NGDP.A"
+    entity: IND
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); IND"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "IRL.GGXCNL_NGDP.A"
+    entity: IRL
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); IRL"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "ITA.GGXCNL_NGDP.A"
+    entity: ITA
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); ITA"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "JPN.GGXCNL_NGDP.A"
+    entity: JPN
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); JPN"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "KOR.GGXCNL_NGDP.A"
+    entity: KOR
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); KOR"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "LTU.GGXCNL_NGDP.A"
+    entity: LTU
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); LTU"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "LUX.GGXCNL_NGDP.A"
+    entity: LUX
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); LUX"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "LVA.GGXCNL_NGDP.A"
+    entity: LVA
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); LVA"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "MEX.GGXCNL_NGDP.A"
+    entity: MEX
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); MEX"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "MLT.GGXCNL_NGDP.A"
+    entity: MLT
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); MLT"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "NLD.GGXCNL_NGDP.A"
+    entity: NLD
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); NLD"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "POL.GGXCNL_NGDP.A"
+    entity: POL
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); POL"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "PRT.GGXCNL_NGDP.A"
+    entity: PRT
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); PRT"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "ROU.GGXCNL_NGDP.A"
+    entity: ROU
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); ROU"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "SAU.GGXCNL_NGDP.A"
+    entity: SAU
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); SAU"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "SVK.GGXCNL_NGDP.A"
+    entity: SVK
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); SVK"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "SVN.GGXCNL_NGDP.A"
+    entity: SVN
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); SVN"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "SWE.GGXCNL_NGDP.A"
+    entity: SWE
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); SWE"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "TUR.GGXCNL_NGDP.A"
+    entity: TUR
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); TUR"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "USA.GGXCNL_NGDP.A"
+    entity: USA
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); USA"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "ZAF.GGXCNL_NGDP.A"
+    entity: ZAF
+    indicator: A04
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government net lending/borrowing, percent of GDP (WEO GGXCNL_NGDP; data-sources A03-A05); ZAF"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "ARG.GGXWDG_NGDP.A"
+    entity: ARG
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); ARG"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "AUS.GGXWDG_NGDP.A"
+    entity: AUS
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); AUS"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "AUT.GGXWDG_NGDP.A"
+    entity: AUT
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); AUT"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "BEL.GGXWDG_NGDP.A"
+    entity: BEL
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); BEL"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "BGR.GGXWDG_NGDP.A"
+    entity: BGR
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); BGR"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "BRA.GGXWDG_NGDP.A"
+    entity: BRA
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); BRA"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "CAN.GGXWDG_NGDP.A"
+    entity: CAN
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); CAN"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "CHN.GGXWDG_NGDP.A"
+    entity: CHN
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); CHN"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "CYP.GGXWDG_NGDP.A"
+    entity: CYP
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); CYP"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "CZE.GGXWDG_NGDP.A"
+    entity: CZE
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); CZE"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "DEU.GGXWDG_NGDP.A"
+    entity: DEU
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); DEU"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "DNK.GGXWDG_NGDP.A"
+    entity: DNK
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); DNK"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "ESP.GGXWDG_NGDP.A"
+    entity: ESP
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); ESP"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "EST.GGXWDG_NGDP.A"
+    entity: EST
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); EST"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "FIN.GGXWDG_NGDP.A"
+    entity: FIN
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); FIN"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "FRA.GGXWDG_NGDP.A"
+    entity: FRA
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); FRA"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "GBR.GGXWDG_NGDP.A"
+    entity: GBR
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); GBR"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "GRC.GGXWDG_NGDP.A"
+    entity: GRC
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); GRC"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "HRV.GGXWDG_NGDP.A"
+    entity: HRV
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); HRV"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "HUN.GGXWDG_NGDP.A"
+    entity: HUN
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); HUN"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "IDN.GGXWDG_NGDP.A"
+    entity: IDN
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); IDN"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "IND.GGXWDG_NGDP.A"
+    entity: IND
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); IND"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "IRL.GGXWDG_NGDP.A"
+    entity: IRL
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); IRL"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "ITA.GGXWDG_NGDP.A"
+    entity: ITA
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); ITA"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "JPN.GGXWDG_NGDP.A"
+    entity: JPN
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); JPN"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "KOR.GGXWDG_NGDP.A"
+    entity: KOR
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); KOR"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "LTU.GGXWDG_NGDP.A"
+    entity: LTU
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); LTU"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "LUX.GGXWDG_NGDP.A"
+    entity: LUX
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); LUX"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "LVA.GGXWDG_NGDP.A"
+    entity: LVA
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); LVA"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "MEX.GGXWDG_NGDP.A"
+    entity: MEX
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); MEX"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "MLT.GGXWDG_NGDP.A"
+    entity: MLT
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); MLT"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "NLD.GGXWDG_NGDP.A"
+    entity: NLD
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); NLD"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "POL.GGXWDG_NGDP.A"
+    entity: POL
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); POL"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "PRT.GGXWDG_NGDP.A"
+    entity: PRT
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); PRT"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "ROU.GGXWDG_NGDP.A"
+    entity: ROU
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); ROU"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "SAU.GGXWDG_NGDP.A"
+    entity: SAU
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); SAU"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "SVK.GGXWDG_NGDP.A"
+    entity: SVK
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); SVK"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "SVN.GGXWDG_NGDP.A"
+    entity: SVN
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); SVN"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "SWE.GGXWDG_NGDP.A"
+    entity: SWE
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); SWE"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "TUR.GGXWDG_NGDP.A"
+    entity: TUR
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); TUR"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "USA.GGXWDG_NGDP.A"
+    entity: USA
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); USA"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}
+  - dataset: IMF.RES:WEO
+    key: "ZAF.GGXWDG_NGDP.A"
+    entity: ZAF
+    indicator: A05
+    role: headline
+    valid_from: 1991-01-01
+    rationale: "IMF WEO general government gross debt, percent of GDP (WEO GGXWDG_NGDP; data-sources Q08/A05); ZAF"
+    expect: {frequency: A, unit: PCT_GDP, seasonal_adjustment: NA, price_basis: NA}

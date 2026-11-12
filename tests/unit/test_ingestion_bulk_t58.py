@@ -35,6 +35,7 @@ from macro_monitor.ingestion.connectors.sdmx import (
     load_series_entries,
     series_filter_for,
 )
+from macro_monitor.ingestion.discovery import DiscoveryFailed
 from macro_monitor.ingestion.http import HttpClient, HttpSettings, RetryConfig
 from macro_monitor.ingestion.parsers.xlsx_rows import is_xlsx
 from macro_monitor.registry.config import load_sources
@@ -48,7 +49,9 @@ PINK = FIX / "pinksheet" / "monthly_synthetic.xlsx"
 FFPI = FIX / "fao" / "ffpi_synthetic.csv"
 CSDB = FIX / "fao" / "csdb_synthetic.xlsx"
 SOFI = FIX / "fao" / "foodsecurity_synthetic.zip"
-BCS = FIX / "ecsurvey" / "bcs_synthetic.zip"
+BCS = FIX / "ecsurvey" / "bcs_synthetic.zip"  # v1 layout, kept for the frozen v1 parser
+BCS2 = FIX / "ecsurvey" / "main_indicators_sa_nace2_real_layout.zip"
+LANDING_EXCERPT = FIX / "ecsurvey" / "landing_excerpt.html"
 AMECO = FIX / "dbnomics" / "ameco_avgdgp_synthetic.json"
 NEW_SOURCES = ("worldbank_pinksheet", "fao", "faostat", "ec_surveys", "dbnomics")
 NEW_GROUPS = (
@@ -110,6 +113,16 @@ def _raw(body: bytes, group: str) -> RawObject:
     return RawObject(body=body, source_id="x", group_id=group, fetched_at=None, parser_id=pid)  # type: ignore[arg-type]
 
 
+def _raw_v1(body: bytes, group: str) -> RawObject:
+    return RawObject(
+        body=body,
+        source_id="x",
+        group_id=group,
+        fetched_at=None,  # type: ignore[arg-type]
+        parser_id="fao_csdb_v1@1",
+    )
+
+
 def _parse(path: Path, group_id: str, dataset: str | None = None) -> Any:
     g = _group(group_id)
     flt = series_filter_for(g.series, dataset or g.series[0].dataset, g.missing_markers)
@@ -152,16 +165,17 @@ def test_parsers_registered_and_group_parser_specs_resolve() -> None:
         "fao_csdb_v1@1",
         "fao_stat_v1@1",
         "ecsurvey_v1@1",
+        "ecsurvey_v2@2",
         "ameco_v1@1",
     ):
         assert registry.resolve(pid) is not None
     ids = {g: _parser_id(_parser_spec(g)) for g in NEW_GROUPS}
     assert ids == {
         "pinksheet_monthly": "pinksheet_v1@1",
-        "fao_ffpi": "fao_ffpi_v1@1",
-        "fao_csdb": "fao_csdb_v1@1",
+        "fao_ffpi": "fao_ffpi_v2@2",
+        "fao_csdb": "fao_csdb_v2@2",
         "faostat_sofi": "fao_stat_v1@1",
-        "ec_bcs_monthly": "ecsurvey_v1@1",
+        "ec_bcs_monthly": "ecsurvey_v2@2",
         "dbnomics_ameco_gap": "ameco_v1@1",
     }
 
@@ -169,7 +183,10 @@ def test_parsers_registered_and_group_parser_specs_resolve() -> None:
 def test_new_sources_disabled_explicit_policies_no_group_switch() -> None:
     for sid in NEW_SOURCES:
         s = _source(sid)
-        assert s["enabled"] is False, sid
+        # the source switch is an explicit boolean (operators flip it); the pinksheet stays parked
+        assert isinstance(s["enabled"], bool), sid
+        if sid == "worldbank_pinksheet":
+            assert s["enabled"] is False
         assert s["archive"] in ("public", "hash_only")
         assert s["publish_site"] in (
             "public",
@@ -366,8 +383,10 @@ def test_ffpi_bad_date_and_non_numeric_rows_are_rejected_not_loaded() -> None:
 # ------------------------------------------------------------------ FAO cereal brief
 
 
-def test_csdb_golden_parse_marketing_year_and_status() -> None:
-    out = _parse(CSDB, "fao_csdb")
+def test_csdb_v1_golden_parse_marketing_year_and_status() -> None:
+    g = _group("fao_csdb_manual")
+    flt = series_filter_for(g.series, g.series[0].dataset, g.missing_markers)
+    out = BulkConnector("fao").parse(_raw_v1(CSDB.read_bytes(), "fao_csdb_manual"), flt)
     name = "World cereals stocks-to-use ratio (%)"
     assert [m.series_ref for m in out.metas] == [name]
     meta = out.metas[0]
@@ -414,26 +433,108 @@ def test_csdb_layout_drift_fails_closed(mutate: Any, match: str) -> None:
         ws.append(["World cereals stocks-to-use ratio (%)", 30.9, 31.4])
         mutate(ws)
 
-    g = _group("fao_csdb")
+    g = _group("fao_csdb_manual")
     flt = series_filter_for(g.series, "csdb", g.missing_markers)
     with pytest.raises(ParseError, match=f"PARSE-01.*{match}"):
-        BulkConnector("fao").parse(_raw(_xlsx(build), "fao_csdb"), flt)
+        BulkConnector("fao").parse(_raw_v1(_xlsx(build), "fao_csdb_manual"), flt)
 
 
 def test_csdb_wrong_sheet_fails_closed() -> None:
-    g = _group("fao_csdb")
+    g = _group("fao_csdb_manual")
     flt = series_filter_for(g.series, "csdb", g.missing_markers)
     body = _xlsx(lambda wb: setattr(wb.active, "title", "Sheet1"))
     with pytest.raises(ParseError, match="worksheet 'CSDB'"):
-        BulkConnector("fao").parse(_raw(body, "fao_csdb"), flt)
+        BulkConnector("fao").parse(_raw_v1(body, "fao_csdb_manual"), flt)
 
 
 def test_fao_source_needs_a_recorded_parser_id() -> None:
-    g = _group("fao_csdb")
+    g = _group("fao_csdb_manual")
     flt = series_filter_for(g.series, "csdb", g.missing_markers)
-    bare = RawObject(body=CSDB.read_bytes(), source_id="fao", group_id="fao_csdb", fetched_at=None)  # type: ignore[arg-type]
+    bare = RawObject(
+        body=CSDB.read_bytes(), source_id="fao", group_id="fao_csdb_manual", fetched_at=None
+    )  # type: ignore[arg-type]
     with pytest.raises(ParseError, match="no parser id"):
         BulkConnector("fao").parse(bare, flt)
+
+
+def _v2_book(blocks: list[list[list[Any]]]) -> bytes:
+    def build(wb: Workbook) -> None:
+        ws = wb.active
+        assert ws is not None
+        ws.title = "CSDB data"
+        for block in blocks:
+            for row in block:
+                ws.append(row)
+            ws.append([])
+
+    return _xlsx(build)
+
+
+_RATIO = "World stock-to-use ratio"
+
+
+def _v2_parse(body: bytes) -> Any:
+    g = _group("fao_csdb_manual")
+    flt = series_filter_for(g.series, g.series[0].dataset, g.missing_markers)
+    return BulkConnector("fao").parse(_raw(body, "fao_csdb_manual"), flt)
+
+
+def test_manual_group_uses_v2_and_reads_real_layout() -> None:
+    assert _parser_id(_parser_spec("fao_csdb_manual")) == "fao_csdb_v2@2"
+    out = _v2_parse(
+        _v2_book(
+            [
+                [
+                    ["WORLD CEREAL MARKET"],
+                    [None, "World production", _RATIO],
+                    [None, "( . . million tonnes . . )", "( . percent . )"],
+                    ["2023/24", 2300, 30.9],
+                    ["2024/25", 2350, 31.4],
+                    ["2025/26", 2400, 31.7],
+                ]
+            ]
+        )
+    )
+    name = "World cereals stocks-to-use ratio (%)"
+    assert [m.series_ref for m in out.metas] == [name]
+    assert out.metas[0].unit_code == "PCT"
+    assert [(o.value_status, o.source_flags) for o in out.observations] == [
+        ("OBS", "status-inferred"),
+        ("EST", "status-inferred"),
+        ("PROJ", "status-inferred"),
+    ]
+
+
+def test_v2_million_tonnes_unit_mult_and_unknown_unit_fails() -> None:
+    def book(unit: str) -> bytes:
+        return _v2_book(
+            [
+                [
+                    ["WORLD CEREAL MARKET"],
+                    [None, _RATIO],
+                    [None, unit],
+                    ["2024/25", 5],
+                ]
+            ]
+        )
+
+    # the ratio column is given a tonnage unit on purpose to exercise the mapping
+    meta = _v2_parse(book("million tonnes")).metas[0]
+    assert (meta.unit_code, meta.unit_mult) == ("MT", 6)
+    with pytest.raises(ParseError, match=r"PARSE-01.*unknown unit"):
+        _v2_parse(book("US$ per tonne"))
+
+
+def test_v2_block_without_season_rows_does_not_scan_into_next_block() -> None:
+    body = _v2_book(
+        [
+            [["WORLD CEREAL MARKET"], [None, _RATIO], [None, "( . percent . )"]],
+            [["OTHER BLOCK"], [None, _RATIO], [None, "( . percent . )"], ["2024/25", 31.4]],
+        ]
+    )
+    # the data belongs to OTHER BLOCK, not to the empty WORLD CEREAL MARKET block
+    with pytest.raises(ParseError, match=r"PARSE-01.*no CSDB block"):
+        _v2_parse(body)
 
 
 # ------------------------------------------------------------------ FAOSTAT SOFI
@@ -501,17 +602,29 @@ def test_faostat_layout_drift_fails_closed(members: dict[str, bytes]) -> None:
 
 
 def test_ecsurvey_golden_parse() -> None:
-    out = _parse(BCS, "ec_bcs_monthly")
+    out = _parse(BCS2, "ec_bcs_monthly")
     refs = [m.series_ref for m in out.metas]
     assert refs == sorted(e.key for e in _group("ec_bcs_monthly").series)
-    assert all(m.unit_code == "BALANCE" and m.seasonal_adjustment == "SA" for m in out.metas)
-    assert "INDUSTRY.XX" not in refs  # unmapped country column ignored
-    assert _values(out, "CONSUMER.DE") == [
-        ("2025-08-01", Decimal("-16.0"), "OBS"),
-        ("2025-09-01", Decimal("-15.5"), "OBS"),
-        ("2025-10-01", Decimal("-15.0"), "OBS"),
+    assert len(refs) == 8
+    assert all(m.seasonal_adjustment == "SA" for m in out.metas)
+    assert all(
+        m.unit_code == ("IDX" if m.series_ref.endswith(".ESI") else "BALANCE") for m in out.metas
+    )
+    assert "DE.INDU" not in refs  # unmapped columns ignored
+    assert "DE.BUIL" not in refs
+    assert _values(out, "DE.ESI") == [
+        ("1985-01-01", Decimal("97.8"), "OBS"),
+        ("1985-02-01", Decimal("97.3"), "OBS"),
+        ("1985-03-01", Decimal("96.8"), "OBS"),
+        ("2026-08-01", Decimal("94.2"), "OBS"),
+        ("2026-09-01", Decimal("94.8"), "OBS"),
+        ("2026-10-01", Decimal("94.1"), "OBS"),
     ]
-    assert out.observations[0].ref_period_end == date(2025, 8, 31)
+    fr = _values(out, "FR.ESI")
+    assert fr[0] == ("1985-01-01", None, "MISS")  # the text marker NA
+    assert fr[1] == ("1985-02-01", Decimal("82"), "OBS")
+    assert _values(out, "EA.CONS")[-1] == ("2026-10-01", Decimal("-17.9"), "OBS")
+    assert out.observations[0].ref_period_end == date(1985, 1, 31)
     assert out.rejected == ()
 
 
@@ -519,12 +632,10 @@ def _bcs(mutate: Any) -> bytes:
     def build(wb: Workbook) -> None:
         ws = wb.active
         assert ws is not None
-        ws.title = "INDUSTRY"
-        ws.append(["DATE", "DE", "FR"])
-        ws.append([datetime(2025, 8, 31), -1.0, 2.0])
-        cons = wb.create_sheet("CONSUMER")
-        cons.append(["DATE", "DE"])
-        cons.append(["2025-08", -3.0])
+        ws.title = "MONTHLY"
+        ws.append([None, "DE.ESI", "DE.CONS", None, "FR.ESI"])
+        ws.append([datetime(2025, 8, 31), -1.0, -3.0, None, 2.0])
+        ws.append([datetime(2025, 9, 30), "NA", -2.0, None, 3.0])
         mutate(wb)
 
     return _zip({"main_indicators_nace2.xlsx": _xlsx(build)})
@@ -532,13 +643,22 @@ def _bcs(mutate: Any) -> bytes:
 
 def test_ecsurvey_layout_drift_fails_closed() -> None:
     g = _group("ec_bcs_monthly")
-    flt = series_filter_for(g.series, "main_indicators_nace2", g.missing_markers)
+    refs = ("DE.ESI", "DE.CONS", "FR.ESI")
+    series = [e for e in g.series if e.key in refs]
+    flt = series_filter_for(series, "main_indicators_sa_nace2", g.missing_markers)
     ok = BulkConnector("ec_surveys").parse(_raw(_bcs(lambda wb: None), "ec_bcs_monthly"), flt)
-    assert _values(ok, "CONSUMER.DE") == [("2025-08-01", Decimal("-3.0"), "OBS")]
+    assert _values(ok, "DE.CONS") == [
+        ("2025-08-01", Decimal("-3.0"), "OBS"),
+        ("2025-09-01", Decimal("-2.0"), "OBS"),
+    ]
+    assert _values(ok, "DE.ESI")[1] == ("2025-09-01", None, "MISS")
     cases: list[tuple[Any, str]] = [
-        (lambda wb: wb.remove(wb["CONSUMER"]), "worksheet 'CONSUMER'"),
-        (lambda wb: wb["INDUSTRY"].__setitem__("A1", "Month"), "A1 is not 'DATE'"),
-        (lambda wb: wb["INDUSTRY"].__setitem__("C1", "DE"), "not unique"),
+        (lambda wb: setattr(wb["MONTHLY"], "title", "OTHER"), "MONTHLY"),
+        (lambda wb: wb["MONTHLY"].__setitem__("A1", "DATE"), "A1 is not empty"),
+        (lambda wb: wb["MONTHLY"].__setitem__("C1", "DE.ESI"), "not unique"),
+        (lambda wb: wb["MONTHLY"].__setitem__("C1", "Germany"), "not <COUNTRY>.<SURVEY>"),
+        (lambda wb: wb["MONTHLY"].__setitem__("C1", "DE.XXXX"), "requested series 'DE.CONS'"),
+        (lambda wb: wb["MONTHLY"].__setitem__("A3", datetime(2025, 8, 31)), "occurs twice"),
     ]
     for mutate, match in cases:
         with pytest.raises(ParseError, match=f"PARSE-01.*{match}"):
@@ -550,6 +670,19 @@ def test_ecsurvey_layout_drift_fails_closed() -> None:
     ):
         with pytest.raises(ParseError, match="PARSE-01"):
             BulkConnector("ec_surveys").parse(_raw(body, "ec_bcs_monthly"), flt)
+
+
+def test_ecsurvey_non_numeric_text_is_rejected_not_loaded() -> None:
+    g = _group("ec_bcs_monthly")
+    series = [e for e in g.series if e.key in ("DE.ESI", "DE.CONS", "FR.ESI")]
+    flt = series_filter_for(series, "main_indicators_sa_nace2", g.missing_markers)
+
+    def bad(wb: Workbook) -> None:
+        wb["MONTHLY"]["B2"] = "n/a"
+
+    out = BulkConnector("ec_surveys").parse(_raw(_bcs(bad), "ec_bcs_monthly"), flt)
+    assert [r.reason for r in out.rejected] == ["PARSE-03: non-numeric"]
+    assert [v for v in _values(out, "DE.ESI") if v[0] == "2025-08-01"] == []
 
 
 _ZIP_FAILURES = [
@@ -580,7 +713,7 @@ def test_faostat_zip_read_errors_are_parse_01(exc: Exception, monkeypatch: Any) 
 def test_ecsurvey_zip_read_errors_are_parse_01(exc: Exception, monkeypatch: Any) -> None:
     # ZipFile.read is monkeypatched for the same reason as in the FAOSTAT test above.
     g = _group("ec_bcs_monthly")
-    flt = series_filter_for(g.series, "main_indicators_nace2", g.missing_markers)
+    flt = series_filter_for(g.series, "main_indicators_sa_nace2", g.missing_markers)
     body = _zip({"main_indicators_nace2.xlsx": b"x"})
 
     def boom(self: Any, *a: Any, **k: Any) -> Any:
@@ -697,10 +830,10 @@ def test_plan_urls_one_full_request_per_dataset() -> None:
     expect = {
         # T64: discovered groups plan the landing page; the file URL is resolved in fetch
         "pinksheet_monthly": "https://www.worldbank.org/en/research/commodity-markets",
-        "fao_ffpi": "https://www.fao.org/media/docs/worldfoodsituationlibraries/default-document-library/food_price_indices_data.csv",
+        "fao_ffpi": "https://www.fao.org/media/docs/worldfoodsituationlibraries/wfs-library/food_price_indices_data.csv",
         "fao_csdb": "https://www.fao.org/worldfoodsituation/csdb/en/",
         "faostat_sofi": "https://bulks-faostat.fao.org/production/Food_Security_Data_E_All_Data_(Normalized).zip",
-        "ec_bcs_monthly": "https://ec.europa.eu/economy_finance/db_indicators/surveys/documents/main_indicators_nace2.zip",
+        "ec_bcs_monthly": "https://economy-finance.ec.europa.eu/economic-forecast-and-surveys/business-and-consumer-surveys/download-business-and-consumer-survey-data/time-series_en",
     }
     for group_id, url in expect.items():
         g = _group(group_id)
@@ -742,6 +875,7 @@ def test_xlsx_gets_no_member_date_but_last_modified_wins() -> None:
     assert file_date("Tue, 03 Nov 2026 10:00:00 GMT", body) == "2026-11-03"
     assert file_date(None, SOFI.read_bytes()) == "2026-10-15"  # a plain zip still has one
     assert file_date(None, BCS.read_bytes()) == "2026-10-15"
+    assert file_date(None, BCS2.read_bytes()) == "2026-10-26"  # zip member date of the real layout
 
 
 def test_fetch_plain_workbook_marker_and_conditional_request() -> None:
@@ -783,3 +917,101 @@ def test_fetch_dbnomics_body_untouched_and_conditional() -> None:
     assert result.update_marker is None
     assert seen[0].headers.get("If-None-Match") == '"e"'
     assert dict(seen[0].url.params) == {"observations": "1", "format": "json", "limit": "1000"}
+
+
+def test_csdb_v2_parses_real_layout_blocks() -> None:
+    def build(wb: Workbook) -> None:
+        ws = wb.active
+        ws.title = "CSDB data"
+        ws.append(["WORLD CEREAL MARKET"])
+        ws.append([None, "Production 1/", "World stock-to-use ratio"])
+        ws.append([None, "( . . million tonnes . . )", "( . percent . )"])
+        ws.append(["2023/24", 2863.3, 31.5])
+        ws.append(["2024/25", 2869.4, 30.1])
+        ws.append(["2025/26", 3050.0, 23.7])
+        ws.append([None])
+        ws.append(["WORLD WHEAT MARKET"])
+        ws.append([None, "Production 1/"])
+
+    g = _group("fao_csdb")
+    flt = series_filter_for(g.series, "csdb", g.missing_markers)
+    out = BulkConnector("fao").parse(_raw(_xlsx(build), "fao_csdb"), flt)
+    name = "World cereals stocks-to-use ratio (%)"
+    assert [m.series_ref for m in out.metas] == [name]
+    assert out.metas[0].unit_code == "PCT"
+    assert [(str(o.ref_period_start), o.value_status) for o in out.observations] == [
+        ("2023-07-01", "OBS"),
+        ("2024-07-01", "EST"),
+        ("2025-07-01", "PROJ"),
+    ]
+    assert out.rejected == ()
+
+
+def test_ffpi_v2_parses_the_real_layout_with_padding_and_blank_row() -> None:
+    real = FIX / "fao" / "ffpi_real_layout.csv"
+    out = _parse(real, "fao_ffpi")
+    assert [m.series_ref for m in out.metas] == ["Food Price Index"]
+    vals = _values(out, "Food Price Index")
+    assert vals[0] == ("1990-01-01", Decimal("64.4"), "OBS")
+    assert vals[-1] == ("2026-10-01", Decimal("133.9"), "OBS")
+    assert len(vals) == 18
+    assert not out.rejected
+    # v1 cannot read the padded header and the blank row (why v2 exists)
+    g = _group("fao_ffpi")
+    flt = series_filter_for(g.series, "food_price_indices_data", g.missing_markers)
+    v1 = RawObject(
+        body=real.read_bytes(),
+        source_id="x",
+        group_id="fao_ffpi",
+        fetched_at=None,  # type: ignore[arg-type]
+        parser_id="fao_ffpi_v1@1",
+    )
+    with pytest.raises(ParseError, match="PARSE-01"):
+        BulkConnector("fao").parse(v1, flt)
+
+
+def test_ecsurvey_discovery_against_landing_excerpt_and_zip_format_check() -> None:
+    g = _group("ec_bcs_monthly")
+    conn = BulkConnector(g.source_id)
+    (spec,) = conn.plan(g, FakeState(), "refresh")
+    assert spec.resolve is not None
+    assert spec.resolve.expect_format == "zip"
+    good = (
+        "https://ec.europa.eu/economy_finance/db_indicators/surveys/documents/series/"
+        "nace2_ecfin_2610/main_indicators_sa_nace2.zip"
+    )
+    zip_body = BCS2.read_bytes()
+    seen: list[str] = []
+
+    def handler(body: bytes) -> Any:
+        def h(req: httpx.Request) -> httpx.Response:
+            seen.append(str(req.url))
+            if req.url.host == "economy-finance.ec.europa.eu":
+                return httpx.Response(
+                    200, content=LANDING_EXCERPT.read_bytes(), headers={"Content-Type": "text/html"}
+                )
+            return httpx.Response(200, content=body)
+
+        return h
+
+    settings = HttpSettings(
+        base_url="https://ec.europa.eu/",
+        retries=RetryConfig(max=0),
+        extra_hosts=frozenset(spec.resolve.allowed_hosts),
+    )
+
+    def client(body: bytes) -> HttpClient:
+        return HttpClient(
+            settings,
+            repo_url="https://example.invalid/repo",
+            clock=Clock(),
+            transport=httpx.MockTransport(handler(body)),
+        )
+
+    res = conn.fetch(spec, client(zip_body), FakeState())
+    assert res.resolved_url == good  # the second (industry_total) anchor does not match
+    assert seen == [spec.url, good]
+    assert res.body == zip_body
+    assert res.update_marker == "2026-10-26"
+    with pytest.raises(DiscoveryFailed, match="not a zip archive"):
+        conn.fetch(spec, client(b"<html>not a zip</html>"), FakeState())

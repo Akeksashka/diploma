@@ -3,6 +3,8 @@ status: approved   # approved by the user on 2026-11-04 (stated in session: "app
 ---
 # ADR-026: Percentile orientation stated in the legend, per-indicator direction labels, bin edges, domain-page sorting, and no overall freshness field (amends ADR-025)
 
+Amended by ADR-034 and docs/specs/dashboard-layout-amendment.md (2026-11-10).
+
 Date: 2026-11-04. Amends ADR-025 decisions 2 (percentile encoding), 4 (heatmaps), 11 (microcopy) and AC-UX-3, AC-UX-10, AC-UX-13; answers ADR-025 open questions Q3 and Q6. Changes no other ADR and no export spec. User decision stated in session on 2026-11-04 ("move as recommended"): keep the neutral single-hue percentile scale and the standing caveat, and state in the legend that a higher percentile means a more favourable position by each indicator's stated direction. Labels: [REPO] read in this repository this session; [UNVERIFIED] not checked. No external source is used; every claim below is from repository files read on 2026-11-04.
 
 ## Context

@@ -82,7 +82,7 @@ const cells = (page, sel) => page.$$eval(sel, (rows) => rows.map((r) => [...r.qu
 
 describe("AC-DASH-1: V1-V5 render without error and without an off-origin request", () => {
   const PAGES = [
-    ["V1 landing", "/", "#country-list li"],
+    ["V1 landing", "/", "#band-overview"],
     ["PG-DOMAINS", "/domains", "#domain-list li"],
     ["V1 labour", "/domain/labour", "#domain-heatmap tbody tr"],
     ["V1 prices", "/domain/prices", "#domain-heatmap tbody tr"],
@@ -107,7 +107,7 @@ describe("AC-DASH-1: V1-V5 render without error and without an off-origin reques
   }
 
   test("landing first load, measured in the browser, is within 1.5 MB gzip -9", async (t) => {
-    await withPage(t, "/", "#country-list li", async ({page, log, origin}) => {
+    await withPage(t, "/", "#band-overview", async ({page, log, origin}) => {
       await page.waitForLoadState("networkidle");
       const urls = [...new Set(log.requests.filter((u) => u.startsWith(origin)))].map((u) => new URL(u).pathname);
       const bodies = urls.map((p) => site.served.findLast((s) => s.path === p)).filter(Boolean);
@@ -201,23 +201,23 @@ describe("V2 peer-group filter and sort, on PG-INDICATOR", () => {
       const nameOf = new Map(entities.map((e) => [e.entity_id, e.name]));
       const g = groups.find((x) => x.members.length < allRows && x.members.some((m) => all.includes(nameOf.get(m.entity_id))));
       assert.ok(g, "the fixture has a group that is a proper subset of the panel");
-      await page.check(`#indicator-group input[value="${g.group_id}"]`);
+      await page.selectOption("#filter-group", g.group_id);
       await page.waitForFunction((n) => document.querySelectorAll("#indicator-table tr[data-entity]").length !== n, allRows, {timeout: TIMEOUT});
       const shown = (await peerCells(page)).map((r) => r[0]);
       const members = new Set(g.members.map((m) => nameOf.get(m.entity_id)));
       assert.ok(shown.length > 0 && shown.length < all.length);
       for (const n of shown) assert.ok(members.has(n), `${n} is not a member of ${g.group_id}`);
-      await page.check('#indicator-group input[value="all"]');
+      await page.selectOption("#filter-group", "");
       await page.waitForFunction((n) => document.querySelectorAll("#indicator-table tr[data-entity]").length === n, allRows, {timeout: TIMEOUT});
 
-      await page.selectOption("#indicator-sort", "name");
+      await page.selectOption("#rank-sort", "name");
       await page.waitForFunction(() => {
         const n = [...document.querySelectorAll('#indicator-table tbody[data-group="with-value"] tr[data-entity]')].map((r) => r.querySelector("th").innerText.trim());
         return n.length > 1 && n.every((x, i) => i === 0 || n[i - 1].localeCompare(x) <= 0);
       }, null, {timeout: TIMEOUT});
       const byName = (await peerCells(page)).map((r) => r[0]);
       assert.deepEqual(byName, [...byName].sort((a, b) => a.localeCompare(b)));
-      await page.selectOption("#indicator-sort", "value");
+      await page.selectOption("#rank-sort", "value");
       const num = (x) => parseFloat(String(x).replace(/,/g, ""));
       await page.waitForFunction(() => {
         const v = [...document.querySelectorAll('#indicator-table tbody[data-group="with-value"] tr[data-entity]')].map((r) => parseFloat(r.querySelector("td").innerText.replace(/,/g, "")));
@@ -230,32 +230,30 @@ describe("V2 peer-group filter and sort, on PG-INDICATOR", () => {
   });
 });
 
-describe("T118 V2 controls on PG-INDICATOR: radio group, sort, URL-hash focus", () => {
-  test("the group is a fieldset with a legend and the labels; radios are at least 24 px; choosing a group only filters (AC-DASH-9)", async (t) => {
+describe("T118 V2 controls on PG-INDICATOR: group select, sort, URL-hash focus", () => {
+  test("the group is a labelled select in the filter bar (L23: no radio fieldset any more); choosing a group only filters (AC-DASH-9)", async (t) => {
     await withPage(t, "/indicator/M09", IND, async ({page, log}) => {
       const r = await page.evaluate(() => {
-        const fs = document.querySelector("fieldset#indicator-group");
-        const radios = [...fs.querySelectorAll("input[type=radio]")];
+        const sel = document.querySelector("select#filter-group");
         return {
-          legend: fs.querySelector("legend")?.textContent.trim(),
-          labels: radios.map((x) => x.closest("label").innerText.trim()),
-          checked: radios.filter((x) => x.checked).map((x) => x.value),
-          small: radios.filter((x) => x.getBoundingClientRect().width < 24 || x.getBoundingClientRect().height < 24).length,
-          sort: document.querySelector("#indicator-sort") !== null,
-          noGroupSelect: document.querySelector("select#indicator-group") === null
+          label: sel?.labels[0]?.firstChild?.textContent.trim() ?? null,
+          labels: sel ? [...sel.options].map((o) => o.textContent.trim()) : [],
+          value: sel?.value,
+          sort: document.querySelector("#rank-sort") !== null,
+          noFieldset: document.querySelector("fieldset#indicator-group") === null,
+          height: sel ? sel.getBoundingClientRect().height : 0
         };
       });
-      assert.ok(r.legend && r.legend.length > 0);
+      assert.equal(r.label, "Group");
       assert.equal(r.labels[0], "All countries");
-      assert.deepEqual(r.checked, ["all"]);
-      assert.equal(r.small, 0, "every radio is at least 24 x 24 CSS px");
-      assert.ok(r.sort && r.noGroupSelect);
-      const known = new Set(["All countries", "G7", "Euro area", "EU members outside the euro area", "Advanced economies", "Emerging economies"]);
-      for (const l of r.labels) assert.ok(known.has(l), l);
+      assert.equal(r.value, "");
+      assert.ok(r.height >= 24, "the select is at least 24 CSS px high");
+      assert.ok(r.sort && r.noFieldset);
+      assert.equal(r.labels.length, dataJson("meta/groups.json").groups.length + 1, "All countries plus every stored group");
       const pctOf = async (name) => page.$$eval(IND, (rows, n) => rows.find((x) => x.querySelector("th")?.innerText.trim() === n)?.querySelector("td.mm-pct")?.innerText.trim() ?? null, name);
       const before = await pctOf("Germany");
       assert.ok(before);
-      await page.check('#indicator-group input[value="g7"]');
+      await page.selectOption("#filter-group", "g7");
       await page.waitForFunction(() => document.querySelectorAll("#indicator-table tr[data-entity]").length < 8, null, {timeout: TIMEOUT});
       assert.equal(await pctOf("Germany"), before, "the stored percentile is the same with and without the filter");
       clean(log);

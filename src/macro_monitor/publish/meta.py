@@ -29,6 +29,7 @@ from macro_monitor.publish.export import (
     sorted_by_id,
 )
 from macro_monitor.publish.manifest import RunInfo
+from macro_monitor.publish.published import PUBLISHED_INDICATOR_IDS_SQL
 from macro_monitor.registry.config import load_yaml_text
 from macro_monitor.registry.sync import MapEntry, SyncError, parse_series_map
 
@@ -239,7 +240,7 @@ def meta_producer(config: ConfigTree) -> Producer:
             "SELECT indicator_id, name, scope, priority, currency_basis, staleness_class, "
             "transform_id, alert_method, adverse_dir, good_dir, display_dir, rank_mode, "
             "max_ref_spread_days FROM ref.indicator "
-            "WHERE kind = 'indicator' AND NOT is_comparison ORDER BY indicator_id"
+            f"WHERE indicator_id IN ({PUBLISHED_INDICATOR_IDS_SQL}) ORDER BY indicator_id"
         )
         ids = {r[0] for r in inds}
         dom_of: dict[str, list[str]] = defaultdict(list)

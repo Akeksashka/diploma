@@ -1,0 +1,14 @@
+# Sidecar of main_indicators_sa_nace2_real_layout.zip: a TRIMMED re-pack of the real workbook.
+# Source: the member main_indicators_nace2.xlsx (MONTHLY sheet) of the live download below, captured
+# 2026-11-10. Kept: the MONTHLY header layout (A1 empty, COUNTRY.SURVEY headers for EU, EA, DE, FR x the
+# seven surveys, one blank separator column between country blocks), the first 3 and last 3 month rows
+# (1985-01..1985-03, 2026-08..2026-10) with the published values and the text "NA" marker (FR.INDU
+# 1985-01). Index and INFO sheets are stubs. Values are EC DG ECFIN survey data (free of charge,
+# no licence text on the page; attribution "Source: European Commission, DG ECFIN"). Not synthetic,
+# but not the original bytes (re-packed with openpyxl); the full-file hash below is the original ZIP.
+synthetic: false
+source_url: https://ec.europa.eu/economy_finance/db_indicators/surveys/documents/series/nace2_ecfin_2610/main_indicators_sa_nace2.zip
+fetched_on: 2026-11-10
+full_response_sha256: 68c90eba29cb5edc0cda4db4a2fe5858791d41aea5096d2330e30efc5c28abff
+sha256: 916f90c3cb14253f8d2a4830f25e3a7497ce0409e338a43f4594b9ee345b18f0
+parser_id: ecsurvey_v2@2

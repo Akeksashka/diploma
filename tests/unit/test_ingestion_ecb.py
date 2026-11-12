@@ -21,7 +21,7 @@ from macro_monitor.ingestion.connectors.ecb import (
 )
 from macro_monitor.ingestion.connectors.sdmx import ConnectorConfigError, series_filter_for
 from macro_monitor.ingestion.http import HttpClient, HttpSettings, RetryConfig
-from macro_monitor.registry.config import load_sources
+from macro_monitor.registry.config import load_sources, load_yaml
 from macro_monitor.storage.manifest import LatestState
 
 pytestmark = pytest.mark.unit
@@ -165,3 +165,44 @@ def test_persistent_503_ends_as_error() -> None:
     )
     assert result.outcome in ("error", "blocked")
     assert result.body is None
+
+
+def test_v2_real_layout_maps_pc_to_pct() -> None:
+    """Real 2026-11-09 captures: UNIT=PC (-> PCT), no ADJUSTMENT column (-> NA)."""
+    assert registry.resolve("ecb_csv_v2@2") is not None
+    g = _group()
+    for name, ref, area, first, last in (
+        ("de", "M.DE.L.L40.CI.0000.EUR.N.Z", "DE", Decimal("8.94"), Decimal("3.473")),
+        (
+            "u2",
+            "M.U2.L.L40.CI.0000.EUR.N.Z",
+            "U2",
+            Decimal("9.320464354821377"),
+            Decimal("3.9283751113081005"),
+        ),
+    ):
+        body = (FIXTURE.parent / f"irs_real_layout_{name}.csv").read_bytes()
+        flt = series_filter_for(g.series, "IRS", g.missing_markers)
+        out = EcbConnector().parse(replace(_raw(), body=body, parser_id="ecb_csv_v2@2"), flt)
+        assert out.rejected == ()
+        (meta,) = out.metas
+        assert (meta.series_ref, meta.entity_code, meta.frequency) == (ref, area, "M")
+        assert (meta.unit_code, meta.seasonal_adjustment) == ("PCT", "NA")
+        assert len(out.observations) == 5
+        assert out.observations[0].value == first
+        assert out.observations[-1].value == last
+        assert str(out.observations[-1].ref_period_start) == "2026-09-01"
+
+
+def test_v2_series_map_expectations_match_parsed_meta() -> None:
+    doc = load_yaml(MAP)
+    assert [e["expect"]["unit"] for e in doc["series"]] == ["PCT", "PCT"]
+    assert [e["expect"]["seasonal_adjustment"] for e in doc["series"]] == ["NA", "NA"]
+    source = next(
+        s
+        for s in load_sources(
+            ROOT / "config" / "sources.yaml", env_example=ROOT / ".env.example"
+        ).data["sources"]
+        if s["id"] == "ecb"
+    )
+    assert source["groups"][0]["parser"] == "macro_monitor.ingestion.parsers.ecb_csv_v2:parse"

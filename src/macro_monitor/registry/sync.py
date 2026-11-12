@@ -212,7 +212,7 @@ def map_issues(
     indicators: IndicatorsConfig,
     entity_ids: frozenset[str],
 ) -> list[ConfigIssue]:
-    """Rules 8, 12 (global scope only to WLD), AC-CFG-2 and the one-headline rule (T-DDL-4)."""
+    """Rules 8, 12 (global scope only to WLD; country scope must not map to WLD), AC-CFG-2 and the one-headline rule (T-DDL-4)."""
     out: list[ConfigIssue] = []
     by_id = {i.id: i for i in indicators.indicators}
     seen: set[tuple[str, str, str, str, str]] = set()
@@ -228,6 +228,10 @@ def map_issues(
             out.append(ConfigIssue("14", e.label(), f"unknown entity {e.entity!r}"))
         if ind.values["scope"] == "global" and e.entity != "WLD":
             out.append(ConfigIssue("12", e.label(), "a scope: global indicator maps only to WLD"))
+        if ind.values["scope"] == "country" and e.entity == "WLD":
+            out.append(
+                ConfigIssue("12", e.label(), "a scope: country indicator must not map to WLD")
+            )
         if e.role == "comparison" and not ind.values["is_comparison"]:
             out.append(
                 ConfigIssue("12", e.label(), "role comparison needs an is_comparison indicator")

@@ -24,11 +24,12 @@ export function alignmentTable(html, view) {
 
 // Order on the page (ADR-026 decision 3): notices, the standing caveat, the peer-set note, the description of the figure, the
 // heatmap, then the legend (orientation note first), the alignment table and the detail table in <details>.
-export function domainBlock(html, view) {
+// card: true (L24) puts the block inside a card under a band: the name becomes the card title (h3) because the band carries the h2.
+export function domainBlock(html, view, {card = false} = {}) {
   const model = heatmapModel(view);
   const root = html`<div class="mm-sc">
 ${glyphSprite(html)}
-<h2>${view.name}</h2>
+${card ? html`<h3>${view.name}</h3>` : html`<h2>${view.name}</h2>`}
 ${view.notices.map((n) => html`<p class="mm-notice">${n}</p>`)}
 <p class="mm-caveat" id="caveat">${view.caveat}</p>
 ${view.peerNote ? html`<p class="mm-peer-note" id="peer-set-note">${view.peerNote}</p>` : ""}

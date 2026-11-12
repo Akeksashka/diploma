@@ -6,7 +6,7 @@
   (indicator, entity) pair must not mix the two: the compositions are never spliced.
 - ``fetch``: shared ``HttpClient`` (503/429 retried with backoff by its ``retries`` policy; the
   ECB returned 503 then 200 on 2026-10-17, ADR-004). The body is returned untouched.
-- ``parse``: delegates to the frozen parser registry (``ecb_csv_v1@1``).
+- ``parse``: delegates to the frozen parser registry (``ecb_csv_v2@2``).
 
 [UNVERIFIED] URL shape ``service/data/{flow}/{key}?format=csvdata&startPeriod=1991-01`` and the
 FIXED/CHANGING key positions are not confirmed by a live capture.
@@ -35,7 +35,7 @@ from macro_monitor.models.types import FetchResult, RequestSpec
 from macro_monitor.registry.config import load_yaml
 
 SOURCE_ID = "ecb"
-PARSER_ID = "ecb_csv_v1@1"
+PARSER_ID = "ecb_csv_v2@2"
 START_PARAM = "startPeriod"
 AGGREGATE_AREAS = frozenset({"U2", "U3"})
 COMPOSITIONS = frozenset({"FIXED", "CHANGING"})

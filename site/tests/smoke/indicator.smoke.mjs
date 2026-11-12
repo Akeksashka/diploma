@@ -1,4 +1,6 @@
-// Redesign R10 browser smoke of PG-INDICATOR (AC-RD-20, 21, 22, 23, 25, 40, 42, 45, 54 indicator part, 62 indicator part).
+// Redesign R10 browser smoke of PG-INDICATOR (AC-RD-20, 21, 22, 23, 25, 40, 42, 45, 54 indicator part, 62 indicator part), retargeted at the
+// L23 arrangement (layout amendment 4.3): Group and the indicator switcher are in the filter bar (#filter-group, #filter-indicator + Go), the sort is
+// in the header of the C-RANK card (#rank-sort, ".mm-rank-table") and the Table band (#indicator-table) follows it.
 // Runs against a built site (npm run build). States and the sort/filter checks that need rows with and without values, estimates and
 // all the state kinds need the SYNTHETIC sparse fixture (tests/fixtures/sparse_export, entities SY01..SY41, SYA1..SYA3, indicators T01..T05);
 // on another export those tests skip and the generic ones still run. The download link needs a series file, so that test needs an
@@ -132,7 +134,7 @@ describe("R10 PG-INDICATOR", () => {
     }
   });
 
-  test("AC-RD-23: the filter note is verbatim, the percentile header is the stored label, the group control only filters", async (t) => {
+  test("AC-RD-23: the filter note is verbatim, the percentile header is the stored label, the group control (in the filter bar) only filters", async (t) => {
     const id = firstIndicator().indicator_id;
     await withPage(t, `/indicator/${id}`, async ({page}) => {
       assert.equal((await page.locator("#filter-note").innerText()).trim(), FILTER_NOTE);
@@ -141,41 +143,42 @@ describe("R10 PG-INDICATOR", () => {
       if (!group) return;
       const read = () => page.$$eval("#indicator-table tr[data-entity]", (rs) => rs.map((r) => [r.getAttribute("data-entity"), r.querySelector("td.mm-pct")?.textContent ?? r.querySelector("td.mm-reason")?.textContent ?? ""]));
       const before = new Map(await read());
-      await page.locator(`input[name="indicator-group"][value="${group.group_id}"]`).check();
+      await page.selectOption("#filter-group", group.group_id);
       const members = new Set(group.members.map((m) => m.entity_id));
       for (const [ent, pct] of await read()) {
         assert.ok(members.has(ent), `${ent} is in the group`);
         assert.equal(pct, before.get(ent), `${ent}: the percentile is the stored one, not recomputed within the group`);
       }
-      await page.locator('input[name="indicator-group"][value="all"]').check();
+      await page.selectOption("#filter-group", "");
       assert.equal(await page.locator("#indicator-table tr[data-entity]").count(), before.size);
     });
   });
 
-  test("decisions 3.5: the group radio writes #g (keeping #c) with replaceState, and a hashchange reads g and the focus", async (t) => {
+  test("decisions 3.5: the Group select writes #g (keeping #c) with replaceState, and a hashchange reads g and the focus", async (t) => {
     const id = firstIndicator().indicator_id;
     const group = groups.find((g) => g.members.length > 0 && g.members.length < entities.length);
     if (!group) return;
     await withPage(t, `/indicator/${id}`, async ({page}) => {
       const total = await page.locator("#indicator-table tr[data-entity]").count();
       const length = await page.evaluate(() => history.length);
-      await page.locator(`input[name="indicator-group"][value="${group.group_id}"]`).check();
+      await page.selectOption("#filter-group", group.group_id);
       assert.equal(await page.evaluate(() => location.hash), `#g=${group.group_id}`);
       assert.equal(await page.evaluate(() => history.length), length, "replaceState: no history entry");
       // #c is kept: choose a country in the reader, then the group again.
       const member = group.members[0].entity_id;
-      const options = await page.$$eval("#value-reader-country option", (os) => os.map((o) => o.value));
+      const options = await page.$$eval("#rank-reader-country option", (os) => os.map((o) => o.value));
       if (options.includes(member)) {
-        await page.selectOption("#value-reader-country", member);
+        await page.selectOption("#rank-reader-country", member);
         await page.waitForFunction((v) => location.hash.includes(`c=${v}`), member, {timeout: TIMEOUT});
-        assert.equal(await page.evaluate(() => location.hash), `#c=${member}&g=${group.group_id}`);
+        const hash = await page.evaluate(() => location.hash);
+        assert.ok(hash.includes(`c=${member}`) && hash.includes(`g=${group.group_id}`), `both keys are kept: ${hash}`);
       }
       // hashchange reads g: back to "all" via the address, the radio and the rows follow.
-      await page.evaluate(() => { location.hash = "#g=all"; });
+      await page.evaluate(() => { location.hash = "#g="; });
       await page.waitForFunction((n) => document.querySelectorAll("#indicator-table tr[data-entity]").length === n, total, {timeout: TIMEOUT});
-      assert.equal(await page.locator('input[name="indicator-group"][value="all"]').isChecked(), true);
+      assert.equal(await page.inputValue("#filter-group"), "");
       await page.evaluate((g) => { location.hash = `#g=${g}`; }, group.group_id);
-      await page.waitForFunction((g) => document.querySelector(`input[name="indicator-group"][value="${g}"]`)?.checked === true, group.group_id, {timeout: TIMEOUT});
+      await page.waitForFunction((g) => document.querySelector("#filter-group")?.value === g, group.group_id, {timeout: TIMEOUT});
       assert.ok((await page.locator("#indicator-table tr[data-entity]").count()) <= group.members.length);
     });
   });
@@ -195,9 +198,10 @@ describe("R10 PG-INDICATOR", () => {
       assert.deepEqual(await shownOrder(page), [...s.withValue].sort(asc).map((c) => c.entity_id), "default: Country A-Z");
       assert.equal(await page.getAttribute("#indicator-table thead th:first-child", "aria-sort"), "ascending");
       for (const [option, field, dir] of [["value", "value", "desc"], ["percentile", "percentile", "desc"], ["period", "ref_period_end", "desc"], ["name", "entity_id", "asc"]]) {
-        await page.selectOption("#indicator-sort", option);
+        await page.selectOption("#rank-sort", option);
         const want = field === "entity_id" ? [...s.withValue].sort(asc).map((c) => c.entity_id) : expected(field, dir);
         assert.deepEqual(await shownOrder(page), want, option);
+        assert.deepEqual(await page.$$eval('.mm-rank-table tbody[data-group="countries"] tr[data-has-value="true"]', (rows) => rows.map((r) => r.getAttribute("data-entity")).filter((e) => !e.startsWith("SYA"))), want.filter((e) => !e.startsWith("SYA")), `${option}: the C-RANK card orders the same`);
         const sorted = await page.$$eval("#indicator-table th[aria-sort]", (ths) => ths.filter((x) => x.getAttribute("aria-sort") !== "none").map((x) => x.getAttribute("aria-sort")));
         assert.deepEqual(sorted, [dir === "asc" ? "ascending" : "descending"], `${option}: exactly one active aria-sort`);
       }
@@ -217,22 +221,12 @@ describe("R10 PG-INDICATOR", () => {
           assert.equal(await tr.locator("td.mm-pct .mm-fig").innerText(), c.percentile.toFixed(2));
         }
       }
-      const fig = page.locator("#value-figure");
-      assert.equal(await fig.getAttribute("role"), "img");
-      assert.ok((await fig.getAttribute("aria-label")).includes(s.ind.name));
-      const bars = await fig.locator('g[aria-label="bar"]').first().locator("rect").count();
-      assert.equal(bars, s.withValue.length, "one bar per entity with a stored value");
-      const svgText = await fig.evaluate((el) => el.textContent);
-      assert.ok(svgText.includes(`${s.ind.name} (${s.ind.unit_label})`), "axis title: name and unit");
-      const bar = fig.locator('g[aria-label="bar"] rect').first();
-      await bar.scrollIntoViewIfNeeded();
-      const box = await bar.boundingBox();
-      await page.mouse.move(box.x + 2, box.y + box.height / 2);
-      await page.mouse.move(box.x + 30, box.y + box.height / 2);
-      await page.waitForFunction(() => (document.querySelector('#value-figure g[aria-label="tip"]')?.textContent ?? "").length > 0, null, {timeout: TIMEOUT});
-      const tip = await fig.locator('g[aria-label="tip"]').first().textContent();
-      assert.ok(tip.includes(s.ind.unit_label), `the hover tip carries the unit "${s.ind.unit_label}": ${tip}`);
-      assert.ok(s.withValue.some((c) => tip.includes(formatValue(c.value))), `the hover tip carries a stored value: ${tip}`);
+      // The value chart is the bar column of the C-RANK card (a span with the stored value, unit and period in its title); one per entity with a value.
+      const bars = page.locator(".mm-rank-table .mm-rank-bar-wrap");
+      assert.equal(await bars.count(), s.withValue.length, "one bar per entity with a stored value");
+      const title = await bars.first().getAttribute("title");
+      assert.ok(title.includes(s.ind.unit_label), `the bar carries the unit "${s.ind.unit_label}": ${title}`);
+      assert.ok(s.withValue.some((c) => title.includes(formatValue(c.value))), `the bar carries a stored value: ${title}`);
       clean(log);
     });
   });
@@ -240,11 +234,10 @@ describe("R10 PG-INDICATOR", () => {
   test("AC-RD-22: bar order follows the sort select", async (t) => {
     await withPage(t, "/indicator/T02", async ({page}) => {
       for (const option of ["value", "name"]) {
-        await page.selectOption("#indicator-sort", option);
+        await page.selectOption("#rank-sort", option);
         const order = await shownOrder(page);
-        const ys = await page.locator('#value-figure g[aria-label="bar"]').first().locator("rect").evaluateAll((rs) => rs.map((r) => Number(r.getAttribute("y"))));
-        assert.equal(ys.length, order.length);
-        assert.deepEqual(ys, [...ys].sort((a, b) => a - b), `${option}: bars are drawn top to bottom in table order`);
+        const bars = await page.$$eval('.mm-rank-table tbody[data-group="countries"] tr[data-has-value="true"]', (rows) => rows.filter((r) => r.querySelector(".mm-rank-bar-wrap")).map((r) => r.getAttribute("data-entity")));
+        assert.deepEqual(bars, order.filter((e) => bars.includes(e)), `${option}: bars are drawn in table order`);
       }
     }, {sparse: true});
   });
@@ -253,7 +246,7 @@ describe("R10 PG-INDICATOR", () => {
     await withPage(t, "/indicator/T02", async ({page}) => {
       const fig = page.locator("#indicator-dot-figure");
       assert.equal(await fig.getAttribute("role"), "img");
-      const shown = await page.locator('tr[data-has-value="true"] td.mm-pct[data-bin]:not([data-bin="none"])').count();
+      const shown = await page.locator('#indicator-table tr[data-has-value="true"] td.mm-pct[data-bin]:not([data-bin="none"])').count();
       assert.ok(shown > 0);
       assert.equal(await fig.locator("circle").count(), shown, "one dot per percentile shown in the table");
     }, {sparse: true});
@@ -268,7 +261,7 @@ describe("R10 PG-INDICATOR", () => {
       assert.equal(await mark.count(), 1);
       assert.ok((await mark.innerText()).includes("e"));
       assert.equal(await mark.locator(".mm-hollow").count(), 1);
-      assert.ok((await page.locator("#value-figure").evaluate((el) => el.textContent)).includes("e"));
+      assert.ok((await page.locator('.mm-rank-table tr[data-entity="SY01"] .mm-rank-bar-wrap').getAttribute("title")).includes(" e "), "an e in the bar title");
     }, {sparse: true});
   });
 
@@ -322,13 +315,13 @@ describe("R10 PG-INDICATOR", () => {
       const href = () => page.getAttribute("#open-series", "href");
       assert.equal(await href(), "../explorer#i=T02&c=SY01,SY02,SY03,SY04,SY05");
       for (const option of ["value", "percentile", "period"]) {
-        await page.selectOption("#indicator-sort", option);
+        await page.selectOption("#rank-sort", option);
         assert.equal(await href(), "../explorer#i=T02&c=SY01,SY02,SY03,SY04,SY05", `${option}: never chosen by value or percentile`);
       }
     }, {sparse: true});
     await withPage(t, "/indicator/T02#c=SY06", async ({page}) => {
       assert.equal(await page.getAttribute("#open-series", "href"), "../explorer#i=T02&c=SY06");
-      assert.equal(await page.locator('tr[data-entity="SY06"]').getAttribute("data-focus"), "true");
+      assert.equal(await page.locator('#indicator-table tr[data-entity="SY06"]').getAttribute("data-focus"), "true");
     }, {sparse: true});
   });
 
@@ -339,7 +332,7 @@ describe("R10 PG-INDICATOR", () => {
       const tr = page.locator(`#indicator-table tr[data-entity="${c.entity_id}"]`);
       assert.equal(await tr.locator("a[data-link=country]").getAttribute("href"), `../country/${c.entity_id}`);
       assert.equal(await tr.locator("a[data-link=series]").getAttribute("href"), `../explorer#i=${id}&c=${c.entity_id}`);
-      assert.equal(await page.locator(`details.mm-about[data-for="${id}"]`).count(), stored(id).withValue.length, "About this value per value row");
+      assert.equal(await page.locator(`details.mm-about[data-for="${id}"][id^="about-"]`).count(), stored(id).withValue.length, "About this value per value row");
       const d = page.locator(`#about-${id}-${c.entity_id}`);
       await d.locator("summary").click();
       assert.ok((await d.innerText()).includes(nameOf(c.entity_id)));
@@ -368,15 +361,15 @@ describe("R10 PG-INDICATOR", () => {
       const target = indicators.at(-1).indicator_id;
       const other = indicators.at(-2).indicator_id;
       const url = page.url();
-      await page.selectOption("#indicator-switcher", target);
+      await page.selectOption("#filter-indicator", target);
       await page.waitForTimeout(500);
       assert.equal(page.url(), url, "selecting an option does not navigate");
       await page.focus("#indicator-switcher-go");
       await Promise.all([page.waitForURL(`**/indicator/${target}`), page.keyboard.press("Enter")]);
       await page.waitForSelector(READY, {timeout: TIMEOUT});
       assert.equal(await page.locator("h1").getAttribute("data-indicator"), target);
-      await page.selectOption("#indicator-switcher", other);
-      await page.focus("#indicator-switcher");
+      await page.selectOption("#filter-indicator", other);
+      await page.focus("#filter-indicator");
       await Promise.all([page.waitForURL(`**/indicator/${other}`), page.keyboard.press("Enter")]);
       await page.waitForSelector(READY, {timeout: TIMEOUT});
       assert.equal(await page.locator("h1").getAttribute("data-indicator"), other);
@@ -414,70 +407,26 @@ describe("R10 PG-INDICATOR", () => {
   });
 });
 
-describe("R16 PG-INDICATOR point reader (AC-RD-30)", () => {
-  test("hover on a bar shows a minimal tip; the reader select is the country in focus and reads the same text", async (t) => {
+describe("R16 PG-INDICATOR point reader (AC-RD-30), on the C-RANK card", () => {
+  test("the reader select is the country in focus and reads value; period; the output element and the focus are kept", async (t) => {
     await withPage(t, "/indicator/T02", async ({page}) => {
-      assert.equal(await page.locator("#value-figure [tabindex]").count(), 0, "no focusable descendant in the figure");
-      assert.equal(await page.locator("#value-reader legend").textContent(), "Read a value");
-      const bar = page.locator('#value-figure g[aria-label="bar"] rect').first();
-      await bar.scrollIntoViewIfNeeded();
-      const rect = await bar.boundingBox();
-      await page.mouse.move(rect.x + 2, rect.y + rect.height / 2);
-      await page.mouse.move(rect.x + 30, rect.y + rect.height / 2);
-      await page.waitForFunction(() => (document.querySelector('#value-figure g[aria-label="tip"]')?.textContent ?? "").length > 0, null, {timeout: TIMEOUT});
-      const tipLines = async () => page.locator('#value-figure g[aria-label="tip"]').first().evaluate((g) => [...g.querySelectorAll("tspan")].map((x) => x.textContent.replace(/\u200b/g, "").trim()).filter((x) => x !== ""));
-      const hovered = await tipLines();
-      assert.equal(hovered.length, 3, `tip rows: ${hovered.join(" | ")}`);
-      await page.keyboard.press("Escape");
-      assert.ok(!(await page.locator('#value-figure g[aria-label="tip"]').first().isVisible()), "Escape hides the pointer tip");
-      await page.mouse.move(rect.x + 4, rect.y + rect.height / 2);
-      assert.ok(await page.locator('#value-figure g[aria-label="tip"]').first().isVisible(), "the next pointer move restores the tip");
-      const id = await page.$eval("#value-reader-country option:nth-child(2)", (o) => o.value);
-      // Item 3: choosing a country updates the live region in place; the output element and the keyboard focus are kept.
-      await page.$eval("#value-reader-output", (o) => { o.dataset.kept = "yes"; });
-      await page.focus("#value-reader-country");
-      await page.selectOption("#value-reader-country", id);
-      assert.equal(await page.$eval("#value-reader-output", (o) => o.dataset.kept), "yes", "the live <output> is not rebuilt");
-      assert.equal(await page.evaluate(() => document.activeElement.id), "value-reader-country", "focus stays on the select");
-      assert.equal(await page.locator(`#indicator-table tr[data-entity="${id}"]`).getAttribute("data-focus"), "true", "the table row of the country in focus is marked");
+      assert.equal(await page.locator("#rank-reader legend").count(), 1);
+      const id = await page.$eval("#rank-reader-country option:nth-child(2)", (o) => o.value);
+      await page.$eval("#rank-reader-output", (o) => { o.dataset.kept = "yes"; });
+      await page.focus("#rank-reader-country");
+      await page.selectOption("#rank-reader-country", id);
       await page.waitForFunction((v) => location.hash.includes(v), id, {timeout: TIMEOUT});
-      const text = await page.textContent("#value-reader-output");
-      const parts = text.split("; ");
-      assert.equal(parts.length, 3, `country; value with unit; period: ${text}`);
-      const row = page.locator(`tr[data-entity="${id}"]`).first();
-      assert.ok((await row.count()) > 0, "the table row of the country is present");
-      // The value cell as shown (visually hidden words dropped, whitespace collapsed) is the reader's value part, estimate mark included.
-      const cell = await row.locator("td.mm-num").first().evaluate((td) => {
+      assert.equal(await page.$eval("#rank-reader-output", (o) => o.dataset.kept), "yes", "the live <output> is not rebuilt");
+      assert.equal(await page.evaluate(() => document.activeElement.id), "rank-reader-country", "focus stays on the select");
+      assert.equal(await page.locator(`#indicator-table tr[data-entity="${id}"]`).getAttribute("data-focus"), "true", "the table row of the country in focus is marked");
+      const text = await page.textContent("#rank-reader-output");
+      assert.ok(text.includes(nameOf(id)), text);
+      const cell = await page.locator(`#indicator-table tr[data-entity="${id}"] td.mm-num`).first().evaluate((td) => {
         const c = td.cloneNode(true);
         for (const h of c.querySelectorAll(".mm-visually-hidden")) h.remove();
         return c.textContent.replace(/\s+/g, " ").trim();
       });
-      assert.equal(parts[1], cell, "the reader value equals the table value cell");
-      // The hovered bar is the first one, which is the country chosen above (option 2): its tip rows joined with "; " are the output.
-      assert.equal(hovered.join("; "), text, "the pointer tip reads the same words as the output");
-    }, {sparse: true});
-  });
-  test("Escape hides the static highlight tip while focus is in the reader; a select change or re-entering focus restores it; the output stays", async (t) => {
-    await withPage(t, "/indicator/T02", async ({page}) => {
-      const stat = page.locator("#value-figure g.mm-static-tip");
-      // The figure is redrawn on the change and Plot sizes the tip after it is attached: wait for it rather than checking at once.
-      const shown = async (loc, msg) => loc.waitFor({state: "visible", timeout: 5000}).catch(() => assert.fail(msg));
-      const id = await page.$eval("#value-reader-country option:nth-child(2)", (o) => o.value);
-      await page.focus("#value-reader-country");
-      await page.selectOption("#value-reader-country", id);
-      await shown(stat, "static tip shown for the chosen country");
-      const text = await page.textContent("#value-reader-output");
-      await page.keyboard.press("Escape");
-      assert.ok(!(await stat.isVisible()), "Escape hides the static tip");
-      assert.equal(await page.textContent("#value-reader-output"), text, "the output text stays");
-      assert.ok(await page.locator("#value-reader-output").isVisible());
-      await page.focus("#indicator-switcher");
-      await page.focus("#value-reader-country");
-      await shown(stat, "re-entering focus restores it");
-      await page.keyboard.press("Escape");
-      const third = await page.$eval("#value-reader-country option:nth-child(3)", (o) => o.value);
-      await page.selectOption("#value-reader-country", third);
-      await shown(stat, "a select change restores it");
+      assert.ok(text.replace(/\s+/g, " ").includes(cell), `the reader carries the table value cell "${cell}": ${text}`);
     }, {sparse: true});
   });
 });

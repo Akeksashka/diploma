@@ -3,6 +3,7 @@
 // Each page is awaited on a data-dependent selector (a rendered data row or control), not on the static h1.
 // Runs against a built site (npm run build). Localhost only. Skips without a browser unless MM_SMOKE_REQUIRE_BROWSER=1 (CI).
 // MM_EXPECT_BUILD_ID, when set, must equal the built manifest build_id (guards against running against the wrong fixture).
+import {defaultDomainId} from "../../src/lib/home-dashboard.js";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import {after, before, describe, test} from "node:test";
@@ -41,8 +42,9 @@ after(async () => {
 const meta = (stem) => JSON.parse(readFileSync(`${DIST}/_file/data/meta/${metaIndex[stem]}`, "utf8"));
 
 // Requested data files as manifest paths: /_file/data/<path-without-ext>.<sha8>.<ext> -> <path>.<ext>. The manifest itself is "manifest.json".
-function dataRequests(urls) {
-  const out = new Set();
+// Returns a sorted list; with {keepDuplicates: true} a file requested twice appears twice (a Set would hide it).
+function dataRequests(urls, {keepDuplicates = false} = {}) {
+  const out = [];
   for (const u of urls) {
     const {pathname} = new URL(u);
     const m = pathname.match(/^\/_file\/data\/(.+)\.([0-9a-f]{8,64})\.([a-z]+)$/);
@@ -54,12 +56,12 @@ function dataRequests(urls) {
       assert.ok(entry, `${path} is requested but not listed in manifest files[]`);
       assert.ok(entry.sha256.startsWith(m[2]), `${path}: file name hash ${m[2]} is not the manifest sha256`);
     }
-    out.add(path);
+    if (keepDuplicates || !out.includes(path)) out.push(path);
   }
-  return [...out].sort();
+  return out.sort();
 }
 
-async function load(t, path, ready) {
+async function load(t, path, ready, opts = {}) {
   if (!browser) return t.skip(reason), null;
   const {page, context, log} = await openPage(browser, site.origin);
   await page.goto(`${site.origin}${path}`);
@@ -71,19 +73,57 @@ async function load(t, path, ready) {
   assert.deepEqual(log.offOrigin, [], "off-origin requests");
   assert.deepEqual(log.failed, [], "failed requests");
   assert.deepEqual(log.errors, [], "page or console errors");
-  return dataRequests(reqs);
+  return dataRequests(reqs, opts);
 }
 
 const metaPaths = (...stems) => stems.map((s) => `meta/${s}.json`);
 const sorted = (a) => [...a].sort();
 
 describe("AC-RD-51 requests per page type equal the files of spec section 3", () => {
-  test("PG-HOME and PG-DOMAINS read no data file but the manifest (lists are built at build time)", async (t) => {
-    // .mm-asof is rendered after the manifest loads, so waiting for it means the manifest request has happened.
-    for (const [p, sel] of [["/", ".mm-asof"], ["/domains", ".mm-asof"]]) {
-      const r = await load(t, p, sel);
-      if (r) assert.deepEqual(r, ["manifest.json"], p);
+  test("PG-HOME (AC-DB-12): manifest, meta/* for the bar and exactly one scorecard (the default domain); no series/* and no history", async (t) => {
+    // #filterbar exists after meta/* has loaded; the dashboard mounts in the same cell chain, so wait for its first band as well.
+    const r = await load(t, "/", "#band-overview", {keepDuplicates: true}); // a list: each file must be requested exactly once
+    if (!r) return;
+    const d = defaultDomainId(meta("domains").domains, meta("domains").default_domain ?? null);
+    assert.deepEqual(r, sorted(["manifest.json", ...metaPaths("entities", "groups", "domains", "indicators", "series"), `scorecard/${d}.json`]), "/"); // L14: meta/series.json for the tiles' reference-period format and the n/a sentence
+    assert.ok(!r.some((p) => p.startsWith("series/") || p.endsWith(".parquet")), "no series or history file on first load");
+  });
+
+  test("PG-HOME (AC-DB-12): a Domain change adds only that domain's scorecard, once; switching back adds nothing (cache)", async (t) => {
+    if (!browser) return t.skip(reason);
+    const {page, context, log} = await openPage(browser, site.origin);
+    try {
+      await page.goto(`${site.origin}/`);
+      await page.waitForSelector("#band-overview", {timeout: 20000});
+      await page.waitForLoadState("networkidle");
+      const first = dataRequests([...log.requests]);
+      const domains = meta("domains").domains;
+      const dflt = defaultDomainId(domains, meta("domains").default_domain ?? null);
+      const other = domains.find((x) => x.domain_id !== dflt);
+      assert.ok(other, "fixture has a second domain");
+      const change = async (id) => {
+        await page.evaluate((d) => globalThis.__mmFilterStore.set({d, i: null}), id);
+        await page.waitForLoadState("networkidle");
+        await page.waitForTimeout(500);
+        return dataRequests([...log.requests]);
+      };
+      const second = await change(other.domain_id);
+      assert.deepEqual(second.filter((p) => !first.includes(p)), [`scorecard/${other.domain_id}.json`]);
+      assert.equal(await page.locator("#band-domain-heading").innerText(), other.name);
+      const again = await change(dflt);
+      const third = await change(other.domain_id);
+      assert.deepEqual(third, again, "switching back and forth requests nothing new");
+      assert.equal(log.requests.filter((u) => u.includes(`/scorecard/${other.domain_id}.`)).length, 1, "one request per domain");
+      assert.ok(!third.some((p) => p.startsWith("series/")));
+      assert.deepEqual(log.errors, []);
+    } finally {
+      await context.close();
     }
+  });
+
+  test("PG-DOMAINS reads no data file but the manifest (lists are built at build time)", async (t) => {
+    const r = await load(t, "/domains", ".mm-asof");
+    if (r) assert.deepEqual(r, ["manifest.json"], "/domains");
   });
 
   test("PG-COUNTRY: meta/*, one scorecard per domain except global, no series file before 'Show history'", async (t) => {
@@ -112,7 +152,7 @@ describe("AC-RD-51 requests per page type equal the files of spec section 3", ()
     const d = meta("domains").domains.find((x) => x.domain_id !== "global") ?? meta("domains").domains[0];
     const r = await load(t, `/domain/${d.domain_id}`, "#domain-heatmap tbody tr");
     if (!r) return;
-    assert.deepEqual(r, sorted(["manifest.json", `scorecard/${d.domain_id}.json`, ...metaPaths("entities", "indicators", "domains", "series")]));
+    assert.deepEqual(r, sorted(["manifest.json", `scorecard/${d.domain_id}.json`, ...metaPaths("entities", "groups", "indicators", "domains", "series")])); // the bar has a Group control (L24)
   });
 
   test("PG-REVISIONS: the recent-revisions file and meta/*, no per-indicator revisions file before a choice", async (t) => {

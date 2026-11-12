@@ -26,6 +26,13 @@ RELEASED_PARSERS: dict[str, str] = {
     "ameco_v1@1": "macro_monitor.ingestion.parsers.ameco_v1",
     "jsonstat_v2@2": "macro_monitor.ingestion.parsers.jsonstat_v2",
     "worldbank_v2@2": "macro_monitor.ingestion.parsers.worldbank_v2",
+    "fao_csdb_v2@2": "macro_monitor.ingestion.parsers.fao_csdb_v2",
+    "sdmxcsv_v2@2": "macro_monitor.ingestion.parsers.sdmxcsv_v2",
+    "bis_v2@2": "macro_monitor.ingestion.parsers.bis_v2",
+    "fao_ffpi_v2@2": "macro_monitor.ingestion.parsers.fao_ffpi_v2",
+    "ecb_csv_v2@2": "macro_monitor.ingestion.parsers.ecb_csv_v2",
+    "ecsurvey_v2@2": "macro_monitor.ingestion.parsers.ecsurvey_v2",
+    "weo_v1@1": "macro_monitor.ingestion.parsers.weo_v1",
 }
 
 

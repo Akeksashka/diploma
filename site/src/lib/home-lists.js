@@ -3,7 +3,7 @@
 // only) then adds one labelled text filter per list, which only sets `hidden`. Display only: no value is computed here.
 import {
   HOME_AGGREGATES_HEADING, HOME_COUNTRIES_HEADING, DRAFT_HOME_FILTER_COUNT, HOME_FILTER_LABEL, DRAFT_HOME_FILTER_NONE,
-  HOME_INDICATORS_HEADING, HOME_LINKS, OTHER_INDICATORS_GROUP
+  DRAFT_BROWSE_SUMMARY, DRAFT_GROUP_BROWSE, HOME_INDICATORS_HEADING, HOME_LINKS, OTHER_INDICATORS_GROUP
 } from "./copy.js";
 import {SAFE_ID} from "./domains-list.js";
 
@@ -54,6 +54,16 @@ ${details}
 </section>
 
 <ul class="mm-home-links" id="home-links"><li><a href="./explorer">${esc(HOME_LINKS.series)}</a></li><li><a href="./domains">${esc(HOME_LINKS.domains)}</a></li><li><a href="./revisions">${esc(HOME_LINKS.revisions)}</a></li></ul>`;
+}
+
+// L11: band "Browse": a collapsed <details> holding the lists above; it is in the built HTML, so every link works without JavaScript.
+export function browseBandHtml(data) {
+  return `<section class="mm-dband" id="band-browse" aria-labelledby="band-browse-heading">
+<div class="mm-band"><h2 id="band-browse-heading">${esc(DRAFT_GROUP_BROWSE)}</h2></div>
+<details class="mm-browse" id="browse"><summary>${esc(DRAFT_BROWSE_SUMMARY)}</summary>
+${homeListsHtml(data)}
+</details>
+</section>`;
 }
 
 // Case-insensitive substring match; an empty query matches everything.

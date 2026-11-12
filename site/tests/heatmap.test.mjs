@@ -5,7 +5,7 @@ import {existsSync, readFileSync} from "node:fs";
 import {test} from "node:test";
 import {listOf} from "../src/lib/meta.js";
 import {domainView} from "../src/lib/scorecard.js";
-import {heatmapModel, nextSort, sortRows} from "../src/lib/heatmap.js";
+import {cardView, heatmapModel, nextSort, sortRows} from "../src/lib/heatmap.js";
 import {factsView, heatmapTable} from "../src/lib/heatmap-view.js";
 import {legendBlock} from "../src/lib/legend.js";
 import {domainBlock} from "../src/lib/scorecard-view.js";
@@ -216,4 +216,62 @@ test("fixture domains (labour, prices, agri, global): shown numbers and bins equ
     if (d === "agri" || d === "global") assert.ok(!/data-bin="[1-5]"/.test(out), `${d}: no colour`);
   }
   assert.ok(checked >= 5, `only ${checked} ranked cells checked`);
+});
+
+// ------------------------------------------------------------------------------------------------ L13 home card
+const cardData = () => {
+  const entities = [...meta.entities, {entity_id: "DDD", name: "Ddd", kind: "country"}, {entity_id: "GLO", name: "World", kind: "country", is_global: true}];
+  const indicators = meta.indicators.map((i) => ({...i, frequency_set: i.indicator_id === "I2" ? ["Q"] : ["M"]}));
+  const groups = [{group_id: "g1", name: "G1", members: [{entity_id: "AAA", valid_from: "2000-01-01", valid_to: null}]}];
+  const scorecard = sc([
+    ent("AAA", 0.9, 1, [ind("I1"), ind("I2"), ind("I3"), ind("I4", {rank_mode: "descriptive_only", percentile: null})]),
+    ent("BBB", 0.5, 2, [ind("I1", {percentile: 0.5}), ind("I2", {percentile: 0.8})]),
+    ent("ZZZ", null, null, [ind("I1", {percentile: null})], {n_available: 0})
+  ]);
+  return {entities, indicators, groups, scorecard, domains: meta.domains};
+};
+
+test("card view: rows are the comparison set (none dropped), columns follow Frequency, stored cells are untouched", () => {
+  const {scorecard, ...m} = cardData();
+  const all = cardView(scorecard, {...m, state: {}});
+  assert.deepEqual(all.rows.map((r) => r.entityId).sort(), ["AAA", "BBB", "CCC", "DDD", "ZZZ"], "CCC and DDD are absent from the scorecard but countries; GLO is global");
+  assert.deepEqual(all.columns.map((c) => c.indicatorId), ["I2", "I1", "I3", "I4"]);
+  const missing = heatmapModel(all).rows.find((r) => r.entityId === "DDD");
+  assert.ok(missing.cells.every((c) => c === null), "an entity the scorecard does not hold keeps its row with n/a cells");
+  const q = cardView(scorecard, {...m, state: {f: "Q"}});
+  assert.deepEqual(q.columns.map((c) => c.indicatorId), ["I2"]);
+  assert.equal(q.rows.length, all.rows.length, "Frequency removes columns, not rows");
+  const stored = heatmapModel(all).rows.find((r) => r.entityId === "AAA").cells[1];
+  assert.equal(stored.cell.percentile, 0.9);
+  assert.equal(all.rows.find((r) => r.entityId === "AAA").summary.meanPercentile, 0.9);
+});
+
+test("card view: an entity the scorecard does not hold gets no invented coverage counts (no 0/0), only the n/a placeholder", () => {
+  const {scorecard, ...m} = cardData();
+  const row = cardView(scorecard, {...m, state: {}}).rows.find((r) => r.entityId === "DDD");
+  assert.ok(row, "the row is kept");
+  assert.equal(row.summary.coverageText, "n/a");
+  assert.equal(row.summary.meanPercentile ?? null, null);
+  assert.ok(!JSON.stringify(row).includes("0/0"));
+});
+
+test("card view: Group narrows countries, aggregates stay, a focus Country outside the Group stays; Period is not a parameter", () => {
+  const {scorecard, ...m} = cardData();
+  assert.deepEqual(cardView(scorecard, {...m, state: {g: "g1"}}).rows.map((r) => r.entityId).sort(), ["AAA", "ZZZ"]);
+  assert.deepEqual(cardView(scorecard, {...m, state: {g: "g1", c: ["BBB"]}}).rows.map((r) => r.entityId).sort(), ["AAA", "BBB", "ZZZ"]);
+  const out = heatmapTable(html, heatmapModel(cardView(scorecard, {...m, state: {from: 2030, to: 2031}}))).s;
+  assert.ok(out.includes('data-entity="AAA"') && !/hidden by the period/.test(out), "no hidden rows, no disclosure");
+});
+
+test("table options: the home card carries the hash, links from the root, no orientation text in the header; defaults are PG-DOMAIN", () => {
+  const {scorecard, ...m} = cardData();
+  const model = heatmapModel(cardView(scorecard, {...m, state: {}}));
+  const card = heatmapTable(html, model, {hrefs: {country: (id) => `./country/${id}`, indicator: (id) => `./indicator/${id}`}, carry: true, orientation: false}).s;
+  assert.ok(card.includes('href="./country/AAA"') && card.includes('href="./indicator/I1"'));
+  assert.ok(/data-link="country" data-carry/.test(card) && /data-link="indicator" data-carry/.test(card));
+  assert.ok(!card.includes(ORIENTATION_NOTE), "the note is printed once, in the legend");
+  const v1 = heatmapTable(html, model).s;
+  assert.ok(v1.includes('href="../country/AAA"') && !v1.includes("data-carry") && v1.includes(ORIENTATION_NOTE));
+  const legend = legendBlock(html, {states: model.states, bins: model.hasBins}).s;
+  assert.equal(legend.split(ORIENTATION_NOTE).length - 1, 1);
 });

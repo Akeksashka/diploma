@@ -2,7 +2,9 @@
 // state and sort order is a function of one stored field. Bins compare the stored percentile with constant edges (bins.js);
 // sorting orders by the stored percentile or the stored rank_position, never by anything computed here.
 import {BinError, binLabel, binOf} from "./bins.js";
+import {comparisonSet, indicatorsOfFrequency} from "./filter-model.js";
 import {cellState, summaryState} from "./states.js";
+import {domainView} from "./scorecard.js";
 
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 
@@ -52,6 +54,25 @@ export function heatmapModel(view) {
     hasBins: rows.some((r) => r.cells.some((c) => c !== null && c.bin !== null) || r.mean.bin !== null),
     states: LEGEND_ORDER.filter((k) => present.has(k))
   };
+}
+
+// ----------------------------------------------------------------------------------------------- home card (L13)
+// The domainView() of the home heatmap card: rows = the comparison set (Group intersect scope: countries, the focus Country outside the
+// Group, then the stored aggregates; none dropped: an entity the scorecard does not hold gets an empty stored-shape entity and shows n/a),
+// columns = the Domain's indicators narrowed by Frequency (stored `frequency_set[]`; no row is removed by it). Period is not applied
+// (ADR-036: it hides rows on C-RANK and C-TABLE only). Nothing is computed: rows are selected, never merged or summed.
+export function cardView(scorecard, {entities = [], groups = [], indicators = [], domains = [], state = {}} = {}) {
+  const set = comparisonSet({entities, groups, groupId: state.g ?? null, focusIds: state.c ?? []});
+  const ids = [...set.countries, ...set.outside, ...set.references].map((e) => e.entity_id);
+  const held = new Set(scorecard.entities.map((e) => e.entity_id));
+  const empty = (id) => ({entity_id: id, percentile_rank: null, percentile_rank_label: scorecard.percentile_rank_label, rank_position: null, n_available: null, n_defined: null, indicators: []}); // no counts are invented: the coverage cell prints n/a
+  const full = {...scorecard, entities: [...scorecard.entities, ...ids.filter((id) => !held.has(id)).map(empty)]};
+  const view = domainView(full, {entities, indicators, domains});
+  const inSet = new Set(ids);
+  const offered = state.f ? new Set(indicatorsOfFrequency(indicators, state.f).map((i) => i.indicator_id)) : null;
+  const keep = view.columns.map((c) => offered === null || offered.has(c.indicatorId));
+  const pick = (list) => list.filter((_, k) => keep[k]);
+  return {...view, columns: pick(view.columns), rows: view.rows.filter((r) => inSet.has(r.entityId)).map((r) => ({...r, cells: pick(r.cells)}))};
 }
 
 // ----------------------------------------------------------------------------------------------- sorting (T112)

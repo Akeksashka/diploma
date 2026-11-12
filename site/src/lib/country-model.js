@@ -19,7 +19,7 @@ export function countryHeader(entity, groups = []) {
   return {entityId: entity.entity_id, name: entity.name ?? entity.entity_id, kind: entity.kind ?? null, memberships, noGroupsText: DRAFT_COUNTRY_NO_GROUPS, labels: {crumb: DRAFT_CRUMB_LABEL, home: DRAFT_CRUMB_HOME, countries: DRAFT_CRUMB_COUNTRIES, kind: DRAFT_COUNTRY_KIND_LABEL, groups: DRAFT_COUNTRY_GROUPS_LABEL}};
 }
 
-function figureLine(row, domain, state) {
+export function figureLine(row, domain, state) {
   if (domain.ranked !== true) return {state, label: null, percentileRank: null, percentileText: null, coverageText: null, positionText: null};
   const lowCoverage = row.low_coverage === true;
   const hasPosition = !lowCoverage && isNum(row.rank_position) && isNum(row.n_ranked_entities);

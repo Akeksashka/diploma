@@ -80,7 +80,8 @@ const resolvePath = (from, href) => new URL(href.split("#")[0].split("?")[0], `h
 
 describe("R18 PG-HOME", () => {
   test("AC-RD-02, 62: every non-global entity and indicator is linked; built links resolve; no Guide/Status/heatmap/status block", async (t) => {
-    await withPage(t, "/", "#country-list li", async ({page, log}) => {
+    await withPage(t, "/", "#band-overview", async ({page, log}) => {
+      await page.evaluate(() => { document.getElementById("browse").open = true; });
       const hs = await page.$$eval("a[href]", (as) => as.map((a) => a.getAttribute("href")));
       for (const e of entities.filter((x) => x.is_global !== true)) assert.ok(hs.includes(`./country/${e.entity_id}`), e.entity_id);
       for (const i of indicators) assert.ok(hs.includes(`./indicator/${i.indicator_id}`), i.indicator_id);
@@ -89,7 +90,7 @@ describe("R18 PG-HOME", () => {
       assert.deepEqual(await page.locator(".mm-nav a").allInnerTexts(), ["Home", "Time series", "Domains", "Revisions"]);
       assert.equal(await page.locator('a[href*="/status"], a[href*="/guide"]').count(), 0);
       assert.equal(await page.locator("#observablehq-main h1").count(), 1);
-      assert.equal(await page.locator("table, svg, #domain-heatmap").count(), 0);
+      assert.equal(await page.locator("table:not(.mm-card *), svg:not(.mm-card *):not(.mm-dlegend *), #domain-heatmap").count(), 0);
       const text = await page.locator("main, #observablehq-main").first().innerText();
       for (const bad of ["Guide", "Data status", "Projections are not shown", "all lines share one unit", "Domain overviews", "Look at one series"]) assert.ok(!text.includes(bad), bad);
       assert.equal(await page.locator("#caveat").count(), 1);
@@ -99,15 +100,67 @@ describe("R18 PG-HOME", () => {
     });
   });
 
+  test("L11 (AC-DB-12, 13): band layout, Browse collapsed with the links in the HTML, slots reserved and aria-busy, domain heading follows the Domain", async (t) => {
+    await withPage(t, "/", "#band-overview", async ({page, log}) => {
+      const heads = await page.$$eval(".mm-dband .mm-band > h2", (hs) => hs.map((h) => h.textContent));
+      const domain = domains.find((d) => d.ranked === true) ?? domains[0];
+      assert.deepEqual(heads, ["Overview", "Compare", domain.name, "Indicators", "Over time", "Browse"]);
+      assert.equal(await page.locator("#observablehq-main h1").count(), 1);
+      assert.equal(await page.locator("#browse").evaluate((d) => d.open), false, "Browse is collapsed");
+      const slots = await page.$$eval(".mm-card--slot", (els) => els.map((e) => ({busy: e.getAttribute("aria-busy"), h: e.getBoundingClientRect().height, filled: e.classList.contains("mm-card--rank") || e.classList.contains("mm-card--facts") || e.dataset.slot === "overview" || e.classList.contains("mm-card--heat") || e.classList.contains("mm-card--table") || e.classList.contains("mm-card--series")})));
+      assert.equal(slots.length, 6);
+      // L12 fills the compare and facts slots, L14 the Overview slot (tiles, or the no-country placeholder with no mm-card--tiles) and L13 the heatmap slot (mm-card--heat); the others stay reserved and busy until L13-L16.
+      for (const sl of slots.filter((x) => !x.filled)) assert.ok(sl.busy === "true" && sl.h >= 100, JSON.stringify(sl));
+      const next = domains.find((d) => d.domain_id !== domain.domain_id);
+      await page.evaluate((d) => globalThis.__mmFilterStore.set({d}), next.domain_id);
+      await page.waitForFunction((n) => document.getElementById("band-domain-heading")?.textContent === n, next.name);
+      clean(log);
+    });
+  });
+
+  test("L17 (AC-DB-26, 03): the Indicators band exists only with one Country; table with no Trend column, rows without a value last, filter control, Period disclosure", async (t) => {
+    await withPage(t, "/", "#band-overview", async ({page, log}) => {
+      const band = page.locator("#band-indicators");
+      assert.equal(await band.isHidden(), true, "no Country: the band is omitted");
+      const dom = domains.find((d) => d.ranked === true) ?? domains[0];
+      const inScorecard = new Set(dataJson(`scorecard/${dom.domain_id}.json`).entities.map((e) => e.entity_id));
+      const entity = entities.find((e) => e.is_global !== true && e.kind !== "aggregate" && inScorecard.has(e.entity_id)) ?? entities[0];
+      const startYear = Number(String(dataJson("manifest.json").history_start).slice(0, 4));
+      await page.evaluate((c) => globalThis.__mmFilterStore.set({c: [c]}), entity.entity_id);
+      await page.waitForSelector("#band-indicators table.mm-country-table", {timeout: TIMEOUT});
+      assert.equal(await band.isVisible(), true);
+      const heads = await page.$$eval("#band-indicators thead th", (ths) => ths.map((th) => th.textContent.trim()));
+      assert.ok(heads.length > 0 && !heads.some((h) => /trend/i.test(h)), JSON.stringify(heads));
+      assert.equal(await page.locator("#band-indicators [data-slot='indicators']").getAttribute("aria-busy"), "false");
+      assert.equal(await page.locator("#band-indicators svg[role='img']").count(), 0, "no sparkline in phase A");
+      const order = await page.$$eval("#band-indicators tr[data-indicator][data-has-value]", (trs) => trs.map((tr) => tr.dataset.hasValue));
+      assert.ok(order.length > 0 && order.join(",") === [...order].sort().reverse().join(","), "rows without a value come last");
+      const links = await page.$$eval("#band-indicators a[data-link]", (as) => as.map((a) => a.getAttribute("href")));
+      assert.ok(links.length > 0 && links.every((h) => h.startsWith("./")), JSON.stringify(links));
+      const hasUnvalued = (await page.locator("#band-indicators tbody[data-group='without-value']").count()) > 0;
+      await page.locator("#band-indicators input[name='country-filter'][value='value']").check();
+      if (hasUnvalued) assert.equal(await page.locator("#band-indicators tbody[data-group='without-value']").evaluate((e) => e.hidden), true);
+      await page.evaluate((y) => globalThis.__mmFilterStore.set({from: y, to: y}), startYear);
+      await page.waitForFunction(() => document.querySelector("#band-indicators .mm-hidden-rows summary") !== null, null, {timeout: TIMEOUT});
+      assert.match(await page.locator("#band-indicators .mm-hidden-rows summary").innerText(), /rows? hidden by the period filter/);
+      assert.equal(await page.locator("#band-indicators tbody[data-group='with-value']").count(), 0);
+      await page.evaluate(() => globalThis.__mmFilterStore.set({c: []}));
+      await page.waitForFunction(() => document.getElementById("band-indicators").hidden === true, null, {timeout: TIMEOUT});
+      clean(log);
+    });
+  });
+
   test("home link labels equal the nav labels (G-STR4)", async (t) => {
-    await withPage(t, "/", "#home-links a", async ({page}) => {
+    await withPage(t, "/", "#band-overview", async ({page}) => {
+      await page.evaluate(() => { document.getElementById("browse").open = true; });
       const labels = await page.$$eval("#home-links a", (as) => as.map((a) => a.textContent));
       assert.deepEqual(labels, [HOME_LINKS.series, HOME_LINKS.domains, HOME_LINKS.revisions]);
     });
   });
 
   test("a11y: landmarks, labelled filters, headings, keyboard-reachable details", async (t) => {
-    await withPage(t, "/", "#filter-countries", async ({page}) => {
+    await withPage(t, "/", "#band-overview", async ({page}) => {
+      await page.evaluate(() => { document.getElementById("browse").open = true; });
       assert.equal(await page.locator("main, [role=main]").count() >= 1, true);
       assert.ok((await page.locator("nav[aria-label]").count()) >= 1);
       for (const id of ["filter-countries", "filter-indicators"]) {
@@ -125,7 +178,8 @@ describe("R18 PG-HOME", () => {
   });
 
   test("filters narrow the lists, open matching groups, report the count and restore on clear", async (t) => {
-    await withPage(t, "/", "#filter-indicators", async ({page}) => {
+    await withPage(t, "/", "#band-overview", async ({page}) => {
+      await page.evaluate(() => { document.getElementById("browse").open = true; });
       const total = await page.locator("#country-list li").count();
       assert.ok(total > 1);
       const name = (await page.locator("#country-list li a").first().innerText()).trim();
@@ -159,12 +213,14 @@ describe("R18 PG-HOME", () => {
         await installCls(page);
         await page.goto(`${site.origin}/`);
         await page.waitForSelector(".mm-asof", {timeout: TIMEOUT});
-        await page.waitForSelector(".mm-filter input", {timeout: TIMEOUT});
+        await page.waitForSelector("#band-overview", {timeout: TIMEOUT});
         await page.waitForLoadState("networkidle");
         await page.waitForTimeout(500);
         const {cls, unsupported} = await readCls(page);
         if (unsupported) return t.skip("layout-shift entries unsupported in this browser");
         assert.ok(cls <= 0.1, `CLS ${cls} at ${width}px`);
+        await page.evaluate(() => { document.getElementById("browse").open = true; });
+        await page.waitForSelector(".mm-filter input", {timeout: TIMEOUT});
         const blocks = await page.$$eval(".mm-filter[data-filter-slot]", (els) =>
           els.map((e) => ({h: e.getBoundingClientRect().height, reserved: parseFloat(getComputedStyle(e).minHeight), kids: e.querySelectorAll("label, input, .mm-filter-status").length}))
         );
@@ -192,7 +248,11 @@ describe("R18 PG-HOME", () => {
           await page.setViewportSize({width, height: 800});
           await page.goto(`${site.origin}${path}`);
           await page.waitForSelector(".mm-asof", {timeout: TIMEOUT});
-          if (path === "/") await page.waitForSelector(".mm-filter input", {timeout: TIMEOUT});
+          if (path === "/") {
+            await page.waitForSelector("#band-overview", {timeout: TIMEOUT});
+            await page.evaluate(() => { document.getElementById("browse").open = true; });
+            await page.waitForSelector(".mm-filter input", {timeout: TIMEOUT});
+          }
           await page.waitForLoadState("networkidle");
           const m = await page.evaluate(() => {
             // Shell: the content after it must sit at the same place with the reservation as without it (margins collapse through the
@@ -227,12 +287,14 @@ describe("R18 PG-HOME", () => {
   }
 
   test("AC-RD-03: one click reaches a country page and an indicator page", async (t) => {
-    await withPage(t, "/", "#country-list li a", async ({page}) => {
+    await withPage(t, "/", "#band-overview", async ({page}) => {
+      await page.evaluate(() => { document.getElementById("browse").open = true; });
       await page.locator("#country-list li a").first().click();
       await page.waitForSelector("h1[data-entity]", {timeout: TIMEOUT});
       assert.match(page.url(), /\/country\//);
     });
-    await withPage(t, "/", "#indicators", async ({page}) => {
+    await withPage(t, "/", "#band-overview", async ({page}) => {
+      await page.evaluate(() => { document.getElementById("browse").open = true; });
       await page.locator("#indicators details").first().evaluate((d) => { d.open = true; });
       await page.locator("#indicators details a").first().click();
       await page.waitForURL(/\/indicator\//, {timeout: TIMEOUT});

@@ -1,0 +1,12 @@
+# Sidecar of the two real-layout fixtures irs_real_layout_de.csv / irs_real_layout_u2.csv.
+# Excerpts (header + first 3 + last 2 data rows) of the live responses archived as raw_id 24 (DE)
+# and raw_id 23 (U2), fetched 2026-11-09. Values are ECB statistics (usage policy: reuse allowed
+# with attribution "Source: ECB statistics"). Not synthetic. The real layout has no ADJUSTMENT
+# column, and UNIT is "PC" (ECB code list; the project vocabulary has PCT).
+synthetic: false
+source_url_de: https://data-api.ecb.europa.eu/service/data/IRS/M.DE.L.L40.CI.0000.EUR.N.Z?format=csvdata&startPeriod=1991-01
+source_url_u2: https://data-api.ecb.europa.eu/service/data/IRS/M.U2.L.L40.CI.0000.EUR.N.Z?format=csvdata&startPeriod=1991-01
+fetched_on: 2026-11-09
+full_response_sha256_de: ef636c795843ec81407224a29e69e1048b917620e6c9b6566aebe454355fd5c5
+full_response_sha256_u2: 998de37659be149a2ade166a25bb8467c182dc87696136e290f3c35c9ae41c03
+parser_id: ecb_csv_v2@2

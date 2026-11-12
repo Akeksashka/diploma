@@ -450,7 +450,7 @@ def _poll(
 # ----------------------------------------------------------------------------------- OECD (T57)
 
 OECD_SOURCE_ID = "oecd"
-OECD_PARSER_ID = "sdmxcsv_v1@1"
+OECD_PARSER_ID = "sdmxcsv_v2@2"
 OECD_START_PARAM = "startPeriod"
 OECD_FORBIDDEN_PARAMS = frozenset(
     {"lastnobservations", "firstnobservations", "updatedafter", "endperiod"}
@@ -484,10 +484,11 @@ class OecdConnector:
       A bot challenge is outcome ``blocked``: logged with the manual fallback, never retried.
     - ``fetch_budgeted``: one pass over the planned requests that stops at the first
       ``rate_limited`` or ``blocked`` outcome and reports the rest as deferred to catch-up.
-    - ``parse``: delegates to the frozen parser registry (``sdmxcsv_v1@1``).
+    - ``parse``: delegates to the frozen parser registry (``sdmxcsv_v2@2``).
 
     [UNVERIFIED] ``format=csvfile`` and the dataflow ids other than KEI and PRICES_ALL (research
-    F13) are not confirmed by a live capture; the source stays ``enabled: false`` until probed.
+    F13) are not confirmed by a live capture; the source is enabled as of 2026-11-09
+    (real-layout fixtures only), and these items remain unverified.
     """
 
     source_id = OECD_SOURCE_ID

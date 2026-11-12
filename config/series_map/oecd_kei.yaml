@@ -4,34 +4,34 @@
 # series-map seeding report (T52 reviewed CSV not supplied).
 series:
   - dataset: "OECD.SDD.STES,DSD_KEI@DF_KEI"
-    key: "USA.M.IRLT.PA._Z.N._Z._Z._Z"
+    key: "USA.M.IRLT.PA._Z._Z._Z"
     entity: USA
     indicator: M18
     role: headline
     valid_from: 1991-01-01
     rationale: "OECD KEI long-term interest rate IRLT, United States (data-sources research F13, M18)"
-    expect: {frequency: M, unit: PCT, seasonal_adjustment: NSA, price_basis: NA}
+    expect: {frequency: M, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
   - dataset: "OECD.SDD.STES,DSD_KEI@DF_KEI"
-    key: "JPN.M.IRLT.PA._Z.N._Z._Z._Z"
+    key: "JPN.M.IRLT.PA._Z._Z._Z"
     entity: JPN
     indicator: M18
     role: headline
     valid_from: 1991-01-01
     rationale: "OECD KEI long-term interest rate IRLT, Japan (data-sources research F13, M18)"
-    expect: {frequency: M, unit: PCT, seasonal_adjustment: NSA, price_basis: NA}
+    expect: {frequency: M, unit: PCT, seasonal_adjustment: NA, price_basis: NA}
   - dataset: "OECD.SDD.STES,DSD_KEI@DF_KEI"
-    key: "USA.M.CCICP.IX._Z._Z._Z._Z._Z"
+    key: "USA.M.CCICP.PB._Z.Y._Z"
     entity: USA
     indicator: M04
     role: headline
     valid_from: 1991-01-01
     rationale: "OECD KEI consumer confidence CCICP, United States (data-sources research F13, M04)"
-    expect: {frequency: M, unit: IDX, seasonal_adjustment: NA, price_basis: NA}
+    expect: {frequency: M, unit: BALANCE, seasonal_adjustment: SCA, price_basis: NA}
   - dataset: "OECD.SDD.STES,DSD_KEI@DF_KEI"
-    key: "JPN.M.CCICP.IX._Z._Z._Z._Z._Z"
+    key: "JPN.M.CCICP.PB._Z.Y._Z"
     entity: JPN
     indicator: M04
     role: headline
     valid_from: 1991-01-01
     rationale: "OECD KEI consumer confidence CCICP, Japan (data-sources research F13, M04)"
-    expect: {frequency: M, unit: IDX, seasonal_adjustment: NA, price_basis: NA}
+    expect: {frequency: M, unit: BALANCE, seasonal_adjustment: SCA, price_basis: NA}

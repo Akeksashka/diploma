@@ -1,0 +1,9 @@
+# Provenance: 6 rows copied verbatim (all 79 columns, header unchanged) from the real IMF data-portal export
+# manual_inbox/imf_weo_manual/2026-10/dataset_2026-10-24T18_11_54.477413633Z_DEFAULT_INTEGRATION_IMF.RES_WEO_9.0.0.csv
+# (IMF.RES:WEO 9.0.0, PUBLICATION_DATE 2026-10-13T02:00:00Z, source https://data.imf.org/datasets/WEO, downloaded 2026-10-24).
+# Rows kept: USA.NGAP_NPGDP.A, DEU.NGDP_RPCH.A, IND.NGDP_RPCH.A (FY label), DEU.GGXWDG_NGDP.A, ZAF.GGXCNL_NGDP.A (FY label),
+# USA.NGDP_D.A (index unit, refused by weo_v1 if mapped). No value edited. Row/field selection only; BOM and CSV quoting as in the file.
+source_url: https://data.imf.org/datasets/WEO
+derived_from_real_file: true
+edition_label: WEO-2026-10
+edition_date: 2026-10-13

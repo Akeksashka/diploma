@@ -137,11 +137,24 @@ def test_par1_golden_resolved_table(cfg: IndicatorsConfig) -> None:
     assert render(rows) == GOLDEN.read_text(encoding="utf-8")
 
 
-def test_global_domain_members_are_exactly_m24_and_g02(cfg: IndicatorsConfig) -> None:
+def test_global_domain_members_are_exactly_m24_g02_g03(cfg: IndicatorsConfig) -> None:
     members = {i.id for i in cfg.indicators if "global" in [d["id"] for d in i.values["domains"]]}
-    assert members == {"M24", "G02"}
+    assert members == {"M24", "G02", "G03"}
     assert [d["id"] for d in cfg.by_id("G02").values["domains"]] == ["global"]
     assert cfg.by_id("G02").values["domains"][0]["ranked"] is False
+
+
+def test_g03_is_a_global_indicator_in_global_only(cfg: IndicatorsConfig) -> None:
+    g03 = cfg.by_id("G03").values
+    assert g03["scope"] == "global"
+    assert [d["id"] for d in g03["domains"]] == ["global"]
+    assert g03["domains"][0]["ranked"] is False
+
+
+def test_comparison_indicators_flagged_and_domainless(cfg: IndicatorsConfig) -> None:
+    for iid in ("A02b", "A02c"):
+        assert cfg.by_id(iid).values["is_comparison"] is True
+        assert cfg.by_id(iid).values["domains"] == []
 
 
 def test_all_rows_proposed(cfg: IndicatorsConfig) -> None:

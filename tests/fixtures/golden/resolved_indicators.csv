@@ -24,7 +24,7 @@ M24,indicator,global,M,core,B2,market_rate,YOY,MKT45,rate_of_change,false,robust
 M27,indicator,country,M,opt,B1,activity_yoy,YOY,ACT120,rate_of_change,false,z,-1,2.0,1.5,240,60,92,70,descriptive_only,0,environment:U,0,proposed
 G01,indicator,country,M,core,B1,price_rate,YOY,ACT120,rate_of_change,false,robust_z,1,2.0,1.5,240,60,92,70,descriptive_only,0,prices:U;agri:U,0,proposed
 G02,indicator,global,M,ext,B2,market_rate,YOY,MKT45,rate_of_change,false,robust_z,1,2.0,1.5,240,60,92,70,descriptive_only,0,global:U,0,proposed
-G03,indicator,country,M,ext,B1,activity_yoy,LEVEL,ACT120,stationary,false,z,-1,2.0,1.5,240,60,92,70,descriptive_only,0,agri:U,0,proposed
+G03,indicator,global,M,ext,B1,activity_yoy,LEVEL,ACT120,stationary,false,z,-1,2.0,1.5,240,60,92,70,descriptive_only,0,global:U,0,proposed
 G04,indicator,country,M,ext,B1,activity_yoy,SUM12_PCT_GDP,ACT120,stationary,false,z,-1,2.0,1.5,240,60,92,70,descriptive_only,0,agri:U,0,proposed
 G05,indicator,country,M,opt,B1,market_rate,YOY,Q270,stationary,false,robust_z,0,2.0,1.5,240,60,92,70,descriptive_only,0,agri:U,0,proposed
 G06,indicator,country,M,opt,B1,activity_yoy,LEVEL,ACT120,stationary,false,z,0,2.0,1.5,240,60,92,70,descriptive_only,0,agri:U,0,proposed

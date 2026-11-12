@@ -8,7 +8,8 @@ import {fileURLToPath} from "node:url";
 import {BIN_EDGES} from "../src/lib/bins.js";
 import * as copy from "../src/lib/copy.js";
 import {countryModel} from "../src/lib/country-model.js";
-import {countryBlock, domainHref, indicatorHref, seriesHref, switcherOptions} from "../src/lib/country-view.js";
+import {countryPage as countryBlock} from "../src/lib/country-page.js";
+import {domainHref, indicatorHref, seriesHref, switcherOptions} from "../src/lib/country-view.js";
 import {BANDS, PROFILE_TICKS, profileChart, profileFigure, profileRows} from "../src/lib/profile-chart.js";
 import {html} from "./support/html-standin.mjs";
 
@@ -102,7 +103,7 @@ test("rows without a value sit in a second group with code and sentence; the fil
   const out = page("SY07");
   assert.match(out, /<tbody data-group="without-value"><tr class="mm-group-row"><th scope="rowgroup" colspan="6">Indicators without a value in this export<\/th>/);
   assert.match(out, new RegExp(`<span class="mm-code">n/a</span></span> <span class="mm-sentence">${copy.DRAFT_NA_DEFINED_SENTENCE}`));
-  assert.match(out, /<fieldset id="country-filter"/);
+  assert.match(out, /<fieldset id="country-filter-growth"/, "one Show control per table card (L22)");
   assert.match(out, new RegExp(`${copy.DRAFT_COUNTRY_FILTER_VALUE}`));
   assert.doesNotMatch(out, /\b\d+ (rows? )?hidden/);
 });
@@ -112,9 +113,11 @@ test("ranked domain shows the stored label and figure; unranked domain shows no 
   const growth = /id="domain-growth"[\s\S]*?<\/section>/.exec(out)[0];
   assert.match(growth, /mean percentile of the domain&#39;s indicators|mean percentile of the domain's indicators/);
   assert.match(growth, /0\.35/);
-  assert.match(growth, /0\.35<\/span>, 2 of 4 indicators available; position 3 of 3/);
+  assert.match(growth, /data-tile="domain-figure"[^>]*>/, "domain-figure tile (AC-DB-21)");
+  assert.match(growth, /data-field="percentile-rank">0\.35<\/span>/);
+  assert.match(growth, /2 of 4 indicators available; position 3 of 3/);
   const agri = /id="domain-agri"[\s\S]*?<\/section>/.exec(out)[0];
-  assert.doesNotMatch(agri, /mm-figure-line|role="img"/);
+  assert.doesNotMatch(agri, /data-tile=|role="img"/);
   assert.match(agri, /informational, unranked/);
   const agg = /id="domain-growth"[\s\S]*?<\/section>/.exec(page("SYA1"))[0];
   assert.match(agg, /aggregate \(not ranked\)/);
@@ -133,4 +136,31 @@ test("the switcher has an explicit Go button and no change-triggered navigation 
   assert.doesNotMatch(fn, /addEventListener\("change"/);
   assert.match(fn, /"click"/);
   assert.match(fn, /e\.key === "Enter"/);
+});
+
+test("L22: band per domain in stored order; tile span 4, strip span 8, table card span 12; no Trend column, no sparkline", () => {
+  const out = page("SY01");
+  const ids = [...out.matchAll(/<section class="mm-dband mm-country-domain" id="domain-([a-z_]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(ids, domains.map((d) => d.domain_id).filter((id) => model("SY01").domains.some((x) => x.domainId === id)));
+  const growth = /id="domain-growth"[\s\S]*?<\/section>/.exec(out)[0];
+  assert.match(growth, /mm-card--tile mm-card--span-4 mm-tile" data-tile="domain-figure"/);
+  assert.match(growth, /mm-card--span-8 mm-card--strip/);
+  assert.match(growth, /mm-card--span-12 mm-card--table" data-table-card="growth"/);
+  assert.match(growth, /<h2 id="h-growth"><a href="\.\.\/domain\/growth" data-link="domain" data-carry>/);
+  assert.match(growth, /data-link="indicator-name" data-carry/);
+  assert.doesNotMatch(out, /Trend|sparkline/i);
+  assert.equal(out.split("<h1").length, 1, "the h1 is the static page heading, not the block");
+});
+
+test("L22: without a store the switcher sits above the bands; the page has the hidden empty card", () => {
+  const out = page("SY01");
+  assert.ok(out.indexOf("country-switcher") < out.indexOf('id="domain-growth"'));
+  assert.match(out, /id="country-empty" hidden/);
+});
+
+test("L22: the ranked=false domain has no tile and no strip; a low-coverage or aggregate figure follows the stored fields (AC-DB-21)", () => {
+  const agri = /id="domain-agri"[\s\S]*?<\/section>/.exec(page("SY01"))[0];
+  assert.doesNotMatch(agri, /mm-card--span-4|mm-card--strip|percentile-rank/);
+  const agg = /id="domain-growth"[\s\S]*?<\/section>/.exec(page("SYA1"))[0];
+  assert.doesNotMatch(agg, /percentile-rank/);
 });

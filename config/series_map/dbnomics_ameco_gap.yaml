@@ -1,8 +1,8 @@
 # Series map of group dbnomics_ameco_gap. Key = parser series_ref: the DBnomics series_code.
 # [UNVERIFIED] against a live response: codes follow the synthetic fixture. A02c is its own
 # indicator (comparison series, ADR-009/D18), so role headline is the one headline of A02c; the
-# is_comparison flag is NOT set on A02c in indicators.yaml (role: comparison would fail rule 12),
-# decision for the user. Seed set only (research: 37 series expected).
+# is_comparison flag is set on A02b and A02c in indicators.yaml (export-real-data-amendment, Q-4);
+# they have no domain and are not exported. Seed set only (research: 37 series expected).
 series:
   - dataset: AMECO/AVGDGP
     key: "DEU.1.0.0.0.AVGDGP"

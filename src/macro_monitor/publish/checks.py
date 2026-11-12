@@ -34,6 +34,7 @@ from macro_monitor.publish.export import (
 )
 from macro_monitor.publish.manifest import FileEntry, RunInfo, utc_text
 from macro_monitor.publish.meta import ConfigTree
+from macro_monitor.publish.published import PUBLISHED_INDICATOR_IDS_SQL
 from macro_monitor.publish.scorecard import day, num
 
 MB = 1_000_000
@@ -181,7 +182,7 @@ class Reference:
         self.session, self.run = session, run
         f = session.fetch
         ind = f("SELECT indicator_id, kind, is_comparison, scope FROM ref.indicator")
-        self.allowed = {str(r[0]) for r in ind if r[1] == "indicator" and not r[2]}
+        self.allowed = {str(r[0]) for r in f(PUBLISHED_INDICATOR_IDS_SQL)}
         self.scope = {str(r[0]): str(r[3]) for r in ind}
         self.inputs = {str(r[0]) for r in ind if r[1] == "input"}
         self.is_global = {
@@ -231,6 +232,10 @@ def check_exp02(
                     out.fail(f"{f.path}: input indicator {iid} (support set) is exported")
                 elif iid not in ref.allowed:
                     out.fail(f"{f.path}: indicator {iid} is not a published indicator")
+        if f.path == "meta/indicators.json":
+            for e in doc["indicators"]:
+                if not e.get("domain_ids"):
+                    out.fail(f"{f.path}: indicator {e['indicator_id']} has empty domain_ids")
         if f.path != "meta/series.json":
             for _, sid in _walk(doc, ("series_id",)):
                 if sid is not None and sid not in ref.series_ind:
@@ -290,8 +295,8 @@ def check_exp04(
         str(r[0]): int(r[1])
         for r in f(
             "SELECT h.indicator_id, count(*) FROM curated.v_headline_obs_published h "
-            "JOIN ref.indicator i ON i.indicator_id = h.indicator_id AND i.kind = 'indicator' "
-            "AND NOT i.is_comparison WHERE h.value_status <> 'PROJ' "
+            "WHERE h.indicator_id IN (" + PUBLISHED_INDICATOR_IDS_SQL + ") "
+            "AND h.value_status <> 'PROJ' "
             "AND h.ref_period_start >= %s GROUP BY h.indicator_id",
             [ser.SERIES_START],
         )
@@ -301,9 +306,9 @@ def check_exp04(
         for r in f(
             "SELECT indicator_id, count(*) FROM (SELECT r.indicator_id, count(*) OVER "
             "(PARTITION BY r.series_id, r.indicator_id, r.entity_id, r.ref_period_start) AS n "
-            "FROM curated.v_revision_history r JOIN ref.indicator i "
-            "ON i.indicator_id = r.indicator_id AND NOT i.is_comparison "
-            "WHERE r.value_status <> 'PROJ' AND r.known_at <= %s) t WHERE n >= 2 "
+            "FROM curated.v_revision_history r "
+            "WHERE r.indicator_id IN (" + PUBLISHED_INDICATOR_IDS_SQL + ") "
+            "AND r.value_status <> 'PROJ' AND r.known_at <= %s) t WHERE n >= 2 "
             "GROUP BY indicator_id",
             [run.known_cutoff],
         )
@@ -462,7 +467,8 @@ def check_exp05(docs: Mapping[str, Any], ref: Reference, run: RunInfo, out: _Run
                 same(where, "n_ranked", i["n_ranked"], n_rk)
     alerts = {(r[0], r[1]): (r[2], num(r[3]), r[4]) for r in f(
         "SELECT indicator_id, entity_id, level, z, confidence FROM analytics.v_alert_published "
-        "WHERE analysis_run_id = %s AND level IN ('watch', 'alert')", [rid])}  # fmt: skip
+        "WHERE analysis_run_id = %s AND level IN ('watch', 'alert')", [rid])
+        if r[0] in ref.allowed}  # fmt: skip
     if "alerts.json" in docs:
         got_a = {(a["indicator_id"], a["entity_id"]): (a["level"], a["z"], a["confidence"])
                  for a in docs["alerts.json"]["alerts"]}  # fmt: skip

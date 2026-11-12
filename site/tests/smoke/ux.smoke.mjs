@@ -42,7 +42,7 @@ const builtJson = (stem) => {
 const TIMEOUT = 20000;
 // V1 (landing and a domain scorecard), V2, V3, V4. Selector = content that proves the page rendered its data.
 const PAGES = [
-  ["V1 landing", "/", "#country-list li"],
+  ["V1 landing", "/", "#band-overview"],
   ["PG-DOMAINS", "/domains", "#domain-list li"],
   ["V1 domain", "/domain/labour", "#domain-heatmap tbody tr"],
   ["PG-INDICATOR", "/indicator/M09", "#indicator-table tbody tr"],
@@ -196,6 +196,54 @@ describe("AC-UX-6: no page-level horizontal scroll at 320/390/768/1280/1920", ()
       });
     });
   }
+});
+
+describe("L2 (AC-DB-10, AC-DB-11): .mm-grid columns and card layout at 320/390/768/1280/1920", () => {
+  // The grid is not on a built page yet (home cards come in L11); a probe grid is injected into a built page.
+  const COLUMNS = {320: 1, 390: 1, 768: 6, 1280: 12, 1920: 12};
+  test("columns per breakpoint, span widths, no overflow or overlap, band h2, forced-colors border", async (t) => {
+    await withPage(t, "/domains", "#domain-list li", async ({page}) => {
+      await page.evaluate(() => {
+        const g = document.createElement("div");
+        g.id = "l2-probe";
+        g.className = "mm-grid";
+        g.innerHTML =
+          '<div class="mm-band" style="grid-column: 1 / -1"><h2>Band</h2></div>' +
+          ["8", "4", "3", "3", "3", "3", "12"].map((n) => `<section class="mm-card mm-card--span-${n}"><h3>Card ${n}</h3><p class="mm-card-sub">sub</p><p class="mm-tile-number">1.5</p></section>`).join("");
+        document.querySelector("#observablehq-main").append(g);
+      });
+      const failures = [];
+      for (const w of VIEWPORTS) {
+        await setViewport(page, w);
+        await page.waitForTimeout(100);
+        const r = await page.evaluate(() => {
+          const grid = document.querySelector("#l2-probe");
+          const cards = [...grid.querySelectorAll(".mm-card")].map((c) => c.getBoundingClientRect());
+          const cols = getComputedStyle(grid).gridTemplateColumns.split(" ").length;
+          let overlap = false;
+          for (let i = 0; i < cards.length; i++) for (let j = i + 1; j < cards.length; j++) {
+            const a = cards[i], b = cards[j];
+            if (a.left < b.right - 0.5 && b.left < a.right - 0.5 && a.top < b.bottom - 0.5 && b.top < a.bottom - 0.5) overlap = true;
+          }
+          const gr = grid.getBoundingClientRect();
+          const clipped = cards.some((c) => c.left < gr.left - 0.5 || c.right > gr.right + 0.5);
+          return {cols, overlap, clipped, vw: innerWidth, scrollW: document.documentElement.scrollWidth, widths: cards.map((c) => Math.round(c.width))};
+        });
+        if (r.cols !== COLUMNS[w]) failures.push(`${w}px: ${r.cols} columns, expected ${COLUMNS[w]}`);
+        if (r.overlap) failures.push(`${w}px: cards overlap`);
+        if (r.clipped) failures.push(`${w}px: a card leaves the grid`);
+        if (r.scrollW > r.vw) failures.push(`${w}px: page scrolls horizontally (${r.scrollW} > ${r.vw})`);
+        if (w === 1280 && !(r.widths[0] > r.widths[1] && r.widths[2] < r.widths[1])) failures.push(`1280px: span widths ${r.widths.join(",")}`);
+      }
+      assert.deepEqual(failures, []);
+      // headings: band is an h2, card titles h3, cards do not nest
+      const shape = await page.evaluate(() => ({band: document.querySelectorAll("#l2-probe .mm-band h2").length, nested: document.querySelectorAll(".mm-card .mm-card").length}));
+      assert.deepEqual(shape, {band: 1, nested: 0});
+      await setForcedColors(page);
+      const border = await page.evaluate(() => getComputedStyle(document.querySelector("#l2-probe .mm-card")).borderTopWidth);
+      assert.equal(border, "1px");
+    });
+  });
 });
 
 describe("AC-UX-12: cumulative layout shift at most 0.1", () => {
@@ -362,7 +410,7 @@ describe("T113 AC-UX-5 and AC-UX-15: table semantics, legend, orientation", () =
           assert.equal(r.bins[0], "lowest fifth of the panel");
           assert.equal(r.bins[4], "highest fifth of the panel");
           assert.ok(r.order, "the caveat precedes the legend in DOM order");
-          assert.equal(r.groups, d === "labour" ? 2 : 1, "countries and aggregates are separate row groups (aggregates only where the scorecard has one)");
+          assert.equal(r.groups, 2, "countries and aggregates are separate row groups (L21, amendment 4.8: the rows are the comparison set, so the aggregate group is present on every ranked domain)");
         }
       });
     });
@@ -537,11 +585,11 @@ describe("T117-T119 V2 dot plot, table alternative and cards, on PG-INDICATOR", 
       // unranked rows stay in the table and are not drawn
       for (const [name] of a.tableValues.filter((r) => r[1] !== "ranked")) assert.ok(!a.labels.some((l) => l.startsWith(`${name}:`)), name);
       // the guide lines do not move with the group filter or the indicator
-      await page.check('#indicator-group input[value="g7"]');
+      await page.selectOption("#filter-group", "g7");
       await page.waitForTimeout(300);
       const b = await read();
       assert.deepEqual([b.rules, b.ruleX], [a.rules, a.ruleX]);
-      await page.selectOption("#indicator-sort", "value");
+      await page.selectOption("#rank-sort", "value");
       await page.waitForTimeout(300);
       const c = await page.evaluate(() => [...document.querySelectorAll("#indicator-dot-figure [aria-label=rule] line")].map((l) => l.getAttribute("x1")).join(","));
       assert.equal(c, a.ruleX, "the guide lines do not move with the sort either");
@@ -1048,7 +1096,8 @@ describe("T130 AC-UX-9: print stylesheet", () => {
             bg: root.getPropertyValue("--mm-bg").trim(), bodyBg: getComputedStyle(document.body).backgroundColor,
             adjust: getComputedStyle(document.body).printColorAdjust || getComputedStyle(document.body).webkitPrintColorAdjust,
             visibleControls: [...document.querySelectorAll("select, input, nav.mm-nav, .mm-skip, fieldset.mm-radios, fieldset.mm-point-reader, .mm-filter, .mm-group-btn, .mm-selection, .mm-facts, button.mm-history-btn, button.mm-country-go")].filter(vis).map((e) => e.tagName + "." + e.className),
-            closedHidden: [...document.querySelectorAll("details:not([open])")].filter((d) => [...d.children].some((c) => c.tagName !== "SUMMARY" && !vis(c) && c.textContent.trim())).length,
+            // the filter bar is hidden in print (amendment 2.5): its chips are not closed content
+            closedHidden: [...document.querySelectorAll("details:not([open])")].filter((d) => !d.closest(".mm-filterbar")).filter((d) => !d.closest(".mm-filterbar")).filter((d) => [...d.children].some((c) => c.tagName !== "SUMMARY" && !vis(c) && c.textContent.trim())).length,
             closedCount: document.querySelectorAll("details:not([open])").length,
             asof: document.querySelector(".mm-asof") && vis(document.querySelector(".mm-asof")) ? document.querySelector(".mm-asof").textContent : "",
             caveatPresent: Boolean(document.querySelector(".mm-caveat")), caveatVisible: [...document.querySelectorAll(".mm-caveat")].every(vis),
@@ -1246,6 +1295,7 @@ describe("T132 AC-UX-6: responsive matrix and the WCAG 1.4.12 text-spacing overr
       if (["SCRIPT", "STYLE", "OPTION"].includes(el.tagName) || el.closest("svg") && el.localName !== "svg") continue;
       if (!visible(el) || el.closest(".mm-visually-hidden")) continue; // visually hidden text is clipped on purpose
       const cs = getComputedStyle(el);
+      if (cs.clipPath === "inset(50%)" && cs.position === "absolute") continue; // a table caption hidden on purpose (L22: it repeats the card title)
       const ownsText = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
       if (el.localName === "svg") continue;
       if (ownsText || el.matches("select, button, input")) {
@@ -1372,7 +1422,8 @@ describe("R22 AC-RD-54: redesign page types, interactive states", () => {
 
   for (const scheme of SCHEMES) {
     test(`home with the filter in use (no match), ${scheme}: text contrast, status sentence, focus ring on the input`, async (t) => {
-      await withPage(t, "/", "#country-list li", async ({page}) => {
+      await withPage(t, "/", "#band-overview", async ({page}) => {
+        await page.evaluate(() => { document.getElementById("browse").open = true; });
         await setTheme(page, scheme);
         const input = page.locator("#countries input[type=search]");
         await input.fill("zzzzqq");
@@ -1515,4 +1566,145 @@ describe("R22 AC-RD-54: redesign page types, interactive states", () => {
       t.diagnostic(`${scheme} adjacent bin fill ratios: ${lum.slice(1).map((c, i) => luminanceRatio(lum[i], c).toFixed(2)).join(", ")}`);
     }
   });
+});
+
+// L25 (AC-DB-04, 05, 06, 10, 11, 33): the sweep over every changed page type. Chromium emulation only; screen reader, Firefox, Safari and a real
+// print dialog are manual (docs/ops/dashboard-layout-measurements.md, L25 section).
+describe("L25 headings: one h1, band titles h2, card titles h3, no skipped level (AC-DB-10)", () => {
+  const OUTLINE_PAGES = [...PAGES, ["PG-DOMAIN unranked", "/domain/agri", "#domain-heatmap"], ["PG-INDICATOR other", "/indicator/P01", "#indicator-table tbody tr"]];
+  for (const [name, path, ready] of OUTLINE_PAGES) {
+    for (const width of [320, 1280]) {
+      test(`${name} at ${width}px`, async (t) => {
+        await withPage(t, path, ready, async ({page}) => {
+          await setViewport(page, width);
+          const r = await page.evaluate(() => {
+            const hs = [...document.querySelectorAll("h1, h2, h3, h4, h5, h6")].filter((h) => !h.closest("[hidden]") && getComputedStyle(h).display !== "none");
+            const skips = [];
+            let prev = 0;
+            for (const h of hs) {
+              const level = Number(h.tagName[1]);
+              if (prev && level > prev + 1) skips.push(`${h.tagName} "${h.textContent.trim().slice(0, 30)}" after h${prev}`);
+              prev = level;
+            }
+            return {
+              h1: hs.filter((h) => h.tagName === "H1").length,
+              skips,
+              bandNotH2: [...document.querySelectorAll(".mm-band h1, .mm-band h3, .mm-band h4")].map((h) => h.tagName),
+              bandWithout: [...document.querySelectorAll(".mm-band")].filter((b) => !b.querySelector("h2")).length,
+              cardTitleNotH3: [...document.querySelectorAll(".mm-card > h2, .mm-card > h4, .mm-card > header > h2, .mm-card > header > h4")].map((h) => `${h.tagName} ${h.textContent.trim().slice(0, 30)}`)
+            };
+          });
+          assert.equal(r.h1, 1, "exactly one h1");
+          assert.deepEqual(r.skips, [], "no skipped heading level");
+          assert.deepEqual(r.bandNotH2, [], "a band title is an h2");
+          assert.equal(r.bandWithout, 0, "every band has its h2");
+          assert.deepEqual(r.cardTitleNotH3, [], "a card title is an h3");
+        });
+      });
+    }
+  }
+});
+
+describe("L25 print: the bar is absent and one filters line is present on every page type that has the bar (AC-DB-06)", () => {
+  for (const [name, path, ready] of PAGES) {
+    test(name, async (t) => {
+      await withPage(t, path, ready, async ({page}) => {
+        const hasBar = await page.evaluate(() => document.getElementById("filterbar-slot") !== null);
+        await setPrint(page, true);
+        const r = await page.evaluate(() => {
+          const line = document.querySelector(".mm-print-filters");
+          const slot = document.getElementById("filterbar-slot");
+          return {line: line && getComputedStyle(line).display !== "none" ? line.textContent.trim() : "", slotShown: slot ? getComputedStyle(slot).display !== "none" && slot.getBoundingClientRect().height > 0 : false, filterbar: document.getElementById("filterbar") ? getComputedStyle(document.getElementById("filterbar")).display !== "none" : false};
+        });
+        assert.equal(r.slotShown || r.filterbar, false, "no filter bar in print");
+        if (hasBar) assert.equal(r.line, "Filters: none", "defaults print none");
+        else assert.equal(r.line, "", "a page without the bar prints no filters line");
+      });
+    });
+  }
+});
+
+describe("L25 320 px with a filter in use: no page-level horizontal scroll, no card overlap (AC-DB-05, 11)", () => {
+  const FILTERED = [
+    ["PG-HOME filtered", "/#g=g7&f=M&from=2023&to=2025", "#band-overview"],
+    ["PG-COUNTRY filtered", "/country/DEU#d=labour&f=M", ".mm-country-domain table tbody tr"],
+    ["PG-INDICATOR filtered", "/indicator/M09#g=g7&c=DEU", "#indicator-table tbody tr"],
+    ["PG-DOMAIN filtered", "/domain/labour#g=g7&f=M", "#domain-heatmap tbody tr"]
+  ];
+  for (const [name, path, ready] of FILTERED) {
+    test(name, async (t) => {
+      await withPage(t, path, ready, async ({page}) => {
+        const failures = [];
+        for (const w of [320, 390]) {
+          await setViewport(page, w);
+          await page.waitForTimeout(150);
+          const o = await horizontalOverflow(page);
+          if (o.scrollW > o.vw) failures.push(`${w}px: scrollWidth ${o.scrollW} > ${o.vw}; ${o.offenders.join("; ") || "none found"}`);
+          const overlap = await page.evaluate(() => {
+            const cards = [...document.querySelectorAll(".mm-card")].filter((c) => c.getBoundingClientRect().height > 0).map((c) => c.getBoundingClientRect());
+            let n = 0;
+            for (let i = 0; i < cards.length; i++) for (let j = i + 1; j < cards.length; j++) {
+              const a = cards[i], b = cards[j];
+              if (Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 1) n++;
+            }
+            return n;
+          });
+          if (overlap) failures.push(`${w}px: ${overlap} overlapping card pairs`);
+        }
+        assert.deepEqual(failures, []);
+      });
+    });
+  }
+});
+
+describe("L25 keyboard: C-RANK on PG-HOME and PG-INDICATOR (AC-DB-04)", () => {
+  for (const [name, path, ready] of [["PG-HOME", "/", "#band-overview"], ["PG-INDICATOR", "/indicator/M09", "#indicator-table tbody tr"]]) {
+    for (const width of [320, 1280]) {
+      test(`${name} at ${width}px: the sort select is operated by keys; every C-RANK control is a Tab stop, visibly focused, not covered, at least 24 px`, async (t) => {
+        await withPage(t, path, ready, async ({page}) => {
+          await setViewport(page, width);
+          await page.waitForSelector("#rank-sort");
+          await page.focus("#rank-sort");
+          const before = await page.inputValue("#rank-sort");
+          // type-ahead on the focused select (works the same on every platform): the first letter of an option other than the current one
+          const letter = await page.evaluate(() => { const s = document.getElementById("rank-sort"); const cur = s.selectedOptions[0].textContent.trim(); const o = [...s.options].find((x) => x.textContent.trim()[0].toLowerCase() !== cur[0].toLowerCase()); return o.textContent.trim()[0]; });
+          await page.keyboard.type(letter);
+          await page.waitForTimeout(150);
+          assert.notEqual(await page.inputValue("#rank-sort"), before, "typing an option's first letter changes the sort");
+          assert.equal(await page.evaluate(() => document.activeElement?.id), "rank-sort", "focus stays on the select after the card redraws");
+          const want = await page.evaluate(() => [...document.querySelector(".mm-card--rank").querySelectorAll("a[href], button, select, input, summary, textarea")].filter((e) => e.getBoundingClientRect().width > 0 && getComputedStyle(e).visibility !== "hidden").length);
+          assert.ok(want > 0);
+          await page.evaluate(() => { document.activeElement?.blur(); document.querySelector(".mm-card--rank").scrollIntoView(); });
+          await page.focus("#rank-sort");
+          const seen = new Set();
+          const problems = [];
+          for (let k = 0; k < want + 5; k++) {
+            const m = await page.evaluate(() => {
+              const el = document.activeElement;
+              const card = document.querySelector(".mm-card--rank");
+              if (!el || !card.contains(el)) return null;
+              const r = el.getBoundingClientRect();
+              const bar = document.getElementById("filterbar-slot")?.getBoundingClientRect();
+              const head = el.closest("table")?.querySelector("thead")?.getBoundingClientRect();
+              const cs = getComputedStyle(el);
+              const covered = (b) => b && b.height > 1 && Math.min(r.bottom, b.bottom) - Math.max(r.top, b.top) > 0.5 && Math.min(r.right, b.right) - Math.max(r.left, b.left) > 0.5;
+              const key = el.id || el.getAttribute("href") || el.textContent.trim().slice(0, 20);
+              const ring = parseFloat(cs.outlineWidth) >= 2 && cs.outlineStyle !== "none" || cs.boxShadow !== "none";
+              const below = el.closest("thead") ? false : covered(head);
+              return {key: `${el.tagName}:${key}`, inline: cs.display === "inline", w: r.width, h: r.height, ring, barCovered: !el.closest("#filterbar-slot") && covered(bar), headCovered: below};
+            });
+            if (!m) break;
+            seen.add(m.key);
+            if (!m.ring) problems.push(`${m.key}: no visible focus indicator`);
+            if (m.barCovered) problems.push(`${m.key}: covered by the bar`);
+            if (m.headCovered) problems.push(`${m.key}: covered by the sticky header`);
+            if (!m.inline && (m.w < 24 || m.h < 24)) problems.push(`${m.key}: target ${Math.round(m.w)}x${Math.round(m.h)}`);
+            await page.keyboard.press("Tab");
+          }
+          assert.deepEqual(problems, []);
+          assert.ok(seen.size >= 2, `Tab moves through the card (${seen.size} stops)`);
+        });
+      });
+    }
+  }
 });

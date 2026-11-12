@@ -392,7 +392,7 @@ indicators:
   - id: G03
     name: Stocks-to-use ratio (wheat, coarse grains, rice, oilseeds)
     kind: indicator
-    scope: country
+    scope: global
     tier: M
     priority: ext
     currency_basis: B1
@@ -402,9 +402,9 @@ indicators:
     transform: LEVEL
     alert: {adverse: -1}
     rank: {mode: descriptive_only, good_dir: 0, display_dir: null}
-    domains: [{id: agri, ranked: false}]
+    domains: [{id: global, ranked: false}]
     calendar_basis: MKTYR
-    notes: "calendar_basis MKTYR; staleness borderline (spec section 7 item 3)"
+    notes: "calendar_basis MKTYR; staleness borderline (spec section 7 item 3); scope global (WLD)"
 
   - id: G04
     name: Agricultural trade balance, 12-month sum
@@ -736,6 +736,7 @@ indicators:
   - id: A02b
     name: Output gap, OECD estimate (comparison)
     kind: indicator
+    is_comparison: true
     scope: country
     tier: A
     priority: opt
@@ -751,6 +752,7 @@ indicators:
   - id: A02c
     name: Output gap, European Commission estimate (comparison)
     kind: indicator
+    is_comparison: true
     scope: country
     tier: A
     priority: opt

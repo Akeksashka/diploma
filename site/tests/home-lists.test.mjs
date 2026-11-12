@@ -55,19 +55,20 @@ test("unsafe ids are refused", () => {
   assert.throws(() => domainsListHtml([{domain_id: "a/b", name: "x"}]), /unsafe/);
 });
 
-test("home page source: title, caveat, shell only; no heatmap, overall figure, status block, Guide, Data status or withdrawn sentences", () => {
+test("home page source: title, caveat, shell only; the L13 heatmap card is mounted, no PG-DOMAIN heatmap, overall figure, status block, Guide, Data status or withdrawn sentences", () => {
   const s = homePageSource({entities, indicators, domains});
   assert.equal((s.match(/<h1>/g) ?? []).length, 1);
   assert.ok(s.includes(`<p class="mm-caveat" id="caveat">${CAVEAT}</p>`));
   assert.ok(/display\(pageHead\(html, boot, "lists"\)\);/.test(s));
-  for (const bad of ["heatmap", "Heatmap", "scorecard/", "Guide", "Data status", "/status", "/guide", "Projections are not shown", "all lines share one unit", "Look at one series", "Domain overviews", "domain-heatmap", "mm-overall"]) assert.ok(!s.includes(bad), bad);
+  assert.ok(s.includes("mountHeatmapCard(html, dash"));
+  for (const bad of ["Guide", "Data status", "/status", "/guide", "Projections are not shown", "all lines share one unit", "Look at one series", "Domain overviews", "domain-heatmap", "mm-overall"]) assert.ok(!s.includes(bad), bad);
   assert.ok(s.includes("mountFilters(document)"));
 });
 
 test("domains list: name, notices and a link per domain; unranked without notices shows the informational wording; escaped", () => {
   const h = domainsListHtml(domains);
-  assert.equal((h.match(/<li>/g) ?? []).length, 3);
-  assert.ok(h.includes('<a href="./domain/labour">Labour</a></li>'));
+  assert.equal((h.match(/<li class="mm-card mm-card--span-4"/g) ?? []).length, 3);
+  assert.ok(h.includes('<h3><a href="./domain/labour">Labour</a></h3></li>'));
   assert.ok(h.includes("<em>(informational, unranked)</em>"));
   assert.ok(h.includes("note &lt;b&gt;"));
   assert.ok(!h.includes("<table"));

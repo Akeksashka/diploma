@@ -3,24 +3,23 @@
 // (the V2 helpers of peers.js); the sort select orders by a stored field, nulls last, ties by name; every number printed is a stored
 // field formatted by indicator-model.js. R16: pointer tip on the value chart; "Read a value" (the country in focus select) for the keyboard.
 import {
-  BIN_LABELS, DRAFT_DOWNLOAD, DRAFT_INDICATOR_COLUMNS as ICOL, DRAFT_INDICATOR_COLUMNS_MORE as MORE, DRAFT_INDICATOR_GROUP_LEGEND,
-  INDICATOR_SERIES_LINK, DRAFT_INDICATOR_SORT_LABEL, DRAFT_INDICATOR_SORT_LABELS, DRAFT_INDICATOR_SWITCHER_GO, DRAFT_INDICATOR_SWITCHER_LABEL, DRAFT_LEGEND_BINS,
-  DRAFT_NEXT_GROUP, DRAFT_OFFSET_FLAG, DRAFT_OPEN_AS_SERIES, DRAFT_PEER_FIGURE_LABEL, READER_NONE, SERIES_LINK_LABEL, DRAFT_TRANSFORMED_HEADER, DRAFT_VALUE_NEUTRAL_LEGEND, EMPTY_GROUP,
+  BIN_LABELS, DRAFT_BAND_TABLE, DRAFT_BAND_TITLES, DRAFT_DOWNLOAD, DRAFT_EMPTY_CARD, DRAFT_INDICATOR_COLUMNS as ICOL, DRAFT_INDICATOR_COLUMNS_MORE as MORE,
+  INDICATOR_SERIES_LINK, DRAFT_LEGEND_BINS,
+  DRAFT_NEXT_GROUP, DRAFT_OFFSET_FLAG, DRAFT_OPEN_AS_SERIES, DRAFT_PEER_FIGURE_LABEL, SERIES_LINK_LABEL, DRAFT_TRANSFORMED_HEADER, DRAFT_VALUE_NEUTRAL_LEGEND, EMPTY_GROUP,
   FILTER_NOTE, FLAG_AHEAD, FLAG_INHERITED, FLAG_LAGGING, FLAG_UNALIGNED, NO_RANKING_SPREAD, PERCENTILE_COLUMN_LABEL
 } from "./copy.js";
 import {aboutDetails} from "./about-value.js";
 import {chip, sourceCell, valueCell} from "./country-view.js";
 import {chartFigure} from "./figure.js";
 import {glyph, glyphSprite} from "./glyphs.js";
-import {parseHash, serializeHash} from "./hash.js";
+import {serializeHash} from "./hash.js";
 import {filterRows, groupMembers, groupOptions, spreadText} from "./peers.js";
-import {installTipDismiss, pointReader} from "./point-reader.js";
-import {peerChart, radioGroup, selectBox} from "./peers-view.js";
+import {peerChart} from "./peers-view.js";
+import {INDICATOR_SORT_OPTIONS} from "./rank-model.js";
+import {mountRankCard} from "./rank-view.js";
 import {ariaSort, sortRows} from "./sort.js";
 import {emptyBlock} from "./state-blocks.js";
 import {STATES} from "./states.js";
-import {readerText, valueTipLines} from "./tip.js";
-import {valueFigure, valueRows} from "./value-chart.js";
 
 const ALIGNMENT_TAGS = Object.freeze({ahead: FLAG_AHEAD, lagging: FLAG_LAGGING, unaligned: FLAG_UNALIGNED});
 
@@ -32,7 +31,6 @@ export const SORTS = Object.freeze({
   percentile: Object.freeze({field: "percentile", dir: "desc"}),
   period: Object.freeze({field: "refPeriodEnd", dir: "desc"})
 });
-export const SORT_OPTIONS = Object.freeze(Object.keys(SORTS).map((id) => ({id, label: DRAFT_INDICATOR_SORT_LABELS[id]})));
 export const DEFAULT_SORT = "name";
 const MAX_SERIES_COUNTRIES = 5;
 const BIN_IDS = Object.freeze([1, 2, 3, 4, 5]);
@@ -40,9 +38,6 @@ const BIN_IDS = Object.freeze([1, 2, 3, 4, 5]);
 // Links of the page. From /indicator/<id> the explorer is ../explorer and a country page is ../country/<id>.
 export const countryHref = (entityId) => `../country/${entityId}`;
 export const seriesHref = (indicatorId, entityIds) => `../explorer${serializeHash({i: indicatorId, c: entityIds})}`;
-
-// Switcher options: every indicator of the build, by name (a sort by the stored name, nothing else).
-export const indicatorOptions = (indicators) => sortRows(indicators.map((i) => ({id: i.indicator_id, label: i.name ?? i.indicator_id})), "label", {nameKey: "label"});
 
 // Peer-group data: option list and the member sets on the manifest's known cutoff (the V2 helpers; date logic only selects rows).
 export function peerGroups(groups, knownCutoff) {
@@ -63,35 +58,10 @@ export function seriesCountries(rows, focus) {
   return sortRows(rows.filter((r) => r.hasValue), "name").slice(0, MAX_SERIES_COUNTRIES).map((r) => r.entityId);
 }
 
-// The state read from the address: `#c=<entity_id>` is the country in focus (only a country of this page), `#g=<group_id>` a peer group.
-export function initialState(hash, entityIds, groupIds) {
-  const h = parseHash(hash, {entities: new Set(entityIds), groups: new Set(groupIds)});
-  return {focus: h.c[0] ?? null, group: h.g ?? "all", sort: DEFAULT_SORT, reading: false};
-}
-
-// The address for a state: #c= (the country in focus) and #g= (the group, omitted for "all"). Decisions record section 3 item 5.
-export const stateHash = (state) => serializeHash({c: state.focus ? [state.focus] : [], g: state.group === "all" ? null : state.group});
-
 // Reference-period line (C-IND-2): the stored figures, or the not-ranked wording when both are null.
 export function referenceLineText(line) {
   if (!line.ranked) return NO_RANKING_SPREAD;
   return spreadText({spreadDays: line.spreadDays, rankReferencePeriod: line.commonPeriod, maxSpreadDays: line.maxRefSpreadDays, nRanked: line.nRanked, nUnaligned: line.nUnaligned});
-}
-
-// WCAG 3.2.2: choosing an option never navigates; the explicit Go button, or Enter on the select, does.
-export function indicatorSwitcher(html, options, currentId) {
-  const root = html`<label class="mm-country-switch">${DRAFT_INDICATOR_SWITCHER_LABEL} <select id="indicator-switcher">${options.map((o) => html`<option value="${o.id}" selected=${o.id === currentId}>${o.label}</option>`)}</select></label> <button type="button" id="indicator-switcher-go" class="mm-country-go">${DRAFT_INDICATOR_SWITCHER_GO}</button>`;
-  if (typeof root?.querySelector === "function" && typeof location !== "undefined") {
-    const go = () => location.assign(`./${root.querySelector("select").value}`);
-    root.querySelector("#indicator-switcher-go").addEventListener("click", go);
-    root.querySelector("select").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        go();
-      }
-    });
-  }
-  return root;
 }
 
 const headerCell = (html, label, field, sortState, cls = "") => {
@@ -100,7 +70,7 @@ const headerCell = (html, label, field, sortState, cls = "") => {
 };
 
 function countryCell(html, r) {
-  return html`<th scope="row" class="mm-country" data-label="${ICOL.country}">${r.hasCountryPage ? html`<a href="${countryHref(r.entityId)}" data-link="country">${r.name}</a>` : r.name}</th>`;
+  return html`<th scope="row" class="mm-country" data-label="${ICOL.country}">${r.hasCountryPage ? html`<a href="${countryHref(r.entityId)}" data-link="country" data-carry>${r.name}</a>` : r.name}</th>`;
 }
 
 function periodCell(html, r) {
@@ -167,128 +137,121 @@ function binLegend(html) {
   return html`<div class="mm-legend mm-ind-legend" id="indicator-legend"><p class="mm-legend-head">${DRAFT_LEGEND_BINS}</p><ol class="mm-legend-bins">${BIN_LABELS.map((label, k) => html`<li data-bin="${BIN_IDS[k]}"><span class="mm-swatch" data-bin="${BIN_IDS[k]}"></span> ${label}</li>`)}<li data-bin="none"><span class="mm-swatch" data-bin="none"></span> ${DRAFT_VALUE_NEUTRAL_LEGEND}</li></ol></div>`;
 }
 
-// The part that follows the controls: links, charts, table. state: {group, sort, focus}.
-// "Read a value" on this page (amendment 5.6 item 3): the country-in-focus select. Choosing a country calls hooks.onFocus(id | null);
-// while focus is inside the fieldset the value chart shows a static tip for the country in focus. DOM only (not built under the
-// htl stand-in of the unit tests).
-function valueReader(html, Plot, bars, state, h, hooks, figureId) {
-  const draw = (tipRow) => valueFigure(html, Plot, bars.map((b) => ({...b, focus: b.entityId === state.focus})), {name: h.name, unit: h.unit, id: figureId, tipRow});
-  let current = draw(state.reading ? state.focus : null);
-  let ready = false;
-  if (current === "" || typeof current?.replaceWith !== "function") return {figure: current, reader: ""};
-  installTipDismiss();
-  const swap = (tipRow) => {
-    const next = draw(tipRow);
-    if (next === "" || !current.parentNode) return;
-    current.replaceWith(next);
-    current = next;
-  };
-  const entries = bars.map((b) => ({id: b.entityId, name: b.label, texts: [readerText(valueTipLines(b))], periods: []}));
-  const inFocus = bars.some((b) => b.entityId === state.focus);
-  const reader = pointReader(html, {
-    id: "value-reader",
-    entries,
-    range: false,
-    none: READER_NONE,
-    value: inFocus ? state.focus : null,
-    // Only the figure (outline and static tip), the table's focus marks and the output text change; the reader fieldset, its live
-    // <output> and the keyboard focus are never rebuilt (so the new text is announced).
-    onChange: (sel) => {
-      hooks.onFocus(sel === null ? null : sel.entry.id);
-      if (ready) swap(state.reading ? state.focus : null);
-    },
-    onActive: (active) => {
-      if (state.reading === active) return;
-      state.reading = active;
-      swap(active ? state.focus : null);
-    }
-  });
-  ready = true;
-  if (!inFocus) reader.select.value = "";
-  return {get figure() { return current; }, reader: reader.el};
+// Rows the Table band and the dot plot show for a state {group, sort, focus}.
+// L23 (layout amendment 4.3): the page is a header card, a "Compare" band (the C-RANK card of rank-view.js with the dot plot beside it) and a "Table" band.
+const emptyCard = (html, id) => html`<p class="mm-state mm-state-empty" id="${id}" data-state="empty">${DRAFT_EMPTY_CARD}</p>`;
+
+// The dot plot card body (C-IND-4) and, when any bar has a percentile bin, the bin legend. "" parts are left out; a card with no dot has the empty sentence.
+export function dotCardBody(html, Plot, model, rows, focus) {
+  const dot = dotFigure(html, Plot, model, rows.withValue, focus);
+  const legend = rows.withValue.some((r) => r.bin !== null) ? binLegend(html) : "";
+  return html`<div class="mm-ind-dot" id="indicator-dot-body">${dot === "" ? emptyCard(html, "indicator-dot-empty") : dot}${legend}</div>`;
 }
 
-export function resultsBlock(html, Plot, model, state, groups, downloadHref = null, hooks = {onFocus: () => {}}) {
+// The Table band card body: the links (C-IND-6, C-IND-7) and the all-country table (C-IND-5) or the empty state of a group with no members.
+export function resultsBlock(html, model, state, groups, downloadHref = null) {
   const rows = viewRows(model, state, groups.members);
   const shown = [...rows.withValue, ...rows.withoutValue];
   const h = model.header;
   const links = html`<p class="mm-ind-links"><a href="${seriesHref(h.indicatorId, seriesCountries(shown, state.focus))}" id="open-series" data-link="series-all">${DRAFT_OPEN_AS_SERIES}</a>${downloadHref ? html` <a href="${downloadHref}" download id="indicator-download" data-link="download">${DRAFT_DOWNLOAD}</a>` : ""}</p>`;
   if (shown.length === 0) return html`<div class="mm-ind-results" data-group="${state.group}" data-sort="${state.sort}">${links}${emptyBlock(html, {id: "empty-group", text: EMPTY_GROUP, next: DRAFT_NEXT_GROUP})}</div>`;
-  const bars = valueRows(rows.withValue, state.focus);
-  const {figure: barFigure, reader} = valueReader(html, Plot, bars, state, h, hooks, "value-figure");
-  const legend = barFigure !== "" && bars.some((b) => b.bin !== null) ? binLegend(html) : "";
-  return html`<div class="mm-ind-results" data-group="${state.group}" data-sort="${state.sort}">${links}${barFigure}${reader}${legend}${dotFigure(html, Plot, model, rows.withValue, state.focus)}${indicatorTable(html, model, rows, rows.sort, state.focus)}</div>`;
+  return html`<div class="mm-ind-results" data-group="${state.group}" data-sort="${state.sort}">${links}${indicatorTable(html, model, rows, rows.sort, state.focus)}</div>`;
 }
 
-// opts: {options (indicatorOptions), groups (meta/groups.json list), knownCutoff, downloadHref}. The state lives in the controls and the
-// address only; nothing is stored.
-export function indicatorBlock(html, Plot, model, {options = [], groups = [], knownCutoff = null, downloadHref = null} = {}) {
+// The page links of the C-RANK card, one level down from the site root.
+export const INDICATOR_LINKS = Object.freeze({country: countryHref, series: (indicatorId, entityId) => seriesHref(indicatorId, [entityId])});
+
+// The state of the page, read from the filter store: Group (`g`, "all" when unset), the country in focus (`c`, only a country of this page) and the
+// sort, which lives in the C-RANK card header and is not in the address.
+export function pageState(storeState, entityIds, sort = DEFAULT_SORT) {
+  const c = storeState.c?.[0] ?? null;
+  return {group: storeState.g ?? "all", focus: c !== null && entityIds.includes(c) ? c : null, sort, reading: false};
+}
+
+// The adapter that lets mountRankCard run on this page: the two slots it needs, and a context built from the store and the loaded scorecard.
+// `quiet()` marks the next store change as caused by the card itself (the reader's country), so the card is not rebuilt under the user's keyboard.
+function compareHost(store, {indicatorId, domainId, scorecard, slots}) {
+  const subs = new Set();
+  let quiet = false;
+  const context = () => ({state: store.get(), domainId, indicatorId, scorecard, error: null, loading: false});
+  store.subscribe(() => {
+    if (quiet) return;
+    for (const fn of [...subs]) fn(context());
+  });
+  return {
+    slots,
+    quiet: (fn) => {
+      quiet = true;
+      try {
+        fn();
+      } finally {
+        quiet = false;
+      }
+    },
+    fill(slot, ...nodes) {
+      slot.replaceChildren(...nodes);
+      slot.setAttribute("aria-busy", "false");
+    },
+    busy(slot) {
+      slot.setAttribute("aria-busy", "true");
+    },
+    onChange(fn) {
+      subs.add(fn);
+      fn(context());
+      return () => subs.delete(fn);
+    }
+  };
+}
+
+// opts: {groups (meta/groups.json list), knownCutoff, downloadHref, store (the filter store; Group and the country in focus come from it),
+// meta ({entities, indicators, domains, groups} lists), series (meta/series.json list), scorecard (the first domain's scorecard), domainId, Plot}.
+// The state lives in the controls, the card header and the address only; nothing is stored.
+export function indicatorBlock(html, Plot, model, {groups = [], knownCutoff = null, downloadHref = null, store, meta = null, series = [], scorecard = null, domainId = null} = {}) {
   const h = model.header;
   const pg = peerGroups(groups, knownCutoff);
   const entityIds = model.rows.map((r) => r.entityId);
-  const hash = typeof location !== "undefined" ? location.hash : "";
-  const state = initialState(hash, entityIds, groups.map((g) => g.group_id));
-  const groupBox = radioGroup(html, {id: "indicator-group", legend: DRAFT_INDICATOR_GROUP_LEGEND, options: pg.options, value: state.group});
-  const sortBox = selectBox(html, {id: "indicator-sort", label: DRAFT_INDICATOR_SORT_LABEL, options: SORT_OPTIONS});
+  let sort = DEFAULT_SORT;
+  const view = () => pageState(store.get(), entityIds, sort);
   const line = referenceLineText(model.referenceLine);
-  // replaceState: no hashchange event, no history entry per click.
-  const writeHash = () => {
-    if (typeof location === "undefined" || typeof history === "undefined") return;
-    const hash = stateHash(state);
-    if (location.hash !== hash) history.replaceState(history.state, "", `${location.pathname}${location.search}${hash}`);
-  };
-  const hooks = {
-    // The reader select is the country in focus: it outlines the bar, marks the table row and writes #c= (replaceState, no hashchange).
-    onFocus: (id) => {
-      if (id === state.focus) return;
-      state.focus = id;
-      state.reading = true;
-      if (typeof location !== "undefined" && typeof history !== "undefined") {
-        writeHash();
-      }
-      syncFocus();
-    }
-  };
-  let refresh = () => {};
-  // The country in focus changed (reader select): update the table's focus marks, the dot figure and the "open as series" link in
-  // place. The value figure and the reader are handled by the reader itself (valueReader).
-  const syncFocus = () => {
-    if (typeof root?.querySelectorAll !== "function") return;
-    for (const tr of root.querySelectorAll("tr[data-entity]")) tr.setAttribute("data-focus", String(tr.getAttribute("data-entity") === state.focus));
-    const rows = viewRows(model, state, pg.members);
-    const link = root.querySelector("#open-series");
-    if (link) link.setAttribute("href", seriesHref(h.indicatorId, seriesCountries([...rows.withValue, ...rows.withoutValue], state.focus)));
-    const dot = root.querySelector("#indicator-dot-figure");
-    const next = dotFigure(html, Plot, model, rows.withValue, state.focus);
-    if (dot && next !== "") dot.replaceWith(next);
-  };
+  const s0 = view();
+  const rows0 = viewRows(model, s0, pg.members);
+  const ranked = model.domainRanked;
+  const B = DRAFT_BAND_TITLES;
   const root = html`<div class="mm-indicator" data-indicator="${h.indicatorId}">
 ${glyphSprite(html)}
-<div class="mm-ind-controls">${indicatorSwitcher(html, options, h.indicatorId)}${groupBox}${sortBox}</div>
 <p class="mm-filter-note" id="filter-note">${FILTER_NOTE}</p>
 <p class="mm-spread" id="reference-spread">${line}</p>
-${resultsBlock(html, Plot, model, state, pg, downloadHref, hooks)}</div>`;
-  if (typeof root?.addEventListener === "function") {
-    refresh = () => root.querySelector(".mm-ind-results").replaceWith(resultsBlock(html, Plot, model, state, pg, downloadHref, hooks));
-    groupBox.addEventListener("change", () => {
-      state.group = groupBox.value;
-      writeHash();
-      refresh();
-    });
-    root.querySelector("#indicator-sort").addEventListener("change", (e) => {
-      state.sort = e.target.value;
-      refresh();
-    });
-    if (typeof addEventListener === "function") {
-      addEventListener("hashchange", () => {
-        const next = initialState(location.hash, entityIds, pg.options.map((o) => o.id));
-        state.focus = next.focus;
-        state.group = next.group;
-        const radio = groupBox.querySelector(`input[value="${state.group}"]`);
-        if (radio) radio.checked = true;
+<section class="mm-dband" id="band-compare" aria-labelledby="band-compare-heading"><div class="mm-band"><h2 id="band-compare-heading">${B.compare}</h2></div><div class="mm-grid"><div class="mm-card mm-card--slot mm-card--rank mm-card--span-${ranked ? 8 : 12}" id="indicator-compare" data-slot="compare" aria-busy="true"></div>${ranked ? html`<div class="mm-card mm-card--span-4 mm-card--dot" id="indicator-dot-card"><h3>${PERCENTILE_COLUMN_LABEL}</h3>${dotCardBody(html, Plot, model, rows0, s0.focus)}</div>` : ""}</div></section>
+<section class="mm-dband" id="band-table" aria-labelledby="band-table-heading"><div class="mm-band"><h2 id="band-table-heading">${DRAFT_BAND_TABLE}</h2></div><div class="mm-grid"><div class="mm-card mm-card--table mm-card--span-12" id="indicator-table-card"><h3>${model.labels.caption}</h3><div id="indicator-table-body">${resultsBlock(html, model, s0, pg, downloadHref)}</div></div></div></section></div>`;
+  if (typeof root?.querySelector !== "function") return root; // the string stand-in of the unit tests has no DOM: the cards above are the static markup
+  const swap = (selector, next) => {
+    const el = root.querySelector(selector);
+    if (el) el.replaceWith(next);
+  };
+  const refresh = () => {
+    const state = view();
+    const rows = viewRows(model, state, pg.members);
+    const body = html`<div id="indicator-table-body">${resultsBlock(html, model, state, pg, downloadHref)}</div>`;
+    swap("#indicator-table-body", body);
+    if (ranked) swap("#indicator-dot-body", dotCardBody(html, Plot, model, rows, state.focus));
+  };
+  store.subscribe(refresh);
+  if (meta) {
+    const dash = compareHost(store, {indicatorId: h.indicatorId, domainId, scorecard, slots: {compare: root.querySelector("#indicator-compare")}});
+    mountRankCard(html, Plot, dash, {
+      data: meta,
+      series,
+      links: INDICATOR_LINKS,
+      facts: false,
+      sorts: INDICATOR_SORT_OPTIONS,
+      focusReader: true,
+      onSort: (id) => {
+        sort = id;
         refresh();
-      });
-    }
+      },
+      // The reader's country is the country in focus: it is written to the address as `c` through the store (Group and the other keys are kept).
+      onFocus: (id) => dash.quiet(() => store.set({c: id === null ? [] : [id]}))
+    });
   }
   return root;
 }

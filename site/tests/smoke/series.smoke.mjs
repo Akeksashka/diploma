@@ -349,3 +349,95 @@ describe("R16: pointer tip and the \"Read a value\" point reader (AC-RD-30, 30b)
     });
   });
 });
+
+describe("L20: Lines / Bars toggle of PG-SERIES (AC-DB-28)", () => {
+  test("shown with exactly one country only; Bars equal the table rows; the address does not change", async (t) => {
+    await withPage(t, "#i=M09&c=DEU", async ({page}) => {
+      assert.equal(await page.locator('input[name="explorer-chart-mode"]').count(), 2);
+      await page.locator("#explorer-view-table summary").click();
+      await page.waitForSelector("#explorer-view-table-table tbody tr", {timeout: TIMEOUT});
+      const rows = await page.locator("#explorer-view-table-table tbody tr").count();
+      const hash = await page.evaluate(() => location.hash);
+      await page.locator('input[name="explorer-chart-mode"][value="bars"]').check();
+      await page.waitForSelector('#explorer-figure [aria-label="bar"] rect', {timeout: TIMEOUT});
+      assert.equal(await page.locator('#explorer-figure [aria-label="bar"] rect').count(), rows, "one bar per table row");
+      assert.equal(await page.evaluate(() => location.hash), hash, "chart type is not in the address");
+    });
+  });
+  test("hidden with two countries", async (t) => {
+    await withPage(t, "#i=M09&c=DEU,FRA", async ({page}) => {
+      assert.equal(await page.locator('input[name="explorer-chart-mode"]').count(), 0);
+    });
+  });
+});
+
+describe("L21: PG-SERIES filter bar (AC-DB-01, 02, 03; AC-RD-31, 34)", () => {
+  const hashOf = (page) => page.evaluate(() => location.hash);
+  test("the bar has Domain, Period and Frequency (named) and no Group, Country or Indicator; the rail controls stay", async (t) => {
+    await withPage(t, "#i=M09&c=DEU", async ({page}) => {
+      const bar = page.locator('form[role="group"][aria-label="Filters"]');
+      assert.equal(await bar.count(), 1);
+      assert.equal(await bar.locator("#filter-domain").count(), 1);
+      assert.equal(await bar.locator("#filter-frequency").count(), 1);
+      assert.equal(await bar.locator("#filter-period").count(), 1);
+      for (const id of ["#filter-group", "#filter-indicator", "#filter-country"]) assert.equal(await bar.locator(id).count(), 0, id);
+      assert.equal(await bar.locator("label", {hasText: "Domain"}).count(), 1);
+      for (const id of ["#explorer-indicator", "#explorer-from", "#explorer-to", "#explorer-entities", "#explorer-transform"]) assert.equal(await page.locator(id).count(), 1, id);
+    });
+  });
+  test("Domain narrows the rail picker; a selected indicator that falls out moves to the first offered one; the address is replaced, not pushed", async (t) => {
+    await withPage(t, "#i=M09&c=DEU", async ({page}) => {
+      const len = await page.evaluate(() => history.length);
+      const all = await page.$$eval("#explorer-indicator option", (o) => o.length);
+      await page.selectOption("#filter-domain", "prices");
+      await page.waitForFunction(() => document.querySelector("#explorer-indicator").value === "P01", null, {timeout: TIMEOUT});
+      const offered = await page.$$eval("#explorer-indicator option", (o) => o.map((x) => x.value));
+      assert.ok(offered.length < all && offered.every((id) => indicators.find((i) => i.indicator_id === id)?.domain_ids?.includes("prices")), `offered ${offered}`);
+      await page.waitForFunction(() => location.hash.includes("i=P01"), null, {timeout: TIMEOUT});
+      const h = await hashOf(page);
+      assert.match(h, /^#i=P01&c=DEU&d=prices$|^#i=P01&d=prices$/, h);
+      assert.equal(await page.evaluate(() => history.length), len, "history.length unchanged");
+      await page.locator("#filter-reset").click();
+      await page.waitForFunction(() => document.querySelector("#explorer-indicator").options.length > 1, null, {timeout: TIMEOUT});
+      assert.equal(await page.inputValue("#explorer-indicator"), "P01", "Reset clears the filters, not the selected indicator");
+      assert.doesNotMatch(await hashOf(page), /d=/);
+    });
+  });
+  test("one state: the Period chip and the rail years show and write the same range; the chart is clipped by it", async (t) => {
+    await withPage(t, "#i=M09&c=DEU&g=advanced", async ({page}) => {
+      const first = await page.$$eval("#explorer-from option", (o) => o.map((x) => x.value).filter(Boolean));
+      const [y1, y2] = [first.at(-2), first.at(-1)];
+      await page.locator("#filter-period-summary").click();
+      await page.selectOption("#filter-period-from", y1);
+      await page.selectOption("#filter-period-to", y2);
+      await page.waitForFunction(([a, b]) => document.querySelector("#explorer-from").value === a && document.querySelector("#explorer-to").value === b, [y1, y2], {timeout: TIMEOUT});
+      assert.match(await hashOf(page), new RegExp(`&from=${y1}&to=${y2}$`), "g is ignored and never written");
+      assert.doesNotMatch(await hashOf(page), /g=/);
+      await page.locator("#explorer-view-table summary").click();
+      await page.waitForSelector("#explorer-view-table-table tbody tr", {state: "attached"});
+      const years = await page.$$eval("#explorer-view-table-table tbody tr td:nth-child(2), #explorer-view-table-table tbody tr th:nth-child(2)", (c) => [...new Set(c.map((x) => x.textContent.trim().slice(0, 4)))]);
+      assert.ok(years.length > 0 && years.every((y) => y >= y1 && y <= y2), `table years ${years} inside ${y1}..${y2}`);
+      // The rail writes the chip.
+      await page.selectOption("#explorer-from", y2);
+      await page.waitForFunction((y) => document.querySelector("#filter-period-summary").textContent.includes(`${y} to`), y2, {timeout: TIMEOUT});
+      assert.match(await hashOf(page), new RegExp(`from=${y2}&to=${y2}$`));
+    });
+  });
+  test("a range in the address is shown by both controls and nothing is written on load; hashchange re-reads it", async (t) => {
+    await withPage(t, "#i=M09&c=DEU&from=2024&to=2025", async ({page}) => {
+      assert.equal(await page.inputValue("#explorer-from"), "2024");
+      assert.equal(await page.inputValue("#explorer-to"), "2025");
+      assert.match(await page.textContent("#filter-period-summary"), /2024 to 2025/);
+      assert.equal(await hashOf(page), "#i=M09&c=DEU&from=2024&to=2025");
+      await page.evaluate(() => { location.hash = "#i=M09&c=DEU&from=2025&to=2025"; });
+      await page.waitForFunction(() => document.querySelector("#explorer-from").value === "2025", null, {timeout: TIMEOUT});
+      assert.match(await page.textContent("#filter-period-summary"), /2025 to 2025/);
+    });
+  });
+  test("from greater than to in the address: both ignored, with the fallback note", async (t) => {
+    await withPage(t, "#i=M09&c=DEU&from=2025&to=2024", async ({page}) => {
+      assert.equal(await page.inputValue("#explorer-from"), "");
+      assert.equal(await page.locator("#explorer-hash-note").count(), 1);
+    });
+  });
+});

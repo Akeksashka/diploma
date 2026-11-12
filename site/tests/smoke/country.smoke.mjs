@@ -87,8 +87,8 @@ describe("R7 PG-COUNTRY", () => {
         const sec = page.locator(`#domain-${d.domain_id}`);
         for (const ind of d.indicator_ids) assert.equal(await sec.locator(`tr[data-indicator="${ind}"]`).count(), 1, `${d.domain_id}/${ind}`);
         assert.equal(await sec.locator("h2 a[data-link=domain]").getAttribute("href"), `../domain/${d.domain_id}`);
-        const figure = await sec.locator(".mm-figure-line").count();
-        assert.equal(figure, d.ranked ? 1 : 0, `${d.domain_id}: figure line only for a ranked domain`);
+        const figure = await sec.locator('[data-tile="domain-figure"]').count();
+        assert.equal(figure, d.ranked ? 1 : 0, `${d.domain_id}: domain-figure tile only for a ranked domain`);
         if (!d.ranked) assert.equal(await sec.locator('[role="img"]').count(), 0, "an unranked domain draws no percentile chart");
       }
       assert.equal(await page.locator(".mm-caveat").count(), 1);
@@ -147,13 +147,15 @@ describe("R7 PG-COUNTRY", () => {
       const total = await page.locator("tr[data-indicator]").count();
       const visibleBefore = await page.locator("tr[data-indicator]:visible").count();
       assert.equal(visibleBefore, total);
-      await page.locator('input[name="country-filter"][value="value"]').check();
+      // L22: one filter per table card (radio group country-filter-<domain>).
+      const setAll = async (v) => { for (const r of await page.locator(`input[name^="country-filter-"][value="${v}"]`).all()) await r.check(); };
+      await setAll("value");
       assert.equal(await page.locator('tr[data-has-value="false"]:visible').count(), 0);
       assert.equal(await page.locator('tr[data-has-value="true"]:visible').count(), await page.locator('tr[data-has-value="true"]').count());
       assert.equal(await page.locator(".mm-group-row:visible").count(), 0);
       assert.equal(await page.locator(".mm-country-domain:visible").count(), await page.locator(".mm-country-domain").count());
       assert.doesNotMatch(await page.locator("main").innerText(), /\b\d+\s+(rows?|indicators?)?\s*(hidden|filtered)/i);
-      await page.locator('input[name="country-filter"][value="all"]').check();
+      await setAll("all");
       assert.equal(await page.locator("tr[data-indicator]:visible").count(), total);
     }, {sparse: true});
   });
@@ -243,8 +245,8 @@ describe("R7 PG-COUNTRY", () => {
 
   test("AC-RD-12: an aggregate shows the not ranked wording; an unranked domain shows no percentile", async (t) => {
     await withPage(t, "/country/SYA1", async ({page}) => {
-      assert.ok((await page.locator("#domain-growth .mm-figure-line").innerText()).includes("aggregate (not ranked)"));
-      assert.equal(await page.locator("#domain-agri .mm-figure-line").count(), 0);
+      assert.ok((await page.locator('#domain-growth [data-tile="domain-figure"]').innerText()).includes("aggregate (not ranked)"));
+      assert.equal(await page.locator('#domain-agri [data-tile="domain-figure"]').count(), 0);
       assert.equal(await page.locator("#domain-agri td.mm-pct .mm-fig").count(), 0);
     }, {sparse: true});
   });

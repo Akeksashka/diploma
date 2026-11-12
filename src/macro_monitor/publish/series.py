@@ -26,6 +26,7 @@ from macro_monitor.analytics.transforms import Point
 from macro_monitor.models.enums import Frequency
 from macro_monitor.publish.export import ExportError, ExportSession, ExportSink
 from macro_monitor.publish.manifest import RunInfo
+from macro_monitor.publish.published import PUBLISHED_INDICATOR_IDS_SQL
 
 SERIES_START = date(1991, 1, 1)
 _DICT = pa.dictionary(pa.int32(), pa.string())
@@ -110,7 +111,7 @@ def series_producer(session: ExportSession, run: RunInfo, sink: ExportSink) -> N
         str(r[0]): str(r[1])
         for r in session.fetch(
             "SELECT indicator_id, transform_id FROM ref.indicator "
-            "WHERE kind = 'indicator' AND NOT is_comparison ORDER BY indicator_id"
+            f"WHERE indicator_id IN ({PUBLISHED_INDICATOR_IDS_SQL}) ORDER BY indicator_id"
         )
     }
     grouped: dict[str, list[tuple[Any, ...]]] = defaultdict(list)

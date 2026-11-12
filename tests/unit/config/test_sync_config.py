@@ -81,6 +81,7 @@ def test_shipped_config_loads() -> None:
         "faostat_sofi": {"G12"},
         "ec_bcs_monthly": {"M03", "M04"},
         "dbnomics_ameco_gap": {"A02c"},
+        "imf_weo_files": {"A02", "A03", "A04", "A05"},
         "worldbank_support": {"X01", "X02"},  # T62
         "eurostat_gdp_q": {"X01"},  # T62
     }

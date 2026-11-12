@@ -93,8 +93,8 @@ test("header: skip link first, then title and the pages nav; no heading", () => 
   assert.equal((h.match(/<li>/g) ?? []).length, config.pages.length);
   for (const p of config.pages) assert.ok((h.includes(`href="${p.path}"`) && h.includes(`${p.name}</a>`)));
   assert.equal((h.match(/aria-current="page"/g) ?? []).length, 1);
-  assert.ok(h.includes('<a href="/explorer" aria-current="page">Time series</a>'));
-  assert.ok(headerHtml({title: "T", pages: config.pages, path: "/index"}).includes('<a href="/" aria-current="page">'));
+  assert.ok(h.includes('<a href="/explorer" data-carry aria-current="page">Time series</a>'));
+  assert.ok(headerHtml({title: "T", pages: config.pages, path: "/index"}).includes('<a href="/" data-carry aria-current="page">'));
   assert.ok(!headerHtml({title: "T", pages: config.pages, path: "/domain/labour"}).includes("aria-current"));
 });
 
@@ -129,4 +129,16 @@ test("offset cut-off: freshness line and stale banner show the same UTC date", (
   assert.ok(out.includes("Data cut-off: 2026-10-02 (build b1)."), out);
   assert.ok(out.includes('id="stale-banner"') && out.includes("2026-10-02") && !out.includes("2026-10-01"), out);
   assert.ok(text(statusBlock(html, m, Date.parse("2026-10-05T00:00:00Z"))).includes("Data cut-off: 2026-10-02"));
+});
+
+test("L10: every header navigation link opts in to carrying the hash; the skip link and site title do not", () => {
+  const h = headerHtml({title: "T", pages: config.pages, path: "/"});
+  const nav = h.slice(h.indexOf("<nav"), h.indexOf("</nav>"));
+  assert.equal((nav.match(/<a /g) ?? []).length, (nav.match(/<a [^>]*data-carry/g) ?? []).length);
+  assert.ok(!h.slice(0, h.indexOf("<nav")).includes("data-carry"));
+});
+
+test("L10: the freshness line is followed by an empty print-filters slot the filter bar fills", () => {
+  const out = text(statusBlock(html, {known_cutoff: "2026-11-01T04:23:41Z", build_id: "b1"}, NOW));
+  assert.ok(out.includes('</p><p class="mm-print-filters" id="print-filters"></p>'));
 });

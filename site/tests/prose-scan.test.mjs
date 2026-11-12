@@ -7,7 +7,7 @@
 // Seeded negatives prove each rule fails.
 import test from "node:test";
 import assert from "node:assert/strict";
-import {readFileSync} from "node:fs";
+import {readdirSync, readFileSync} from "node:fs";
 import {dirname, join} from "node:path";
 import {fileURLToPath} from "node:url";
 import * as copy from "../src/lib/copy.js";
@@ -27,7 +27,10 @@ const ALLOW = {
 };
 // Spec 1.6 entries with no copy.js export yet: the C-IND-2 reference-period line, "Choose up to 5 countries to compare.",
 // and the stale-banner wording. They are allowed by name once added; any other new name is not.
-const PENDING = ["DRAFT_CHOOSE_COUNTRIES_HINT", "STALE_BANNER", "STALE_BANNER_UNREADABLE"];
+// Layout amendment section 6 (L3): control labels and options, chip summary pattern, print filters line, placeholder, empty-card and
+// sparkline sentences, "Reference rows", "Browse", the hidden-row sentence, the home h1 and the four band titles.
+const LAYOUT_SECTION6 = ["DRAFT_FILTER_LABELS", "DRAFT_FILTER_ALL", "DRAFT_FREQUENCY_NAMES", "DRAFT_PERIOD_PRESETS", "DRAFT_BAND_TITLES", "DRAFT_GROUP_BROWSE", "DRAFT_GROUP_REFERENCE_ROWS", "DRAFT_LOAD_HISTORY", "DRAFT_SHOW_MORE", "DRAFT_CHART_MODES", "DRAFT_CHOOSE_COUNTRY_PLACEHOLDER", "DRAFT_EMPTY_CARD", "DRAFT_SPARKLINE_TOO_FEW", "DRAFT_HOME_H1", "DRAFT_FILTER_CHIP_SUMMARY", "DRAFT_PERIOD_VALUE", "DRAFT_PRINT_FILTERS", "DRAFT_HIDDEN_ROWS", "DRAFT_HIDDEN_ROW_ITEM", "DRAFT_RANK_SORT_LABELS", "DRAFT_RANK_COLUMNS", "DRAFT_COUNTRY_LIMIT", "DRAFT_COUNTRY_SELECTED", "DRAFT_COUNTRY_CHIP_HELP", "DRAFT_PERIOD_INVALID", "DRAFT_PERIOD_UNAVAILABLE_CONSEQUENCE", "DRAFT_PERIOD_REGION"];
+const PENDING = ["DRAFT_CHOOSE_COUNTRIES_HINT", "STALE_BANNER", "STALE_BANNER_UNREADABLE", ...LAYOUT_SECTION6];
 // Per-value missing-data sentences (spec 5.1): one short sentence each, selected by stored fields.
 const MISSING_SENTENCES = ["DRAFT_NOT_PUBLISHED_SENTENCE", "DRAFT_NA_DEFINED_SENTENCE", "G_STR1_NO_SERIES", "DRAFT_NA_NO_RANKED_SENTENCE"];
 // The spec's own longer fixed texts (VINTAGE_TEXT is 300+ characters in the confirmed wording; see report).
@@ -92,4 +95,64 @@ test("AC-RD-62: seeded unlisted prose fails (long string, two sentences, and an 
   assert.equal(literalFindings("lib/units.js", `export const note = "Rank is shown. It is computed elsewhere.";`).length, 1);
   assert.equal(literalFindings("lib/sort.js", `export const x = "${long}";`).length, 1);
   assert.equal(literalFindings("lib/sort.js", `export const x = "values in " + u; // One. Two sentences in a comment`).length, 0);
+});
+
+// L26 (AC-DB-32): the layout modules L1-L24 carry data and labels only. Every string literal of each module is checked with the
+// same length and sentence rules; a module on the exception list below carries a documented, reported finding. The list of
+// modules is explicit (so a rename fails) and the directory walk below catches any other module added later.
+const LAYOUT_MODULES = ["bar-chart", "carry", "country-page", "domain-page", "explorer-filters", "facts-card", "filter-bar-options", "filter-bar", "filter-chip", "filter-country", "filter-model", "filter-period", "filter-proof", "filter-store", "heatmap-card", "home-dashboard", "kpi-model", "kpi-view", "rank-model", "rank-view", "series-card", "small-multiples", "table-card"];
+const allLibModules = () => readdirSync(join(src, "lib")).filter((n) => n.endsWith(".js") && n !== "copy.js").map((n) => n.slice(0, -3));
+// Modules whose literals are not yet clean (none expected). Each is a reported finding with file and reason, never silent.
+const PROSE_EXCEPTIONS = {};
+// Markup literals (html`...`) are judged by their visible text: `${...}` expressions and tags are removed, the rest is the prose
+// a reader could see (attribute values are not text). Plain literals are judged whole, as in literalFindings.
+const stripExpressions = (t) => { let out = ""; let depth = 0; for (let i = 0; i < t.length; i += 1) { if (depth === 0 && t[i] === "$" && t[i + 1] === "{") { depth = 1; i += 1; } else if (depth > 0) { if (t[i] === "{") depth += 1; else if (t[i] === "}") depth -= 1; } else out += t[i]; } return out; };
+const visibleText = (l) => stripExpressions(l).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+const layoutLiteralFindings = (name, code) => literals(code).flatMap((l) => {
+  const t = /</.test(l) ? visibleText(l) : l;
+  return t.length > MAX || sentences(t) > 1 ? [`${name}: "${t.slice(0, 40)}..." (${t.length} chars, ${sentences(t)} sentences)`] : [];
+});
+
+test("AC-DB-32 (L26): every layout module exists, and its string literals are labels or single short sentences", () => {
+  const onDisk = allLibModules();
+  for (const m of LAYOUT_MODULES) assert.ok(onDisk.includes(m), `${m} is missing (the scan would pass vacuously)`);
+  const hits = LAYOUT_MODULES.flatMap((n) => (n in PROSE_EXCEPTIONS ? [] : layoutLiteralFindings(`lib/${n}.js`, readFileSync(join(src, "lib", `${n}.js`), "utf8"))));
+  assert.deepEqual(hits, []);
+});
+
+test("AC-DB-32 (L26): the directory walk finds no module that is neither on the layout list nor an older module checked elsewhere", () => {
+  const older = new Set(readdirSync(join(src, "lib")).filter((n) => n.endsWith(".js")).map((n) => n.slice(0, -3)).filter((n) => !LAYOUT_MODULES.includes(n)));
+  // Modules outside the L26 list are the R/T-series ones; any module added after L26 must be appended to LAYOUT_MODULES, so the
+  // older set is pinned by name: a new unlisted module fails here instead of passing unscanned.
+  const PINNED_OLDER = ["about-value", "attribution", "bins", "copy", "country-model", "country-view", "domains-list", "explorer-view", "explorer", "figure", "glyphs", "hash", "heatmap-view", "heatmap", "history", "home-lists", "indicator-model", "indicator-view", "legend", "manifest", "meta", "missing", "peers-view", "peers", "period", "point-reader", "profile-chart", "rebase", "revisions-view", "revisions", "scorecard-view", "scorecard", "series-meta", "shell", "sort", "stale", "state-blocks", "states", "tip", "tokens", "units", "value-chart"];
+  assert.deepEqual([...older].filter((n) => !PINNED_OLDER.includes(n)), [], "an unlisted new module: add it to LAYOUT_MODULES so its literals are scanned");
+  assert.deepEqual(PINNED_OLDER.filter((n) => !older.has(n)), [], "a pinned older module no longer exists");
+});
+
+test("AC-DB-32 (L26): the section 6 allow-list is closed: every listed name exists, is a string, function or frozen map, and no unlisted layout export is long prose", () => {
+  for (const n of LAYOUT_SECTION6) assert.ok(n in copy, `${n} is not exported by copy.js`);
+  const layoutExports = Object.fromEntries(Object.entries(copy).filter(([k]) => LAYOUT_SECTION6.includes(k) || /^DRAFT_(BROWSE_SUMMARY|BAND_TABLE|BAND_REVISIONS|CHART_TYPE_LEGEND|KPI_ERROR_CONSEQUENCE)$/.test(k)));
+  const flat = {};
+  for (const [k, v] of Object.entries(layoutExports)) {
+    if (typeof v === "string") flat[k] = v;
+    else if (typeof v === "object") for (const [kk, vv] of Object.entries(v)) flat[`${k}.${kk}`] = vv;
+  }
+  const allowed = new Set([...Object.keys(flat)]);
+  assert.deepEqual(proseFindings(flat, allowed), [], "allow-listed layout strings are at most 160 characters");
+  // the extra layout names are not in the allow-list: they must pass the plain rule (one short sentence)
+  for (const k of ["DRAFT_BROWSE_SUMMARY", "DRAFT_BAND_TABLE", "DRAFT_BAND_REVISIONS", "DRAFT_CHART_TYPE_LEGEND", "DRAFT_KPI_ERROR_CONSEQUENCE"]) assert.deepEqual(proseFindings({[k]: copy[k]}, new Set()), [], k);
+});
+
+test("AC-DB-32 (L26): seeded prose in a layout module, a two-sentence card caption and an unlisted long export all fail", () => {
+  const long = "B".repeat(MAX + 1);
+  assert.equal(literalFindings("lib/rank-view.js", 'const caption = "Countries are ranked by value. Higher is shown first.";').length, 1);
+  assert.equal(literalFindings("lib/table-card.js", "const t = `" + long + "`;").length, 1);
+  assert.equal(layoutLiteralFindings("lib/kpi-view.js", "html`<p class=\"mm-x\">This tile explains what the indicator measures.</p> <p>It also says why. ${name}</p>`").length, 1, "two sentences of visible text inside markup fail");
+  assert.equal(layoutLiteralFindings("lib/kpi-view.js", "html`<div class=\"" + long + "\"><span>${a}</span> Latest value</div>`").length, 0, "attributes, tags and expressions are not visible prose");
+  assert.equal(layoutLiteralFindings("lib/kpi-view.js", "html`<p>" + long + "</p>`").length, 1);
+  assert.equal(literalFindings("lib/kpi-view.js", 'const x = "Latest value. Compared with peers.";').length, 1);
+  assert.equal(literalFindings("lib/kpi-view.js", 'const x = "Latest value";').length, 0);
+  assert.equal(proseFindings({DRAFT_LAYOUT_EXPLAINER: "Cards show values. Bands group cards."}, allowedNames).length, 1);
+  assert.equal(proseFindings({DRAFT_LAYOUT_EXPLAINER: long}, allowedNames).length, 1);
+  assert.equal(proseFindings({"DRAFT_HIDDEN_ROWS": long}, allowedNames).length, 1, "an allow-listed layout name over 160 characters fails");
 });

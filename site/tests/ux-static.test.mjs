@@ -76,6 +76,17 @@ const ALLOW = [
   {file: "lib/scorecard.js", rule: "subtraction", contains: "return pa - pb ||", clause: ORDERING + " (stored rank_position, ADR-025 decision 4)"},
   {file: "lib/peers.js", rule: "multiply, divide, modulo, power", contains: "return dir * (x - y)", clause: ORDERING + " (dir is +1/-1, the sort direction)"},
   {file: "lib/peers.js", rule: "subtraction", contains: "return dir * (x - y)", clause: ORDERING},
+  // Layout L5 (filter view-model): calendar arithmetic and the one named count.
+  {file: "lib/filter-period.js", rule: "subtraction", contains: "bounds.to - bounds.from + 1", clause: "L9: the number of calendar years the Period selects list, from the stored bounds; a count of options, not a data value"},
+  {file: "lib/filter-period.js", rule: "addition", contains: "bounds.to - bounds.from + 1", clause: "L9: the number of calendar years the Period selects list, from the stored bounds; a count of options, not a data value"},
+  {file: "lib/filter-model.js", rule: "subtraction", contains: "bounds.to - (n - 1)", clause: "amendment 2.2 preset arithmetic: 'Last 10 years' = known_cutoff year minus 9; calendar years, not data values"},
+  {file: "lib/filter-model.js", rule: "subtraction", contains: "rows.length - splitByPeriod", clause: "AC-DB-36: countPeriodHiddenRows, rows before minus rows after the Period filter; the single whitelisted browser-side count (ADR-034 A1 item 1)"},
+  // Layout L19 / L20 (series card): paging and tick selection by position, and facet ordering; never a value.
+  {file: "lib/series-card.js", rule: "compound assignment or increment", contains: "facetCount += FACET_PAGE", clause: "L19 amendment 4.10: 'Show more' adds the next block of facets; a count of facets drawn, not a data value"},
+  {file: "lib/small-multiples.js", rule: "subtraction", contains: "rank.get(a.entity) - rank.get(b.entity)", clause: ORDERING + " (position in the C-RANK order of the comparison set)"},
+  {file: "lib/bar-chart.js", rule: "multiply, divide, modulo, power", contains: "labels.length / max", clause: "L20: spacing of at most 10 labelled x ticks by position in the list; every bar is still drawn, no value is computed"},
+  {file: "lib/bar-chart.js", rule: "Math function", contains: "Math.ceil(labels.length / max)", clause: "L20: spacing of at most 10 labelled x ticks by position in the list; no value is computed"},
+  {file: "lib/bar-chart.js", rule: "multiply, divide, modulo, power", contains: "i % step === 0", clause: "L20: every step-th period label is a tick; a position test, not a statistic"},
   // Display-only rebase to 100 (pure scaling, checked against Python).
   {file: "lib/rebase.js", rule: "multiply, divide, modulo, power", contains: "(r.value / base) * 100", clause: "export spec section 'Selectors served without further computation' (display-only rebase) and AC-DASH-6; ADR-025 decision 6 rebase rule. Not a statistic"},
   {file: "lib/explorer.js", rule: "Math function", contains: "Math.min(...sets", clause: "same rebase selector: earliest stored date when no common period exists (a date, not a statistic of values)"},
@@ -228,11 +239,12 @@ test("AC-UX-12: landingBudget enforces 20 KB CSS gzip, the 600 KB target and the
 // ------------------------------------------------------------------------------------------ R5 (AC-RD-50, 51, 52)
 // The redesign modules (spec 1.1, 5.1-5.3; plan R2-R4) are scanned by name, so removing one from src/lib or from the scan fails.
 const NEW_LIB = ["hash", "period", "units", "sort", "missing", "copy", "country-view", "profile-chart", "indicator-view", "value-chart"].map((n) => `lib/${n}.js`);
+const IMPORT_ONLY_LIB = ["lib/filter-model.js"]; // L5: allow-listed for its two entries only (AC-DB-36); import-checked here
 const BASELINE_DEPS = {"@observablehq/framework": "1.13.4", "@observablehq/plot": "0.6.18", d3: "7.9.2"};
 const BASELINE_DEV = {playwright: "1.64.1"};
 
 // Import specifiers of a module (static `import ... from "x"`, `export ... from "x"`, `import("x")`).
-const importSpecifiers = (code) => [...code.matchAll(/(?:\bfrom\s*|\bimport\s*\(\s*|\bimport\s+)["']([^"']+)["']/g)].map((m) => m[1]);
+const importSpecifiers = (code) => [...code.matchAll(/(?:(?:^|[}\s*])from\s*|\bimport\s*\(\s*|\bimport\s+)["']([^"']+)["']/g)].map((m) => m[1]);
 const nonRelativeImports = (code) => importSpecifiers(code).filter((s) => !/^\.{1,2}\//.test(s));
 
 test("AC-RD-50: each redesign module is scanned, computes nothing, and needs no allow-list entry", () => {
@@ -279,7 +291,7 @@ test("AC-RD-52: no new npm dependency, and the redesign modules import only rela
   const pkg = JSON.parse(readFileSync(join(site, "package.json"), "utf8"));
   assert.deepEqual(pkg.dependencies, BASELINE_DEPS);
   assert.deepEqual(pkg.devDependencies, BASELINE_DEV);
-  for (const m of NEW_LIB) assert.deepEqual(nonRelativeImports(readFileSync(join(src, m), "utf8")), [], `${m} imports a package`);
+  for (const m of [...NEW_LIB, ...IMPORT_ONLY_LIB]) assert.deepEqual(nonRelativeImports(readFileSync(join(src, m), "utf8")), [], `${m} imports a package`);
 });
 
 test("AC-RD-52: a seeded package import fails", () => {
@@ -343,4 +355,241 @@ test("R22: no rule after the print hide re-shows .mm-filter", () => {
     if (targetsFilter && display && display[1].trim() !== "none") offenders.push(`${selector.trim()} { display: ${display[1].trim()} }`);
   }
   assert.deepEqual(offenders, []);
+});
+
+// ------------------------------------------------------------------------------------------ L5 (AC-DB-22, AC-DB-36)
+test("AC-DB-36: filter-model.js has exactly two allow-listed hits (preset arithmetic and countPeriodHiddenRows); any other count fails", () => {
+  const {hits} = moduleHits(src);
+  const mine = hits["lib/filter-model.js"];
+  assert.ok(mine, "filter-model.js is scanned");
+  assert.deepEqual(applyAllowList({"lib/filter-model.js": mine}, ALLOW).violations, []);
+  assert.equal(mine.length, 2, JSON.stringify(mine));
+  const seeded = [
+    "export const countRows = (rows) => rows.length - other.length;",
+    "export function nCountries(es) { let n = 0; for (const e of es) n += 1; return n; }",
+    "export const total = (xs) => xs.reduce((s, x) => s + x, 0);"
+  ];
+  for (const code of seeded) {
+    const h = computeHits(code);
+    assert.ok(h.length > 0, code);
+    assert.ok(applyAllowList({"lib/filter-model.js": h}, ALLOW).violations.length > 0, `not reported: ${code}`);
+  }
+});
+
+// ------------------------------------------------------------------------------------------ L26 (AC-DB-22, 30, 32, 34, 35)
+// Layout modules L1-L24. The scans below walk the directory (a new module is scanned without being listed); this list only
+// proves that these modules exist and are covered, so deleting or renaming one cannot make a scan pass vacuously.
+const LAYOUT_LIB = ["bar-chart", "carry", "country-page", "domain-page", "explorer-filters", "facts-card", "filter-bar-options", "filter-bar", "filter-chip", "filter-country", "filter-model", "filter-period", "filter-proof", "filter-store", "heatmap-card", "home-dashboard", "kpi-model", "kpi-view", "rank-model", "rank-view", "series-card", "small-multiples", "table-card"].map((n) => `lib/${n}.js`);
+const libFiles = () => listFiles(join(src, "lib"), (n) => n.endsWith(".js"));
+const stripComments = (t) => t.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, " ")).replace(/(^|[^:])\/\/.*$/gm, "$1");
+
+// Rule 1: no Total / sum / average label in any string, template text or page (word match, comments excluded).
+const LABEL_RE = /\b(?:grand\s+total|totals?|sums?|averages?|avg|overall|aggregate\s+row)\b/i;
+const labelFindings = (name, text) => stripComments(text).split("\n").flatMap((l, k) => (LABEL_RE.test(l) ? [`${name}:${k + 1}: total/average label: ${l.trim().slice(0, 80)}`] : []));
+
+// Rule 2: a helper DEFINED with a total / sum / average / count name (function, const, let, var), and the entity-count reads.
+const HELPER_DEF = /\b(?:function|const|let|var)\s+((?:total|sum|avg|average|mean|tally|count|n)(?:[A-Z_]\w*)?|\w*(?:Total|Sum|Average|Mean|Count|Tally)s?)\s*(?=[=(;])/g;
+const WHITELISTED_COUNT = {file: "lib/filter-model.js", name: "countPeriodHiddenRows"}; // ADR-036, AC-DB-36: the single named exception
+const helperFindings = (file, code) => [...stripNoise(code).matchAll(HELPER_DEF)].filter((m) => m[1] !== "n" && !(file === WHITELISTED_COUNT.file && m[1] === WHITELISTED_COUNT.name)).map((m) => `${file}: helper ${m[1]}`);
+// `.length` / `.size` read whose value is used (passed on, returned, stored, put in a label) rather than compared or tested.
+const COMPARED = /[\w$.?()[\]!]*?\.(?:length|size)\s*(?:===?|!==?|>=?|<=?|<|>)\s*[\w.]+/g;
+const TESTED = /!+[\w$.?()[\]]*?\.(?:length|size)\b|(?:\b(?:if|while)\s*\(\s*|[&|]{2}\s*)[\w$.?()[\]]*?\.(?:length|size)\b(?=\s*(?:\)|\?|&&|\|\|))|[\w$.?()[\]]*?\.(?:length|size)\s*(?=\?|&&|\|\|)/g;
+const countReads = (code) => stripNoise(code).split("\n").flatMap((l, k) => {
+  const r = l.replace(COMPARED, "").replace(TESTED, "");
+  return /\.(?:length|size)\b/.test(r) ? [{rule: "length or size read that feeds output", line: k + 1, text: l.trim()}] : [];
+});
+const HIDDEN_LENGTH = /\bhidden\w*\s*(?:\?\.|\.)\s*(?:length|size)\b/;
+const hiddenLengthHits = (file, code) => (file === "lib/filter-model.js" ? [] : stripNoise(code).split("\n").flatMap((l, k) => (HIDDEN_LENGTH.test(l) ? [`${file}:${k + 1}: reads .length of a hidden list`] : [])));
+
+// Entity-count allow-list. Every entry names why it is not a count of entities shown to the reader as a statistic.
+// Entries marked [pre-L] predate the layout tasks (R-series, T-series) and are reported to the user in the L26 section of
+// docs/ops/dashboard-layout-measurements.md; they are listed so that a NEW count fails, not to endorse them.
+const COUNT_ALLOW = [
+  {file: "lib/filter-model.js", contains: "rows.length - splitByPeriod", clause: "AC-DB-36: countPeriodHiddenRows, the single whitelisted browser-side count"},
+  {file: "lib/filter-country.js", contains: "DRAFT_COUNTRY_SELECTED(selected.length)", clause: "L10 chip summary: how many countries the reader has picked (at most 5, own selection), not a count of data entities [report]"},
+  {file: "lib/filter-country.js", contains: "querySelectorAll(", clause: "L10: visible-item test for the text filter heading; compared to zero on the next line, never shown"},
+  {file: "lib/bar-chart.js", contains: "Math.ceil(labels.length / max)", clause: "L20: tick spacing by position; see the AC-UX-10 entry"},
+  {file: "lib/series-card.js", contains: "model.series.length", clause: "L19/L20: series drawn decides Lines/Bars availability (RD C-SER); an input of a mode rule, not displayed"},
+  {file: "lib/series-card.js", contains: "selected: built.visible.length", clause: "L19/L20: passes the number of facets drawn to the mode rule; not displayed"},
+  {file: "lib/series-card.js", contains: "selected: plan.entities.length", clause: "L19/L20: passes the number of series drawn to the mode rule; not displayed"},
+  {file: "lib/explorer-view.js", contains: ".size", clause: "[pre-L] T-series: number of distinct years of a plotted series chooses axis tick format; not displayed"},
+  {file: "lib/heatmap-view.js", contains: "].length", clause: "[pre-L] colspan of the group row (columns of the table); a layout number, not displayed as a count"},
+  {file: "lib/home-dashboard.js", contains: "emitted.length", clause: "test hook data-renders (render counter); not user-visible text"},
+  {file: "lib/home-lists.js", contains: "c.aggregates.length", clause: "[pre-L] R17: presence of the Aggregates sub-list; tested, not displayed"},
+  {file: "lib/home-lists.js", contains: "hrefs.size", clause: "[pre-L] R17: HOME_FILTER_COUNT `n shown` of the home link filter (links, not entities) [report]"},
+  {file: "lib/indicator-view.js", contains: "dots.length", clause: "[pre-L] R10: country count in the dot-plot aria-label (DRAFT_PEER_FIGURE_LABEL) [report]"},
+  {file: "lib/value-chart.js", contains: "rows.length", clause: "[pre-L] R10: country count in the bar-chart aria-label (DRAFT_VALUE_FIGURE_LABEL) [report]"},
+  {file: "lib/peers-view.js", contains: "st.rows.filter(", clause: "[pre-L] R11: n of the ranked dot plot (peer chart) [report]"},
+  {file: "lib/point-reader.js", contains: "entry.texts.length", clause: "index of the last plotted point; see the AC-UX-10 entry"},
+  {file: "lib/revisions.js", contains: ".length", clause: "[pre-L] T96-T99: counts of listed revision rows and versions (ACCEPTED 2026-11-04, see the AC-UX-10 entries)"},
+  {file: "lib/revisions-view.js", contains: "rv.rows.length", clause: "[pre-L] T96-T99: emptiness test of the listed rows (ACCEPTED 2026-11-04)"},
+  {file: "lib/scorecard.js", contains: "staleCount", clause: "[pre-L] T-series scorecard: stale indicators of one entity, a flag count in the summary line [report]"},
+  {file: "lib/explorer.js", contains: "rs[rs.length - 1]", clause: "last element of a date-sorted list; an index (see the AC-UX-10 entry)"}
+];
+const HELPER_ALLOW = [
+  {file: "lib/scorecard.js", name: "staleCount", clause: "[pre-L] counts the stale indicators of one entity [report]"},
+  {file: "lib/series-card.js", name: "facetCount", clause: "L19: facets drawn so far (AC-UX-10 entry); a paging cursor, not a statistic"},
+  {file: "lib/heatmap.js", name: "meanState", clause: "[pre-L] state of the STORED domain mean percentile column (summary.meanPercentile); nothing is averaged in the browser"},
+  {file: "lib/heatmap.js", name: "meanBin", clause: "[pre-L] bin of the STORED domain mean percentile column; nothing is averaged in the browser"},
+  {file: "lib/scorecard.js", name: "mean", clause: "[pre-L] the stored percentile_rank of the entity (domain figure); nothing is averaged in the browser"},
+  {file: "lib/scorecard.js", name: "meanText", clause: "[pre-L] formatted stored percentile_rank of the entity; nothing is averaged in the browser"},
+];
+
+function layoutScan(root) {
+  const files = listFiles(join(root, "lib"), (n) => n.endsWith(".js"));
+  const labels = [];
+  const reads = {};
+  const helpers = [];
+  const hidden = [];
+  for (const f of files) {
+    const code = readFileSync(f, "utf8");
+    const file = rel(root, f);
+    labels.push(...labelFindings(file, code));
+    reads[file] = countReads(code);
+    helpers.push(...helperFindings(file, code));
+    hidden.push(...hiddenLengthHits(file, code));
+  }
+  for (const f of listFiles(root, (n) => n.endsWith(".md"))) labels.push(...labelFindings(rel(root, f), readFileSync(f, "utf8")));
+  return {files, labels, reads, helpers, hidden};
+}
+const countViolations = (reads, allow) => {
+  const used = new Set();
+  const violations = [];
+  for (const [file, hits] of Object.entries(reads)) {
+    for (const h of hits) {
+      const i = allow.findIndex((a) => a.file === file && h.text.includes(a.contains));
+      if (i >= 0) used.add(i);
+      else violations.push(`${file}:${h.line}: ${h.rule}: ${h.text.slice(0, 100)}`);
+    }
+  }
+  return {violations, unused: allow.filter((_, i) => !used.has(i)).map((a) => `${a.file}: ${a.contains}`)};
+};
+const helperViolations = (helpers, allow) => helpers.filter((h) => !allow.some((a) => h === `${a.file}: helper ${a.name}`));
+
+test("AC-DB-22 (L26): every layout module exists and is in the scanned directory walk", () => {
+  const scanned = libFiles().map((f) => rel(src, f));
+  for (const m of LAYOUT_LIB) assert.ok(scanned.includes(m), `${m} is missing from src/lib (scan would pass vacuously)`);
+  assert.equal(scanned.length, readdirSync(join(src, "lib")).filter((n) => n.endsWith(".js")).length, "the walk covers every module on disk");
+});
+
+test("AC-DB-22 (L26): no Total / average / sum label and no total/sum/average/count helper in any module or page", () => {
+  const r = layoutScan(src);
+  assert.deepEqual(r.labels, []);
+  assert.deepEqual(helperViolations(r.helpers, HELPER_ALLOW), []);
+  assert.deepEqual(r.helpers.filter((h) => h.endsWith("countPeriodHiddenRows")), [], "the whitelisted function is skipped only in filter-model.js");
+  for (const a of HELPER_ALLOW) assert.ok(r.helpers.includes(`${a.file}: helper ${a.name}`), `stale helper exception ${a.file} ${a.name}`);
+});
+
+test("AC-DB-22 (L26): countPeriodHiddenRows is defined once, in filter-model.js, and no module computes a second entity count", () => {
+  const defs = libFiles().filter((f) => /\b(?:function|const)\s+countPeriodHiddenRows\b/.test(stripNoise(readFileSync(f, "utf8")))).map((f) => rel(src, f));
+  assert.deepEqual(defs, ["lib/filter-model.js"]);
+  const r = layoutScan(src);
+  const {violations, unused} = countViolations(r.reads, COUNT_ALLOW);
+  assert.deepEqual(violations, []);
+  assert.deepEqual(unused, [], "count allow-list entries that match nothing must be removed");
+  for (const a of COUNT_ALLOW) assert.ok(a.clause.length > 20, `exception without a clause: ${a.file} ${a.contains}`);
+  assert.deepEqual(r.hidden, [], "no view module reads .length of a hidden list (ADR-036 I5)");
+});
+
+test("AC-DB-22 (L26): seeded totals, averages, counts and hidden-list lengths each fail", () => {
+  for (const s of ['const row = {name: "Total", value: 1};', "html`<tr><th>Average</th></tr>`", 'const t = "Sum of values";', "<th>Overall</th>", 'const l = "Grand total";', "const t = 'Totals';"]) assert.equal(labelFindings("lib/x.js", s).length, 1, s);
+  for (const s of ["// a total row is never drawn", "const label = 'Aggregates';", "const all = 'Browse';"]) assert.deepEqual(labelFindings("lib/x.js", s), [], s);
+  for (const s of ["const total = (xs) => 0;", "function sumOf(xs) { return 0; }", "const meanOf = (xs) => 0;", "let rowCount = 0;", "const nCountries = (es) => es.length;", "function count(xs) {}", "const countRows = (r) => 0;"]) {
+    assert.equal(helperFindings("lib/x.js", s).length, 1, s);
+  }
+  assert.equal(helperFindings("lib/rank-view.js", "const countPeriodHiddenRows = () => 0;").length, 1, "the exception is bound to filter-model.js");
+  assert.deepEqual(helperFindings("lib/filter-model.js", "export function countPeriodHiddenRows(r) {}"), []);
+  assert.deepEqual(helperFindings("lib/x.js", "const country = 1; const counter = 2; const countryGroups = () => []; const n = 3;"), []);
+  for (const s of ["const nEntities = entities.length;", "return rows.length;", "const label = `${rows.length} rows`;", "const s = DRAFT_X(ids.length);", "root.dataset.n = String(set.size);", "const k = {count: xs.length};"]) {
+    assert.equal(countReads(s).length, 1, s);
+    assert.equal(countViolations({"lib/rank-view.js": countReads(s)}, COUNT_ALLOW).violations.length, 1, `not reported: ${s}`);
+  }
+  for (const s of ["if (!rows.length) return;", "const empty = rows.length === 0;", "const ok = rows.length > 0 && x;", "const t = rows.length ? 1 : 2;", "if (a.length) { go(); }", "const e = !rows.length;"]) assert.deepEqual(countReads(s), [], s);
+  for (const s of ["const n = hidden.length;", "if (split.hidden.length > 0) go();", "const k = hiddenRows?.size;"]) assert.equal(hiddenLengthHits("lib/rank-view.js", s).length, 1, s);
+  assert.deepEqual(hiddenLengthHits("lib/filter-model.js", "const n = hidden.length;"), [], "only filter-model.js may read it");
+  assert.equal(countViolations({"lib/filter-model.js": countReads("return rows.length - splitByPeriod(rows, from, to, opts).kept.length;")}, COUNT_ALLOW).violations.length, 0, "the whitelisted line passes");
+  assert.equal(countViolations({"lib/filter-model.js": countReads("return a.length - b.length;")}, COUNT_ALLOW).violations.length, 1, "any other line in filter-model.js fails");
+});
+
+test("AC-DB-22 (L26): the scans fail on a seeded violation in a directory walk of a copy of src/lib", () => {
+  const dir = mkdtempSync(join(tmpdir(), "mm-l26-"));
+  try {
+    mkdirSync(join(dir, "lib"));
+    writeFileSync(join(dir, "lib", "new-view.js"), 'export const f = (rows) => ({label: "Total", n: rows.length, mean: sumOf(rows)});\nconst hidden = [];\nexport const g = () => hidden.length;\nfunction sumOf(xs) { return 0; }\n');
+    writeFileSync(join(dir, "page.md"), "# Page\n\n| Average |\n");
+    const r = layoutScan(dir);
+    assert.ok(r.labels.length >= 2 && r.helpers.length === 1 && r.hidden.length === 1);
+    assert.equal(countViolations(r.reads, COUNT_ALLOW).violations.length, 2);
+  } finally {
+    rmSync(dir, {recursive: true, force: true});
+  }
+});
+
+test("AC-DB-22 (L26): every layout module computes nothing outside the AC-UX-10 allow-list and has no banned word", () => {
+  const {hits} = moduleHits(src);
+  for (const m of LAYOUT_LIB) {
+    assert.ok(m in hits, `${m} is not scanned`);
+    const mine = applyAllowList({[m]: hits[m]}, ALLOW).violations;
+    assert.deepEqual(mine, [], m);
+    assert.deepEqual(hits[m].filter((h) => h.rule in BANNED_WORDS), [], m);
+  }
+});
+
+test("AC-DB-30 (L26): no new dependency, layout modules import only relative files, nothing in package.json adds a runtime script source", () => {
+  const pkg = JSON.parse(readFileSync(join(site, "package.json"), "utf8"));
+  assert.deepEqual(pkg.dependencies, BASELINE_DEPS);
+  assert.deepEqual(pkg.devDependencies, BASELINE_DEV);
+  assert.equal(pkg.optionalDependencies, undefined);
+  assert.equal(pkg.peerDependencies, undefined);
+  for (const f of libFiles()) assert.deepEqual(nonRelativeImports(readFileSync(f, "utf8")), [], `${rel(src, f)} imports a package`);
+  for (const f of listFiles(src, (n) => n.endsWith(".md"))) {
+    const code = readFileSync(f, "utf8");
+    const bad = nonRelativeImports(code).filter((s) => !/^npm:|^observablehq:|^@observablehq\//.test(s));
+    assert.deepEqual(bad, [], `${rel(src, f)} imports an unregistered package`);
+  }
+  assert.deepEqual(nonRelativeImports('import {x} from "lodash"; import("d3-array"); export {y} from "https://cdn.example.org/a.js";').sort(), ["d3-array", "https://cdn.example.org/a.js", "lodash"]);
+});
+
+test("AC-DB-30 (L26): the built-output scan fails on an off-origin URL, a remote import, a font file and a font-face in a synthetic dist", () => {
+  const dir = mkdtempSync(join(tmpdir(), "mm-l26-dist-"));
+  const scanDist = (root) => {
+    const hits = [];
+    for (const f of listFiles(root, () => true)) {
+      const name = rel(root, f);
+      if (FONT_FILE(name)) hits.push(`${name}: font file`);
+      if (name.startsWith("_file/") || /\.(parquet|wasm|png|ico)$/.test(name)) continue; // same exemptions as tests/smoke/static.smoke.mjs
+      for (const x of distFindings(name, readFileSync(f, "utf8"))) hits.push(`${name}: ${x}`);
+    }
+    return hits;
+  };
+  try {
+    mkdirSync(join(dir, "_file", "data"), {recursive: true});
+    mkdirSync(join(dir, "country"), {recursive: true});
+    writeFileSync(join(dir, "index.html"), '<a href="./country/DEU">x</a><svg xmlns="http://www.w3.org/2000/svg"></svg>');
+    writeFileSync(join(dir, "style.css"), "a{color:var(--mm-fg)}");
+    writeFileSync(join(dir, "_file", "data", "m.json"), '{"source_url":"https://data.example.org/x"}'); // attribution text in data is exempt
+    assert.deepEqual(scanDist(dir), []);
+    writeFileSync(join(dir, "country", "DEU.html"), '<img src="' + 'https://cdn.example.org/a.png">');
+    writeFileSync(join(dir, "app.js"), 'fetch("' + '//api.example.org/v1")');
+    writeFileSync(join(dir, "style.css"), "@import url(" + "https://fonts.googleapis.com/css);\n@font-" + "face{font-family:X}");
+    writeFileSync(join(dir, "Inter.woff2"), "x");
+    const hits = scanDist(dir);
+    for (const needle of ["country/DEU.html: URL", "app.js: URL", "style.css: remote @import", "style.css: @font-face", "Inter.woff2: font file"]) assert.ok(hits.some((h) => h.startsWith(needle)), `not flagged: ${needle}\n${hits.join("\n")}`);
+  } finally {
+    rmSync(dir, {recursive: true, force: true});
+  }
+});
+
+test("AC-DB-30 (L26): src/lib modules and pages carry no off-origin URL (every module, by directory walk)", () => {
+  const hits = [...libFiles(), ...listFiles(src, (n) => n.endsWith(".md"))].flatMap((f) => distFindings(f, readFileSync(f, "utf8")).map((x) => `${rel(src, f)}: ${x}`));
+  assert.deepEqual(hits, []);
+});
+
+test("AC-DB-22 (L26): every layout module and page is in the colour and inline-style scan file set and carries no literal", () => {
+  const files = listFiles(src, (n) => /\.(js|md)$/.test(n)).map((f) => rel(src, f));
+  for (const m of LAYOUT_LIB) {
+    assert.ok(files.includes(m), `${m} is not colour-scanned`);
+    assert.deepEqual(scan(readFileSync(join(src, m), "utf8")), [], m);
+  }
+  assert.ok(scan(`export const c = "${"steel" + "blue"}"; // layout`).includes("named colour"));
 });

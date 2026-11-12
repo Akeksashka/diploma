@@ -12,6 +12,13 @@
   --mm-text: #1a1d21;
   --mm-text-muted: #4f5964;
   --mm-border: #858d97;
+  /* layout surface (ADR-034, amendment section 3): page canvas, card, band; neutral, never a state or percentile colour */
+  --mm-canvas: #f2f4f7;
+  --mm-card: #ffffff;
+  --mm-card-border: #858d97;
+  --mm-band-bg: #dde3ea;
+  --mm-band-ink: #1a1d21;
+  --mm-tile-number-size: 2rem;
   /* percentile scale: light = low percentile, dark = high percentile */
   --mm-pct-1: #deebf7;
   --mm-pct-2: #9ecae1;
@@ -67,6 +74,11 @@
     --mm-text: #e8ebef;
     --mm-text-muted: #a9b2bd;
     --mm-border: #7b8591;
+    --mm-canvas: #0b0f14;
+    --mm-card: #131920;
+    --mm-card-border: #66707c;
+    --mm-band-bg: #1b232d;
+    --mm-band-ink: #e8ebef;
     /* dark theme: intensity still rises with percentile, so the ramp runs dark (low) to light (high) */
     --mm-pct-1: #16304d;
     --mm-pct-2: #245f94;
@@ -536,3 +548,230 @@ h1[data-indicator] { overflow-wrap: anywhere; }
 .mm-home-shell .mm-loading { min-height: 0; margin: 0 0 1rem; padding: 0; border: 0; background: none; }
 .mm-filter-status { flex: 1 0 100%; max-width: none; margin: 0.25rem 0 0; min-height: 1.5em; color: var(--mm-text-muted); }
 .mm-home-links { display: flex; flex-wrap: wrap; gap: 1rem; list-style: none; padding: 0; margin: 1.5rem 0; }
+
+/* L2 (ADR-034, amendment section 3): canvas, card, band and grid. Layout only: no text beyond names and stored values.
+   Colours come from tokens. Cards never nest. Min-heights are reserved per card type to hold CLS (values are first estimates; L27 measures them). */
+body { background: var(--mm-canvas); }
+@media print { body { background: var(--mm-bg); } }
+.mm-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--mm-space-4); margin: var(--mm-space-4) 0; }
+.mm-card { grid-column: span 12; min-width: 0; box-sizing: border-box; padding: var(--mm-space-4); background: var(--mm-card); color: var(--mm-text); border: 1px solid var(--mm-card-border); border-radius: var(--mm-radius); }
+.mm-card--span-3 { grid-column: span 3; }
+.mm-card--span-4 { grid-column: span 4; }
+.mm-card--span-6 { grid-column: span 6; }
+.mm-card--span-8 { grid-column: span 8; }
+.mm-card--span-12 { grid-column: span 12; }
+.mm-card h3 { margin: 0 0 var(--mm-space-1); font-size: var(--mm-fs-h3); line-height: 1.3; overflow-wrap: anywhere; }
+.mm-card-sub { margin: 0 0 var(--mm-space-3); max-width: none; color: var(--mm-text-muted); font-size: var(--mm-fs-small); overflow-wrap: anywhere; }
+.mm-card--tile { min-height: 6rem; }
+.mm-card--rank { min-height: 24rem; }
+.mm-card--heat { min-height: 28rem; }
+.mm-card--table { min-height: 20rem; }
+.mm-card--series { min-height: 22rem; }
+.mm-tile-number { font-size: var(--mm-tile-number-size); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.mm-band { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--mm-space-1) var(--mm-space-4); margin: var(--mm-space-5) 0 var(--mm-space-3); padding: var(--mm-space-2) var(--mm-space-4); background: var(--mm-band-bg); color: var(--mm-band-ink); border-radius: var(--mm-radius); }
+.mm-band h2 { margin: 0; font-size: var(--mm-fs-h2); color: inherit; }
+.mm-band a { color: inherit; text-decoration: underline; }
+@media (max-width: 63.99rem) {
+  .mm-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .mm-card, .mm-card--span-4, .mm-card--span-6, .mm-card--span-8, .mm-card--span-12 { grid-column: span 6; }
+  .mm-card--span-3 { grid-column: span 3; }
+}
+@media (max-width: 39.99rem) {
+  .mm-grid { grid-template-columns: minmax(0, 1fr); }
+  .mm-card, .mm-card--span-3, .mm-card--span-4, .mm-card--span-6, .mm-card--span-8, .mm-card--span-12 { grid-column: 1 / -1; }
+}
+@media (forced-colors: active) { .mm-card, .mm-band { border: 1px solid CanvasText; } }
+@media print { .mm-card { break-inside: avoid; } }
+/* reduced motion: the global rule above already disables every animation and transition. */
+
+/* L7, L10 (amendment 2.1, 2.5): the filter bar. Native selects and one button. The bar sits in #filterbar-slot (static HTML), which is sticky and reserves
+   the bar's height at first paint: --fbar-reserve per breakpoint (measured, docs/ops/dashboard-layout-measurements.md), so mounting causes no layout shift.
+   --fbar-h is the height the offsets use: the reserve until the script publishes the real slot height. Zero where there is no bar. */
+:root { --fbar-h: 0px; }
+/* reserves = measured natural heights (site_spike export, 16px root) rounded up; band edges sit 1 rem above the measured wrap points so a classic scrollbar (media queries count it, layout does not) cannot push a band into a taller wrap */
+:root:has(#filterbar-slot) { --fbar-reserve: 5.2rem; --fbar-h: var(--fbar-reserve); }
+@media (max-width: 79.99rem) { :root:has(#filterbar-slot) { --fbar-reserve: 7.95rem; } }
+@media (max-width: 72.99rem) { :root:has(#filterbar-slot) { --fbar-reserve: 9.3rem; } }
+@media (max-width: 52.99rem) { :root:has(#filterbar-slot) { --fbar-reserve: 12rem; } }
+@media (max-width: 45.99rem) { :root:has(#filterbar-slot) { --fbar-reserve: 13.4rem; } }
+@media (max-width: 39.99rem) { :root:has(#filterbar-slot) { --fbar-reserve: 3.1rem; } }
+:root:has(#filterbar-slot[data-empty]) { --fbar-reserve: 0px; --fbar-h: 0px; }
+@media (scripting: none) { :root:has(#filterbar-slot) { --fbar-reserve: 0px; --fbar-h: 0px; } }
+.mm-filterbar-slot { display: flex; flex-direction: column; position: sticky; top: 0; z-index: 20; min-height: var(--fbar-reserve, 0px); margin: var(--mm-space-4) 0; box-sizing: border-box; }
+.mm-filterbar-slot[data-empty] { display: none; }
+/* a focused or targeted element is never left under the bar (WCAG 2.4.11); the bar's own controls are excluded so focusing them does not scroll the page */
+:root:has(#filterbar-slot) { scroll-padding-top: var(--fbar-h); }
+:root:has(#filterbar-slot) :where(a, button, input, select, textarea, summary, [tabindex], [id], h1, h2, h3):not(#filterbar-slot *) { scroll-margin-top: var(--fbar-h); }
+/* the country and indicator tables sit in their own scroll container (L22, L23): the sticky header sticks to the top of that container (top 0), never offset by the bar,
+   or it would cover the first rows; the container's scroll-padding keeps a focused cell clear of the header (WCAG 2.4.11) */
+.mm-ctry-scroll, .mm-ind-scroll { scroll-padding-top: 3.5rem; }
+.mm-filterbar { position: relative; display: block; margin: 0; padding: var(--mm-space-3) var(--mm-space-4); box-sizing: border-box; flex: 1 1 auto; background: var(--mm-card); color: var(--mm-text); border: 1px solid var(--mm-card-border); border-radius: var(--mm-radius); }
+.mm-filterbar-more > summary { display: none; }
+.mm-filterbar-controls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--mm-space-2) var(--mm-space-3); }
+.mm-filterbar-controls select { max-width: 11rem; }
+.mm-filterbar-chips { display: none; margin: 0; }
+@media (max-width: 39.99rem) {
+  .mm-filterbar { display: flex; flex-wrap: nowrap; align-items: center; gap: var(--mm-space-2); padding: var(--mm-space-2) var(--mm-space-3); min-height: 0; }
+  .mm-filterbar-more { flex: none; }
+  .mm-filterbar-more > summary { display: inline-flex; align-items: center; min-height: 24px; min-width: 24px; box-sizing: border-box; padding: var(--mm-space-1) var(--mm-space-3); cursor: pointer; font-size: var(--mm-fs-small); color: var(--mm-text); background: var(--mm-card); border: 1px solid var(--mm-border); border-radius: var(--mm-radius); }
+  .mm-filterbar-controls { position: absolute; z-index: 21; top: 100%; left: 0; right: 0; flex-direction: column; align-items: stretch; max-height: calc(100vh - var(--fbar-h) - var(--mm-space-4)); overflow-y: auto; margin-top: var(--mm-space-1); padding: var(--mm-space-3); box-sizing: border-box; background: var(--mm-card); border: 1px solid var(--mm-card-border); border-radius: var(--mm-radius); }
+  .mm-filterbar-more:not([open]) > .mm-filterbar-controls { display: none; } /* closed: no boxes at all, so nothing hidden can be hit or measured */
+  .mm-filterbar-controls .mm-chip-body { position: static; max-width: none; max-height: none; }
+  .mm-filterbar-chips { display: flex; flex: 1 1 auto; min-width: 0; flex-wrap: nowrap; gap: var(--mm-space-1); overflow: hidden; font-size: var(--mm-fs-small); }
+  .mm-filterbar-chip { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: var(--mm-space-1) var(--mm-space-2); color: var(--mm-text); background: var(--mm-card); border: 1px solid var(--mm-border); border-radius: var(--mm-radius); }
+}
+.mm-print-filters { display: none; }
+.mm-filterbar-field { display: flex; flex-direction: column; gap: var(--mm-space-1); font-size: var(--mm-fs-small); min-width: 0; }
+.mm-filterbar select { min-height: 24px; max-width: 100%; font: inherit; color: var(--mm-text); background: var(--mm-card); border: 1px solid var(--mm-border); border-radius: var(--mm-radius); padding: var(--mm-space-1) var(--mm-space-2); }
+.mm-filterbar-reset { min-height: 24px; min-width: 24px; font: inherit; color: var(--mm-text); background: var(--mm-card); border: 1px solid var(--mm-border); border-radius: var(--mm-radius); padding: var(--mm-space-1) var(--mm-space-3); cursor: pointer; }
+.mm-chip { position: relative; font-size: var(--mm-fs-small); }
+.mm-chip > summary { display: inline-flex; align-items: center; min-height: 24px; min-width: 24px; box-sizing: border-box; padding: var(--mm-space-1) var(--mm-space-3); cursor: pointer; color: var(--mm-text); background: var(--mm-card); border: 1px solid var(--mm-border); border-radius: var(--mm-radius); }
+.mm-chip--disabled > summary { cursor: not-allowed; color: var(--mm-text-muted); }
+.mm-chip-body { position: absolute; z-index: 5; top: 100%; left: 0; display: flex; flex-direction: column; gap: var(--mm-space-2); min-width: 16rem; max-width: min(24rem, 90vw); max-height: 20rem; overflow-y: auto; margin-top: var(--mm-space-1); padding: var(--mm-space-3); color: var(--mm-text); background: var(--mm-card); border: 1px solid var(--mm-card-border); border-radius: var(--mm-radius); }
+.mm-chip-field { display: flex; flex-direction: column; gap: var(--mm-space-1); }
+.mm-chip-field input, .mm-chip-field select { min-height: 24px; font: inherit; color: var(--mm-text); background: var(--mm-card); border: 1px solid var(--mm-border); border-radius: var(--mm-radius); padding: var(--mm-space-1) var(--mm-space-2); }
+.mm-chip-list { list-style: none; margin: 0; padding: 0; }
+.mm-chip-item label { display: flex; align-items: center; gap: var(--mm-space-2); min-height: 24px; padding: var(--mm-space-1) 0; cursor: pointer; }
+.mm-chip-item input { width: 1.5rem; height: 1.5rem; margin: 0; flex: none; }
+.mm-chip-sub { margin: var(--mm-space-2) 0 0; font-weight: 600; }
+.mm-chip-help, .mm-chip-msg, .mm-chip-none { margin: 0; }
+.mm-chip-presets { display: flex; flex-wrap: wrap; gap: var(--mm-space-2); }
+.mm-chip-preset { min-height: 24px; min-width: 24px; font: inherit; color: var(--mm-text); background: var(--mm-card); border: 1px solid var(--mm-border); border-radius: var(--mm-radius); padding: var(--mm-space-1) var(--mm-space-3); cursor: pointer; }
+@media (pointer: coarse) { .mm-chip-item label { min-height: 44px; } }
+@media (forced-colors: active) { .mm-chip > summary, .mm-chip-body { border: 1px solid CanvasText; } }
+@media (forced-colors: active) { .mm-filterbar, .mm-filterbar-chip, .mm-filterbar-more > summary, .mm-filterbar-controls { border: 1px solid CanvasText; } }
+@media print { .mm-filterbar-slot, .mm-filterbar { display: none; } .mm-print-filters { display: block; margin: 0 0 var(--mm-space-3); font-size: .85rem; } .mm-print-filters:empty { display: none; } }
+
+/* L11 */
+.mm-dband { margin: var(--mm-space-4) 0; }
+.mm-card--slot { min-height: 8rem; }
+.mm-browse > summary { cursor: pointer; padding: var(--mm-space-2) 0; }
+#dashboard-slot { min-height: 63.9rem; }
+@media (max-width: 63.99rem) { #dashboard-slot { min-height: 72.9rem; } }
+/* end L11 */
+
+/* L24 (amendment 4.5): the domains list is a card grid; the card title is the link. */
+.mm-card-list { list-style: none; padding: 0; }
+.mm-card-list .mm-card-sub { display: block; margin: 0; max-width: none; }
+.mm-card-list h3 a { display: inline-flex; align-items: center; min-height: 24px; } /* WCAG 2.5.8 target size */
+/* end L24 */
+
+/* L14 (amendment 4.6): KPI tiles in the Overview band. The overview slot is layout-only when it holds tiles (display: contents), so a tile is a grid card and cards never nest.
+   Bin colours and state signatures repeat those of the table cells above (same tokens, applied to .mm-tile-pct); no colour carries direction. */
+.mm-card--slot.mm-card--tiles { display: contents; }
+.mm-kpi-note { margin: 0; max-width: none; }
+.mm-tile-value { margin: 0 0 var(--mm-space-1); max-width: none; }
+.mm-tile-number { overflow-wrap: anywhere; }
+.mm-tile .mm-card-sub { margin-bottom: var(--mm-space-2); }
+.mm-tile .mm-unit, .mm-tile .mm-sentence, .mm-tile-coverage { color: var(--mm-text-muted); font-size: var(--mm-fs-small); overflow-wrap: anywhere; }
+.mm-tile-coverage { margin: 0; max-width: none; }
+.mm-tile .mm-flag { display: inline-block; padding: 0 var(--mm-space-1); border: 1px solid var(--mm-warn-border); border-radius: 3px; background: var(--mm-warn-bg); color: var(--mm-warn-ink); font-size: .78rem; }
+.mm-tile-pct, .mm-tile-state { display: flex; flex-wrap: wrap; align-items: center; gap: var(--mm-space-1); margin: 0; max-width: none; }
+.mm-tile-pct .mm-cell { display: inline-flex; width: auto; min-height: 1.75rem; justify-content: flex-start; }
+.mm-tile-pct[data-bin="1"] .mm-cell { background: var(--mm-pct-1); color: var(--mm-pct-1-ink); }
+.mm-tile-pct[data-bin="2"] .mm-cell { background: var(--mm-pct-2); color: var(--mm-pct-2-ink); }
+.mm-tile-pct[data-bin="3"] .mm-cell { background: var(--mm-pct-3); color: var(--mm-pct-3-ink); }
+.mm-tile-pct[data-bin="4"] .mm-cell { background: var(--mm-pct-4); color: var(--mm-pct-4-ink); }
+.mm-tile-pct[data-bin="5"] .mm-cell { background: var(--mm-pct-5); color: var(--mm-pct-5-ink); }
+.mm-tile-pct[data-state="stale"] .mm-cell { background: repeating-linear-gradient(135deg, transparent 0 5px, var(--mm-border) 5px 6px), var(--mm-surface); color: var(--mm-text); }
+.mm-tile-pct[data-state="lagging"] .mm-cell, .mm-tile-pct[data-state="unaligned"] .mm-cell { border: 2px dotted var(--mm-border); }
+.mm-tile-pct[data-state="descriptive"] .mm-cell { font-style: italic; }
+.mm-tile-pct[data-state="na"] .mm-cell, .mm-tile-pct[data-state="not_published"] .mm-cell, .mm-tile-pct[data-state="aggregate"] .mm-cell { color: var(--mm-text-muted); }
+.mm-tile-pct[data-state="inherited"] .mm-code { text-decoration: underline; }
+.mm-tile-pct[data-state="plain"] .mm-cell { background: var(--mm-surface); }
+.mm-tile-link { margin: var(--mm-space-2) 0 0; max-width: none; }
+.mm-tile-link a { display: inline-block; min-height: 1.5rem; padding: var(--mm-space-1) 0; }
+.mm-tile h3 a { display: inline-block; min-height: 1.5rem; }
+/* end L14 */
+
+/* L12: ranked comparison card (C-RANK) and facts card; tokens only */
+.mm-card--slot.mm-card--rank { min-height: 24rem; }
+.mm-rank-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--mm-space-2) var(--mm-space-4); margin: 0 0 var(--mm-space-2); }
+.mm-rank-head label { margin: 0; }
+.mm-rank-head select { min-height: 24px; max-width: 100%; font: inherit; color: var(--mm-text); background: var(--mm-card); border: 1px solid var(--mm-border); border-radius: var(--mm-radius); padding: var(--mm-space-1) var(--mm-space-2); }
+.mm-hidden-slot:empty { display: none; }
+.mm-hidden-rows { margin: 0 0 var(--mm-space-2); }
+.mm-hidden-rows > summary { display: inline-flex; align-items: center; min-height: 24px; cursor: pointer; }
+.mm-hidden-rows ul { max-height: 10rem; margin: var(--mm-space-1) 0 0; padding-left: var(--mm-space-5); overflow: auto; }
+.mm-rank-scroll { position: relative; max-height: 22rem; margin: 0 0 var(--mm-space-3); overflow: auto; border: 1px solid var(--mm-border); }
+.mm-rank-table { display: table; width: 100%; min-width: 44rem; max-width: none; margin: 0; border-collapse: separate; border-spacing: 0; font-size: var(--mm-fs-small); line-height: 1.3; }
+.mm-rank-table th, .mm-rank-table td { padding: var(--mm-space-1) var(--mm-space-2); border-bottom: 1px solid var(--mm-border); text-align: left; vertical-align: middle; background-clip: padding-box; }
+.mm-rank-table thead th { position: sticky; top: 0; z-index: 2; background: var(--mm-card); vertical-align: bottom; }
+.mm-rank-table th[scope="row"] { min-width: 8rem; font-weight: 400; overflow-wrap: anywhere; }
+.mm-rank-table .mm-num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mm-rank-table .mm-unit, .mm-rank-table .mm-sentence { color: var(--mm-text-muted); font-size: .78rem; }
+.mm-rank-table .mm-pct { min-width: 7rem; }
+.mm-rank-table .mm-pct .mm-cell, .mm-rank-table .mm-reason .mm-cell { display: inline-flex; width: auto; min-height: 1.75rem; justify-content: flex-start; }
+.mm-rank-table .mm-flag { display: inline-block; padding: 0 var(--mm-space-1); border: 1px solid var(--mm-warn-border); border-radius: 3px; background: var(--mm-warn-bg); color: var(--mm-warn-ink); font-size: .78rem; }
+.mm-rank-table .mm-sub-row td { padding: 0 var(--mm-space-2) var(--mm-space-1); }
+.mm-rank-table .mm-group-row th[scope="rowgroup"] { background: var(--mm-surface); color: var(--mm-text-muted); font-weight: 600; border-top: 2px solid var(--mm-card-border); }
+.mm-rank-table tr[data-focus="true"] > * { box-shadow: inset 0 2px 0 var(--mm-focus), inset 0 -2px 0 var(--mm-focus); }
+.mm-rank-table tr[data-focus="true"] > :first-child { box-shadow: inset 2px 0 0 var(--mm-focus), inset 0 2px 0 var(--mm-focus), inset 0 -2px 0 var(--mm-focus); }
+.mm-rank-bar, .mm-rank-bar-head { width: 9.5rem; padding-left: 0; padding-right: 0; }
+.mm-rank-bar-wrap { display: block; line-height: 0; color: var(--mm-text-muted); }
+.mm-rank-bar-wrap svg { display: block; max-width: none; overflow: visible; background: transparent; }
+.mm-rank-bar-wrap rect, .mm-rank-bar-wrap circle { fill: currentColor; stroke: var(--mm-text); stroke-width: 1; }
+.mm-rank-bar-wrap[data-bin="none"] rect, .mm-rank-bar-wrap[data-bin="none"] circle { fill-opacity: .45; }
+.mm-rank-bar-wrap[data-bin="1"] { color: var(--mm-pct-1); }
+.mm-rank-bar-wrap[data-bin="2"] { color: var(--mm-pct-2); }
+.mm-rank-bar-wrap[data-bin="3"] { color: var(--mm-pct-3); }
+.mm-rank-bar-wrap[data-bin="4"] { color: var(--mm-pct-4); }
+.mm-rank-bar-wrap[data-bin="5"] { color: var(--mm-pct-5); }
+.mm-rank-bar-head svg { overflow: visible; background: transparent; color: var(--mm-text); }
+.mm-rank-body .mm-point-reader { margin: 0 0 var(--mm-space-2); }
+.mm-rank-alt > summary { display: inline-flex; align-items: center; min-height: 24px; cursor: pointer; font-weight: 600; }
+.mm-rank-alt-scroll { max-height: 20rem; margin: var(--mm-space-2) 0 0; overflow: auto; border: 1px solid var(--mm-border); }
+.mm-rank-alt .mm-indicator-table { display: table; width: 100%; min-width: 56rem; max-width: none; margin: 0; border-collapse: separate; border-spacing: 0; font-size: var(--mm-fs-small); line-height: 1.3; }
+.mm-rank-alt .mm-indicator-table thead th { position: sticky; top: 0; z-index: 2; background: var(--mm-card); vertical-align: bottom; }
+.mm-facts { margin: 0; }
+.mm-fact { margin: 0 0 var(--mm-space-3); }
+.mm-fact dt { color: var(--mm-text-muted); font-size: var(--mm-fs-small); }
+.mm-fact dd { margin: 0; overflow-wrap: anywhere; }
+.mm-fact-notes { margin: 0; padding-left: var(--mm-space-5); }
+.mm-card--rank a { display: inline-flex; align-items: center; min-height: 24px; } /* WCAG 2.5.8 target size */
+@media print { .mm-rank-scroll, .mm-rank-alt-scroll { max-height: none; overflow: visible; } .mm-rank-table, .mm-rank-alt .mm-indicator-table { min-width: 0; width: 100%; max-width: 100%; table-layout: auto; } .mm-rank-bar, .mm-rank-bar-head { width: auto; } .mm-rank-bar-wrap svg { max-width: 100%; } .mm-rank-table thead th, .mm-rank-alt .mm-indicator-table thead th { position: static; } }
+@media (forced-colors: active) { .mm-rank-scroll, .mm-rank-alt-scroll { border-color: CanvasText; } .mm-rank-bar-wrap rect, .mm-rank-bar-wrap circle { fill: CanvasText; stroke: CanvasText; } }
+/* end L12 */
+
+/* L13 (amendment 4.8): heatmap card. The V1 table rules apply through .mm-sc on the card; tokens only. Sticky header and first column sit inside the card's own
+   scroll container (top 0 of that container), so the filter bar never covers them; the container's scroll-padding keeps a focused cell clear of both. */
+.mm-dlegend:empty { display: none; }
+.mm-dlegend .mm-legend { margin: 0 0 var(--mm-space-3); }
+.mm-card--heat { min-height: 16rem; }
+.mm-card--heat .mm-heatmap { margin: 0; }
+.mm-card--heat .mm-heatmap-scroll { max-height: min(32rem, calc(100vh - var(--fbar-h, 0px) - var(--mm-space-6))); overflow: auto; }
+.mm-card--heat .mm-heatmap-table .mm-hm-country { background: var(--mm-card); }
+.mm-card--heat .mm-heatmap-table thead th { background: var(--mm-card); }
+.mm-card--heat .mm-facts { position: static; }
+@media print { .mm-card--heat .mm-heatmap-scroll { max-height: none; overflow: visible; } }
+/* end L13 */
+
+/* L17 (amendment 4.9 phase A): indicator table card. The V1 country table rules apply through .mm-country on the body; the card has its own scroll
+   container (.mm-ctry-scroll); the band is omitted (hidden) when no single Country is in focus; the table caption repeats the card title. */
+.mm-dband[hidden] { display: none; }
+.mm-card--table .mm-country-controls { margin: 0 0 var(--mm-space-2); }
+.mm-card--table .mm-table-body .mm-country-table caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.mm-card--table .mm-ctry-scroll { max-height: min(36rem, calc(100vh - var(--fbar-h, 0px) - var(--mm-space-6))); }
+@media print { .mm-card--table .mm-ctry-scroll { max-height: none; overflow: visible; } }
+/* end L17 */
+/* L18: time-series card (Over time band) */
+.mm-card--series .mm-series-body h3 { margin: 0 0 var(--mm-space-2); }
+.mm-card--series .mm-series-body h3:focus { outline: none; }
+.mm-card--series .mm-history-btn { min-height: 24px; margin: var(--mm-space-1) 0; }
+.mm-card--series .mm-figure { margin: var(--mm-space-2) 0; padding: 0; max-width: 100%; overflow-x: auto; color: var(--mm-text); }
+.mm-card--series .mm-figure svg { display: block; min-width: 36rem; max-width: 100%; height: auto; color: var(--mm-text); }
+.mm-card--series .mm-state-error { margin: var(--mm-space-1) 0; padding: var(--mm-space-2) var(--mm-space-3); border: 1px solid var(--mm-warn-border); background: var(--mm-warn-bg); color: var(--mm-warn-ink); }
+@media print { .mm-card--series .mm-figure { overflow: visible; } .mm-card--series .mm-figure svg { min-width: 0; } .mm-card--series button.mm-history-btn { display: none; } }
+/* end L18 */
+
+/* L22 (amendment 4.2): PG-COUNTRY header card, domain bands, table card. The bar sits directly under the header card as its own sticky element. */
+.mm-header-card { margin: var(--mm-space-4) 0 0; }
+.mm-header-card h1 { margin-top: 0; }
+.mm-header-card .mm-country-facts { margin-bottom: 0; }
+.mm-country-page .mm-country-domain { margin: var(--mm-space-4) 0; }
+.mm-country-page .mm-band h2 { margin: 0; }
+.mm-country-page .mm-country-domain[hidden] { display: none; }
+.mm-country-page .mm-card--strip .mm-figure { margin: var(--mm-space-2) 0; max-width: 100%; overflow-x: auto; }
+.mm-country-page .mm-card--table { min-height: 0; }
+.mm-filterbar-controls .mm-country-switch select { min-height: 24px; max-width: 100%; }
+/* end L22 */

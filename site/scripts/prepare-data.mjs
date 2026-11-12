@@ -4,7 +4,7 @@ import {copyFileSync, existsSync, lstatSync, mkdirSync, readFileSync, realpathSy
 import {createHash} from "node:crypto";
 import {dirname, isAbsolute, join, resolve, sep} from "node:path";
 import {fileURLToPath} from "node:url";
-import {firstDomainId, storedPercentileDifferences, storedTransformId} from "../src/lib/indicator-model.js";
+import {firstDomainId, indicatorsWithoutDomain, storedPercentileDifferences, storedTransformId} from "../src/lib/indicator-model.js";
 import {indicatorPageSource, countryPageSource, domainPageSource, explorerPageSource,revisionsPageSource, homePageSource, domainsPageSource} from "./lib.mjs";
 
 // Copies manifest.json plus every manifest.files[].path from the export into dst (after clearing dst); nothing else
@@ -107,6 +107,14 @@ for (const [dir, kind, file, key, idKey, skip] of [["country", "country", "entit
     console.error(`prepare-data: meta/${file}.json has no ${key} list`);
     process.exit(1);
   }
+  if (kind === "indicator") {
+    // AC-RD-01: one page per indicator, no exceptions; an indicator without a domain has no scorecard (export spec section 4).
+    const none = indicatorsWithoutDomain(list);
+    if (none.length) {
+      for (const id of none) console.error(`prepare-data: indicator ${id} has no domain_ids`);
+      process.exit(1);
+    }
+  }
   let n = 0;
   for (const e of list) {
     if (skip(e)) continue;
@@ -142,7 +150,7 @@ const metaList = (file, key) => {
   return list;
 };
 writeFileSync(join(here, "..", "src", "domains.md"), domainsPageSource(domains));
-writeFileSync(join(here, "..", "src", "index.md"), homePageSource({entities: metaList("entities", "entities"), indicators: metaList("indicators", "indicators"), domains}));
+writeFileSync(join(here, "..", "src", "index.md"), homePageSource({entities: metaList("entities", "entities"), indicators: metaList("indicators", "indicators"), domains, manifest: JSON.parse(readFileSync(join(dst, "manifest.json"), "utf8"))}));
 console.log("prepare-data: home and domains pages written");
 }
 

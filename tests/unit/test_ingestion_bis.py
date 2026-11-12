@@ -187,3 +187,69 @@ def test_known_gaps_declared_and_series_map_whitelist() -> None:
     pairs = {(g["indicator"], g["entity"]) for g in gaps}
     assert ("M17", "BGR") in pairs
     assert sum(1 for i, _ in pairs if i == "Q06") == 10  # 42 countries minus 32 with the series
+
+
+@pytest.mark.parametrize(
+    ("name", "group", "dataset", "ref", "unit", "first"),
+    [
+        ("ws_cbpol_real_layout", "bis_cbpol", "WS_CBPOL", "M.US", "PCT", Decimal("4.33")),
+        (
+            "ws_credit_gap_real_layout",
+            "bis_credit_gap",
+            "WS_CREDIT_GAP",
+            "Q.US.P.A.C",
+            "PCT_GDP",
+            Decimal("-1.5"),
+        ),
+    ],
+)
+def test_bis_v2_parses_real_layout(
+    name: str, group: str, dataset: str, ref: str, unit: str, first: Decimal
+) -> None:
+    g = _group(group)
+    assert registry.resolve("bis_v2@2") is not None
+    flt = series_filter_for(g.series, dataset, g.missing_markers)
+    raw = RawObject(
+        body=(FIX / f"{name}.zip").read_bytes(),
+        source_id="bis",
+        group_id=group,
+        fetched_at=datetime(2026, 11, 9, tzinfo=UTC),
+        parser_id="bis_v2@2",
+    )
+    out = BulkConnector().parse(raw, flt)
+    assert [m.series_ref for m in out.metas] == [ref]
+    assert out.metas[0].unit_code == unit
+    assert out.observations[0].value == first
+    assert len(out.observations) == 2
+    assert out.rejected == ()
+
+
+def test_bis_v2_nan_value_with_status_m_is_missing_not_non_finite() -> None:
+    import io
+    import zipfile
+
+    g = _group("bis_cbpol")
+    src = zipfile.ZipFile(FIX / "ws_cbpol_real_layout.zip")
+    lines = src.read(src.namelist()[0]).decode().splitlines()
+    row = (
+        lines[1]
+        .replace(",2025-08,4.33,", ",2025-10,NaN,")
+        .replace(",A: Normal value,", ",M: Missing value,")
+    )
+    assert "NaN" in row
+    assert "M: Missing" in row
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as zf:
+        zf.writestr("WS_CBPOL_csv_flat.csv", "\n".join([*lines, row]) + "\n")
+    flt = series_filter_for(g.series, "WS_CBPOL", g.missing_markers)
+    raw = RawObject(
+        body=buf.getvalue(),
+        source_id="bis",
+        group_id="bis_cbpol",
+        fetched_at=datetime(2026, 11, 9, tzinfo=UTC),
+        parser_id="bis_v2@2",
+    )
+    out = BulkConnector().parse(raw, flt)
+    assert out.rejected == ()
+    miss = [o for o in out.observations if o.value_status == "MISS"]
+    assert [(str(o.ref_period_start), o.value) for o in miss] == [("2025-10-01", None)]

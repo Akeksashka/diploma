@@ -7,7 +7,8 @@ import {fileURLToPath} from "node:url";
 import {aboutDetails, aboutFields, aboutFlags} from "../src/lib/about-value.js";
 import * as copy from "../src/lib/copy.js";
 import {countryModel} from "../src/lib/country-model.js";
-import {countryBlock, switcherOptions} from "../src/lib/country-view.js";
+import {switcherOptions} from "../src/lib/country-view.js";
+import {countryPage as countryBlock} from "../src/lib/country-page.js";
 import {html} from "./support/html-standin.mjs";
 
 const dir = join(dirname(fileURLToPath(import.meta.url)), "fixtures", "sparse_export");

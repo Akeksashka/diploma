@@ -122,6 +122,40 @@ test("every fixed string is verbatim the confirmed wording", () => {
 
 // T105 DRAFT wording: new sentences NOT yet confirmed by the user (gate G2); listed in docs/ops/dashboard-ux-baseline.md.
 // This list pins them so a change is deliberate; it is not a confirmation.
+// Layout L3 (amendment section 7): every new string, as [accessor, expected]. All stay DRAFT until the user confirms them.
+export const LAYOUT_L3 = {
+  DRAFT_FILTER_LABELS: [(v) => Object.values(v), ["Filters", "Group", "Country", "Domain", "Indicator", "Period", "Frequency", "From", "To", "All", "Reset filters"]],
+  DRAFT_FILTER_ALL: [(v) => Object.values(v), ["All countries", "All domains", "All frequencies"]],
+  DRAFT_FREQUENCY_NAMES: [(v) => Object.values(v), ["Daily", "Monthly", "Quarterly", "Annual"]],
+  DRAFT_PERIOD_PRESETS: [(v) => Object.values(v), ["All", "Last 10 years", "Last 5 years"]],
+  DRAFT_BAND_TITLES: [(v) => Object.values(v), ["Overview", "Compare", "Indicators", "Over time"]],
+  DRAFT_GROUP_BROWSE: [(v) => v, "Browse"],
+  DRAFT_BROWSE_SUMMARY: [(v) => v, "Countries, indicators and other pages"],
+  DRAFT_GROUP_REFERENCE_ROWS: [(v) => v, "Reference rows"],
+  DRAFT_LOAD_HISTORY: [(v) => v, "Load history"],
+  DRAFT_SHOW_MORE: [(v) => v, "Show more"],
+  DRAFT_CHART_MODES: [(v) => Object.values(v), ["Lines", "Bars"]],
+  DRAFT_CHART_TYPE_LEGEND: [(v) => v, "Chart type"],
+  DRAFT_CHOOSE_COUNTRY_PLACEHOLDER: [(v) => v, "Choose a country to see its key indicators."],
+  DRAFT_EMPTY_CARD: [(v) => v, "No values for this selection."],
+  DRAFT_KPI_ERROR_CONSEQUENCE: [(v) => v, "The key indicators are not shown."],
+  DRAFT_SPARKLINE_TOO_FEW: [(v) => v, "Too few values in the selected period."],
+  DRAFT_HOME_H1: [(v) => v, "Macro dashboard"],
+  DRAFT_FILTER_CHIP_SUMMARY: [(v) => v("Period", "2015 to 2025"), "Period: 2015 to 2025"],
+  DRAFT_PERIOD_VALUE: [(v) => v(2015, 2025), "2015 to 2025"],
+  DRAFT_PRINT_FILTERS: [(v) => [v(["Group: EU"]), v([])], ["Filters: Group: EU", "Filters: none"]],
+  DRAFT_COUNTRY_LIMIT: [(v) => v(5), "You can select up to 5 countries. Clear one to select another."],
+  DRAFT_COUNTRY_SELECTED: [(v) => v(3), "3 selected"],
+  DRAFT_COUNTRY_CHIP_HELP: [(v) => v, "Select up to 5 countries."],
+  DRAFT_PERIOD_INVALID: [(v) => v, "The From year must not be after the To year. The period was not changed."],
+  DRAFT_PERIOD_UNAVAILABLE_CONSEQUENCE: [(v) => v, "The period filter is not available; all years are shown."],
+  DRAFT_PERIOD_REGION: [(v) => v, "the period range"],
+  DRAFT_HIDDEN_ROWS: [(v) => [v(3), v(1), v(0)], ["3 rows hidden by the period filter", "1 row hidden by the period filter", ""]], // ADR-036 decision 5 (singular fix)
+  DRAFT_HIDDEN_ROW_ITEM: [(v) => v("Germany", "2019 Q4"), "Germany: latest value 2019 Q4"],
+  // L12: the ranked comparison card (amendment 4.7)
+  DRAFT_RANK_SORT_LABELS: [(v) => ({...v}), {name: "Country (A to Z)", value: "Value", percentile: "Percentile"}],
+  DRAFT_RANK_COLUMNS: [(v) => ({...v}), {bar: "Bar", dot: "Percentile position"}]
+};
 const DRAFT = [
   "DRAFT_LOADING", "DRAFT_ERROR_TITLE", "DRAFT_ERROR_VERSION", "DRAFT_ERROR_INVALID", "DRAFT_CONSEQUENCE", "DRAFT_SUBREGION_CONSEQUENCE",
   "DRAFT_NOSCRIPT", "DRAFT_NEXT_GROUP", "DRAFT_NEXT_SERIES", "DRAFT_REGIONS",
@@ -144,7 +178,7 @@ const DRAFT = [
   // Redesign R9: indicator page header and row table labels
   "DRAFT_CRUMB_INDICATORS", "DRAFT_INDICATOR_FACT_LABELS", "DRAFT_INDICATOR_COLUMNS", "DRAFT_INDICATOR_TABLE_CAPTION",
   // Redesign R10: indicator page controls, table and charts; G-STR3 labels stay DRAFT
-  "DRAFT_INDICATOR_GROUP_LEGEND", "DRAFT_INDICATOR_SORT_LABEL", "DRAFT_INDICATOR_SORT_LABELS", "DRAFT_INDICATOR_SWITCHER_LABEL", "DRAFT_INDICATOR_SWITCHER_GO", "DRAFT_INDICATOR_COLUMNS_MORE",
+  "DRAFT_BAND_TABLE", "DRAFT_BAND_REVISIONS", "DRAFT_CARD_REVISIONS", "DRAFT_DOMAINS_BAND", "DRAFT_ALL_DOMAINS_LINK", "DRAFT_INDICATOR_SORT_LABEL", "DRAFT_INDICATOR_SORT_LABELS", "DRAFT_INDICATOR_SWITCHER_GO", "DRAFT_INDICATOR_COLUMNS_MORE",
   "DRAFT_TRANSFORMED_HEADER", "DRAFT_OPEN_AS_SERIES", "DRAFT_VALUE_AXIS_TITLE", "DRAFT_VALUE_FIGURE_LABEL", "DRAFT_VALUE_ESTIMATE_MARK", "DRAFT_VALUE_NEUTRAL_LEGEND",
   "DRAFT_CHOOSE_COUNTRIES_HINT",
   // Redesign R14: PG-SERIES about table and units; DRAFT
@@ -153,7 +187,9 @@ const DRAFT = [
   
   // Redesign R17/R18: home and domains pages
   "DRAFT_HOME_FILTER_COUNT",
-  "DRAFT_HOME_FILTER_NONE", "DRAFT_HOME_DOMAINS_TITLE"
+  "DRAFT_HOME_FILTER_NONE", "DRAFT_HOME_DOMAINS_TITLE",
+  // Layout L3: amendment sections 6 and 7
+  ...Object.keys(LAYOUT_L3)
 ];
 
 // Confirmed by the user (2026-11-08, and 2026-11-09 for the home filter label): exact text pinned; each must keep its annotation.
@@ -277,10 +313,10 @@ test("DRAFT strings: exact text, and every DRAFT_ export is pinned here", () => 
   assert.deepEqual({...copy.DRAFT_INDICATOR_FACT_LABELS}, {id: "Identifier", domains: "Domains", unit: "Unit", frequency: "Frequency", direction: "Direction", notes: "Notes", transform: "Transform"});
   assert.deepEqual({...copy.DRAFT_INDICATOR_COLUMNS}, {country: "Country", value: "Latest value", period: "Reference period", offset: "Offset (days)", percentile: "percentile vs all ranked countries"});
   assert.equal(copy.DRAFT_INDICATOR_TABLE_CAPTION("GDP"), "GDP: latest values by country");
-  assert.equal(copy.DRAFT_INDICATOR_GROUP_LEGEND, "Peer group (filter)");
   assert.equal(copy.DRAFT_INDICATOR_SORT_LABEL, "Sort by");
   assert.deepEqual({...copy.DRAFT_INDICATOR_SORT_LABELS}, {name: "Country", value: "Value", percentile: "Percentile", period: "Reference period"});
-  assert.equal(copy.DRAFT_INDICATOR_SWITCHER_LABEL, "Switch indicator");
+  assert.equal(copy.DRAFT_BAND_TABLE, "Table");
+  assert.deepEqual([copy.DRAFT_BAND_REVISIONS, copy.DRAFT_CARD_REVISIONS, copy.DRAFT_DOMAINS_BAND, copy.DRAFT_ALL_DOMAINS_LINK], ["Revisions", "Revisions and vintages", "All domains", "All domains"]);
   assert.equal(copy.DRAFT_INDICATOR_SWITCHER_GO, "Go");
   assert.deepEqual({...copy.DRAFT_INDICATOR_COLUMNS_MORE}, {flags: "Flags", source: "Source", actions: "Actions", reason: "Why there is no value"});
   assert.equal(copy.DRAFT_TRANSFORMED_HEADER("YOY"), "Transformed value (YOY)");
@@ -301,6 +337,18 @@ test("DRAFT strings: exact text, and every DRAFT_ export is pinned here", () => 
   for (const r of Object.values(copy.DRAFT_REGIONS)) assert.ok(!/[/:.\d]|https?/.test(r), r);
 });
 
+test("Layout L3 (AC-DB-34): every amendment section 7 string is a DRAFT_ constant with its exact text", () => {
+  for (const [name, [get, expected]] of Object.entries(LAYOUT_L3)) {
+    assert.ok(name.startsWith("DRAFT_"), name);
+    assert.ok(name in copy, `${name} is exported`);
+    assert.deepEqual(get(copy[name]), expected, name);
+    assert.ok(Object.isFrozen(copy[name]) || typeof copy[name] !== "object", `${name} is frozen`);
+  }
+  assert.equal(copy.HOME_AGGREGATES_HEADING, "Aggregates", "the confirmed string is unchanged");
+  assert.equal(copy.DRAFT_HIDDEN_ROWS(0), "", "N = 0 renders no sentence");
+  assert.ok(!/%|total|of \d/.test(copy.DRAFT_HIDDEN_ROWS(5)), "no percentage, share or total");
+});
+
 test("R11: the heatmap column link has the full indicator name in its accessible name, starting with the visible text", () => {
   assert.equal(copy.HEATMAP_INDICATOR_LINK, "Indicator page");
   assert.equal(copy.HEATMAP_INDICATOR_LINK_LABEL("Unemployment rate"), "Indicator page: Unemployment rate");
@@ -316,7 +364,7 @@ test("copy.js has no imports and every export other than the data label is used 
   const text = readFileSync(join(src, "lib", "copy.js"), "utf8");
   assert.ok(!/^\s*import\b/m.test(text));
   const others = readdirSync(join(src, "lib")).filter((n) => n.endsWith(".js") && n !== "copy.js").map((n) => readFileSync(join(src, "lib", n), "utf8")).join("\n");
-  const unused = Object.keys(copy).filter((k) => k !== "DOMAIN_FIGURE_LABEL" && k !== "FRESHNESS_LABEL" && k !== "STALE_BANNER" && k !== "STALE_BANNER_UNREADABLE" && !new RegExp(`\\b${k}\\b`).test(others));
+  const unused = Object.keys(copy).filter((k) => k !== "DOMAIN_FIGURE_LABEL" && k !== "FRESHNESS_LABEL" && k !== "STALE_BANNER" && k !== "STALE_BANNER_UNREADABLE" && !(k in LAYOUT_L3) /* L3 constants are consumed by the L6+ filter bar */ && !new RegExp(`\\b${k}\\b`).test(others));
   assert.deepEqual(unused, []);
 });
 
@@ -469,4 +517,59 @@ test("AC-RD-55, 62: withdrawn strings are absent from copy.js, src and the built
     for (const re of withdrawn) if (re.test(body)) hits.push(`${f}: ${re}`);
   }
   assert.deepEqual(hits, []);
+});
+
+// --- L26 / AC-DB-34: layout amendment section 7, checked against the amendment text itself ------------------------------------
+const amendmentText = readFileSync(join(root, "..", "docs", "specs", "dashboard-layout-amendment.md"), "utf8");
+// The plain quoted strings of section 7 (before "Existing confirmed strings"); the two function forms are checked in LAYOUT_L3.
+const section7Strings = () => {
+  const i = amendmentText.indexOf("## 7. New strings");
+  const body = amendmentText.slice(i, amendmentText.indexOf("Existing confirmed strings", i));
+  const noForms = body.replace(/`DRAFT_HIDDEN_ROW[^`]*`[^.]*?"<name>: latest value <period>" \(for example "[^"]*"\)/, "").replace(/"<n> rows[^"]*"|"1 row[^"]*"|"<name>[^"]*"/g, "");
+  return [...new Set([...noForms.matchAll(/"([^"<>]+)"/g)].map((m) => m[1]))];
+};
+const flatten = (v) => (typeof v === "string" ? [v] : typeof v === "object" && v !== null ? Object.values(v).flatMap(flatten) : []);
+// Returns, for each string, the copy exports that hold it verbatim.
+const holders = (module, strings) => Object.fromEntries(strings.map((s) => [s, Object.keys(module).filter((k) => flatten(module[k]).includes(s))]));
+const draftMarked = (module, name, source) => name.startsWith("DRAFT_") && (module === copy ? /^export const DRAFT_/m.test(source) : true);
+
+test("AC-DB-34 (L26): every plain string of amendment section 7 is held by a DRAFT_ export of copy.js (Aggregates: the confirmed export)", () => {
+  const strings = section7Strings();
+  assert.ok(strings.length >= 32, `parsed only ${strings.length} strings from section 7`);
+  const held = holders(copy, strings);
+  for (const s of strings) {
+    const names = held[s];
+    assert.ok(names.length > 0, `section 7 string "${s}" is not in copy.js`);
+    if (s === "Aggregates") {
+      assert.ok(names.includes("HOME_AGGREGATES_HEADING") && isConfirmed("HOME_AGGREGATES_HEADING"), "Aggregates is the existing confirmed export, unchanged");
+      continue;
+    }
+    // At least one holder is DRAFT-marked: DRAFT_ prefix, so the export is read as unconfirmed everywhere (ADR-025 decision 11).
+    assert.ok(names.some((n) => draftMarked(copy, n, exportLine(n) ?? "")), `"${s}" has no DRAFT_ holder (found: ${names.join(", ")})`);
+  }
+  // A DRAFT_ holder never carries the confirmation annotation until the user confirms it.
+  for (const s of strings.filter((x) => x !== "Aggregates")) for (const n of held[s].filter((k) => k.startsWith("DRAFT_"))) assert.ok(!isConfirmed(n), `${n} is annotated as confirmed`);
+  // Only the strings the amendment names carry the h1 and band titles: both are DRAFT.
+  assert.equal(copy.DRAFT_HOME_H1, "Macro dashboard");
+  assert.deepEqual(Object.values(copy.DRAFT_BAND_TITLES), ["Overview", "Compare", "Indicators", "Over time"]);
+});
+
+test("AC-DB-34 (L26): the section 7 check fails for a missing string, a non-DRAFT holder and a stale confirmation (seeded)", () => {
+  const fake = {DRAFT_A: "Alpha", DRAFT_OBJ: Object.freeze({x: "Beta"}), PLAIN: "Gamma"};
+  assert.deepEqual(holders(fake, ["Alpha", "Beta", "Gamma", "Delta"]), {Alpha: ["DRAFT_A"], Beta: ["DRAFT_OBJ"], Gamma: ["PLAIN"], Delta: []});
+  assert.equal(holders(fake, ["Delta"]).Delta.length, 0, "a missing string has no holder");
+  assert.equal(draftMarked(fake, "PLAIN", "export const PLAIN = 'Gamma';"), false, "a holder without the DRAFT_ prefix is not DRAFT-marked");
+  assert.equal(draftMarked(copy, "DRAFT_A", "export const DRAFT_A = 'Alpha';"), true);
+  assert.ok(/confirmed by the user 2026-11-0[89]/.test("export const DRAFT_A = 'x'; // confirmed by the user 2026-11-09"), "the confirmation annotation is detected, so a DRAFT_ holder carrying it would fail");
+  // The parser sees the plain strings and ignores the function forms.
+  const s7 = section7Strings();
+  for (const s of ["Filters", "Reset filters", "Load history", "Too few values in the selected period.", "Choose a country to see its key indicators."]) assert.ok(s7.includes(s), s);
+  assert.ok(!s7.some((x) => x.includes("<n>") || x.includes("<name>")));
+});
+
+test("AC-DB-34 (L26): confirmed strings are unchanged (Aggregates, caveat, orientation note, Choose a country, Data cut-off)", () => {
+  assert.equal(copy.HOME_AGGREGATES_HEADING, "Aggregates");
+  assert.equal(copy.HOME_COUNTRIES_HEADING, "Choose a country");
+  assert.equal(copy.FRESHNESS_LABEL, "Data cut-off");
+  for (const n of ["CAVEAT", "ORIENTATION_NOTE"]) assert.equal(typeof copy[n], "string", n);
 });

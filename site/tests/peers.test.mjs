@@ -292,5 +292,5 @@ test("T118: no cookie or storage in the peers modules and page", () => {
   const files = ["../src/lib/peers.js", "../src/lib/peers-view.js"].map((f) => readFileSync(new URL(f, import.meta.url), "utf8"));
   files.push(domainPageSource("labour"), readFileSync(new URL("../src/lib/indicator-view.js", import.meta.url), "utf8"));
   for (const t of files) assert.ok(!/localStorage|sessionStorage|document\.cookie/.test(t));
-  assert.ok(files.at(-1).includes("radioGroup(html"));
+  assert.ok(!files.at(-1).includes("radioGroup(html"), "L23: the peer group control is the filter bar's Group select");
 });

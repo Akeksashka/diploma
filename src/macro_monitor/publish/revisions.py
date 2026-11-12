@@ -25,6 +25,7 @@ import pyarrow as pa
 
 from macro_monitor.publish.export import ExportError, ExportSession, ExportSink
 from macro_monitor.publish.manifest import RunInfo, utc_text
+from macro_monitor.publish.published import PUBLISHED_INDICATOR_IDS_SQL
 
 SCHEMA_VERSION = "1.0"
 WINDOW = timedelta(days=365)  # "last 12 months", relative to the run's known_cutoff
@@ -219,16 +220,11 @@ def edition_summaries(
 def revisions_producer(session: ExportSession, run: RunInfo, sink: ExportSink) -> None:
     """Adds ``revisions/<indicator_id>.parquet`` (only indicators with a revision row) and
     ``revisions_recent.json``."""
-    comparison = {
-        str(r[0])
-        for r in session.fetch(
-            "SELECT indicator_id FROM ref.indicator WHERE kind = 'indicator' AND is_comparison"
-        )
-    }
+    published = {str(r[0]) for r in session.fetch(PUBLISHED_INDICATOR_IDS_SQL)}
     source_of = {int(r[0]): str(r[1]) for r in session.fetch(
         "SELECT series_id, source_id FROM ref.v_series_export ORDER BY series_id"
     )}  # fmt: skip
-    rows = [r for r in session.fetch(_SQL) if r[2] not in comparison]
+    rows = [r for r in session.fetch(_SQL) if r[2] in published]
     versions = build_versions(rows, run.known_cutoff)
     by_ind: dict[str, list[Version]] = defaultdict(list)
     for v in versions:

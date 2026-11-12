@@ -9,7 +9,7 @@ const text = (fg, bg) => t(fg, bg, TEXT, "text");
 const ui = (fg, bg) => t(fg, bg, UI, "ui");
 
 // Token name prefixes that hold lengths or font stacks, not colours.
-export const NON_COLOUR_PREFIXES = ["--mm-space-", "--mm-radius", "--mm-font", "--mm-fs-"];
+export const NON_COLOUR_PREFIXES = ["--mm-space-", "--mm-radius", "--mm-font", "--mm-fs-", "--mm-tile-"];
 
 export const PAIRS = [
   text("--mm-text", "--mm-bg"),
@@ -35,5 +35,20 @@ export const PAIRS = [
   ui("--mm-focus", "--mm-bg"),
   ui("--mm-focus", "--mm-surface"),
   // T121 explorer series hues (lines and markers, 3:1 on the page and on the surface the chart sits on).
-  ...[1, 2, 3, 4, 5].flatMap((n) => [ui(`--mm-series-${n}`, "--mm-bg"), ui(`--mm-series-${n}`, "--mm-surface")])
+  ...[1, 2, 3, 4, 5].flatMap((n) => [ui(`--mm-series-${n}`, "--mm-bg"), ui(`--mm-series-${n}`, "--mm-surface")]),
+  // L2 layout surface (amendment section 3): body text on canvas and card, control borders and focus on both, charts sit on the card.
+  text("--mm-text", "--mm-canvas"),
+  text("--mm-text", "--mm-card"),
+  text("--mm-text-muted", "--mm-canvas"),
+  text("--mm-text-muted", "--mm-card"),
+  text("--mm-band-ink", "--mm-band-bg"),
+  ui("--mm-border", "--mm-canvas"),
+  ui("--mm-border", "--mm-card"),
+  ui("--mm-focus", "--mm-canvas"),
+  ui("--mm-focus", "--mm-card"),
+  ui("--mm-focus", "--mm-band-bg"),
+  ...[1, 2, 3, 4, 5].map((n) => ui(`--mm-series-${n}`, "--mm-card")),
+  // The card edge is held to the 3:1 non-text limit on the card and on the canvas (the tests allow only 4.5 and 3); the fill difference is not relied on.
+  ui("--mm-card-border", "--mm-card"),
+  ui("--mm-card-border", "--mm-canvas")
 ];

@@ -21,6 +21,7 @@ from typing import Any
 from macro_monitor.publish.export import ExportError, ExportSession, ExportSink
 from macro_monitor.publish.manifest import RunInfo, utc_text
 from macro_monitor.publish.meta import META_SCHEMA_VERSION, PERCENTILE_RANK_LABEL
+from macro_monitor.publish.published import PUBLISHED_INDICATOR_IDS_SQL
 
 SCORECARD_SCHEMA_VERSION = "1.0"
 PERCENTILE_LABEL = "percentile vs all ranked countries"
@@ -86,7 +87,7 @@ def scorecard_producer(session: ExportSession, run: RunInfo, sink: ExportSink) -
         r[0]: r[1]
         for r in session.fetch(
             "SELECT indicator_id, rank_mode FROM ref.indicator "
-            "WHERE kind = 'indicator' AND NOT is_comparison"
+            f"WHERE indicator_id IN ({PUBLISHED_INDICATOR_IDS_SQL})"
         )
     }
     in_domain: dict[str, list[str]] = defaultdict(list)
@@ -257,12 +258,7 @@ ALERT_COLS = (
 
 def alerts_producer(session: ExportSession, run: RunInfo, sink: ExportSink) -> None:
     """``alerts.json``: published ``watch`` and ``alert`` rows of the run (nothing else)."""
-    known = {
-        r[0]
-        for r in session.fetch(
-            "SELECT indicator_id FROM ref.indicator WHERE kind = 'indicator' AND NOT is_comparison"
-        )
-    }
+    known = {r[0] for r in session.fetch(PUBLISHED_INDICATOR_IDS_SQL)}
     rows = _dicts(
         ALERT_COLS,
         session.fetch(

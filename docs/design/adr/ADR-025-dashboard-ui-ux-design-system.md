@@ -3,6 +3,8 @@ status: approved   # approved by the user on 2026-11-04 (stated in session: "ok,
 ---
 # ADR-025: Dashboard UI/UX design system (tokens, colour scales, state vocabulary, typography, accessibility, print) for V1-V5
 
+Amended by ADR-034 and docs/specs/dashboard-layout-amendment.md (2026-11-10).
+
 Date: 2026-11-04. Extends ADR-010 (decisions 1, 8, 9, 10), ADR-023 (decision 4: no off-origin request, `globalStylesheets: []`; decision 6: bundle-size rule) and ADR-024 (no dependency beyond its list). Changes none of them. User requirement stated in session on 2026-11-04: "I want the final visualisation to be beautiful and informative for UI/UX", to be done after the Eurostat throwaway run. Detail lives in `docs/design/briefs/dashboard-ux-brief.md`. Labels: [DOC] read on the primary page this session; [SEARCH] search-summary only; [REPO] read in this repository; [CALC] hand calculation; [UNVERIFIED] not checked. Access date for every URL: 2026-11-04.
 
 ## Context

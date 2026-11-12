@@ -6,7 +6,8 @@ import {test} from "node:test";
 import {fileURLToPath} from "node:url";
 import {countryPageSource} from "../scripts/lib.mjs";
 import {countryModel} from "../src/lib/country-model.js";
-import {countryBlock, switcherOptions} from "../src/lib/country-view.js";
+import {switcherOptions} from "../src/lib/country-view.js";
+import {countryPage as countryBlock} from "../src/lib/country-page.js";
 import {hasHistory, historyBlock, historyChart, historyModel, historyPoints, historySource} from "../src/lib/history.js";
 import {html} from "./support/html-standin.mjs";
 

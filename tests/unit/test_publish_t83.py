@@ -415,7 +415,7 @@ def test_scorecard_schema_rejects_modal_ref_period_end() -> None:
 def test_alerts_only_watch_and_alert_rows() -> None:
     stub = Stub(
         [
-            ("FROM ref.indicator WHERE", [("M09",), ("M10",)]),
+            ("FROM ref.indicator i WHERE", [("M09",), ("M10",)]),
             ("v_alert_published", [("M09", "DEU", 1, date(2026, 8, 31), "robust_z", Decimal("2.4"), "alert", "full", None, "persistent_shift", None)]),
         ]
     )  # fmt: skip

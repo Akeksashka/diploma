@@ -124,9 +124,9 @@ export function focusables(page) {
           const group = [...document.querySelectorAll(`input[type="radio"][name="${el.name}"]`)];
           if (el !== (group.find((x) => x.checked) ?? group[0])) return false;
         }
-        // Content of a closed <details> is not focusable (only its own summary is).
-        const closed = el.closest("details:not([open])");
-        if (closed && !(el.localName === "summary" && el.parentElement === closed)) return false;
+        // Content of a closed <details> is not focusable; its own summary is, unless an ancestor <details> is closed too (nested: Browse > per-domain lists).
+        const closed = (el.localName === "summary" && el.parentElement?.localName === "details" ? el.parentElement.parentElement : el)?.closest("details:not([open])");
+        if (closed) return false;
         return !el.matches(":disabled") && el.tabIndex >= 0 && cs.visibility !== "hidden" && cs.display !== "none" && r.width > 0 && r.height > 0;
       })
       .map((el) => el.localName + (el.id ? `#${el.id}` : ""));

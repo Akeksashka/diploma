@@ -4,15 +4,7 @@
 # series-map seeding report (T52 reviewed CSV not supplied).
 series:
   - dataset: "OECD.SDD.TPS,DSD_PRICES@DF_PRICES_ALL"
-    key: "ARG.M.CPI.IX.N._Z"
-    entity: ARG
-    indicator: M06
-    role: headline
-    valid_from: 1991-01-01
-    rationale: "OECD headline CPI index, Argentina (data-sources research F13, M06)"
-    expect: {frequency: M, unit: IDX, seasonal_adjustment: NSA, price_basis: NA}
-  - dataset: "OECD.SDD.TPS,DSD_PRICES@DF_PRICES_ALL"
-    key: "BRA.M.CPI.IX.N._Z"
+    key: "BRA.M.N.CPI.IX._T.N._Z"
     entity: BRA
     indicator: M06
     role: headline

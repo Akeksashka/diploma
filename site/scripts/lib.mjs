@@ -5,9 +5,10 @@ import {join, posix, relative, sep} from "node:path";
 import {gzipSync} from "node:zlib";
 import {countryHeader} from "../src/lib/country-model.js";
 import {firstDomainId, indicatorHeader} from "../src/lib/indicator-model.js";
-import {CAVEAT} from "../src/lib/copy.js";
+import {CAVEAT, DRAFT_BAND_TITLES, DRAFT_BROWSE_SUMMARY, DRAFT_GROUP_BROWSE} from "../src/lib/copy.js";
+import {revisionsBandOpen} from "../src/lib/revisions-view.js";
 import {DOMAINS_TITLE, domainsListHtml} from "../src/lib/domains-list.js";
-import {homeListsHtml} from "../src/lib/home-lists.js";
+import {browseBandHtml} from "../src/lib/home-lists.js";
 
 export const LANDING_LIMIT_BYTES = 1_500_000; // AC-DASH-2: 1.5 MB (MB = 1,000,000 bytes) gzipped
 
@@ -176,12 +177,17 @@ title: Domain scorecard
 
 ${pageH1("Domain scorecard", name)}
 
+<div class="mm-filterbar-slot" id="filterbar-slot"></div>
+
 \`\`\`js
 import {parseManifest} from "../lib/manifest.js";
 import {listOf} from "../lib/meta.js";
 import {pageHead, attributionBlock} from "../lib/shell.js";
 import {domainView} from "../lib/scorecard.js";
-import {domainBlock} from "../lib/scorecard-view.js";
+import {domainPage} from "../lib/domain-page.js";
+import {createFilterStore} from "../lib/filter-store.js";
+import {mountFilterBar} from "../lib/filter-bar.js";
+import {periodBounds} from "../lib/filter-model.js";
 import {DRAFT_REGIONS as R} from "../lib/copy.js";
 import {busyBlock, loadAll, setBusy} from "../lib/state-blocks.js";
 \`\`\`
@@ -195,22 +201,29 @@ display(busy);
 // A failed file never throws into the page: loadAll returns one failed region per file (T105).
 const boot = await loadAll([
   {key: "manifest", region: R.manifest, load: () => FileAttachment("../data/manifest.json").json(), parse: parseManifest},
-  {key: "meta", region: R.meta, load: async () => ({series: await FileAttachment("../data/meta/series.json").json(), entities: await FileAttachment("../data/meta/entities.json").json(), indicators: await FileAttachment("../data/meta/indicators.json").json(), domains: await FileAttachment("../data/meta/domains.json").json()}),
-    parse: (m) => ({seriesMeta: listOf(m.series, "series"), entities: listOf(m.entities, "entities"), indicators: listOf(m.indicators, "indicators"), domains: listOf(m.domains, "domains")})},
+  {key: "meta", region: R.meta, load: async () => ({series: await FileAttachment("../data/meta/series.json").json(), entities: await FileAttachment("../data/meta/entities.json").json(), indicators: await FileAttachment("../data/meta/indicators.json").json(), domains: await FileAttachment("../data/meta/domains.json").json(), groups: await FileAttachment("../data/meta/groups.json").json()}),
+    parse: (m) => ({seriesMeta: listOf(m.series, "series"), entities: listOf(m.entities, "entities"), indicators: listOf(m.indicators, "indicators"), domains: listOf(m.domains, "domains"), groups: listOf(m.groups, "groups")})},
   {key: "scorecard", region: R.scorecard, load: () => FileAttachment("../data/scorecard/${domainId}.json").json()}
 ], (d) => ({dv: domainView(d.scorecard, {entities: d.meta.entities, indicators: d.meta.indicators, domains: d.meta.domains})}), R.scorecard);
 setBusy(busy, false);
 \`\`\`
 
-<p><a href="../domains">All domains</a></p>
-
 \`\`\`js
 display(pageHead(html, boot, "scorecard"));
+const barSlot = document.getElementById("filterbar-slot");
 if (boot.ok) {
+  const md = {...boot.data.meta, manifest: boot.data.manifest};
+  // L24: Group (the peer set) and Frequency (the heatmap columns) are the filter bar; the page reads and never writes the address on load.
+  const store = createFilterStore({win: window, maxEntities: 5, known: {bounds: periodBounds(md.manifest) ?? undefined,
+    indicators: new Set(md.indicators.map((i) => i.indicator_id)), entities: new Set(md.entities.map((e) => e.entity_id)),
+    groups: new Set(md.groups.map((g) => g.group_id)), domains: new Set(md.domains.map((d) => d.domain_id))}});
+  globalThis.__mmFilterStore = store;
+  store.attach();
+  barSlot.replaceChildren(mountFilterBar(html, {page: "domain", store, data: md}));
   const dv = boot.derived.dv;
-  display(domainBlock(html, dv));
+  display(domainPage(html, dv, {store, inputs: {scorecard: boot.data.scorecard, entities: md.entities, groups: md.groups, indicators: md.indicators, domains: md.domains}}));
   display(attributionBlock(html, boot.data.meta.seriesMeta, dv.indicatorIds));
-}
+} else barSlot.setAttribute("data-empty", "");
 \`\`\`
 `;
 }
@@ -245,8 +258,13 @@ import * as Plot from "@observablehq/plot";
 import {parseManifest} from "./lib/manifest.js";
 import {listOf} from "./lib/meta.js";
 import {pageHead, attributionBlock} from "./lib/shell.js";
-import {explorerContext, indicatorGroups, initialSelection, loadSeries, buildModel, replaceHash, selectionHash} from "./lib/explorer.js";
+import {explorerContext, indicatorGroups, initialSelection, loadSeries, buildModel, selectionHash} from "./lib/explorer.js";
 import {selectBox, explorerControls, explorerLayout, explorerBlock} from "./lib/explorer-view.js";
+import {chartModeToggle} from "./lib/bar-chart.js";
+import {createFilterStore} from "./lib/filter-store.js";
+import {mountFilterBar} from "./lib/filter-bar.js";
+import {periodBounds} from "./lib/filter-model.js";
+import {modelPeriod, pickerGroups, resolveIndicator, rowsOfFrequency, storeWatch, updatePicker, wireRailPeriod} from "./lib/explorer-filters.js";
 import {DRAFT_REGIONS as R} from "./lib/copy.js";
 import {busyBlock, loadAll, setBusy} from "./lib/state-blocks.js";
 \`\`\`
@@ -287,12 +305,43 @@ const pHash = Generators.observe((notify) => {
 \`\`\`
 
 \`\`\`js
+// L21: the one state of the page is the filter store (layout amendment 2.3): #i, #c, #d, #f, #from and #to; #g is ignored and never written.
+// The store writes the address (replaceState, user changes only, never on load) and re-reads it on hashchange; \`addr.seen\` follows its writes.
+const store = ctx ? createFilterStore({win: {location, history: {get state() { return history.state; }, replaceState: (...a) => { history.replaceState(...a); addr.seen = location.hash; }}, addEventListener: (...a) => addEventListener(...a), removeEventListener: (...a) => removeEventListener(...a)},
+  known: {indicators: new Set(ctx.indicators.map((i) => i.indicator_id)), entities: new Set(ctx.entityName.keys()), domains: new Set(boot.data.meta.domains.map((d) => d.domain_id)), bounds: periodBounds(boot.data.manifest) ?? undefined}, ignore: ["g"]}) : null; // amendment 2.3: PG-SERIES ignores g and never writes it
+if (store) store.attach();
+// Read by the cells below; a cell that mentions one re-runs only when that part changes.
+const pFrequency = store ? storeWatch(Generators, store, (s) => s.f) : null;
+const pPeriod = store ? storeWatch(Generators, store, modelPeriod) : null;
+\`\`\`
+
+\`\`\`js
 // #i and #c set the first indicator and countries; unrecognised parts fall back to the default (first indicator of the first domain, no country).
 // \`sel\` follows the user's choices (countries are kept when the indicator changes); \`touched\` is set by the first user change.
 const initial = ctx ? initialSelection(ctx, pHash) : null;
+if (initial) {
+  // A hash indicator that Domain or Frequency of the address do not offer falls back to the first offered one (nothing is written); a part the store ignored sets the same note.
+  const start = resolveIndicator(ctx, initial.indicator, store.get(), store.get().i !== null); // a default replaced because of Domain/Frequency is not a fallback
+  initial.indicator = start.indicator;
+  initial.note = initial.note || start.fell || store.get().note;
+}
 const sel = {entities: initial ? [...initial.entities] : [], touched: false, last: null};
-const indicatorBox = ctx ? selectBox(html, {id: "explorer-indicator", label: "Indicator", groups: indicatorGroups(ctx), value: initial.indicator ?? undefined}) : null;
+const indicatorBox = ctx ? selectBox(html, {id: "explorer-indicator", label: "Indicator", groups: pickerGroups(ctx, store.get()), value: initial.indicator ?? undefined}) : null;
 const pIndicator = ctx ? Generators.input(indicatorBox.querySelector("select")) : null;
+// The bar's Domain and Frequency narrow this picker (a chosen indicator stays when still offered, else the first offered); removed when this cell re-runs.
+if (ctx) {
+  let key = JSON.stringify([store.get().d, store.get().f]);
+  const off = store.subscribe((s) => {
+    const k = JSON.stringify([s.d, s.f]);
+    if (k === key) return;
+    key = k;
+    updatePicker(html, indicatorBox.querySelector("select"), ctx, s);
+  });
+  invalidation.then(off);
+}
+// L20: the Lines / Bars choice lives outside the address (the hash grammar has no chart type) and survives a change of indicator.
+const modeBox = chartModeToggle(html, {id: "explorer-chart-mode"});
+const pMode = Generators.input(modeBox);
 \`\`\`
 
 \`\`\`js
@@ -312,11 +361,16 @@ try {
   fileHref = null;
 }
 const fresh = ctx !== null && !sel.touched && pIndicator === initial.indicator;
-const box = ctx ? explorerControls(html, ctx, pIndicator, loaded.rows, {indicator: pIndicator, entities: sel.entities, note: fresh && initial.note}) : null;
+// Frequency (the bar) keeps the rows whose stored frequency matches; the series list and the year choices follow.
+const rows = rowsOfFrequency(loaded.rows, pFrequency);
+const box = ctx ? explorerControls(html, ctx, pIndicator, rows, {indicator: pIndicator, entities: sel.entities, note: fresh && initial.note}) : null;
+if (box) {
+  // The rail's From / To years show and write the same Period as the bar (one state).
+  const detach = wireRailPeriod(box, store, rows);
+  invalidation.then(detach);
+}
 const pEntities = box ? Generators.input(box.entities) : null;
 const pTransform = box ? Generators.input(box.transform.querySelector("select")) : null;
-const pFrom = box ? Generators.input(box.from.querySelector("select")) : null;
-const pTo = box ? Generators.input(box.to.querySelector("select")) : null;
 const pRebase = box ? Generators.input(box.rebase.querySelector("input")) : null;
 const pBase = box ? Generators.input(box.base.querySelector("select")) : null;
 const pFree = box ? Generators.input(box.free.querySelector("input")) : null;
@@ -328,6 +382,15 @@ display(pageHead(html, boot, "explorer"));
 display(seriesBusy);
 \`\`\`
 
+<div class="mm-filterbar-slot" id="filterbar-slot"></div>
+
+\`\`\`js
+// L21 (amendment 2.4): Domain, Frequency and Period in the bar. Country and Indicator stay in the rail (C-SER-1); Group is not shown on this page.
+const barSlot = document.getElementById("filterbar-slot");
+if (ctx) barSlot.replaceChildren(mountFilterBar(html, {page: "series", only: ["domain", "period", "frequency"], store, data: {groups: boot.data.meta.groups, domains: boot.data.meta.domains, indicators: ctx.indicators, entities: boot.data.meta.entities, manifest: boot.data.manifest}}));
+else barSlot.setAttribute("data-empty", "");
+\`\`\`
+
 \`\`\`js
 // Controls (left rail, or a "Selection" disclosure on compact screens) and the chart area sit side by side in one layout.
 const layout = box ? explorerLayout(html, {indicator: indicatorBox, box}) : null;
@@ -336,13 +399,15 @@ if (layout) display(layout.el);
 
 \`\`\`js
 if (box) {
-  const model = buildModel(ctx, pIndicator, loaded.rows, {entities: pEntities, transform: pTransform, from: pFrom, to: pTo, rebase: pRebase, base: pBase});
-  layout.main.replaceChildren(explorerBlock(html, Plot, model, loaded.error, {free: pFree, href: fileHref}), attributionBlock(html, boot.data.meta.seriesMeta, [pIndicator]));
+  const model = buildModel(ctx, pIndicator, rows, {entities: pEntities, transform: pTransform, from: pPeriod.from, to: pPeriod.to, rebase: pRebase, base: pBase});
+  const hadFocus = modeBox.contains(document.activeElement);
+  layout.main.replaceChildren(explorerBlock(html, Plot, model, loaded.error, {free: pFree, href: fileHref, selected: pEntities.length, toggle: modeBox, mode: pMode}), attributionBlock(html, boot.data.meta.seriesMeta, [pIndicator]));
+  if (hadFocus) modeBox.querySelector("input:checked")?.focus(); // the group is moved into the new block; keep the keyboard position
 }
 \`\`\`
 
 \`\`\`js
-// Write the address after a user change of indicator or countries (replaceState, picker order). Nothing is written on load.
+// Write the address after a user change of indicator or countries (through the store: replaceState, picker order, other parts kept). Nothing is written on load.
 if (box && layout) {
   const now = {i: pIndicator, c: selectionHash(pIndicator, pEntities, box.order)};
   if (sel.last === null) sel.last = now;
@@ -353,7 +418,7 @@ if (box && layout) {
     sel.entities = [...pEntities];
     document.getElementById("explorer-hash-note")?.remove();
     if (entitiesChanged) document.getElementById("explorer-norows-note")?.remove();
-    if (replaceHash(location, history, now.c)) addr.seen = location.hash;
+    store.set({i: pIndicator, c: box.order.filter((id) => pEntities.includes(id))}); // the store writes the address (other parts kept)
   }
 }
 \`\`\`
@@ -428,6 +493,8 @@ title: Revisions
 ---
 
 # Vintage and revision view
+
+${revisionsBandOpen()}
 
 \`\`\`js
 import {parseManifest} from "./lib/manifest.js";
@@ -514,6 +581,8 @@ if (hbox) {
   display(attributionBlock(html, boot.data.meta.seriesMeta, [...new Set([...rv.rows.map((r) => r.indicatorId), ...(pHistIndicator === NO_CHOICE ? [] : [pHistIndicator])])]));
 }
 \`\`\`
+
+</div></div></section>
 `;
 }
 
@@ -539,9 +608,12 @@ title: Country
 
 <div role="group" aria-label="${escHtml(h.labels.crumb)}" class="mm-crumb"><ol><li><a href="../">${escHtml(h.labels.home)}</a></li><li><a href="../#countries">${escHtml(h.labels.countries)}</a></li><li aria-current="page">${escHtml(h.name)}</li></ol></div>
 
+<div class="mm-card mm-header-card" id="country-header">
 <h1 data-entity="${escHtml(h.entityId)}">${escHtml(h.name)}</h1>
-
 <p class="mm-country-facts">${escHtml(h.labels.kind)}: ${escHtml(h.kind ?? "")}. ${escHtml(h.labels.groups)}: ${groupText}.</p>
+</div>
+
+<div class="mm-filterbar-slot" id="filterbar-slot"></div>
 
 \`\`\`js
 import * as Plot from "@observablehq/plot";
@@ -549,7 +621,11 @@ import {parseManifest} from "../lib/manifest.js";
 import {listOf} from "../lib/meta.js";
 import {pageHead, attributionBlock} from "../lib/shell.js";
 import {countryModel} from "../lib/country-model.js";
-import {countryBlock, switcherOptions} from "../lib/country-view.js";
+import {countrySwitcher, switcherOptions} from "../lib/country-view.js";
+import {countryPage} from "../lib/country-page.js";
+import {createFilterStore} from "../lib/filter-store.js";
+import {mountFilterBar} from "../lib/filter-bar.js";
+import {periodBounds} from "../lib/filter-model.js";
 import {historySource} from "../lib/history.js";
 import {CAVEAT, DRAFT_REGIONS as R, ORIENTATION_NOTE} from "../lib/copy.js";
 import {busyBlock, loadAll, setBusy} from "../lib/state-blocks.js";
@@ -570,7 +646,8 @@ const boot = await loadAll([
 ], (d) => {
   const entity = d.meta.entities.find((e) => e.entity_id === ${JSON.stringify(entity.entity_id)});
   if (!entity) throw new Error("entity not in meta/entities.json");
-  return {options: switcherOptions(d.meta.entities.filter((e) => e.is_global !== true)), model: countryModel({entity, domains: d.meta.domains, scorecards: d.scorecards, indicators: d.meta.indicators, series: d.meta.seriesMeta, groups: d.meta.groups})};
+  const inputs = {entity, domains: d.meta.domains, scorecards: d.scorecards, indicators: d.meta.indicators, series: d.meta.seriesMeta, groups: d.meta.groups};
+  return {options: switcherOptions(d.meta.entities.filter((e) => e.is_global !== true)), inputs, model: countryModel(inputs)};
 }, R.scorecard);
 setBusy(busy, false);
 \`\`\`
@@ -582,11 +659,25 @@ const seriesFiles = {${attachments}};
 
 \`\`\`js
 display(pageHead(html, boot, "scorecard"));
+const barSlot = document.getElementById("filterbar-slot");
+let store = null;
+if (boot.ok) {
+  const md = {...boot.data.meta, manifest: boot.data.manifest};
+  // L22: Domain, Period and Frequency are the filter bar; the Country switcher (explicit Go) leads it. The page reads and never writes the hash on load.
+  store = createFilterStore({win: window, maxEntities: 5, known: {bounds: periodBounds(md.manifest) ?? undefined,
+    indicators: new Set(md.indicators.map((i) => i.indicator_id)), entities: new Set(md.entities.map((e) => e.entity_id)),
+    groups: new Set(md.groups.map((g) => g.group_id)), domains: new Set(md.domains.map((d) => d.domain_id))}});
+  store.attach();
+  barSlot.replaceChildren(mountFilterBar(html, {page: "country", store, data: md, leading: countrySwitcher(html, boot.derived.options, ${JSON.stringify(entity.entity_id)})}));
+} else barSlot.setAttribute("data-empty", "");
+\`\`\`
+
+\`\`\`js
 if (boot.ok) {
   const model = boot.derived.model;
   // ADR-026 decision 3: caveat first, then the orientation note, and the latter only where a percentile is shown.
   display(html\`<p class="mm-caveat">\${CAVEAT}</p>\${model.showsPercentiles ? html\`<p class="mm-orientation">\${ORIENTATION_NOTE}</p>\` : ""}\`);
-  display(countryBlock(html, Plot, model, boot.derived.options, historySource(boot.data.manifest, seriesFiles)));
+  display(countryPage(html, Plot, model, boot.derived.options, historySource(boot.data.manifest, seriesFiles), {store, inputs: boot.derived.inputs}));
   display(attributionBlock(html, boot.data.meta.seriesMeta));
 }
 \`\`\`
@@ -621,11 +712,12 @@ title: Indicator
 
 <div role="group" aria-label="${escHtml(h.labels.crumb)}" class="mm-crumb"><ol><li><a href="../">${escHtml(h.labels.home)}</a></li><li><a href="../#indicators">${escHtml(h.labels.indicators)}</a></li><li aria-current="page">${escHtml(h.name)}</li></ol></div>
 
+<div class="mm-card mm-card--header mm-card--span-12" id="indicator-header">
 <h1 data-indicator="${escHtml(h.indicatorId)}">${escHtml(h.name)}</h1>
+<dl class="mm-indicator-facts">${facts.map(([k, v]) => `<div><dt>${escHtml(k)}</dt><dd>${v}</dd></div>`).join("")}</dl>${notes ? `\n${notes}` : ""}
+</div>
 
-<dl class="mm-indicator-facts">${facts.map(([k, v]) => `<div><dt>${escHtml(k)}</dt><dd>${v}</dd></div>`).join("")}</dl>
-
-${notes}
+<div class="mm-filterbar-slot" id="filterbar-slot"></div>
 
 \`\`\`js
 import * as Plot from "@observablehq/plot";
@@ -633,7 +725,10 @@ import {parseManifest} from "../lib/manifest.js";
 import {listOf} from "../lib/meta.js";
 import {pageHead, attributionBlock} from "../lib/shell.js";
 import {indicatorModel} from "../lib/indicator-model.js";
-import {indicatorBlock, indicatorOptions} from "../lib/indicator-view.js";
+import {indicatorBlock} from "../lib/indicator-view.js";
+import {createFilterStore} from "../lib/filter-store.js";
+import {mountFilterBar} from "../lib/filter-bar.js";
+import {periodBounds} from "../lib/filter-model.js";
 import {CAVEAT, DRAFT_REGIONS as R, ORIENTATION_NOTE} from "../lib/copy.js";
 import {busyBlock, loadAll, setBusy} from "../lib/state-blocks.js";
 \`\`\`
@@ -676,9 +771,18 @@ if (boot.ok) {
   } catch (e) {
     downloadHref = null;
   }
-  display(indicatorBlock(html, Plot, model, {options: indicatorOptions(boot.data.meta.indicators), groups: boot.data.meta.groups, knownCutoff: boot.data.manifest.known_cutoff, downloadHref}));
+  // L23: the filter bar (Group, and the Indicator switcher with "Go") and the store behind it. The country in focus is the single c.
+  const meta = {...boot.data.meta, manifest: boot.data.manifest, currentIndicator: ${JSON.stringify(indicator.indicator_id)}};
+  const store = createFilterStore({win: window, maxEntities: 1, known: {
+    bounds: periodBounds(meta.manifest) ?? undefined,
+    indicators: new Set(meta.indicators.map((i) => i.indicator_id)), entities: new Set(meta.entities.map((e) => e.entity_id)),
+    groups: new Set(meta.groups.map((g) => g.group_id)), domains: new Set(meta.domains.map((d) => d.domain_id))}});
+  globalThis.__mmFilterStore = store;
+  document.getElementById("filterbar-slot").replaceChildren(mountFilterBar(html, {page: "indicator", store, data: meta}));
+  display(indicatorBlock(html, Plot, model, {groups: meta.groups, knownCutoff: meta.manifest.known_cutoff, downloadHref, store, meta, series: meta.seriesMeta, scorecard: boot.data.scorecards[${JSON.stringify(first)}], domainId: ${JSON.stringify(first)}}));
+  store.attach();
   display(attributionBlock(html, boot.data.meta.seriesMeta, [${JSON.stringify(indicator.indicator_id)}]));
-}
+} else document.getElementById("filterbar-slot")?.setAttribute("data-empty", "");
 \`\`\`
 `;
 }
@@ -712,7 +816,49 @@ display(pageHead(html, boot, "lists"));
 
 </div>`;
 
-export function homePageSource({entities, indicators, domains}) {
+// L6/L7: the filter store and bar (a script cell; nothing in the static HTML). The store is created once and seeded from the hash; a cell that
+// mentions `filters` re-runs on every change (Generators.observe, see filter-store.js). `globalThis.__mmFilterStore` is a test hook for the smoke suite.
+const FILTER_BAR_CELLS = `\`\`\`js
+import {listOf} from "./lib/meta.js";
+import {createFilterStore, filterGenerator} from "./lib/filter-store.js";
+import {mountFilterBar} from "./lib/filter-bar.js";
+import {periodBounds} from "./lib/filter-model.js";
+import {createScorecardLoader, mountHomeDashboard, mountHomeFailure} from "./lib/home-dashboard.js";
+import {mountKpi} from "./lib/kpi-view.js";
+import {mountTableCard} from "./lib/table-card.js";
+\`\`\`
+
+\`\`\`js
+const meta = await loadAll([
+  {key: "meta", region: R.meta, load: async () => ({entities: await FileAttachment("data/meta/entities.json").json(), indicators: await FileAttachment("data/meta/indicators.json").json(), domains: await FileAttachment("data/meta/domains.json").json(), groups: await FileAttachment("data/meta/groups.json").json(), series: await FileAttachment("data/meta/series.json").json()}),
+    parse: (m) => ({entities: listOf(m.entities, "entities"), indicators: listOf(m.indicators, "indicators"), domains: listOf(m.domains, "domains"), groups: listOf(m.groups, "groups"), series: listOf(m.series, "series"), domainsDoc: m.domains})}
+]);
+// L15: any failed meta file (the manifest included) means no data card is built; each card shows the alert instead (amendment 5).
+// The manifest is the one boot already loaded; meta/series.json is loaded once here and reused by the rank card.
+const md = boot.ok && meta.ok ? {...meta.data.meta, manifest: boot.data.manifest} : null;
+\`\`\`
+
+\`\`\`js
+const store = createFilterStore({win: window, maxEntities: 5, known: md ? {
+  bounds: periodBounds(md.manifest) ?? undefined,
+  indicators: new Set(md.indicators.map((i) => i.indicator_id)), entities: new Set(md.entities.map((e) => e.entity_id)),
+  groups: new Set(md.groups.map((g) => g.group_id)), domains: new Set(md.domains.map((d) => d.domain_id))} : {}});
+globalThis.__mmFilterStore = store;
+const barSlot = document.getElementById("filterbar-slot");
+if (md) barSlot.replaceChildren(mountFilterBar(html, {page: "home", store, data: md}));
+else barSlot.setAttribute("data-empty", "");
+\`\`\``;
+
+// L11: one literal FileAttachment per domain (the Framework needs literal paths); only the selected domain's file is requested.
+const SCORECARD_LOADERS = (domains) => `{${domains.map((d) => {
+  if (!DOMAIN_ID_RE.test(d.domain_id)) throw new Error(`unsafe domain_id: ${JSON.stringify(d.domain_id)}`);
+  return `${JSON.stringify(d.domain_id)}: () => FileAttachment("data/scorecard/${d.domain_id}.json").json()`;
+}).join(", ")}}`;
+
+// L18: one literal FileAttachment per series file of the manifest (the Framework needs literal paths); lazy, so none is requested on load.
+const seriesAttachments = (manifest) => seriesPaths(manifest).map((s) => `${JSON.stringify(s.id)}: FileAttachment(${JSON.stringify(`data/${s.path}`)})`).join(", ");
+
+export function homePageSource({entities, indicators, domains, manifest = {files: []}}) {
   return `---
 title: ${HOME_TITLE}
 ---
@@ -723,7 +869,53 @@ ${SHELL_CELLS("./lib/", true)}
 
 <p class="mm-caveat" id="caveat">${escHtml(CAVEAT)}</p>
 
-${homeListsHtml({entities, indicators, domains})}
+<div class="mm-filterbar-slot" id="filterbar-slot"></div>
+
+${FILTER_BAR_CELLS}
+
+<div id="dashboard-slot"></div>
+
+\`\`\`js
+// L11: band skeleton with empty card slots (slot API in lib/home-dashboard.js). Only the default domain's scorecard loads now; a Domain
+// change loads that domain's scorecard once (cached, a failed load is not cached).
+const dash = md ? mountHomeDashboard(html, {store, data: md, declaredDomain: md.domainsDoc?.default_domain ?? null,
+  loadScorecard: createScorecardLoader(${SCORECARD_LOADERS(domains)})}) : null;
+if (dash) document.getElementById("dashboard-slot").replaceChildren(dash.root);
+if (!md) document.getElementById("dashboard-slot").replaceChildren(mountHomeFailure(html, {failures: [...boot.failures, ...meta.failures]}));
+globalThis.__mmDashboard = dash;
+if (dash) mountKpi(html, dash, {data: md}); // L14: Overview band
+\`\`\`
+
+\`\`\`js
+import * as Plot from "@observablehq/plot";
+import {mountRankCard} from "./lib/rank-view.js";
+import {mountHeatmapCard} from "./lib/heatmap-card.js";
+\`\`\`
+
+\`\`\`js
+// L12: the ranked comparison card and the facts card. meta/series.json (reference-period labels, "no series" wording) comes from the meta load above.
+if (dash) mountRankCard(html, Plot, dash, {data: md, series: md ? md.series : null});
+\`\`\`
+
+\`\`\`js
+if (dash) mountHeatmapCard(html, dash, {data: md}); // L13: Domain band
+\`\`\`
+
+\`\`\`js
+if (dash) mountTableCard(html, dash, {data: md}); // L17: Indicators band (one Country in focus)
+\`\`\`
+
+\`\`\`js
+import {mountSeriesCard} from "./lib/series-card.js";
+\`\`\`
+
+\`\`\`js
+// L18: Over time band. One literal FileAttachment per series file; each is lazy and nothing is requested until the "Load history" button.
+const seriesFiles = {${seriesAttachments(manifest)}};
+if (dash) mountSeriesCard(html, Plot, dash, {data: md, files: seriesFiles});
+\`\`\`
+
+${browseBandHtml({entities, indicators, domains})}
 
 \`\`\`js
 mountFilters(document);

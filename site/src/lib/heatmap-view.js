@@ -72,11 +72,24 @@ function domainFigureCells(html, row) {
   ];
 }
 
-function bodyRow(html, model, row) {
-  return html`<tr data-entity="${row.entityId}" data-status="${row.summary.status}"><th scope="row" class="mm-hm-country">${row.summary.hasCountryPage ? html`<a href="${countryHref(row.entityId)}" data-link="country">${row.name}</a>` : row.name}</th>${model.informational ? [] : domainFigureCells(html, row)}${row.cells.map((e, k) => indicatorCell(html, row, e, model.columns[k]))}</tr>`;
+// Options of the table (L13): `hrefs` {country, indicator} builders (the home page sits at the site root), `carry` marks links with data-carry (L10),
+// `orientation` false leaves the orientation note out of the header (the home card prints it once, in the legend above the card).
+// The defaults are the PG-DOMAIN behaviour.
+const DEFAULTS = {hrefs: {country: countryHref, indicator: indicatorPageHref}, carry: false, orientation: true};
+const countryLink = (html, opts, row) =>
+  opts.carry
+    ? html`<a href="${opts.hrefs.country(row.entityId)}" data-link="country" data-carry>${row.name}</a>`
+    : html`<a href="${opts.hrefs.country(row.entityId)}" data-link="country">${row.name}</a>`;
+const indicatorLink = (html, opts, c) =>
+  opts.carry
+    ? html`<a class="mm-hm-open" href="${opts.hrefs.indicator(c.indicatorId)}" data-link="indicator" data-carry aria-label="${HEATMAP_INDICATOR_LINK_LABEL(c.name)}">${HEATMAP_INDICATOR_LINK}</a>`
+    : html`<a class="mm-hm-open" href="${opts.hrefs.indicator(c.indicatorId)}" data-link="indicator" aria-label="${HEATMAP_INDICATOR_LINK_LABEL(c.name)}">${HEATMAP_INDICATOR_LINK}</a>`;
+
+function bodyRow(html, model, row, opts = DEFAULTS) {
+  return html`<tr data-entity="${row.entityId}" data-status="${row.summary.status}"><th scope="row" class="mm-hm-country">${row.summary.hasCountryPage ? countryLink(html, opts, row) : row.name}</th>${model.informational ? [] : domainFigureCells(html, row)}${row.cells.map((e, k) => indicatorCell(html, row, e, model.columns[k]))}</tr>`;
 }
 
-function headCells(html, model, ids, sortState) {
+function headCells(html, model, ids, sortState, opts = DEFAULTS) {
   const aria = (key) => (sortState.key === key ? (sortState.dir === "asc" ? "ascending" : "descending") : "none");
   const sortable = !model.informational;
   const head = (key, content) => (sortable || key === "name" ? html`<button type="button" class="mm-sort" data-sort="${key}">${content}</button>` : content);
@@ -85,12 +98,14 @@ function headCells(html, model, ids, sortState) {
   const figure = model.informational
     ? []
     : [
-        html`<th scope="col" class="mm-hm-mean" aria-sort="${aria("mean")}" aria-describedby="${ids.orient}" title="${ORIENTATION_NOTE}">${head("mean", model.label)}<span id="${ids.orient}" class="mm-visually-hidden">${ORIENTATION_NOTE}</span></th>`,
+        opts.orientation
+          ? html`<th scope="col" class="mm-hm-mean" aria-sort="${aria("mean")}" aria-describedby="${ids.orient}" title="${ORIENTATION_NOTE}">${head("mean", model.label)}<span id="${ids.orient}" class="mm-visually-hidden">${ORIENTATION_NOTE}</span></th>`
+          : html`<th scope="col" class="mm-hm-mean" aria-sort="${aria("mean")}">${head("mean", model.label)}</th>`,
         html`<th scope="col" class="mm-hm-n">${COVERAGE_HEADER}</th>`,
         html`<th scope="col" class="mm-hm-pos">${POSITION_HEADER}</th>`
       ];
   const indicators = model.columns.map(
-    (c) => html`<th scope="col" class="mm-hm-ind" data-indicator="${c.indicatorId}" aria-sort="${model.informational ? "none" : aria(c.indicatorId)}" title="${c.name}${c.unit ? ` (${c.unit})` : ""}">${head(c.indicatorId, html`<span class="mm-hm-name">${c.name}</span>`)}${c.unit ? html`<span class="mm-hm-unit">${c.unit}</span>` : ""}${c.direction ? html`<span class="mm-hm-dir" data-direction="${c.direction.key}">${c.direction.text}</span>` : ""}<a class="mm-hm-open" href="${indicatorPageHref(c.indicatorId)}" data-link="indicator" aria-label="${HEATMAP_INDICATOR_LINK_LABEL(c.name)}">${HEATMAP_INDICATOR_LINK}</a></th>`
+    (c) => html`<th scope="col" class="mm-hm-ind" data-indicator="${c.indicatorId}" aria-sort="${model.informational ? "none" : aria(c.indicatorId)}" title="${c.name}${c.unit ? ` (${c.unit})` : ""}">${head(c.indicatorId, html`<span class="mm-hm-name">${c.name}</span>`)}${c.unit ? html`<span class="mm-hm-unit">${c.unit}</span>` : ""}${c.direction ? html`<span class="mm-hm-dir" data-direction="${c.direction.key}">${c.direction.text}</span>` : ""}${indicatorLink(html, opts, c)}</th>`
   );
   return [country, ...figure, ...indicators];
 }
@@ -98,13 +113,14 @@ function headCells(html, model, ids, sortState) {
 const captionOf = (model) => (model.informational ? DRAFT_HEATMAP_CAPTION_INFO(model.name) : DRAFT_HEATMAP_CAPTION(model.name, model.label));
 
 // The static table (also what the unit tests read). `sortState`: {key, dir}; the default is alphabetical by country name.
-export function heatmapTable(html, model, {idPrefix = "domain-heatmap", sortState = {key: "name", dir: "asc"}} = {}) {
+export function heatmapTable(html, model, {idPrefix = "domain-heatmap", sortState = {key: "name", dir: "asc"}, ...rest} = {}) {
+  const opts = {...DEFAULTS, ...rest};
   const ids = {orient: `${idPrefix}-orientation`};
   const countries = sortRows(model, sortState);
   const aggregates = model.rows.filter((r) => r.aggregate);
   const span = [COUNTRY_HEADER, ...(model.informational ? [] : [1, 2, 3]), ...model.columns].length; // columns of the table
-  return html`<table class="mm-heatmap-table" id="${idPrefix}" data-informational="${model.informational ? "true" : "false"}"><caption>${captionOf(model)}</caption><thead><tr>${headCells(html, model, ids, sortState)}</tr></thead><tbody data-group="countries">${countries.map((r) => bodyRow(html, model, r))}</tbody>${
-    aggregates.length === 0 ? "" : html`<tbody data-group="aggregates" class="mm-hm-aggregates"><tr><th scope="rowgroup" colspan="${span}">${AGGREGATE_NOT_RANKED}</th></tr>${aggregates.map((r) => bodyRow(html, model, r))}</tbody>`
+  return html`<table class="mm-heatmap-table" id="${idPrefix}" data-informational="${model.informational ? "true" : "false"}"><caption>${captionOf(model)}</caption><thead><tr>${headCells(html, model, ids, sortState, opts)}</tr></thead><tbody data-group="countries">${countries.map((r) => bodyRow(html, model, r, opts))}</tbody>${
+    aggregates.length === 0 ? "" : html`<tbody data-group="aggregates" class="mm-hm-aggregates"><tr><th scope="rowgroup" colspan="${span}">${AGGREGATE_NOT_RANKED}</th></tr>${aggregates.map((r) => bodyRow(html, model, r, opts))}</tbody>`
   }</table>`;
 }
 
@@ -126,9 +142,9 @@ export function factsView(html, row, col, entry) {
 
 // The figure: scroll hint, scroll container with the table, and the facts panel. In a browser (html returns a DOM node) it
 // also wires sorting and the facts; with a string stand-in it is plain markup.
-export function heatmapFigure(html, model, {idPrefix = "domain-heatmap"} = {}) {
+export function heatmapFigure(html, model, {idPrefix = "domain-heatmap", ...rest} = {}) {
   const factsId = `${idPrefix}-facts`;
-  const root = html`<div class="mm-heatmap" data-id="${idPrefix}"><p class="mm-scroll-hint">${DRAFT_SCROLL_HINT}</p><div class="mm-heatmap-scroll" tabindex="0" role="region" aria-label="${captionOf(model)}">${heatmapTable(html, model, {idPrefix})}</div><div class="mm-facts" id="${factsId}" aria-hidden="true" data-active="false"></div></div>`;
+  const root = html`<div class="mm-heatmap" data-id="${idPrefix}"><p class="mm-scroll-hint">${DRAFT_SCROLL_HINT}</p><div class="mm-heatmap-scroll" tabindex="0" role="region" aria-label="${captionOf(model)}">${heatmapTable(html, model, {idPrefix, ...rest})}</div><div class="mm-facts" id="${factsId}" aria-hidden="true" data-active="false"></div></div>`;
   if (typeof root?.addEventListener === "function") wire(html, root, model, idPrefix, factsId);
   return root;
 }

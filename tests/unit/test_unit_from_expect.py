@@ -117,14 +117,26 @@ def _tree(tmp: Path) -> Path:
     return tmp
 
 
-def _set_flag(root: Path, value: str) -> None:
+def _set_flag(root: Path, value: str | None) -> None:
+    """Set the group's flag to ``value`` (raw YAML), or drop it when ``None``.
+
+    The shipped config already carries ``unit_from_expect: true``; any existing line is
+    removed first so the test controls the single occurrence.
+    """
     p = root / "config/sources.yaml"
     text = p.read_text(encoding="utf-8")
     marker = "      - id: worldbank_annual\n"
     assert marker in text
-    p.write_text(
-        text.replace(marker, marker + f"        unit_from_expect: {value}\n", 1), encoding="utf-8"
-    )
+    head, tail = text.split(marker, 1)
+    lines = tail.split("\n")
+    # the group block runs until the next line indented by 6 spaces or less
+    n = 0
+    while n < len(lines) and (not lines[n].strip() or lines[n].startswith("        ")):
+        n += 1
+    lines[:n] = [ln for ln in lines[:n] if not ln.startswith("        unit_from_expect:")]
+    if value is not None:
+        lines.insert(0, f"        unit_from_expect: {value}")
+    p.write_text(head + marker + "\n".join(lines), encoding="utf-8")
 
 
 @pytest.mark.parametrize("value", ["true", "false"])
@@ -160,6 +172,7 @@ def test_ac_unit_11_flag_requires_expect_unit_on_every_entry(tmp_path: Path) -> 
         load_config(root)
     # the same map without the flag is fine (no unit is required without opt-in)
     root2 = _tree(tmp_path / "second")
+    _set_flag(root2, None)
     p2 = root2 / WB_MAP
     t2 = p2.read_text(encoding="utf-8")
     p2.write_text(t2.replace(first, "", 1), encoding="utf-8")
