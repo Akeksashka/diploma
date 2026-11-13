@@ -9,6 +9,9 @@ import {CAVEAT, DRAFT_BAND_TITLES, DRAFT_BROWSE_SUMMARY, DRAFT_GROUP_BROWSE} fro
 import {revisionsBandOpen} from "../src/lib/revisions-view.js";
 import {DOMAINS_TITLE, domainsListHtml} from "../src/lib/domains-list.js";
 import {browseBandHtml} from "../src/lib/home-lists.js";
+import {COUNTRY_LIST_TITLE, countryListHtml} from "../src/lib/country-list.js";
+import {modeSwitchHtml} from "../src/lib/mode-switch.js";
+import {DRAFT_MODE_LABELS} from "../src/lib/copy.js";
 
 export const LANDING_LIMIT_BYTES = 1_500_000; // AC-DASH-2: 1.5 MB (MB = 1,000,000 bytes) gzipped
 
@@ -371,8 +374,9 @@ if (box) {
 }
 const pEntities = box ? Generators.input(box.entities) : null;
 const pTransform = box ? Generators.input(box.transform.querySelector("select")) : null;
-const pRebase = box ? Generators.input(box.rebase.querySelector("input")) : null;
-const pBase = box ? Generators.input(box.base.querySelector("select")) : null;
+// A1.5: the rebase control exists only for an indicator whose stored metadata says scale_hint = index; without it the state is false / "auto".
+const pRebase = box?.rebase ? Generators.input(box.rebase.querySelector("input")) : false;
+const pBase = box?.base ? Generators.input(box.base.querySelector("select")) : "auto";
 const pFree = box ? Generators.input(box.free.querySelector("input")) : null;
 \`\`\`
 
@@ -589,6 +593,10 @@ if (hbox) {
 // Page ids of generated country and indicator pages (git-ignored like domain/*.md).
 export const PAGE_ID_RE = /^[A-Za-z][A-Za-z0-9_.-]{0,40}$/;
 
+// V8: the mode switch of a page one level below the root (/country/<id>, /indicator/<id>). A page that fixes an entity or an indicator passes it on to Compare.
+const countryModeSwitch = (entityId) => ({mode: "country", hrefs: {country: "../country", compare: "../compare"}, set: {compare: {c: entityId}}});
+const indicatorModeSwitch = (indicatorId) => ({mode: "compare", hrefs: {country: "../country", compare: "../compare"}, set: {compare: {i: indicatorId}}});
+
 // R6: the country page (PG-COUNTRY). Static part: breadcrumb, h1 = entity name, kind and group memberships (from the export at
 // build time). The scorecard FileAttachment paths must be literal, so one per domain id is written. R7 renders the controls and the domain sections (country-view.js).
 // `manifest` (optional): its series files get one lazy FileAttachment each, used only by "Show history" (R8); without it no
@@ -613,7 +621,7 @@ title: Country
 <p class="mm-country-facts">${escHtml(h.labels.kind)}: ${escHtml(h.kind ?? "")}. ${escHtml(h.labels.groups)}: ${groupText}.</p>
 </div>
 
-<div class="mm-filterbar-slot" id="filterbar-slot"></div>
+<div class="mm-filterbar-slot" id="filterbar-slot" data-mode="country">${modeSwitchHtml(countryModeSwitch(entity.entity_id))}</div>
 
 \`\`\`js
 import * as Plot from "@observablehq/plot";
@@ -621,13 +629,14 @@ import {parseManifest} from "../lib/manifest.js";
 import {listOf} from "../lib/meta.js";
 import {pageHead, attributionBlock} from "../lib/shell.js";
 import {countryModel} from "../lib/country-model.js";
-import {countrySwitcher, switcherOptions} from "../lib/country-view.js";
+import {switcherOptions} from "../lib/country-view.js";
+import {countryPicker} from "../lib/picker.js";
 import {countryPage} from "../lib/country-page.js";
 import {createFilterStore} from "../lib/filter-store.js";
 import {mountFilterBar} from "../lib/filter-bar.js";
 import {periodBounds} from "../lib/filter-model.js";
 import {historySource} from "../lib/history.js";
-import {CAVEAT, DRAFT_REGIONS as R, ORIENTATION_NOTE} from "../lib/copy.js";
+import {DRAFT_REGIONS as R} from "../lib/copy.js";
 import {busyBlock, loadAll, setBusy} from "../lib/state-blocks.js";
 \`\`\`
 
@@ -646,7 +655,8 @@ const boot = await loadAll([
 ], (d) => {
   const entity = d.meta.entities.find((e) => e.entity_id === ${JSON.stringify(entity.entity_id)});
   if (!entity) throw new Error("entity not in meta/entities.json");
-  const inputs = {entity, domains: d.meta.domains, scorecards: d.scorecards, indicators: d.meta.indicators, series: d.meta.seriesMeta, groups: d.meta.groups};
+  // V16: entities, the cut-off and the stored period bounds feed L1, L2 and P1a (the strip reads every entity of the scorecard).
+  const inputs = {entity, entities: d.meta.entities, domains: d.meta.domains, scorecards: d.scorecards, indicators: d.meta.indicators, series: d.meta.seriesMeta, groups: d.meta.groups, knownCutoff: d.manifest.known_cutoff ?? null, bounds: periodBounds(d.manifest)};
   return {options: switcherOptions(d.meta.entities.filter((e) => e.is_global !== true)), inputs, model: countryModel(inputs)};
 }, R.scorecard);
 setBusy(busy, false);
@@ -668,15 +678,14 @@ if (boot.ok) {
     indicators: new Set(md.indicators.map((i) => i.indicator_id)), entities: new Set(md.entities.map((e) => e.entity_id)),
     groups: new Set(md.groups.map((g) => g.group_id)), domains: new Set(md.domains.map((d) => d.domain_id))}});
   store.attach();
-  barSlot.replaceChildren(mountFilterBar(html, {page: "country", store, data: md, leading: countrySwitcher(html, boot.derived.options, ${JSON.stringify(entity.entity_id)})}));
+  barSlot.replaceChildren(mountFilterBar(html, {page: "country", store, data: md, mode: ${JSON.stringify(countryModeSwitch(entity.entity_id))}, leading: countryPicker(html, {entities: md.entities.filter((e) => e.is_global !== true), groups: md.groups, currentId: ${JSON.stringify(entity.entity_id)}, store, hrefFor: (id) => \`../country/\${id}\`})}));
 } else barSlot.setAttribute("data-empty", "");
 \`\`\`
 
 \`\`\`js
 if (boot.ok) {
   const model = boot.derived.model;
-  // ADR-026 decision 3: caveat first, then the orientation note, and the latter only where a percentile is shown.
-  display(html\`<p class="mm-caveat">\${CAVEAT}</p>\${model.showsPercentiles ? html\`<p class="mm-orientation">\${ORIENTATION_NOTE}</p>\` : ""}\`);
+  // ADR-026 decision 3 / ADR-037 decision 3: the caveat and the orientation sentence belong to the percentile layer; countryPage prints them only while pc is on.
   display(countryPage(html, Plot, model, boot.derived.options, historySource(boot.data.manifest, seriesFiles), {store, inputs: boot.derived.inputs}));
   display(attributionBlock(html, boot.data.meta.seriesMeta));
 }
@@ -717,74 +726,9 @@ title: Indicator
 <dl class="mm-indicator-facts">${facts.map(([k, v]) => `<div><dt>${escHtml(k)}</dt><dd>${v}</dd></div>`).join("")}</dl>${notes ? `\n${notes}` : ""}
 </div>
 
-<div class="mm-filterbar-slot" id="filterbar-slot"></div>
+<div class="mm-filterbar-slot" id="filterbar-slot" data-mode="compare">${modeSwitchHtml(indicatorModeSwitch(indicator.indicator_id))}</div>
 
-\`\`\`js
-import * as Plot from "@observablehq/plot";
-import {parseManifest} from "../lib/manifest.js";
-import {listOf} from "../lib/meta.js";
-import {pageHead, attributionBlock} from "../lib/shell.js";
-import {indicatorModel} from "../lib/indicator-model.js";
-import {indicatorBlock} from "../lib/indicator-view.js";
-import {createFilterStore} from "../lib/filter-store.js";
-import {mountFilterBar} from "../lib/filter-bar.js";
-import {periodBounds} from "../lib/filter-model.js";
-import {CAVEAT, DRAFT_REGIONS as R, ORIENTATION_NOTE} from "../lib/copy.js";
-import {busyBlock, loadAll, setBusy} from "../lib/state-blocks.js";
-\`\`\`
-
-\`\`\`js
-const busy = busyBlock(html, R.loadingData);
-display(busy);
-\`\`\`
-
-\`\`\`js
-// A failed file never throws into the page: loadAll returns one failed region per file (T105).
-const boot = await loadAll([
-  {key: "manifest", region: R.manifest, load: () => FileAttachment("../data/manifest.json").json(), parse: parseManifest},
-  {key: "meta", region: R.meta, load: async () => ({series: await FileAttachment("../data/meta/series.json").json(), entities: await FileAttachment("../data/meta/entities.json").json(), indicators: await FileAttachment("../data/meta/indicators.json").json(), domains: await FileAttachment("../data/meta/domains.json").json(), groups: await FileAttachment("../data/meta/groups.json").json()}),
-    parse: (m) => ({seriesMeta: listOf(m.series, "series"), entities: listOf(m.entities, "entities"), indicators: listOf(m.indicators, "indicators"), domains: listOf(m.domains, "domains"), groups: listOf(m.groups, "groups")})},
-  {key: "scorecards", region: R.scorecard, load: async () => ({${JSON.stringify(first)}: await FileAttachment("../data/scorecard/${first}.json").json()})}
-], (d) => {
-  const indicator = d.meta.indicators.find((i) => i.indicator_id === ${JSON.stringify(indicator.indicator_id)});
-  if (!indicator) throw new Error("indicator not in meta/indicators.json");
-  return {model: indicatorModel({indicator, domains: d.meta.domains, scorecards: d.scorecards, entities: d.meta.entities, series: d.meta.seriesMeta})};
-}, R.scorecard);
-setBusy(busy, false);
-\`\`\`
-
-\`\`\`js
-// FileAttachment must be called in the page; it is lazy and only its address is resolved, for the download link.
-const seriesFile = ${seriesFile ? `FileAttachment(${JSON.stringify(`../data/${seriesFile.path}`)})` : "null"};
-\`\`\`
-
-\`\`\`js
-display(pageHead(html, boot, "scorecard"));
-if (boot.ok) {
-  const model = boot.derived.model;
-  // ADR-026 decision 3: caveat first, then the orientation note, and the latter only where a percentile is shown.
-  display(html\`<p class="mm-caveat">\${CAVEAT}</p>\${model.showsPercentiles ? html\`<p class="mm-orientation">\${ORIENTATION_NOTE}</p>\` : ""}\`);
-  // Address of the download link; resolving it fetches nothing.
-  let downloadHref = null;
-  try {
-    downloadHref = (await seriesFile?.url()) ?? null;
-  } catch (e) {
-    downloadHref = null;
-  }
-  // L23: the filter bar (Group, and the Indicator switcher with "Go") and the store behind it. The country in focus is the single c.
-  const meta = {...boot.data.meta, manifest: boot.data.manifest, currentIndicator: ${JSON.stringify(indicator.indicator_id)}};
-  const store = createFilterStore({win: window, maxEntities: 1, known: {
-    bounds: periodBounds(meta.manifest) ?? undefined,
-    indicators: new Set(meta.indicators.map((i) => i.indicator_id)), entities: new Set(meta.entities.map((e) => e.entity_id)),
-    groups: new Set(meta.groups.map((g) => g.group_id)), domains: new Set(meta.domains.map((d) => d.domain_id))}});
-  globalThis.__mmFilterStore = store;
-  document.getElementById("filterbar-slot").replaceChildren(mountFilterBar(html, {page: "indicator", store, data: meta}));
-  display(indicatorBlock(html, Plot, model, {groups: meta.groups, knownCutoff: meta.manifest.known_cutoff, downloadHref, store, meta, series: meta.seriesMeta, scorecard: boot.data.scorecards[${JSON.stringify(first)}], domainId: ${JSON.stringify(first)}}));
-  store.attach();
-  display(attributionBlock(html, boot.data.meta.seriesMeta, [${JSON.stringify(indicator.indicator_id)}]));
-} else document.getElementById("filterbar-slot")?.setAttribute("data-empty", "");
-\`\`\`
-`;
+${compareCells({rel: "../", fixedId: indicator.indicator_id, domainIds: domains.map((d) => d.domain_id), manifest, seriesFile})}`;
 }
 
 // R18: the home page (PG-HOME). The country and indicator lists are static HTML built from meta/*.json, so they are in the built page
@@ -935,6 +879,144 @@ ${SHELL_CELLS("./lib/", false)}
 
 ${domainsListHtml(domains)}
 `;
+}
+
+// V64 (A1.7): the country list page `/country` (src/country.md, git-ignored, regenerated every run; a file next to the country/ folder, so its URL
+// has no trailing slash and the page-relative links of the other root pages work unchanged). The mode switch and the list of every entity are static HTML
+// (no JavaScript needed); the native picker (V9) is added into #picker-slot when meta/entities.json and meta/groups.json have loaded.
+const ROOT_MODE_HREFS = {country: "./country", compare: "./compare"};
+export function countryListPageSource(entities) {
+  return `---
+title: ${COUNTRY_LIST_TITLE}
+---
+
+<h1>${escHtml(COUNTRY_LIST_TITLE)}</h1>
+
+<div class="mm-filterbar-slot" id="filterbar-slot" data-mode="country">${modeSwitchHtml({mode: "country", hrefs: ROOT_MODE_HREFS})}</div>
+
+\`\`\`js
+import {parseManifest} from "./lib/manifest.js";
+import {listOf} from "./lib/meta.js";
+import {pageHead} from "./lib/shell.js";
+import {countryPicker} from "./lib/picker.js";
+import {createFilterStore} from "./lib/filter-store.js";
+import {DRAFT_REGIONS as R} from "./lib/copy.js";
+import {busyBlock, loadAll, setBusy} from "./lib/state-blocks.js";
+\`\`\`
+
+\`\`\`js
+const busy = busyBlock(html, R.loadingData);
+display(busy);
+\`\`\`
+
+\`\`\`js
+// A failed file never throws into the page: loadAll returns one failed region per file (T105). The picker reads meta/entities.json and meta/groups.json only (AC-V2-62); the list below is static.
+const boot = await loadAll([
+  {key: "manifest", region: R.manifest, load: () => FileAttachment("data/manifest.json").json(), parse: parseManifest},
+  {key: "meta", region: R.meta, load: async () => ({entities: await FileAttachment("data/meta/entities.json").json(), groups: await FileAttachment("data/meta/groups.json").json()}),
+    parse: (m) => ({entities: listOf(m.entities, "entities"), groups: listOf(m.groups, "groups")})}
+]);
+setBusy(busy, false);
+display(pageHead(html, boot, "lists"));
+\`\`\`
+
+<div class="mm-picker-slot" id="picker-slot"></div>
+
+\`\`\`js
+if (boot.ok) {
+  const {entities, groups} = boot.data.meta;
+  const store = createFilterStore({win: window, maxEntities: 5, known: {entities: new Set(entities.map((e) => e.entity_id)), groups: new Set(groups.map((g) => g.group_id))}});
+  globalThis.__mmFilterStore = store;
+  document.getElementById("picker-slot").replaceChildren(countryPicker(html, {entities, groups, store, hrefFor: (id) => \`./country/\${id}\`}));
+}
+\`\`\`
+
+${countryListHtml(entities)}
+`;
+}
+
+// V23: the script cells shared by PG-COMPARE (`/compare`) and PG-INDICATOR (`/indicator/<id>`). `rel` is the path from the page to the site root ("./" or "../"), `fixedId` the
+// indicator a PG-INDICATOR page fixes (null on /compare). FileAttachment paths must be literal: one scorecard per domain and one lazy attachment per series file of the manifest
+// (a FileAttachment is lazy: nothing is fetched until comparePage asks for it, after the page has loaded).
+function compareCells({rel, fixedId, domainIds, manifest, seriesFile = null}) {
+  for (const d of domainIds) if (!DOMAIN_ID_RE.test(d)) throw new Error(`unsafe domain_id: ${JSON.stringify(d)}`);
+  const scorecards = domainIds.map((d) => `${JSON.stringify(d)}: await FileAttachment("${rel}data/scorecard/${d}.json").json()`).join(", ");
+  const attachments = manifest ? seriesPaths(manifest).map((p) => `${JSON.stringify(p.id)}: FileAttachment(${JSON.stringify(`${rel}data/${p.path}`)})`).join(", ") : "";
+  const links = fixedId === null ? `{country: (id) => \`./country/\${id}\`, revisions: "./revisions"}` : `{country: (id) => \`../country/\${id}\`, revisions: "../revisions"}`;
+  return `\`\`\`js
+import * as Plot from "@observablehq/plot";
+import {parseManifest} from "${rel}lib/manifest.js";
+import {listOf} from "${rel}lib/meta.js";
+import {pageHead, attributionBlock} from "${rel}lib/shell.js";
+import {comparePage} from "${rel}lib/compare-page.js";
+import {createFilterStore} from "${rel}lib/filter-store.js";
+import {periodBounds} from "${rel}lib/filter-model.js";
+import {historySource} from "${rel}lib/history.js";
+import {DRAFT_REGIONS as R} from "${rel}lib/copy.js";
+import {busyBlock, loadAll, setBusy} from "${rel}lib/state-blocks.js";
+\`\`\`
+
+\`\`\`js
+const busy = busyBlock(html, R.loadingData);
+display(busy);
+\`\`\`
+
+\`\`\`js
+// A failed file never throws into the page: loadAll returns one failed region per file (T105).
+const boot = await loadAll([
+  {key: "manifest", region: R.manifest, load: () => FileAttachment("${rel}data/manifest.json").json(), parse: parseManifest},
+  {key: "meta", region: R.meta, load: async () => ({series: await FileAttachment("${rel}data/meta/series.json").json(), entities: await FileAttachment("${rel}data/meta/entities.json").json(), indicators: await FileAttachment("${rel}data/meta/indicators.json").json(), domains: await FileAttachment("${rel}data/meta/domains.json").json(), groups: await FileAttachment("${rel}data/meta/groups.json").json()}),
+    parse: (m) => ({seriesMeta: listOf(m.series, "series"), entities: listOf(m.entities, "entities"), indicators: listOf(m.indicators, "indicators"), domains: listOf(m.domains, "domains"), groups: listOf(m.groups, "groups")})},
+  {key: "scorecards", region: R.scorecard, load: async () => ({${scorecards}})}
+]);
+setBusy(busy, false);
+\`\`\`
+
+\`\`\`js
+// FileAttachment must be called in the page (not in an imported module); each one is lazy.
+const seriesFiles = {${attachments}};
+// Lazy: only the address of the download link is resolved (nothing is fetched).
+const seriesFile = ${seriesFile ? `FileAttachment(${JSON.stringify(`${rel}data/${seriesFile.path}`)})` : "null"};
+// V54: the map geometry and its join table are static site files, read lazily by C6 only (nothing is fetched here), so only a page that renders C6 carries them.
+const geoFiles = {asset: FileAttachment("${rel}geo/europe-countries.geojson"), join: FileAttachment("${rel}geo/entity_geo_join.json")};
+\`\`\`
+
+\`\`\`js
+display(pageHead(html, boot, "scorecard"));
+if (boot.ok) {
+  const md = boot.data.meta;
+  let downloadHref = null;
+  try {
+    downloadHref = (await seriesFile?.url()) ?? null;
+  } catch (e) {
+    downloadHref = null;
+  }
+  const store = createFilterStore({win: window, maxEntities: 5, known: {bounds: periodBounds(boot.data.manifest) ?? undefined,
+    indicators: new Set(md.indicators.map((i) => i.indicator_id)), entities: new Set(md.entities.map((e) => e.entity_id)),
+    groups: new Set(md.groups.map((g) => g.group_id)), domains: new Set(md.domains.map((d) => d.domain_id))}});
+  globalThis.__mmFilterStore = store;
+  store.attach();
+  const inputs = {entities: md.entities.filter((e) => e.is_global !== true), groups: md.groups, domains: md.domains, indicators: md.indicators, series: md.seriesMeta, scorecards: boot.data.scorecards, knownCutoff: boot.data.manifest.known_cutoff ?? null, bounds: periodBounds(boot.data.manifest), manifest: boot.data.manifest};
+  display(comparePage(html, Plot, inputs, historySource(boot.data.manifest, seriesFiles), {store, fixedIndicator: ${fixedId === null ? "null" : JSON.stringify(fixedId)}, links: ${links}, downloadHref, geo: geoFiles}));
+  display(attributionBlock(html, md.seriesMeta${fixedId === null ? "" : `, [${JSON.stringify(fixedId)}]`}));
+}
+\`\`\`
+`;
+}
+
+// V8, V23: PG-COMPARE (`/compare`, src/compare.md, git-ignored, regenerated every run). The route is the mode (A1.3): no `m` key. Heading, the static mode switch in the filter-bar
+// slot (the Compare controls sit in each chart card), then the charts of compare-page.js. Without `manifest` no series file is attached (every card then says it cannot read it).
+export function comparePageSource(manifest = null, domainIds = []) {
+  const label = DRAFT_MODE_LABELS.compare;
+  return `---
+title: ${label}
+---
+
+<h1>${escHtml(label)}</h1>
+
+<div class="mm-filterbar-slot" id="filterbar-slot" data-mode="compare">${modeSwitchHtml({mode: "compare", hrefs: ROOT_MODE_HREFS})}</div>
+
+${compareCells({rel: "./", fixedId: null, domainIds, manifest})}`;
 }
 
 // ---- measure-pages helpers (R23, AC-RD-53) -----------------------------------------------------------------------------

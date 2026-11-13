@@ -82,7 +82,7 @@ test("a percentile outside [0, 1] becomes an unbinned n/a error cell, not a clam
 });
 
 test("table markup: caption, th scope, a tbody per group, text in every cell, aggregate group without colour", () => {
-  const out = heatmapTable(html, heatmapModel(synthetic())).s;
+  const out = heatmapTable(html, heatmapModel(synthetic()), {orientation: true}).s;
   assert.match(out, /<caption>Labour: mean percentile of the domain's indicators/);
   assert.equal((out.match(/<tbody/g) ?? []).length, 2);
   assert.match(out, /<th scope="rowgroup" colspan="8">aggregate \(not ranked\)/);
@@ -103,7 +103,7 @@ test("table markup: caption, th scope, a tbody per group, text in every cell, ag
 
 test("R11: row headers link to the country page, column headers to the indicator page; full names stay accessible; no peers/ link", () => {
   const model = heatmapModel(synthetic());
-  const out = heatmapTable(html, model).s;
+  const out = heatmapTable(html, model, {orientation: true}).s;
   assert.match(out, /<th scope="row" class="mm-hm-country"><a href="\.\.\/country\/AAA" data-link="country">Aaa<\/a><\/th>/);
   assert.equal((out.match(/data-link="country"/g) ?? []).length, 4, "every row incl. the aggregate has a country page");
   assert.match(out, /<a class="mm-hm-open" href="\.\.\/indicator\/I1" data-link="indicator" aria-label="Indicator page: Unemployment">Indicator page<\/a>/);
@@ -112,12 +112,12 @@ test("R11: row headers link to the country page, column headers to the indicator
   assert.ok(!out.includes("peers/"));
   // a global entity has no country page: its name stays plain text
   const g = heatmapModel(domainView(sc([ent("AAA", 0.9, 1, [ind("I1")]), ent("GGG", null, null, [])]), {...meta, entities: [...meta.entities, {entity_id: "GGG", name: "Globe", kind: "aggregate", is_global: true}]}));
-  const gout = heatmapTable(html, g).s;
+  const gout = heatmapTable(html, g, {orientation: true}).s;
   assert.ok(gout.includes('class="mm-hm-country">Globe</th>') && !gout.includes("country/GGG"));
 });
 
 test("cell names carry the state wording, the bin label and the direction", () => {
-  const out = heatmapTable(html, heatmapModel(synthetic())).s;
+  const out = heatmapTable(html, heatmapModel(synthetic()), {orientation: true}).s;
   assert.ok(out.includes('aria-label="Aaa, Unemployment: 0.90, percentile vs all ranked countries; highest fifth of the panel; lower is better"'));
   assert.ok(out.includes('aria-label="Ccc, Inflation: not ranked (lagging); closer to target is better (target 2 % y/y)"'));
   assert.ok(out.includes("ranked at its latest value, ahead of the common period"));
@@ -126,7 +126,7 @@ test("cell names carry the state wording, the bin label and the direction", () =
 test("informational domain: no colour, no figure column, header says informational, unranked", () => {
   const v = domainView(sc([ent("AAA", null, null, [ind("I1", {percentile: 0.5})])], {ranked: false}), meta);
   const m = heatmapModel(v);
-  const out = heatmapTable(html, m).s;
+  const out = heatmapTable(html, m, {orientation: true}).s;
   assert.equal(m.informational, true);
   assert.ok(!/data-bin="[1-5]"/.test(out));
   assert.ok(!out.includes("data-sort=\"mean\"") && !out.includes("Position"));
@@ -161,7 +161,7 @@ test("sorting: indicator column by stored percentile (desc first, then asc), nul
 
 test("legend: orientation note exactly once, five bins, only the marks present on the page", () => {
   const m = heatmapModel(synthetic());
-  const out = legendBlock(html, {states: m.states, bins: m.hasBins}).s;
+  const out = legendBlock(html, {states: m.states, bins: m.hasBins, orientation: true}).s;
   assert.equal(out.split(ORIENTATION_NOTE).length, 2);
   assert.equal((out.match(/<li data-bin=/g) ?? []).length, 5);
   assert.ok(out.includes("lowest fifth of the panel") && out.includes("highest fifth of the panel"));
@@ -178,7 +178,7 @@ test("facts of a cell are the stored fields; the same facts are columns of the d
   const k = m.columns.findIndex((c) => c.indicatorId === "I2");
   const f = factsView(html, r, m.columns[k], r.cells[k]).s;
   for (const t of ["Latest value", "3.1 % y/y", "2026-09-30", "Reference offset (days)", "2026-11-01", "400", "120", "stale (400 days old, limit 120 days)"]) assert.ok(f.includes(t), t);
-  const page = domainBlock(html, v).s;
+  const page = domainBlock(html, v, {orientation: true}).s;
   assert.ok(page.includes('<details class="mm-values" id="domain-values"><summary>Values and reference periods</summary>'));
   const detail = page.slice(page.indexOf('id="domain-detail"'));
   assert.ok(detail.includes("Reference offset (days)") && detail.includes("Source release") && detail.includes("Age (days)"));
@@ -198,7 +198,7 @@ test("fixture domains (labour, prices, agri, global): shown numbers and bins equ
     const raw = load(`scorecard/${d}.json`);
     const v = domainView(raw, m0);
     const m = heatmapModel(v);
-    const out = heatmapTable(html, m).s;
+    const out = heatmapTable(html, m, {orientation: true}).s;
     assert.ok(out.includes("<caption>"));
     for (const e of raw.entities) {
       const row = m.rows.find((r) => r.entityId === e.entity_id);
@@ -270,8 +270,16 @@ test("table options: the home card carries the hash, links from the root, no ori
   assert.ok(card.includes('href="./country/AAA"') && card.includes('href="./indicator/I1"'));
   assert.ok(/data-link="country" data-carry/.test(card) && /data-link="indicator" data-carry/.test(card));
   assert.ok(!card.includes(ORIENTATION_NOTE), "the note is printed once, in the legend");
-  const v1 = heatmapTable(html, model).s;
+  const v1 = heatmapTable(html, model, {orientation: true}).s;
   assert.ok(v1.includes('href="../country/AAA"') && !v1.includes("data-carry") && v1.includes(ORIENTATION_NOTE));
-  const legend = legendBlock(html, {states: model.states, bins: model.hasBins}).s;
+  const legend = legendBlock(html, {states: model.states, bins: model.hasBins, orientation: true}).s;
   assert.equal(legend.split(ORIENTATION_NOTE).length - 1, 1);
+});
+
+test("ADR-037 decision 3: the orientation sentence is printed only when the percentile layer is declared visible (default off)", () => {
+  const m = heatmapModel(synthetic());
+  assert.ok(!legendBlock(html, {states: m.states, bins: true}).s.includes(ORIENTATION_NOTE), "legend");
+  assert.ok(!heatmapTable(html, m).s.includes(ORIENTATION_NOTE), "heatmap header");
+  assert.ok(legendBlock(html, {states: m.states, bins: true, orientation: true}).s.includes(ORIENTATION_NOTE));
+  assert.ok(heatmapTable(html, m, {orientation: true}).s.includes(ORIENTATION_NOTE));
 });

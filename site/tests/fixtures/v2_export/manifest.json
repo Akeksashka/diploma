@@ -1,0 +1,215 @@
+{
+ "analysis_run_id": 0,
+ "build_id": "synthetic-v2-fixture",
+ "code_version": "0.0.0",
+ "files": [
+  {
+   "bytes": 67,
+   "format": "json",
+   "path": "alerts.json",
+   "rows": null,
+   "sha256": "6ce2cbf5207cce105e03820bab640d700875f4033892e50664fc753af4d1860f"
+  },
+  {
+   "bytes": 1650,
+   "format": "json",
+   "path": "meta/domains.json",
+   "rows": 6,
+   "sha256": "980bb5c762e9abb56cecaaea3acfe986a81329992adc4c06c4409f7679fb76be"
+  },
+  {
+   "bytes": 8239,
+   "format": "json",
+   "path": "meta/entities.json",
+   "rows": 45,
+   "sha256": "b79116b98137a2955ab2cfb1650e5e51ff8f5231aac8e3b86b840ac91eb8f3c7"
+  },
+  {
+   "bytes": 5830,
+   "format": "json",
+   "path": "meta/groups.json",
+   "rows": 5,
+   "sha256": "ee9020659180856acf051cab114e06fca44b80e542e6405075992bfa657281c0"
+  },
+  {
+   "bytes": 8442,
+   "format": "json",
+   "path": "meta/indicators.json",
+   "rows": 15,
+   "sha256": "c41342219842dafa5d4344b7a53556e86e489448244ae4f88b9cbbf746ef6da1"
+  },
+  {
+   "bytes": 184556,
+   "format": "json",
+   "path": "meta/series.json",
+   "rows": 311,
+   "sha256": "a87c1b79002af905df7d4c7c54e3c25006ddd8633dd2a19603df0474e9ddc286"
+  },
+  {
+   "bytes": 114,
+   "format": "json",
+   "path": "revisions_recent.json",
+   "rows": null,
+   "sha256": "c75ceb4ad15120e66735e0c36d3d7a92427cd71d7aa72e658aa0e096f7c8c729"
+  },
+  {
+   "bytes": 46153,
+   "format": "json",
+   "path": "scorecard/agri.json",
+   "rows": 42,
+   "sha256": "7c4c932bdb538d58b7323eed08953caea6f2b3391b6fc68edf3eb7447c5bceb9"
+  },
+  {
+   "bytes": 85932,
+   "format": "json",
+   "path": "scorecard/fiscal.json",
+   "rows": 45,
+   "sha256": "298ff1a8e1fb6911f8a4ac08e0f289b8f2d938c2c5f203752ddd336f4d141cae"
+  },
+  {
+   "bytes": 50090,
+   "format": "json",
+   "path": "scorecard/growth.json",
+   "rows": 27,
+   "sha256": "0e3d3cc3ce3f0e168b6297e2a4a518af95e648e27edc4ff057f7e20df61353aa"
+  },
+  {
+   "bytes": 76393,
+   "format": "json",
+   "path": "scorecard/labour.json",
+   "rows": 28,
+   "sha256": "3aa517f91a511e52e1d3775b41e87cbef36cd200ae8bc60e4a4102359c448e6a"
+  },
+  {
+   "bytes": 22283,
+   "format": "json",
+   "path": "scorecard/prices.json",
+   "rows": 20,
+   "sha256": "6d26fead5fb314478fa479c3f119228b88293e8457e1e982b7666a1aa38feab2"
+  },
+  {
+   "bytes": 19757,
+   "format": "json",
+   "path": "scorecard/qa.json",
+   "rows": 5,
+   "sha256": "31c6a4dbcbbaf1c26be154ea16b9190d78489e61723ab7a2ec667fdd7c334854"
+  },
+  {
+   "bytes": 127328,
+   "format": "json",
+   "path": "series/A01.json",
+   "rows": 1302,
+   "sha256": "ebc861dd37177c8b594dd7e482e0d3a26de2445b1b43ace1cd15fd5340d0bc58"
+  },
+  {
+   "bytes": 74274,
+   "format": "json",
+   "path": "series/A02.json",
+   "rows": 775,
+   "sha256": "d4c2cdfaa8f283bd722c20d48d7e47ba824b94d4f14d80a3b4ae0ace3125eecd"
+  },
+  {
+   "bytes": 135986,
+   "format": "json",
+   "path": "series/A04.json",
+   "rows": 1391,
+   "sha256": "13b45647966288b71854bfbc9dc886e64d63446e55164117af4bb9da663c70ff"
+  },
+  {
+   "bytes": 136032,
+   "format": "json",
+   "path": "series/A05.json",
+   "rows": 1391,
+   "sha256": "99ef8d9af0da26e1e335ac48026cf79d3412473201496f2aab7938c02eb43c72"
+  },
+  {
+   "bytes": 86550,
+   "format": "json",
+   "path": "series/M09.json",
+   "rows": 903,
+   "sha256": "40c2cd83557e32b41c2e68d13011b80abed8da06d249cf199f8be02b38e6f2a2"
+  },
+  {
+   "bytes": 90433,
+   "format": "json",
+   "path": "series/M10.json",
+   "rows": 924,
+   "sha256": "1c2014534b2e26571e8426d9164ac4aefa1ef5082bab4dc98c054f3e323598ae"
+  },
+  {
+   "bytes": 90408,
+   "format": "json",
+   "path": "series/M11.json",
+   "rows": 924,
+   "sha256": "feb73625fe697106aba1edf2183864d1484b23e5d25d36b2022df5994526635c"
+  },
+  {
+   "bytes": 65931,
+   "format": "json",
+   "path": "series/P01.json",
+   "rows": 660,
+   "sha256": "0931ef8f15bbfcb2771e4d8864fd8d9daeafc6b4aafc1ba91eccab9868dfa07c"
+  },
+  {
+   "bytes": 88678,
+   "format": "json",
+   "path": "series/Q08.json",
+   "rows": 918,
+   "sha256": "06416a9b82f5143f588267d36d82f6cce1cef6622fb96a5e2c3bccfaabe1b19f"
+  },
+  {
+   "bytes": 12250,
+   "format": "json",
+   "path": "series/V01.json",
+   "rows": 124,
+   "sha256": "23d8df8ad648d928c75437fc926750ed98004376c545039319ceb72b661ab56e"
+  },
+  {
+   "bytes": 12832,
+   "format": "json",
+   "path": "series/V02.json",
+   "rows": 132,
+   "sha256": "013da73823c04dd1af0e6edbb9878961722e1062a55620af201d94d7408be652"
+  },
+  {
+   "bytes": 13324,
+   "format": "json",
+   "path": "series/V03.json",
+   "rows": 132,
+   "sha256": "a06077348942fbab67dac3af2bab4182df7b6670764b0bd5da3a14c95d7148ed"
+  },
+  {
+   "bytes": 12080,
+   "format": "json",
+   "path": "series/V04.json",
+   "rows": 124,
+   "sha256": "2b04ab4f90b73a3d143907736ecd8708108c314cffb77c6db5ca7678e197856e"
+  },
+  {
+   "bytes": 10038,
+   "format": "json",
+   "path": "series/V05.json",
+   "rows": 99,
+   "sha256": "c00b986d8d25f04bd0954f8baa00e10c6076410feeab59b0d82456942e0d98d6"
+  },
+  {
+   "bytes": 13048,
+   "format": "json",
+   "path": "series/V06.json",
+   "rows": 134,
+   "sha256": "e9593eace7323c4262585517d8a9d48568e2ebf7de93c72b12dc6ad534fdeba2"
+  },
+  {
+   "bytes": 579,
+   "format": "json",
+   "path": "status.json",
+   "rows": 0,
+   "sha256": "33356abaca4531240ed804079e6a1539a7a0416c89b8bd20a0badc795b61f471"
+  }
+ ],
+ "generated_at": "2026-11-03T00:05:00Z",
+ "history_start": "1995-01-01",
+ "ingest_run_id": 0,
+ "known_cutoff": "2026-11-03T00:00:00Z",
+ "schema_version": "1.0"
+}

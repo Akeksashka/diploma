@@ -5,7 +5,7 @@ import {createHash} from "node:crypto";
 import {dirname, isAbsolute, join, resolve, sep} from "node:path";
 import {fileURLToPath} from "node:url";
 import {firstDomainId, indicatorsWithoutDomain, storedPercentileDifferences, storedTransformId} from "../src/lib/indicator-model.js";
-import {indicatorPageSource, countryPageSource, domainPageSource, explorerPageSource,revisionsPageSource, homePageSource, domainsPageSource} from "./lib.mjs";
+import {indicatorPageSource, countryPageSource, domainPageSource, explorerPageSource,revisionsPageSource, homePageSource, domainsPageSource, countryListPageSource, comparePageSource} from "./lib.mjs";
 
 // Copies manifest.json plus every manifest.files[].path from the export into dst (after clearing dst); nothing else
 // (a README or status.json in the export dir would become a page). Throws on an unsafe path, a missing file or a sha256 mismatch.
@@ -152,6 +152,11 @@ const metaList = (file, key) => {
 writeFileSync(join(here, "..", "src", "domains.md"), domainsPageSource(domains));
 writeFileSync(join(here, "..", "src", "index.md"), homePageSource({entities: metaList("entities", "entities"), indicators: metaList("indicators", "indicators"), domains, manifest: JSON.parse(readFileSync(join(dst, "manifest.json"), "utf8"))}));
 console.log("prepare-data: home and domains pages written");
+
+// V64 / V8: the country list page (/country) and the Compare page (/compare); git-ignored, regenerated every run.
+writeFileSync(join(here, "..", "src", "country.md"), countryListPageSource(metaList("entities", "entities")));
+writeFileSync(join(here, "..", "src", "compare.md"), comparePageSource(countryManifest, domains.map((d) => d.domain_id)));
+console.log("prepare-data: country list and compare pages written");
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();

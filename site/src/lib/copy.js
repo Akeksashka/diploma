@@ -406,3 +406,98 @@ export const DRAFT_COUNTRY_CHIP_HELP = "Select up to 5 countries."; // visible h
 export const DRAFT_PERIOD_INVALID = "The From year must not be after the To year. The period was not changed.";
 export const DRAFT_PERIOD_UNAVAILABLE_CONSEQUENCE = "The period filter is not available; all years are shown.";
 export const DRAFT_PERIOD_REGION = "the period range";
+
+// DRAFT (not confirmed): Dashboard v2 (ADR-037) V5 caption block labels (spec 6.1). Labels and one fixed vintage line; the user confirms wording.
+export const DRAFT_NOT_STATED = "not stated"; // the "not stated" marker of spec 6.1 (AC-V2-70): printed whenever a stored caption field is absent
+export const DRAFT_CAPTION_LABELS = Object.freeze({indicator: "Indicator", unit: "Unit", frequency: "Frequency", seasonal: "Seasonal adjustment", period: "Reference period", scale: "Colour scale", source: "Source", vintage: "Vintage"});
+export const DRAFT_CAPTION_SEASONAL = Object.freeze({SA: "SA", NSA: "NSA", NA: "not applicable"}); // stored seasonal_adjustment codes; "n/a" is never printed alone (AC-V2-83)
+export const DRAFT_CAPTION_VINTAGE = (date) => `latest vintage as of ${date}`; // spec 6.1
+export const DRAFT_CAPTION_LEGEND = Object.freeze({EST: "estimate", PROV: "provisional"}); // legend text codes for the value_status marks (spec 6.8); the code itself is stored
+
+// DRAFT (not confirmed): Dashboard v2 (ADR-037 A1.4, ADR-036 Amendment 1) V4 hidden-rows disclosure. English plural variants per category arrive with V45.
+export const DRAFT_HIDDEN_REASON_LABELS = Object.freeze({no_data: "No data", stale: "Stale", other_period: "Other period", other: "Other"});
+const HIDDEN_PARTS = Object.freeze({no_data: "no data", stale: "stale", other_period: "other period", other: "other"});
+// "{N} rows hidden: {X} no data, {Y} stale, {Z} other period" with ", {W} other" only when W > 0; a zero part is omitted; singular "1 row hidden: 1 no data"; "" at N = 0 (ADR-036 I7).
+export const DRAFT_HIDDEN_SUMMARY = (counts) => {
+  const parts = Object.keys(HIDDEN_PARTS).filter((k) => counts?.[k] > 0).map((k) => `${counts[k]} ${HIDDEN_PARTS[k]}`);
+  return counts?.total > 0 ? `${counts.total} ${counts.total === 1 ? "row" : "rows"} hidden: ${parts.join(", ")}` : "";
+};
+export const DRAFT_HIDDEN_LIST_ITEM = (label, reasonLabel, period, sentence) => `${label}: ${reasonLabel}; latest value ${period}; ${sentence}`; // label, reason category, stored period or the not-stated marker, stored reason sentence
+
+// DRAFT (not confirmed): Dashboard v2 (ADR-037) V6 strings consumed by the later chart, mode and picker tasks. Labels and short messages only; the user confirms wording (G-STR).
+export const DRAFT_NO_ALIGNED = "No aligned values for this selection"; // AC-V2-81: empty card of a snapshot chart whose rows are all hidden, with the disclosure
+export const DRAFT_BLOCKED_FIELD_LABELS = Object.freeze({unit_code: "unit code", unit_mult: "unit multiplier", price_basis: "price basis", flow_basis: "flow basis", base_period: "base period", frequency: "frequency"}); // stored field -> label (compat.js blocking fields)
+export const DRAFT_BLOCKED_MESSAGE = (fields) => `Not drawn together; differing stored fields: ${fields.join(", ")}`; // `fields` are DRAFT_BLOCKED_FIELD_LABELS values (AC-V2-31, 41)
+export const DRAFT_MARKED_SEASONAL = "Mixes SA and NSA series"; // compat.js marks, never blocks, a seasonal_adjustment mix (spec 6.6)
+export const DRAFT_COMPAT_SKIPPED = (fields) => `Not compared, no stored value: ${fields.join(", ")}`; // fields absent from every series of the selection (A1.6)
+export const DRAFT_MODE_SWITCH_LABEL = "Mode";
+export const DRAFT_MODE_LABELS = Object.freeze({country: "Country", compare: "Compare"});
+export const DRAFT_PICKER_LABELS = Object.freeze({country: "Country", group: "Group", countries: "Countries", aggregates: "Aggregates", placeholder: "Choose a country"});
+export const DRAFT_SHOW_PERCENTILE = "Show percentile";
+export const DRAFT_SHOW_STALE = "Show stale rows"; // C4, hash `stl` (A1.1)
+export const DRAFT_INCLUDE_OTHER_PERIODS = "Include rows from other reference periods"; // hash `oth`
+export const DRAFT_CONTEXT_LINES = "Context lines"; // hash `ctx`
+export const DRAFT_STALE_CODE = "stale"; // text code printed after a stale row label or in a tip (non-colour channel, A1.1)
+export const DRAFT_REBASE_STATEMENT = (period) => `Index, ${period} = 100, rebased for display; stored values unchanged.`; // kept for when CR-18 exists (spec 6.4)
+
+// DRAFT (not confirmed): Dashboard v2 Country mode (ADR-037, plan V11 to V16): card titles, facet controls, tip lines and labels of the K1, L1, L2, P1a and T1 cards. The user confirms wording (G-STR).
+export const DRAFT_COUNTRY_CARD_TITLES = Object.freeze({k1: "Latest values", l1: "Time series", p1: "Position among countries", t1: "Indicator table", l2: "Series"});
+export const DRAFT_L1_SUMMARY = (domainName) => `${domainName}: time series`;
+export const DRAFT_FACET_EXPAND = "Expand";
+export const DRAFT_FACET_COLLAPSE = "Collapse";
+export const DRAFT_SERIES_UNREADABLE = "The series file of this indicator could not be read.";
+export const DRAFT_STALE_TIP = (period) => `stale, latest stored period ${period}`; // tip line of the last point of a stale series (A1.1)
+export const DRAFT_STALE_PERIOD = (period) => `stale, ${period}`; // K1 card marker text: the code and the stored period
+export const DRAFT_REVISIONS_LINK_LABEL = (indicatorName) => `Revisions of ${indicatorName}`;
+export const DRAFT_STATE_COLUMN = "State"; // T1 and P1a table column of the stored state sentence (percentile layer off)
+export const DRAFT_P1A_FIGURE_LABEL = (indicatorName, period, unit) => `Strip plot of ${indicatorName}, reference period ${period}, in ${unit}; each country is one dot; table below lists the same values`;
+export const DRAFT_P1A_REFERENCE = (period) => `Reference period: ${period}`; // printed beside the strip: the one stored period the drawn rows share
+export const DRAFT_P1A_TABLE_CAPTION = (indicatorName, period) => `${indicatorName}: latest stored value by country, reference period ${period}`;
+export const DRAFT_P1A_MARKS = "Ring: the country in focus; hollow dot: an estimate or a value of another reference period";
+export const DRAFT_P1A_AGGREGATES_NOTE = "Dashed lines mark the stored value of an aggregate, for reference only.";
+export const DRAFT_P1A_NO_REFERENCE = "The scorecard states no reference period for this indicator.";
+
+// DRAFT (not confirmed): Dashboard v2 Compare mode (ADR-037, plan V17 to V23): card titles, control labels, tip lines and labels of C1 to C5 and T2. Labels and short messages only; the user confirms wording (G-STR).
+export const DRAFT_COMPARE_CARD_TITLES = Object.freeze({c1: "Time series by country", c2: "Ranked values", c3: "Two indicators", c4: "Countries by period", c5: "Percentile heatmap", t2: "Indicator table"});
+export const DRAFT_COMPARE_CONTROL_LABELS = Object.freeze({domain: "Domain", countries: "Countries", x: "X indicator", y: "Y indicator", p: "Reference period", choose: "Choose an indicator", latest: "Default period", sort: "Sort by"});
+export const DRAFT_COMPARE_CONTROLS_LABEL = (title) => `Controls: ${title}`;
+export const DRAFT_COMPARE_CHOOSE_INDICATOR = "Choose an indicator to compare countries.";
+export const DRAFT_COMPARE_CHOOSE_PAIR = "Choose two indicators to compare.";
+export const DRAFT_COMPARE_SORTS = Object.freeze({value: "Value", name: "Country (A to Z)", percentile: "Percentile"});
+export const DRAFT_COMPARE_DEFAULT_COUNTRIES = "No country is chosen: the default countries are shown.";
+export const DRAFT_C2_NO_RANK_REFERENCE = "No ranked reference period for this indicator."; // D2: the stored rank_reference_period is null; no period is chosen for the reader
+export const DRAFT_COMPARE_SERIES_PENDING = "Loading the series file of this indicator.";
+export const DRAFT_COMPARE_SECONDARY = (title) => `Percentile layer: ${title}`; // summary of the collapsed secondary block (C5, T2), present only while pc is on
+export const DRAFT_C1_MARKS = "Dashed grey line: a stored aggregate; square marker: the last point of a stale series; hollow marker: an estimate or provisional value";
+export const DRAFT_C1_FIGURE_LABEL = (name, unit, parts) => `Line chart of ${name}, one line per country, y-axis ${unit}: ${parts.join("; ")}; the table under the chart lists the plotted points`;
+export const DRAFT_C2_FIGURE_LABEL = (name, period, unit) => `Bar chart of ${name}, reference period ${period}, in ${unit}; one bar per country; the table below lists the same values`;
+export const DRAFT_C2_MARKS = "Hollow bar: another reference period, with its period in the label; dashed outline: an aggregate, for reference only";
+export const DRAFT_C2_TABLE_CAPTION = (name, period) => `${name}: stored value by country, reference period ${period}`;
+export const DRAFT_C3_FIGURE_LABEL = (xName, xUnit, yName, yUnit, period) => `Scatter plot, x-axis ${xName} in ${xUnit}, y-axis ${yName} in ${yUnit}, reference period ${period}; one dot per country; the table below lists the same values`;
+export const DRAFT_C3_TABLE_CAPTION = (xName, yName, period) => `${xName} and ${yName}: stored values by country, reference period ${period}`;
+export const DRAFT_C3_NO_COMMON = "No reference period has a stored value of both indicators.";
+export const DRAFT_C3_MARKS = "Labelled dots are the countries in focus; every country with both values is a dot and is listed in the table.";
+export const DRAFT_NO_VALUE_FOR = (names) => `no value for ${names.join(", ")}`; // stored reason of a country left out of C3 (names of the indicators it lacks)
+export const DRAFT_C4_FIGURE_LABEL = (name, unit, first, last) => `Heatmap of ${name}, in ${unit}, countries by period, ${first} to ${last}; the table below lists the same values`;
+export const DRAFT_C4_SCALE = (min, max) => `${min} to ${max}, the lowest and highest cell shown`; // display scaling: the value of the caption field "Colour scale" (AC-V2-46)
+export const DRAFT_C4_BLANK = "no stored value";
+export const DRAFT_C4_MARKS = "Hatched cell: no stored value";
+export const DRAFT_C4_TABLE_CAPTION = (name, unit) => `${name}: stored value by country and period, in ${unit}`;
+export const DRAFT_C4_OUTLINE_MARK = "Dashed outline: a stale row, shown because Show stale rows is on";
+export const DRAFT_C4_LEGEND = Object.freeze({min: "lowest", max: "highest"});
+
+// DRAFT (not confirmed): Dashboard v2 chart C6, the choropleth map (ADR-037 A2.2, plan V53 to V55). Labels and short messages only; the user confirms the wording.
+export const DRAFT_C6_CARD_TITLE = "Map of values";
+export const DRAFT_C6_FIGURE_LABEL = (name, period, unit) => `Map of Europe: ${name}, reference period ${period}, in ${unit}; one shape per country; the table below lists the same values`;
+export const DRAFT_C6_SCALE = (min, max) => `${min} to ${max}, the lowest and highest country shown; continuous, no classes`; // the value of the caption field "Colour scale"
+export const DRAFT_C6_LEGEND_UNIT = (unit) => `Unit: ${unit}`;
+export const DRAFT_C6_MARKS = "Hatched: no stored value; plain: a stored value not drawn here; circle: a small country; dashed outline: another reference period";
+export const DRAFT_C6_AGGREGATES_NOTE = "Aggregates and countries outside the map are not drawn; they are listed under the hidden rows and in the table.";
+export const DRAFT_C6_SOURCE_NOTE = "Map shapes: Natural Earth.";
+export const DRAFT_C6_TABLE_CAPTION = (name, period) => `${name}: stored value by country, reference period ${period}, as drawn on the map`;
+export const DRAFT_C6_SKIP_TO_TABLE = "Skip to the table of map values";
+export const DRAFT_C6_NOT_MAPPED = Object.freeze({aggregate: "an aggregate, not drawn on the map", outside: "outside the map extent", nogeometry: "no map shape for this country"});
+export const DRAFT_C6_NOT_MAPPED_SENTENCE = (why, stored) => `${why}; ${stored}`;
+export const DRAFT_C6_GEO_PENDING = "Loading the map shapes.";
+export const DRAFT_C6_GEO_UNREADABLE = "The map shapes could not be read, so the map is not drawn; the table lists the same values";
+export const DRAFT_C6_STORED = (value, period) => `${value} (${period})`; // the stored value and its period, in the state text of a country that is not drawn

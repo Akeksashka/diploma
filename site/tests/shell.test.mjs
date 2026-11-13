@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import {test} from "node:test";
 import {attributionBlock, headerHtml, statusBlock} from "../src/lib/shell.js";
 import {NAV_LABEL, SKIP_LINK_TEXT} from "../src/lib/copy.js";
+import {carryHrefForAttrs} from "../src/lib/carry.js";
 import config from "../observablehq.config.js";
 import {domainPageSource, domainsPageSource, homePageSource} from "../scripts/lib.mjs";
 
@@ -75,10 +76,16 @@ test("every page source calls statusBlock (banner on every page)", async () => {
   for (const f of files) assert.ok(/display\(pageHead\(html, boot, "\w+"\)\);/.test(f)) // pageHead = statusBlock + the failed-region alerts;
 });
 
-test("AC-RD-01: header navigation is exactly Home, Time series, Domains, Revisions; nothing links to status or a guide", async () => {
-  assert.deepEqual(config.pages, [{name: "Home", path: "/"}, {name: "Time series", path: "/explorer"}, {name: "Domains", path: "/domains"}, {name: "Revisions", path: "/revisions"}]);
+// D-1 (OQ-16, ADR-037 A2.6 item 2, spec section 2): AC-RD-01 and G-STR4 now read six pages: Home, Country, Compare, Time series, Domains, Revisions.
+test("AC-RD-01 (six pages per spec section 2): header navigation is exactly Home, Country, Compare, Time series, Domains, Revisions; nothing links to status or a guide", async () => {
+  assert.deepEqual(config.pages, [{name: "Home", path: "/"}, {name: "Country", path: "/country"}, {name: "Compare", path: "/compare"}, {name: "Time series", path: "/explorer"}, {name: "Domains", path: "/domains"}, {name: "Revisions", path: "/revisions"}]);
   const h = headerHtml({title: "Macro Monitor", pages: config.pages, path: "/"});
-  assert.deepEqual([...h.matchAll(/<li><a [^>]*>([^<]*)<\/a><\/li>/g)].map((m) => m[1]), ["Home", "Time series", "Domains", "Revisions"]);
+  assert.deepEqual([...h.matchAll(/<li><a [^>]*>([^<]*)<\/a><\/li>/g)].map((m) => m[1]), ["Home", "Country", "Compare", "Time series", "Domains", "Revisions"]);
+  // the language switch (ADR-037 A2.1) is not a page and stays outside the nav landmark, so it is never one of the six
+  assert.ok(!/hreflang|lang=/.test(h.slice(h.indexOf("<nav"), h.indexOf("</nav>"))));
+  // the two mode pages carry only the keys that stay meaningful for them (carry.js); the other four carry the whole hash as before
+  assert.ok(h.includes('<a href="/country" data-carry="country">Country</a>') && h.includes('<a href="/compare" data-carry="compare">Compare</a>'));
+  assert.ok(h.includes('<a href="/explorer" data-carry>Time series</a>'));
   assert.ok(!/status|guide/i.test(h.replace(/<noscript>[\s\S]*<\/noscript>/, "")));
   const {existsSync} = await import("node:fs");
   assert.ok(!existsSync(new URL("../src/status.md", import.meta.url)) && !existsSync(new URL("../src/guide.md", import.meta.url)));
@@ -95,7 +102,20 @@ test("header: skip link first, then title and the pages nav; no heading", () => 
   assert.equal((h.match(/aria-current="page"/g) ?? []).length, 1);
   assert.ok(h.includes('<a href="/explorer" data-carry aria-current="page">Time series</a>'));
   assert.ok(headerHtml({title: "T", pages: config.pages, path: "/index"}).includes('<a href="/" data-carry aria-current="page">'));
+  assert.ok(headerHtml({title: "T", pages: config.pages, path: "/country"}).includes('<a href="/country" data-carry="country" aria-current="page">Country</a>'));
+  assert.ok(headerHtml({title: "T", pages: config.pages, path: "/compare"}).includes('<a href="/compare" data-carry="compare" aria-current="page">Compare</a>'));
   assert.ok(!headerHtml({title: "T", pages: config.pages, path: "/domain/labour"}).includes("aria-current"));
+});
+
+test("Part 0: on a Country page the header Compare link forces c to the page's country; other pages and links are unchanged", () => {
+  const onCountry = headerHtml({title: "T", pages: config.pages, path: "/country/DEU"});
+  assert.ok(onCountry.includes('<a href="/compare" data-carry="compare" data-carry-set="c=DEU">Compare</a>'));
+  assert.equal((onCountry.match(/data-carry-set/g) ?? []).length, 1, "only Compare is forced");
+  // the forced key survives a stale hash: carrying #c=FRA&i=M09 to Compare gives c=DEU, i kept
+  assert.equal(carryHrefForAttrs("/compare", "#c=FRA&i=M09", "compare", "c=DEU"), "/compare#c=DEU&i=M09");
+  assert.ok(!headerHtml({title: "T", pages: config.pages, path: "/country"}).includes("data-carry-set"));
+  assert.ok(!headerHtml({title: "T", pages: config.pages, path: "/compare"}).includes("data-carry-set"));
+  assert.ok(!headerHtml({title: "T", pages: config.pages, path: "/country/../x"}).includes("data-carry-set"));
 });
 
 test("header escapes titles; config keeps Framework chrome off and sets the header", () => {

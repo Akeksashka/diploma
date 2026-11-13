@@ -109,6 +109,18 @@ export async function openPage(browser, origin, {fixedTime = null} = {}) {
   return {page, context, log};
 }
 
+// A1.5 / CR-18: no stored indicator carries `scale_hint = index` today, so the rebase control is absent on every built export. To exercise the active-rebase path in a real
+// browser without a second build, the page's request for meta/indicators.json is answered with the same file in which the named indicators carry the SYNTHETIC marker
+// `scale_hint: "index"` (nothing else changes; the served files on disk are untouched). Call before page.goto.
+export async function markIndex(context, ids) {
+  await context.route(/\/_file\/data\/meta\/indicators\.[0-9a-f]+\.json$/, async (route) => {
+    const res = await route.fetch();
+    const doc = await res.json();
+    for (const i of doc.indicators) if (ids.includes(i.indicator_id)) i.scale_hint = "index";
+    await route.fulfill({response: res, json: doc});
+  });
+}
+
 // EXP-07 scanner idea, ported to JS: names of secret-like patterns found. Only the NAME is returned.
 export const SECRET_PATTERNS = [
   ["connection URL", /\b(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?|redis|amqps?):\/\//],

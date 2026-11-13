@@ -1,0 +1,411 @@
+{
+ "schema_version": "1.0",
+ "indicators": [
+  {
+   "adverse_dir": 1,
+   "alert_method": "none",
+   "currency_basis": "n/a",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "labour"
+   ],
+   "frequency_set": [
+    "M"
+   ],
+   "good_dir": -1,
+   "indicator_id": "M09",
+   "max_ref_spread_days": 92,
+   "name": "Unemployment rate (synthetic)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "LEVEL"
+   ],
+   "unit_label": "% of labour force"
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "none",
+   "currency_basis": "n/a",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "labour"
+   ],
+   "frequency_set": [
+    "M"
+   ],
+   "good_dir": 1,
+   "indicator_id": "M10",
+   "max_ref_spread_days": 92,
+   "name": "Employment rate (synthetic)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "LEVEL"
+   ],
+   "unit_label": "% of population 15-64"
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "n/a",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "labour"
+   ],
+   "frequency_set": [
+    "M"
+   ],
+   "good_dir": 0,
+   "indicator_id": "M11",
+   "max_ref_spread_days": 92,
+   "name": "Population 15-64 (synthetic)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "LEVEL"
+   ],
+   "unit_label": "million"
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "n/a",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "prices"
+   ],
+   "frequency_set": [
+    "M"
+   ],
+   "good_dir": 0,
+   "indicator_id": "P01",
+   "max_ref_spread_days": 92,
+   "name": "Consumer price index (synthetic)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "LEVEL"
+   ],
+   "unit_label": "index"
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "n/a",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "agri"
+   ],
+   "frequency_set": [
+    "A"
+   ],
+   "good_dir": 0,
+   "indicator_id": "A01",
+   "max_ref_spread_days": 92,
+   "name": "Agricultural land share (synthetic)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "LEVEL"
+   ],
+   "unit_label": "% of land area"
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "none",
+   "currency_basis": "n/a",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "growth"
+   ],
+   "frequency_set": [
+    "A"
+   ],
+   "good_dir": 1,
+   "indicator_id": "A02",
+   "max_ref_spread_days": 92,
+   "name": "Real GDP growth (synthetic)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "LEVEL"
+   ],
+   "unit_label": "% y/y"
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "none",
+   "currency_basis": "n/a",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "growth"
+   ],
+   "frequency_set": [
+    "Q"
+   ],
+   "good_dir": 1,
+   "indicator_id": "Q08",
+   "max_ref_spread_days": 92,
+   "name": "Business confidence (synthetic)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "LEVEL"
+   ],
+   "unit_label": "balance, points"
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "none",
+   "currency_basis": "n/a",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "fiscal"
+   ],
+   "frequency_set": [
+    "A"
+   ],
+   "good_dir": 1,
+   "indicator_id": "A04",
+   "max_ref_spread_days": 92,
+   "name": "General government balance (synthetic)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "LEVEL"
+   ],
+   "unit_label": "% of GDP"
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "none",
+   "currency_basis": "n/a",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "fiscal"
+   ],
+   "frequency_set": [
+    "A"
+   ],
+   "good_dir": -1,
+   "indicator_id": "A05",
+   "max_ref_spread_days": 92,
+   "name": "Gross government debt (synthetic)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "LEVEL"
+   ],
+   "unit_label": "% of GDP"
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "n/a",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "qa"
+   ],
+   "frequency_set": [
+    "A"
+   ],
+   "good_dir": 0,
+   "indicator_id": "V01",
+   "max_ref_spread_days": 92,
+   "name": "QA: two unit codes (synthetic)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "LEVEL"
+   ],
+   "unit_label": "see series"
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "n/a",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "qa"
+   ],
+   "frequency_set": [
+    "M"
+   ],
+   "good_dir": 0,
+   "indicator_id": "V02",
+   "max_ref_spread_days": 92,
+   "name": "QA: SA and NSA mix (synthetic)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "LEVEL"
+   ],
+   "unit_label": "% of labour force"
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "n/a",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "qa"
+   ],
+   "frequency_set": [
+    "M"
+   ],
+   "good_dir": 0,
+   "indicator_id": "V03",
+   "max_ref_spread_days": 92,
+   "name": "QA: index, two base periods (synthetic)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "LEVEL"
+   ],
+   "unit_label": "index"
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "n/a",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "qa"
+   ],
+   "frequency_set": [
+    "A"
+   ],
+   "good_dir": 0,
+   "indicator_id": "V04",
+   "max_ref_spread_days": 92,
+   "name": "QA: flow_basis absent for some series (synthetic)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "LEVEL"
+   ],
+   "unit_label": "% of GDP"
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "n/a",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "qa"
+   ],
+   "frequency_set": [
+    "M"
+   ],
+   "good_dir": 0,
+   "indicator_id": "V05",
+   "max_ref_spread_days": 92,
+   "name": "QA: stored value_yoy (synthetic)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "LEVEL"
+   ],
+   "unit_label": "index"
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "n/a",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "qa"
+   ],
+   "frequency_set": [
+    "M",
+    "Q"
+   ],
+   "good_dir": 0,
+   "indicator_id": "V06",
+   "max_ref_spread_days": 92,
+   "name": "QA: more than one frequency (synthetic)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "LEVEL"
+   ],
+   "unit_label": "% of GDP"
+  }
+ ]
+}

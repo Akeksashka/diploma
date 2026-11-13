@@ -6,7 +6,7 @@ import {readFileSync} from "node:fs";
 import {join} from "node:path";
 import {after, before, describe, test} from "node:test";
 import {gzipBytes, LANDING_LIMIT_BYTES, walk} from "../../scripts/lib.mjs";
-import {DIST, REQUIRE_BROWSER, builtManifestPath, distBuilt, launchBrowser, openPage, serve} from "./support.mjs";
+import {DIST, REQUIRE_BROWSER, builtManifestPath, distBuilt, launchBrowser, markIndex, openPage, serve} from "./support.mjs";
 
 const NOW = "2026-11-04T12:00:00Z"; // fixed browser clock: the fixture known_cutoff is 2026-11-01
 const TIMEOUT = 20000;
@@ -47,11 +47,12 @@ after(async () => {
 });
 
 // Runs `fn({page, log, origin})` in a fresh context with the fixed clock; skips when there is no browser.
-async function withPage(t, path, ready, fn, {srv = () => site, fixedTime = NOW} = {}) {
+async function withPage(t, path, ready, fn, {srv = () => site, fixedTime = NOW, index = null} = {}) {
   if (!browser) return t.skip(reason);
   const s = srv();
   const {page, context, log} = await openPage(browser, s.origin, {fixedTime});
   try {
+    if (index) await markIndex(context, index);
     await page.goto(`${s.origin}${path}`);
     if (ready) await page.waitForSelector(ready, {timeout: TIMEOUT});
     await fn({page, log, origin: s.origin});
@@ -312,6 +313,24 @@ describe("V3 explorer: indicator, transform, rebase and one-file fetch", () => {
         await page.waitForTimeout(250);
       }
       assert.ok(await titleHas(/Year-on-year/), "the transform choice did not reach the chart title");
+      // A1.5: no stored indicator says scale_hint = index, so there is no rebase control and no base period on these series.
+      assert.equal(await page.locator("#explorer-rebase").count(), 0, "no rebase control on a series that is not marked as an index");
+      assert.equal(await page.locator("#rebase-note").count(), 0);
+      clean(log);
+    });
+  });
+});
+
+describe("V3 explorer: rebase of an indicator marked as an index (synthetic scale_hint, A1.5)", () => {
+  test("with a synthetic scale_hint = index on P01 the control exists and rebases the chosen transform to 100", async (t) => {
+    await withPage(t, "/explorer#i=P01&c=DEU", "#series-captions tbody tr", async ({page, log}) => {
+      const titleHas = (re) => page.evaluate((src) => new RegExp(src).test(document.querySelector("#explorer-title")?.textContent ?? ""), re.source);
+      assert.equal(await page.locator("#explorer-rebase").count(), 1, "the control is offered for an indicator marked as an index");
+      for (let i = 0; i < 20 && !(await titleHas(/Year-on-year/)); i += 1) {
+        await page.selectOption("#explorer-transform", "value_yoy");
+        await page.waitForTimeout(250);
+      }
+      assert.ok(await titleHas(/Year-on-year/), "the transform choice did not reach the chart title");
       for (let i = 0; i < 20 && (await page.locator("#rebase-note").count()) === 0; i += 1) {
         await page.check("#explorer-rebase");
         await page.waitForTimeout(250);
@@ -320,7 +339,7 @@ describe("V3 explorer: indicator, transform, rebase and one-file fetch", () => {
       assert.match(await page.textContent("#explorer-title"), /Year-on-year, rebased to 100 at/);
       assert.ok((await page.locator("#explorer-title ~ svg, figure svg, svg").count()) > 0, "a chart is drawn");
       clean(log);
-    });
+    }, {index: ["P01"]});
   });
 });
 

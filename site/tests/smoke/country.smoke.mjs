@@ -75,7 +75,7 @@ async function withPage(t, path, fn, {sparse = false, width = null} = {}) {
 const firstCountry = () => entities.find((e) => e.is_global !== true)?.entity_id;
 
 describe("R7 PG-COUNTRY", () => {
-  test("AC-RD-10, 12, 62: every indicator once per domain section, links, caveat once, orientation at most once, no Guide/Status link", async (t) => {
+  test("AC-RD-10, 12, 62: every indicator once per domain section, links, caveat once per page, no percentile layer by default, orientation once with pc=1, no Guide/Status link", async (t) => {
     const id = isSparse() ? "SY01" : firstCountry();
     await withPage(t, `/country/${id}`, async ({page, log}) => {
       for (const d of domains) {
@@ -87,20 +87,30 @@ describe("R7 PG-COUNTRY", () => {
         const sec = page.locator(`#domain-${d.domain_id}`);
         for (const ind of d.indicator_ids) assert.equal(await sec.locator(`tr[data-indicator="${ind}"]`).count(), 1, `${d.domain_id}/${ind}`);
         assert.equal(await sec.locator("h2 a[data-link=domain]").getAttribute("href"), `../domain/${d.domain_id}`);
-        const figure = await sec.locator('[data-tile="domain-figure"]').count();
-        assert.equal(figure, d.ranked ? 1 : 0, `${d.domain_id}: domain-figure tile only for a ranked domain`);
-        if (!d.ranked) assert.equal(await sec.locator('[role="img"]').count(), 0, "an unranked domain draws no percentile chart");
+        assert.equal(await sec.locator('[data-tile="domain-figure"]').count(), 0, `${d.domain_id}: the percentile tile is the opt-in layer (ADR-037 decision 3)`);
+        assert.equal(await sec.locator('[id^="profile-"]').count(), 0, `${d.domain_id}: no percentile strip by default`);
       }
-      assert.equal(await page.locator(".mm-caveat").count(), 1);
-      assert.ok((await page.locator(".mm-orientation").count()) <= 1);
+      assert.equal(await page.locator(".mm-caveat").count(), 1, "the standing caveat is printed once per page, whatever pc is (C-CTRY-6, AC-RD-62)");
+      assert.equal(await page.locator(".mm-orientation, td.mm-pct").count(), 0, "no orientation sentence or percentile column by default (AC-V2-25, 26)");
       assert.equal(await page.locator('a[href*="guide" i], a[href*="status" i]:not(.mm-nav a)').count(), 0);
       clean(log);
     });
+    await withPage(t, `/country/${id}#pc=1`, async ({page}) => {
+      for (const d of domains) {
+        const sc = dataJson(`scorecard/${d.domain_id}.json`);
+        if (!sc.entities.some((e) => e.entity_id === id)) continue;
+        assert.equal(await page.locator(`#domain-${d.domain_id} [data-tile="domain-figure"]`).count(), d.ranked ? 1 : 0, `${d.domain_id}: domain-figure tile only for a ranked domain, with pc=1`);
+        if (!d.ranked) assert.equal(await page.locator(`#domain-${d.domain_id} [id^="profile-"]`).count(), 0, "an unranked domain draws no percentile chart");
+      }
+      assert.equal(await page.locator(".mm-caveat").count(), 1);
+      assert.equal(await page.locator(".mm-orientation").count(), 1, "the orientation sentence is printed whenever pc=1 (decided 2026-11-13)");
+      assert.equal(await page.locator("#show-percentile").isChecked(), true, "the control follows the hash");
+    });
   });
 
-  test("AC-RD-11, 42: shown value, unit, percentile and period equal the stored JSON (sampled rows)", async (t) => {
+  test("AC-RD-11, 42: shown value, unit, percentile (pc=1) and period equal the stored JSON (sampled rows)", async (t) => {
     const id = isSparse() ? "SY01" : firstCountry();
-    await withPage(t, `/country/${id}`, async ({page}) => {
+    await withPage(t, `/country/${id}#pc=1`, async ({page}) => {
       let checked = 0;
       for (const d of domains) {
         const row = dataJson(`scorecard/${d.domain_id}.json`).entities.find((e) => e.entity_id === id);
@@ -116,14 +126,16 @@ describe("R7 PG-COUNTRY", () => {
           checked++;
         }
         const head = await page.locator(`#table-${d.domain_id} thead th`).allInnerTexts();
-        assert.ok(head.includes("percentile vs all ranked countries"));
+        const anyStored = row.indicators.some((c) => d.indicator_ids.includes(c.indicator_id) && typeof c.percentile === "number");
+        assert.equal(head.includes("percentile vs all ranked countries"), anyStored, `${d.domain_id}: the percentile header is printed iff a row of the table has a stored percentile (decided 2026-11-13)`);
+        if (!anyStored) assert.ok(head.includes("State"), `${d.domain_id}: the stored state column instead`);
       }
       assert.ok(checked > 0);
     });
   });
 
   test("AC-RD-13, 45: the profile chart is role=img with a generated label, plots only stored percentiles, hollow dots for estimates, table beneath", async (t) => {
-    await withPage(t, "/country/SY01", async ({page}) => {
+    await withPage(t, "/country/SY01#pc=1", async ({page}) => {
       const fig = page.locator("#profile-growth");
       assert.equal(await fig.getAttribute("role"), "img");
       assert.equal(await fig.getAttribute("aria-label"), "percentile of each indicator for Synthetic SY01, domain Synthetic growth; table below lists the same values");
@@ -154,7 +166,8 @@ describe("R7 PG-COUNTRY", () => {
       assert.equal(await page.locator('tr[data-has-value="true"]:visible').count(), await page.locator('tr[data-has-value="true"]').count());
       assert.equal(await page.locator(".mm-group-row:visible").count(), 0);
       assert.equal(await page.locator(".mm-country-domain:visible").count(), await page.locator(".mm-country-domain").count());
-      assert.doesNotMatch(await page.locator("main").innerText(), /\b\d+\s+(rows?|indicators?)?\s*(hidden|filtered)/i);
+      // AC-RD-15 is about the Show filter of the table card: it prints no count. (K1 has its own ADR-036 hidden-rows disclosure, AC-V2-13.)
+      for (const card of await page.locator("[data-table-card]").all()) assert.doesNotMatch(await card.innerText(), /\b\d+\s+(rows?|indicators?)?\s*(hidden|filtered)/i);
       await setAll("all");
       assert.equal(await page.locator("tr[data-indicator]:visible").count(), total);
     }, {sparse: true});
@@ -166,17 +179,17 @@ describe("R7 PG-COUNTRY", () => {
       const list = entities.filter((e) => e.is_global !== true);
       const target = list.at(-1).entity_id;
       const other = list.at(-2).entity_id;
-      const url = page.url();
+      const path = new URL(page.url()).pathname;
       await page.selectOption("#country-switcher", target);
       await page.waitForTimeout(500);
-      assert.equal(page.url(), url, "selecting an option does not navigate");
+      assert.equal(new URL(page.url()).pathname, path, "selecting an option does not navigate"); // V9: the choice is written as c (spec A1.2), the page stays
       await page.focus("#country-switcher-go");
-      await Promise.all([page.waitForURL(`**/country/${target}`), page.keyboard.press("Enter")]);
+      await Promise.all([page.waitForURL(`**/country/${target}**`), page.keyboard.press("Enter")]);
       await page.waitForSelector(READY, {timeout: TIMEOUT});
       assert.equal(await page.locator("h1").getAttribute("data-entity"), target);
       await page.selectOption("#country-switcher", other);
       await page.focus("#country-switcher");
-      await Promise.all([page.waitForURL(`**/country/${other}`), page.keyboard.press("Enter")]);
+      await Promise.all([page.waitForURL(`**/country/${other}**`), page.keyboard.press("Enter")]);
       await page.waitForSelector(READY, {timeout: TIMEOUT});
       assert.equal(await page.locator("h1").getAttribute("data-entity"), other);
     });
@@ -209,7 +222,7 @@ describe("R7 PG-COUNTRY", () => {
     const sigs = new Map();
     for (const [ent, ind, dom, key, code, sentence] of CASES) {
       test(`${key}: ${ent} ${ind}`, async (t) => {
-        await withPage(t, `/country/${ent}`, async ({page}) => {
+        await withPage(t, `/country/${ent}#pc=1`, async ({page}) => {
           await page.addStyleTag({content: "html { filter: grayscale(1); }"});
           const tr = page.locator(`#domain-${dom} tr[data-indicator="${ind}"]`);
           const cell = tr.locator("td[data-state]");
@@ -244,7 +257,7 @@ describe("R7 PG-COUNTRY", () => {
   });
 
   test("AC-RD-12: an aggregate shows the not ranked wording; an unranked domain shows no percentile", async (t) => {
-    await withPage(t, "/country/SYA1", async ({page}) => {
+    await withPage(t, "/country/SYA1#pc=1", async ({page}) => {
       assert.ok((await page.locator('#domain-growth [data-tile="domain-figure"]').innerText()).includes("aggregate (not ranked)"));
       assert.equal(await page.locator('#domain-agri [data-tile="domain-figure"]').count(), 0);
       assert.equal(await page.locator("#domain-agri td.mm-pct .mm-fig").count(), 0);
@@ -266,5 +279,62 @@ describe("R7 PG-COUNTRY", () => {
       assert.equal(info.overflow, "auto");
       clean(log);
     }, {width: 320});
+  });
+});
+
+// V16 (Country page assembly; AC-V2-40 fixture part, 61; AC-RD-01, 53): K1, L1, T1 per domain, the percentile control, no controls that do not act. Needs the SYNTHETIC v2 fixture export
+// (EXPORT_DIR=tests/fixtures/v2_export: entities DEU..., indicator V06); on another export the tests skip.
+describe("V16 Country page assembly", () => {
+  const isV2 = () => domains.some((d) => d.domain_id === "qa") && entities.some((e) => e.entity_id === "DEU");
+
+  test("each domain band holds K1, then L1, then the T1 table, in the stored domain order", async (t) => {
+    if (!browser) return t.skip(reason);
+    if (!isV2()) return t.skip("needs the synthetic v2 fixture export (tests/fixtures/v2_export)");
+    await withPage(t, "/country/DEU", async ({page, log}) => {
+      const order = await page.locator("section.mm-country-domain").evaluateAll((els) => els.map((e) => e.getAttribute("data-domain")));
+      assert.deepEqual(order, domains.map((d) => d.domain_id));
+      for (const id of order) {
+        const kinds = await page.locator(`#domain-${id} [data-card="k1"], #domain-${id} [data-card="l1"], #domain-${id} [data-table-card]`).evaluateAll((els) => els.map((e) => (e.matches("[data-card=k1]") ? "k1" : e.matches("[data-card=l1]") ? "l1" : "t1")));
+        assert.deepEqual(kinds, ["k1", "l1", "t1"], id);
+      }
+      assert.deepEqual(await page.locator("section.mm-country-domain details.mm-l1").evaluateAll((els) => els.map((e) => e.open)), [true, true, false, false, false, false], "the first two L1 cards are expanded");
+      assert.equal(await page.locator("#filter-indicator, [id$='-rebase'], [data-action='proj']").count(), 0, "no control that does not act on this page");
+      clean(log);
+    });
+  });
+
+  test("AC-V2-25, 26: the Show percentile checkbox writes pc, adds the percentile layer with the caveat and the orientation sentence, and removes them again", async (t) => {
+    if (!browser) return t.skip(reason);
+    if (!isV2()) return t.skip("needs the synthetic v2 fixture export (tests/fixtures/v2_export)");
+    await withPage(t, "/country/DEU", async ({page}) => {
+      assert.equal(await page.locator("td.mm-pct, .mm-orientation").count(), 0);
+      assert.equal(await page.locator(".mm-caveat").count(), 1, "the caveat stands without pc");
+      await page.check("#show-percentile");
+      await page.waitForFunction(() => document.querySelectorAll("td.mm-pct").length > 0);
+      assert.equal(new URL(page.url()).hash, "#pc=1");
+      assert.equal(await page.locator(".mm-caveat").count(), 1);
+      assert.equal(await page.locator(".mm-orientation").count(), 1);
+      assert.ok((await page.locator(".mm-pc-notes").innerHTML()).indexOf("mm-caveat") < (await page.locator(".mm-pc-notes").innerHTML()).indexOf("mm-orientation"), "caveat first");
+      await page.uncheck("#show-percentile");
+      await page.waitForFunction(() => document.querySelectorAll("td.mm-pct").length === 0);
+      assert.equal(new URL(page.url()).hash, "", "off is the default: an empty hash");
+      assert.equal(await page.locator(".mm-orientation").count(), 0);
+      assert.equal(await page.locator(".mm-caveat").count(), 1, "the caveat stays once per page");
+    });
+  });
+
+  test("AC-V2-40 (fixture): the series files read by the first interaction (two open L1 cards, then one more card) are a few KB and none is read twice", async (t) => {
+    if (!browser) return t.skip(reason);
+    if (!isV2()) return t.skip("needs the synthetic v2 fixture export (tests/fixtures/v2_export)");
+    await withPage(t, "/country/DEU", async ({page, log}) => {
+      await page.waitForLoadState("networkidle");
+      await page.locator("#domain-fiscal details.mm-l1 > summary").click();
+      await page.waitForSelector("#domain-fiscal .mm-facet");
+      await page.waitForLoadState("networkidle");
+      const files = log.requests.filter((u) => /\/_file\/data\/series\//.test(u));
+      assert.equal(new Set(files).size, files.length, "each series file once");
+      assert.ok(files.length >= 4, `series files read: ${files.length}`);
+      assert.ok(files.length <= 8);
+    });
   });
 });

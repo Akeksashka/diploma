@@ -4,7 +4,7 @@
 // Rows: one per entity of the comparison set (countries, then the "Reference rows" group of stored aggregates), none dropped; a row without a
 // value keeps its state code and sentence and comes last in its group. No top-N, no total, no average, no rank is built here.
 import {DRAFT_HIDDEN_ROWS, DRAFT_HIDDEN_ROW_ITEM, DRAFT_INDICATOR_SORT_LABELS, DRAFT_RANK_SORT_LABELS} from "./copy.js";
-import {comparisonSet, countPeriodHiddenRows, splitByPeriod} from "./filter-model.js";
+import {comparisonSet, countHiddenRowsByReason, splitByCoverage} from "./filter-model.js";
 import {indicatorModel} from "./indicator-model.js";
 import {sortRows} from "./sort.js";
 import {seriesUnit} from "./units.js";
@@ -62,9 +62,10 @@ export function buildComparison({indicator, domainId, domains = [], scorecard, e
     fillBin: r.state?.key === "ranked" || r.state?.key === "ahead" ? r.bin : null
   }));
   // Period (ADR-036): one split per card render; N and the list come from the same arguments.
-  const opts = {dateKey: "refPeriodEnd"};
-  const {kept, hidden} = splitByPeriod(marked, state.from ?? null, state.to ?? null, opts);
-  const hiddenSentence = DRAFT_HIDDEN_ROWS(countPeriodHiddenRows(marked, state.from ?? null, state.to ?? null, opts));
+  const split = splitByCoverage(marked, {from: state.from ?? null, to: state.to ?? null, dateKey: "refPeriodEnd"});
+  const kept = split.drawn;
+  const hidden = split.hidden.map((h) => h.row);
+  const hiddenSentence = DRAFT_HIDDEN_ROWS(countHiddenRowsByReason(split.hidden).total);
   const s = RANK_SORTS[sort] ?? RANK_SORTS[DEFAULT_RANK_SORT];
   const order = (rows) => [...sortRows(rows.filter((r) => r.hasValue), s.field, {dir: s.dir}), ...sortRows(rows.filter((r) => !r.hasValue), "name")];
   const inCountries = new Set(countryIds);

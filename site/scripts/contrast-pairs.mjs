@@ -7,6 +7,8 @@ const UI = 3;
 const t = (fg, bg, min, kind) => ({fg, bg, min, kind});
 const text = (fg, bg) => t(fg, bg, TEXT, "text");
 const ui = (fg, bg) => t(fg, bg, UI, "ui");
+// Light theme only (spec A2.5: the dark pairs of new tokens are not asserted; the existing dark block is untouched).
+const lightOnly = (pair) => ({...pair, lightOnly: true});
 
 // Token name prefixes that hold lengths or font stacks, not colours.
 export const NON_COLOUR_PREFIXES = ["--mm-space-", "--mm-radius", "--mm-font", "--mm-fs-", "--mm-tile-"];
@@ -22,6 +24,14 @@ export const PAIRS = [
   ui("--mm-div-neg", "--mm-surface"),
   ui("--mm-div-pos", "--mm-surface"),
   ui("--mm-div-mid", "--mm-surface"),
+  // C4 and C6 value ramp (ADR-026): the dark end and the two diverging ends stand out from the page and the card; cell text (--mm-text, with a page-colour halo) is read on the light end.
+  lightOnly(ui("--mm-val-seq-2", "--mm-bg")),
+  lightOnly(ui("--mm-val-seq-2", "--mm-card")),
+  lightOnly(ui("--mm-val-neg", "--mm-bg")),
+  lightOnly(ui("--mm-val-neg", "--mm-card")),
+  lightOnly(ui("--mm-val-pos", "--mm-bg")),
+  lightOnly(ui("--mm-val-pos", "--mm-card")),
+  lightOnly(text("--mm-text", "--mm-val-seq-1")),
   ui("--mm-alert-watch", "--mm-surface"),
   ui("--mm-alert-alert", "--mm-surface"),
   text("--mm-alert-watch-ink", "--mm-alert-watch"),

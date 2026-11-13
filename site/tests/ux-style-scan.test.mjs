@@ -29,7 +29,7 @@ test("the scan flags each seeded violation", () => {
 });
 
 // R5 (AC-RD-50, AC-RD-62 support): the redesign modules are named here so that dropping one from the scan file set fails.
-const NEW_MODULES = ["hash", "period", "units", "sort", "missing", "copy", "country-view", "profile-chart", "indicator-view", "value-chart"].map((n) => `lib/${n}.js`);
+const NEW_MODULES = ["compare-page", "blocked", "compare-controls", "compare-data", "hatch", "multi-line", "bar-list", "choropleth", "choropleth-model", "scatter", "time-heatmap", "hash", "period", "units", "sort", "missing", "copy", "country-view", "profile-chart", "indicator-view", "value-chart", "caption", "caption-view", "compat", "hidden-rows", "l1-card", "mode-switch", "peer-strip", "picker", "country-list", "series-chart"].map((n) => `lib/${n}.js`);
 
 test("R5: the redesign modules are in the colour/inline-style file set and carry no literal", () => {
   const files = listFiles(src, (n) => /\.(js|md)$/.test(n)).map((f) => f.slice(src.length + 1));
@@ -78,7 +78,10 @@ test("L10 filter bar CSS: sticky slot, reserve per breakpoint, offsets equal the
   for (const w of ["79.99", "72.99", "52.99", "45.99", "39.99"]) assert.ok(css.includes(`@media (max-width: ${w}rem) { :root:has(#filterbar-slot) { --fbar-reserve:`), `reserve at ${w}rem`);
   assert.match(css, /:root:has\(#filterbar-slot\) \{ scroll-padding-top: var\(--fbar-h\); \}/);
   assert.match(css, /scroll-margin-top: var\(--fbar-h\)/);
-  assert.match(css, /thead th \{ top: var\(--fbar-h, 0px\); \}/);
+  // L25: the country/indicator tables sit in their own scroll containers, so their sticky header is at top: 0 inside the container
+  // and the container reserves scroll padding; the old page-level offset would cover the first rows.
+  assert.doesNotMatch(css, /thead th \{ top: var\(--fbar-h, 0px\); \}/);
+  assert.match(css, /\.mm-ctry-scroll, \.mm-ind-scroll \{ scroll-padding-top: 3\.5rem; \}/);
   assert.match(css, /@media print \{ \.mm-filterbar-slot, \.mm-filterbar \{ display: none; \} \.mm-print-filters \{ display: block;/);
   assert.match(css, /@media \(forced-colors: active\) \{ \.mm-filterbar, \.mm-filterbar-chip/);
   assert.match(css, /@media \(scripting: none\) \{ :root:has\(#filterbar-slot\) \{ --fbar-reserve: 0px;/);

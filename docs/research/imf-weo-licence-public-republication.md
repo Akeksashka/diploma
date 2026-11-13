@@ -1,5 +1,5 @@
 ---
-status: draft   # draft | approved ; written by the researcher agent, not approved
+status: approved   # approved by the user on 2026-11-12 (stated in session: "схвали та дозволь дизайн з imf weo"); note: licence reading rests on a page summary, not the full IMF text (Finding 1); full read / copyright@imf.org confirmation remains the user's action
 topic: IMF WEO database licence for republishing values (including projections) on a public static dashboard with attribution
 date: 2026-11-07
 ---

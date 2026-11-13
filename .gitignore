@@ -4,6 +4,11 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 *.egg-info/
+# data/ is a local mirror only (CLAUDE.md): ignore everything except the tracked .gitkeep placeholders (incl. data/geo/)
+data/*
+!data/raw/
+!data/staging/
+!data/curated/
 data/raw/*
 data/staging/*
 data/curated/*

@@ -441,7 +441,7 @@ sources:
     # T58/T64. Disabled until an operator probe confirms the discovery pattern (ADR-028), the
     # workbook layout and the unit spellings (fixture is synthetic; [UNVERIFIED]). Enabling is also
     # gated on the user's licence decision (redistribution_of_raw: unclear).
-    enabled: false
+    enabled: true   # enabled 2026-11-13 on the user's go-ahead after a landing-page probe (link pattern matched once); xlsx layout still UNVERIFIED; licence stays hash_only/withheld
     wave: 1
     base_url: https://thedocs.worldbank.org/
     auth: {type: none}
@@ -634,7 +634,7 @@ sources:
     # T58. Own source because the bulk host differs from www.fao.org (one host per source).
     # Disabled until an operator probe confirms the zip URL and the member layout (fixture is
     # synthetic; [UNVERIFIED]).
-    enabled: false
+    enabled: true   # enabled 2026-11-13 on the user's go-ahead after a HEAD probe (HTTP 200, 2.2 MB zip); member layout still UNVERIFIED
     wave: 1
     base_url: https://bulks-faostat.fao.org/
     auth: {type: none}
@@ -735,7 +735,7 @@ sources:
     # T58. Direct REST with httpx; the AGPL dbnomics client is not used. Used ONLY for A02c because
     # AMECO has no native API (research U5). Disabled until an operator probe confirms the response
     # shape and series codes (fixture is synthetic; [UNVERIFIED]).
-    enabled: false
+    enabled: true   # enabled 2026-11-13 on the user's go-ahead after a one-request probe (HTTP 200, 38 AMECO series, 25 of 42 countries; ROU appears as ROM); series codes still UNVERIFIED
     wave: 1
     base_url: https://api.db.nomics.world/
     auth: {type: none}

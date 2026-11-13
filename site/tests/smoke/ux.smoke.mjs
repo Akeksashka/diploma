@@ -9,7 +9,7 @@ import {after, before, describe, test} from "node:test";
 import {fileURLToPath} from "node:url";
 import {contrastRatio, resolveThemes} from "../../scripts/lib/contrast.mjs";
 import {NON_COLOUR_PREFIXES} from "../../scripts/contrast-pairs.mjs";
-import {DIST, REQUIRE_BROWSER, distBuilt, launchBrowser, openPage, serve} from "./support.mjs";
+import {DIST, REQUIRE_BROWSER, distBuilt, launchBrowser, markIndex, openPage, serve} from "./support.mjs";
 import {
   SCHEMES,
   VIEWPORTS,
@@ -73,10 +73,11 @@ after(async () => {
   await site?.close();
 });
 
-async function withPage(t, path, ready, fn, {before: prep = null} = {}) {
+async function withPage(t, path, ready, fn, {before: prep = null, index = null} = {}) {
   if (!browser) return t.skip(reason);
   const {page, context, log} = await openPage(browser, site.origin, {fixedTime: NOW});
   try {
+    if (index) await markIndex(page.context(), index); // SYNTHETIC scale_hint = index (A1.5); see support.mjs
     if (prep) await prep(page);
     await page.goto(`${site.origin}${path}`);
     await page.waitForSelector(ready, {timeout: TIMEOUT});
@@ -644,7 +645,7 @@ describe("T117-T119 V2 dot plot, table alternative and cards, on PG-INDICATOR", 
 // the series file in the browser, so more than 5 countries can be selected without any other change to the site.
 const WIDE_M09 = readFileSync(join(here, "..", "fixtures", "explorer-m09-7countries.parquet"));
 const useWide = (page) => page.route(/\/_file\/data\/series\/M09\.[0-9a-f]+\.parquet/, (r) => r.fulfill({status: 200, contentType: "application/octet-stream", body: WIDE_M09}));
-const withWide = (t, fn, opts = {}) => withPage(t, "/explorer#i=M09&c=FRA,DEU,IND,ITA,JPN", "#explorer-figure svg", fn, {before: async (page) => { await useWide(page); await opts.before?.(page); }});
+const withWide = (t, fn, opts = {}) => withPage(t, "/explorer#i=M09&c=FRA,DEU,IND,ITA,JPN", "#explorer-figure svg", fn, {before: async (page) => { await useWide(page); await opts.before?.(page); }, index: opts.index ?? null});
 
 describe("T125: V3 explorer chart (AC-UX-3 to 6, 12)", () => {
   test("figure label, hollow and ring marks, end labels, no legend, gap kept (AC-UX-5)", async (t) => {
@@ -764,7 +765,15 @@ describe("T125: V3 explorer chart (AC-UX-3 to 6, 12)", () => {
     });
   });
 
-  test("keyboard: summary, selects, checkboxes and group buttons are reachable by Tab and operable by Space", async (t) => {
+  test("A1.5: the rebase control and the base-period select are absent on the series of this export", async (t) => {
+    await withWide(t, async ({page}) => {
+      assert.equal(await page.locator("#explorer-rebase").count(), 0);
+      assert.equal(await page.locator("#explorer-base").count(), 0);
+      assert.equal(await page.locator("#rebase-note").count(), 0);
+    });
+  });
+
+  test("keyboard: summary, selects, checkboxes and group buttons are reachable by Tab and operable by Space (rebase control with a synthetic scale_hint = index)", async (t) => {
     await withWide(t, async ({page}) => {
       await setViewport(page, 1280);
       await page.focus("#explorer-selection summary");
@@ -777,10 +786,10 @@ describe("T125: V3 explorer chart (AC-UX-3 to 6, 12)", () => {
       await page.focus("#explorer-entities input[value=POL]");
       await page.keyboard.press("Space");
       assert.equal(await page.isChecked("#explorer-entities input[value=POL]"), true);
-    });
+    }, {index: ["M09"]});
   });
 
-  test("rebase marks: index-100 and base-period rules, the confirmed title and the display-only note stay (AC-DASH-6 unchanged)", async (t) => {
+  test("rebase marks: index-100 and base-period rules, the confirmed title and the display-only note stay (AC-DASH-6 unchanged; synthetic scale_hint = index)", async (t) => {
     await withWide(t, async ({page}) => {
       await page.check("#explorer-rebase");
       await page.waitForFunction(() => /rebased to 100 at/.test(document.querySelector("#explorer-title")?.textContent ?? ""));
@@ -789,7 +798,7 @@ describe("T125: V3 explorer chart (AC-UX-3 to 6, 12)", () => {
       assert.ok((await page.textContent("#chart-explain")).includes("The grey lines mark the index value 100 and the base period."));
       assert.ok((await page.$$eval("#explorer-figure svg text", (x) => x.map((n) => n.textContent))).some((s) => /^Germany: [\d.]+( e)? index, \d{4}-\d{2}-\d{2} = 100$/.test(s)));
       assert.match(await page.$eval("#explorer-figure svg", (s) => s.textContent), /index, \d{4}-\d{2}-\d{2} = 100/);
-    });
+    }, {index: ["M09"]});
   });
 
   test("CLS at most 0.1 on the 7-country file", async (t) => {
@@ -1475,7 +1484,8 @@ describe("R22 AC-RD-54: redesign page types, interactive states", () => {
     });
 
     test(`country ${COUNTRY} with a history chart open, ${scheme}: text contrast, profile dots and history line 3:1 on the page`, async (t) => {
-      await withPage(t, `/country/${COUNTRY}`, ".mm-country-domain table tbody tr", async ({page}) => {
+      // ADR-037 decision 3 (V15): the percentile strip is the opt-in layer, so the contrast of its dots is checked with pc=1
+      await withPage(t, `/country/${COUNTRY}#pc=1`, ".mm-country-domain table tbody tr", async ({page}) => {
         await setTheme(page, scheme);
         const dots = await markColours(page, "figure[id^=profile-] circle");
         assert.ok(dots.length > 0, "profile dots found (the loop below is not vacuous)");

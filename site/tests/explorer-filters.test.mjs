@@ -128,7 +128,7 @@ test("L21: the generated page mounts Domain, Frequency and Period only, reads th
   assert.doesNotMatch(page, /replaceHash/);
   assert.doesNotMatch(page, /\bg:|store\.set\(\{g/, "Group is neither shown nor written");
   const hash = readFileSync(new URL("../src/lib/hash.js", import.meta.url), "utf8");
-  assert.match(hash, /const KEYS = \["i", "c", "g", "d", "f", "from", "to"\]/);
+  assert.match(hash, /const KEYS = \["i", "c", "g", "d", "f", "from", "to", "x", "y", "p", "pc", "ctx", "oth", "stl", "rb"\]/);
 });
 
 test("PG-SERIES narrows the picker on load: pickerGroups follows d and f; an empty narrowed list keeps the full picker", () => {

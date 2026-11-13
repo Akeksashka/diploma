@@ -7,7 +7,11 @@ import {failureBlocks, noscriptHtml} from "./state-blocks.js";
 import {installCarry} from "./carry.js";
 
 const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"})[c]);
+// V8: the mode pages carry only the keys that stay meaningful for them (carry.js CARRY_KEYS); every other header link carries the whole hash as before.
+const CARRY_TARGET = {"/country": "country", "/compare": "compare"};
 const norm = (p) => (String(p ?? "").replace(/\/index$/, "").replace(/\/+$/, "") || "/");
+// A Country page fixes the country: its header Compare link forces c to that entity (data-carry-set), so a stale c in the hash never disagrees with the page.
+const COUNTRY_PAGE = /^\/country\/([A-Za-z][A-Za-z0-9_.-]{0,40})$/;
 
 // Static header markup (a string, for Framework's `header` option, so it is in the built HTML without
 // JavaScript): skip link first in DOM order, then the site title and the `pages` navigation, then the <noscript> notice
@@ -15,7 +19,9 @@ const norm = (p) => (String(p ?? "").replace(/\/index$/, "").replace(/\/+$/, "")
 // heading: the page's own h1 is the only h1. `path` is the page path; the matching link gets aria-current.
 export function headerHtml({title, pages, path}) {
   const here = norm(path);
-  const items = pages.map((p) => `<li><a href="${esc(p.path)}" data-carry${norm(p.path) === here ? ' aria-current="page"' : ""}>${esc(p.name)}</a></li>`).join("");
+  const fixed = COUNTRY_PAGE.exec(here)?.[1] ?? null;
+  const set = (p) => (fixed && norm(p.path) === "/compare" ? ` data-carry-set="c=${esc(fixed)}"` : "");
+  const items = pages.map((p) => `<li><a href="${esc(p.path)}" data-carry${CARRY_TARGET[norm(p.path)] ? `="${CARRY_TARGET[norm(p.path)]}"` : ""}${set(p)}${norm(p.path) === here ? ' aria-current="page"' : ""}>${esc(p.name)}</a></li>`).join("");
   return `<a class="mm-skip" href="#observablehq-main">${esc(SKIP_LINK_TEXT)}</a>\n<div class="mm-header"><a class="mm-site-title" href="${esc(pages[0]?.path ?? "/")}">${esc(title)}</a>\n<nav class="mm-nav" aria-label="${esc(NAV_LABEL)}"><ul>${items}</ul></nav></div>\n${noscriptHtml()}`;
 }
 

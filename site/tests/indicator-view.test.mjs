@@ -95,7 +95,7 @@ test("the filter note and the percentile column label are present verbatim (AC-R
 
 test("the table has one row per entity of the scorecard, nothing dropped, aggregates included (AC-RD-20)", () => {
   const m = build("T04");
-  const out = String(indicatorTable(html, m, viewRows(m, {}), SORTS.name, null));
+  const out = String(indicatorTable(html, m, viewRows(m, {}), SORTS.name, null, {percentile: true}));
   assert.equal(out.split('<tr role="row" data-entity=').length - 1, scorecards.growth.entities.length);
   for (const e of scorecards.growth.entities) assert.equal(out.split(`<tr role="row" data-entity="${e.entity_id}"`).length, 2, e.entity_id);
   assert.match(out, /<tbody data-group="without-value"><tr class="mm-group-row"><th scope="rowgroup" colspan="8">Indicators without a value in this export<\/th>/);
@@ -105,7 +105,7 @@ test("the table has one row per entity of the scorecard, nothing dropped, aggreg
 
 test("aria-sort follows the active sort on the four sortable headers only (AC-RD-22)", () => {
   const m = build("T02");
-  const head = (sort) => /<thead>[\s\S]*<\/thead>/.exec(String(indicatorTable(html, m, viewRows(m, {sort}), SORTS[sort], null)))[0];
+  const head = (sort) => /<thead>[\s\S]*<\/thead>/.exec(String(indicatorTable(html, m, viewRows(m, {sort}), SORTS[sort], null, {percentile: true})))[0];
   assert.match(head("name"), /<th scope="col" class="" aria-sort="ascending">Country<\/th>/);
   assert.match(head("name"), /aria-sort="none">Latest value</);
   assert.match(head("value"), /aria-sort="descending">Latest value</);
@@ -116,7 +116,7 @@ test("aria-sort follows the active sort on the four sortable headers only (AC-RD
 
 test("every value carries its unit, the estimate mark, the stored percentile and bin, the offset and links (AC-RD-42, 45)", () => {
   const m = build("T02");
-  const out = String(indicatorTable(html, m, viewRows(m, {}), SORTS.name, null));
+  const out = String(indicatorTable(html, m, viewRows(m, {}), SORTS.name, null, {percentile: true}));
   const tr = (id) => new RegExp(`<tr role="row" data-entity="${id}"[\\s\\S]*?</tr>`).exec(out)[0];
   assert.match(tr("SY01"), /<span class="mm-unit">SYNTH_UNIT<\/span>/);
   assert.match(tr("SY01"), /data-mark="estimate"/);
@@ -130,12 +130,12 @@ test("every value carries its unit, the estimate mark, the stored percentile and
 
 test("a transformed value column appears only when a cell has a non-level transform; the header uses the transform label (C-IND-5, CR-6)", () => {
   const plain = build("T02");
-  assert.doesNotMatch(String(indicatorTable(html, plain, viewRows(plain, {}), SORTS.name, null)), /Transformed value/);
+  assert.doesNotMatch(String(indicatorTable(html, plain, viewRows(plain, {}), SORTS.name, null, {percentile: true})), /Transformed value/);
   const sc = structuredClone(scorecards);
   const cell = sc.growth.entities.find((e) => e.entity_id === "SY01").indicators.find((c) => c.indicator_id === "T02");
   Object.assign(cell, {transform_id: "YOY", transformed_value: 1.5});
   const m = build("T02", sc);
-  const out = String(indicatorTable(html, m, viewRows(m, {}), SORTS.name, null));
+  const out = String(indicatorTable(html, m, viewRows(m, {}), SORTS.name, null, {percentile: true}));
   assert.match(out, /<th scope="col" class="mm-num">Transformed value \(YOY\)<\/th>/);
   assert.match(out, /data-label="Transformed value \(YOY\)">1\.5 <span class="mm-unit">YOY<\/span>/);
   assert.match(out, /colspan="9"/);
@@ -238,18 +238,16 @@ test("the page is a Compare band (rank card slot, dot card beside it) and a Tabl
   assert.match(page("T05"), /mm-card--span-12" id="indicator-compare"/);
 });
 
-test("the generated page names the series file only when the manifest lists it, and loads the groups", () => {
+test("V23: the generated PG-INDICATOR page is Compare mode with the indicator fixed: header, static mode switch, comparePage, groups loaded, no write of i", () => {
   const ind = indicators.find((i) => i.indicator_id === "T02");
-  const none = indicatorPageSource(ind, domains, "LEVEL");
-  assert.match(none, /const seriesFile = null;/);
   const src = indicatorPageSource(ind, domains, "LEVEL", {files: [{path: "series/T02.parquet"}, {path: "series/T01.parquet"}]});
-  assert.match(src, /const seriesFile = FileAttachment\("\.\.\/data\/series\/T02\.parquet"\);/);
-  assert.doesNotMatch(src, /series\/T01/);
   assert.match(src, /meta\/groups\.json/);
-  assert.match(src, /indicatorBlock\(html, Plot, model,/);
+  assert.match(src, /comparePage\(html, Plot, inputs, historySource\(/);
+  assert.match(src, /fixedIndicator: "T02"/);
   assert.match(src, /id="indicator-header"/);
-  assert.match(src, /mountFilterBar\(html, \{page: "indicator"/);
-  assert.match(src, /maxEntities: 1/);
+  assert.match(src, /data-mode="compare"/);
+  assert.match(src, /maxEntities: 5/);
+  assert.doesNotMatch(src, /indicatorBlock|mountFilterBar/);
   assert.doesNotMatch(src, /R9 placeholder/);
 });
 
@@ -268,4 +266,14 @@ test("AC-RD-42: a PG-INDICATOR indicator with no unit_label states the defect on
   for (const tip of tips) for (const r of rows) assert.ok(tip.o.title(r).split("\n")[1].endsWith(` ${stated}`) && tip.o.title(r).split("\n")[1].startsWith(r.estimate ? `${r.valueText} e` : r.valueText), "the tip keeps the value and states the defect");
   const table = String(resultsBlock(html, m, {group: "all", sort: "name", focus: null}, peerGroups([], null)));
   assert.ok(table.includes(stated));
+});
+
+test("T2 (V22, ADR-037 decision 3): the percentile column and its sort are opt-in; without them the stored state is the State column", () => {
+  const m = build("T01");
+  const off = String(indicatorTable(html, m, viewRows(m, {}), SORTS.name, null));
+  assert.doesNotMatch(off, /percentile vs all ranked countries|mm-pct/);
+  assert.match(off, /<th scope="col" class="">State<\/th>/);
+  const on = String(indicatorTable(html, m, viewRows(m, {}), SORTS.name, null, {percentile: true}));
+  assert.match(on, /percentile vs all ranked countries/);
+  assert.match(String(resultsBlock(html, m, {group: "all", sort: "name", focus: null}, peerGroups([], null), null, {percentile: true})), /percentile vs all ranked countries/);
 });

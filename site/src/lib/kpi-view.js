@@ -2,11 +2,12 @@
 // in. Display only: every number printed is a stored field formatted by kpi-model.js. No delta, arrow, rank or count; no colour by direction;
 // the percentile chip colour is the stored bin token, every other state keeps its code, glyph and sentence (AC-UX-2).
 import {
-  AGGREGATE_NOT_RANKED, DRAFT_KPI_ERROR_CONSEQUENCE, DRAFT_OFFSET_FLAG, DRAFT_REGIONS as R, DRAFT_UNIT_MISSING_SENTENCE, FLAG_ESTIMATE, FLAG_LOW_COVERAGE, INDICATOR_SERIES_LINK,
+  AGGREGATE_NOT_RANKED, DRAFT_COUNTRY_CARD_TITLES, DRAFT_KPI_ERROR_CONSEQUENCE, DRAFT_NOT_STATED, DRAFT_OFFSET_FLAG, DRAFT_REGIONS as R, DRAFT_STALE_PERIOD, DRAFT_UNIT_MISSING_SENTENCE, FLAG_ESTIMATE, FLAG_LOW_COVERAGE, INDICATOR_SERIES_LINK,
   NA, NO_POSITION_LOW_COVERAGE, PERCENTILE_COLUMN_LABEL, SERIES_LINK_LABEL
 } from "./copy.js";
 import {binLabel} from "./bins.js";
 import {glyph, glyphSprite} from "./glyphs.js";
+import {hiddenRowsRegion} from "./hidden-rows.js";
 import {kpiModel} from "./kpi-model.js";
 import {busyBlock, errorBlock, failureKind} from "./state-blocks.js";
 import {STATES} from "./states.js";
@@ -99,4 +100,23 @@ export function mountKpi(html, dash, {data, doc = globalThis.document}) {
     if (out.kind === "tiles") slot.classList.add("mm-card--tiles");
     dash.fill(slot, ...sprite, ...out.nodes);
   });
+}
+
+// V11 (K1, spec 3; AC-V2-10, 11, 12, 13): one latest-value card of the country page. `r` is a country-model row with `stale` (k1Model). Printed: indicator name,
+// the stored value with its unit, the reference period label, the source name, the stale marker with the stored period, and the hollow EST/PROV or inherited
+// mark. No delta, arrow, sparkline or percentile (the neutral delta needs a stored delta that the export does not hold; the percentile is the opt-in layer).
+export function k1Card(html, r, {href = (id) => `../indicator/${id}`} = {}) {
+  const marked = mark(html, r);
+  const stale = r.stale ? html`<p class="mm-stale" data-flag="stale"><span class="mm-square" aria-hidden="true"></span> ${DRAFT_STALE_PERIOD(r.periodText ?? DRAFT_NOT_STATED)}</p>` : "";
+  const source = r.sourceName ? (r.sourceUrl ? html`<a href="${r.sourceUrl}" rel="noopener">${r.sourceName}</a>` : r.sourceName) : DRAFT_NOT_STATED;
+  return html`<div class="mm-card mm-card--tile mm-card--span-3 mm-tile" data-tile="k1" data-indicator="${r.indicatorId}" data-has-value="true" data-stale="${r.stale ? "true" : "false"}"><h3><a href="${href(r.indicatorId)}" data-link="indicator-name" data-carry>${r.name}</a></h3>
+<p class="mm-tile-value"><span class="mm-tile-number" data-field="value">${r.valueText}</span> <span class="mm-unit" data-field="unit">${r.unit || DRAFT_UNIT_MISSING_SENTENCE}</span>${marked === "" ? "" : html` ${marked}`}</p>
+<p class="mm-card-sub" data-field="period">${r.periodText ?? r.refPeriodEnd ?? DRAFT_NOT_STATED}</p>
+<p class="mm-tile-source" data-field="source">${source}</p>${stale}</div>`;
+}
+
+// The K1 block of one domain band: the hidden-rows region (role="status"; empty at N = 0) and the grid of cards. `k1` is k1Model(domain).
+export function k1Block(html, k1, {domainId, href = (id) => `../indicator/${id}`} = {}) {
+  const region = hiddenRowsRegion(html, k1.hidden, {href: (row) => href(row.indicatorId)});
+  return html`<div class="mm-k1" data-card="k1" data-domain="${domainId}"><h3>${DRAFT_COUNTRY_CARD_TITLES.k1}</h3>${region}<div class="mm-grid mm-k1-grid">${k1.cards.map((r) => k1Card(html, r, {href}))}</div></div>`;
 }

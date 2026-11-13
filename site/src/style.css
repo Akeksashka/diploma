@@ -34,6 +34,11 @@
   --mm-div-neg: #b35806;
   --mm-div-pos: #2166ac;
   --mm-div-mid: #6b7480;
+  /* stored-value ramp of C4 and C6 (ADR-026): its own hues, never the percentile bins (--mm-pct-*); sequential green, diverging brown-teal with the midpoint at the page colour. Light theme only. */
+  --mm-val-seq-1: #e5f5e0;
+  --mm-val-seq-2: #00441b;
+  --mm-val-neg: #8c510a;
+  --mm-val-pos: #01665e;
   /* alert */
   --mm-alert-watch: #9a5b00;
   --mm-alert-alert: #b42318;
@@ -595,10 +600,20 @@ body { background: var(--mm-canvas); }
 @media (max-width: 52.99rem) { :root:has(#filterbar-slot) { --fbar-reserve: 12rem; } }
 @media (max-width: 45.99rem) { :root:has(#filterbar-slot) { --fbar-reserve: 13.4rem; } }
 @media (max-width: 39.99rem) { :root:has(#filterbar-slot) { --fbar-reserve: 3.1rem; } }
-:root:has(#filterbar-slot[data-empty]) { --fbar-reserve: 0px; --fbar-h: 0px; }
-@media (scripting: none) { :root:has(#filterbar-slot) { --fbar-reserve: 0px; --fbar-h: 0px; } }
+:root:has(#filterbar-slot[data-empty]) { --fbar-reserve: 0px; --fbar-h: 0px; --fbar-mode: 0px; }
+@media (scripting: none) { :root:has(#filterbar-slot) { --fbar-reserve: 0px; --fbar-h: 0px; --fbar-mode: 0px; } }
+/* V8: pages with a mode switch (Country, Compare) reserve one more row for it above the controls (also in the compact bar, where it takes the full first row). */
+:root:has(#filterbar-slot[data-mode]) { --fbar-mode: 2.6rem; }
+.mm-filterbar-slot[data-mode] { min-height: calc(var(--fbar-reserve, 0px) + var(--fbar-mode, 0px)); }
+@media (scripting: none) { :root:has(#filterbar-slot[data-mode]) { --fbar-mode: 0px; } }
 .mm-filterbar-slot { display: flex; flex-direction: column; position: sticky; top: 0; z-index: 20; min-height: var(--fbar-reserve, 0px); margin: var(--mm-space-4) 0; box-sizing: border-box; }
 .mm-filterbar-slot[data-empty] { display: none; }
+.mm-mode-switch ul { display: flex; flex-wrap: nowrap; gap: var(--mm-space-1) var(--mm-space-3); margin: 0 0 var(--mm-space-2); padding: 0; list-style: none; }
+.mm-mode-switch a { display: inline-block; min-height: 24px; min-width: 24px; box-sizing: border-box; padding: var(--mm-space-1) var(--mm-space-2); color: var(--mm-text); border-bottom: 2px solid transparent; }
+.mm-mode-switch a[aria-current="page"] { font-weight: 700; text-decoration: underline; border-bottom-color: var(--mm-text); }
+.mm-filterbar-slot > .mm-mode-switch { padding: var(--mm-space-2) var(--mm-space-4) 0; background: var(--mm-card); border: 1px solid var(--mm-card-border); border-radius: var(--mm-radius); }
+@media (max-width: 39.99rem) { .mm-filterbar:has(> .mm-mode-switch) { flex-wrap: wrap; } .mm-filterbar > .mm-mode-switch { flex: 1 0 100%; min-width: 0; } .mm-mode-switch ul { flex-wrap: wrap; } }
+@media print { .mm-mode-switch { display: none; } }
 /* a focused or targeted element is never left under the bar (WCAG 2.4.11); the bar's own controls are excluded so focusing them does not scroll the page */
 :root:has(#filterbar-slot) { scroll-padding-top: var(--fbar-h); }
 :root:has(#filterbar-slot) :where(a, button, input, select, textarea, summary, [tabindex], [id], h1, h2, h3):not(#filterbar-slot *) { scroll-margin-top: var(--fbar-h); }
@@ -775,3 +790,58 @@ body { background: var(--mm-canvas); }
 .mm-country-page .mm-card--table { min-height: 0; }
 .mm-filterbar-controls .mm-country-switch select { min-height: 24px; max-width: 100%; }
 /* end L22 */
+
+/* V11 to V16 (Dashboard v2 Country mode: K1 cards, L1 panels, L2, P1a, stale marker, percentile control). Tokens only; light theme (A2.5): no new dark rule. Stale is a square marker plus the
+   word, never a dash or a hatch (A1.1). Nothing here is coloured by direction. */
+.mm-slot { display: contents; }
+.mm-k1 { grid-column: 1 / -1; min-width: 0; }
+.mm-k1 h3, .mm-l1 > h3 { margin: 0 0 var(--mm-space-2); }
+.mm-k1-grid { margin: var(--mm-space-2) 0 0; }
+.mm-tile-source { margin: 0; max-width: none; color: var(--mm-text-muted); font-size: var(--mm-fs-small); overflow-wrap: anywhere; }
+.mm-tile-source a { display: inline-block; min-height: 24px; padding: var(--mm-space-1) 0; box-sizing: border-box; }
+.mm-stale { display: inline-flex; align-items: center; gap: var(--mm-space-1); margin: var(--mm-space-1) 0 0; font-size: var(--mm-fs-small); color: var(--mm-text); }
+.mm-facet-head .mm-stale { margin: 0; }
+.mm-square { display: inline-block; width: .6rem; height: .6rem; background: var(--mm-text); border: 1px solid var(--mm-text); }
+.mm-l1 > summary { min-height: 24px; cursor: pointer; font-weight: 700; }
+.mm-l1-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); gap: var(--mm-space-4); margin: var(--mm-space-3) 0 0; }
+.mm-facet { min-width: 0; padding: var(--mm-space-3); border: 1px solid var(--mm-card-border); border-radius: var(--mm-radius); background: var(--mm-card); }
+.mm-facet-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--mm-space-1) var(--mm-space-3); }
+.mm-facet-head h4 { flex: 1 1 10rem; margin: 0; }
+.mm-facet-expand, .mm-l1-more button { min-height: 24px; min-width: 24px; }
+.mm-facet .mm-figure, .mm-l2 .mm-figure, .mm-p1 .mm-figure { margin: var(--mm-space-2) 0; max-width: 100%; overflow-x: auto; color: var(--mm-text); }
+.mm-facet .mm-figure svg { display: block; min-width: 18rem; max-width: 100%; height: auto; }
+.mm-l1-detail { margin: var(--mm-space-3) 0 0; }
+.mm-l1-detail:empty { display: none; }
+.mm-l2, .mm-p1 { margin: var(--mm-space-4) 0 0; padding: var(--mm-space-3); border: 1px solid var(--mm-card-border); border-radius: var(--mm-radius); }
+.mm-l2 h4, .mm-p1 h4 { margin: 0 0 var(--mm-space-2); }
+.mm-caption dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 0 var(--mm-space-3); margin: var(--mm-space-2) 0; font-size: var(--mm-fs-small); }
+.mm-caption dl > div { display: contents; }
+.mm-caption dt { color: var(--mm-text-muted); }
+.mm-caption dd { margin: 0; overflow-wrap: anywhere; }
+.mm-caption-legend { margin: 0 0 var(--mm-space-2); padding-left: var(--mm-space-5); font-size: var(--mm-fs-small); }
+.mm-view-table table { font-size: var(--mm-fs-small); }
+.mm-percentile-toggle { display: inline-flex; align-items: center; gap: var(--mm-space-2); min-height: 24px; }
+.mm-pc-notes:empty { display: none; }
+.mm-country-page [data-slot="percentile-control"]:empty { display: none; }
+.mm-state-cell .mm-sentence { color: var(--mm-text-muted); font-size: .78rem; }
+@media print { .mm-facet-expand, .mm-l1-more, .mm-percentile-toggle { display: none; } .mm-facet .mm-figure svg { min-width: 0; } }
+/* end V11 to V16 */
+
+/* Compare mode (V17 to V23): control strips, cards, the C4 legend ramp. Tokens only; light theme only (A2.5). */
+.mm-compare-page { display: grid; gap: var(--mm-space-4); }
+.mm-compare-section { min-width: 0; }
+.mm-compare-controls { display: flex; flex-wrap: wrap; gap: var(--mm-space-2) var(--mm-space-4); align-items: center; margin: 0 0 var(--mm-space-2); }
+.mm-compare-field select { max-width: 100%; }
+.mm-compare-flag { display: inline-flex; align-items: center; gap: var(--mm-space-1); min-height: 24px; }
+.mm-compare-card { margin: 0 0 var(--mm-space-3); padding: var(--mm-space-3); border: 1px solid var(--mm-card-border); border-radius: var(--mm-radius); background: var(--mm-card); }
+.mm-compare-card .mm-figure { margin: var(--mm-space-2) 0; max-width: 100%; overflow-x: auto; color: var(--mm-text); }
+.mm-blocked-fields { margin: var(--mm-space-1) 0; padding-left: var(--mm-space-5); }
+.mm-secondary > summary { cursor: pointer; min-height: 24px; }
+.mm-c4-legend { display: flex; align-items: center; gap: var(--mm-space-2); font-size: var(--mm-fs-small); margin: var(--mm-space-2) 0; }
+.mm-c4-ramp { display: inline-block; width: 12rem; height: 0.75rem; border: 1px solid var(--mm-border); }
+.mm-c4-ramp[data-scale="sequential"] { background: linear-gradient(to right, var(--mm-val-seq-1), var(--mm-val-seq-2)); }
+.mm-c4-ramp[data-scale="diverging"] { background: linear-gradient(to right, var(--mm-val-neg), var(--mm-bg), var(--mm-val-pos)); }
+/* V53, V54 (C6 map): the figure scales to the card; the legend unit sits at the end of the gradient row. Light theme only (tokens, no dark block). */
+.mm-compare-card[data-card="c6"] .mm-figure { margin: .5rem 0; padding: 0; max-width: 100%; color: var(--mm-text); }
+.mm-compare-card[data-card="c6"] .mm-figure svg { display: block; max-width: 100%; height: auto; color: var(--mm-text); }
+.mm-c6-legend-unit { color: var(--mm-text-muted); }

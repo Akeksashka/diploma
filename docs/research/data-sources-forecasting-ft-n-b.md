@@ -1,5 +1,5 @@
 ---
-status: draft
+status: approved   # approved by the user on 2026-11-12 (stated in session: "схвали та дозволь дизайн з imf weo")
 topic: Data sources for the forecasting amendment rows FT (forecast targets), N (new predictors) and B (benchmarks); coverage matrices for tiers F-A / F-B / F-C; vintages, licences, release timing
 date: 2026-10-24
 ---

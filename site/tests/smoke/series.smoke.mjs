@@ -6,7 +6,7 @@ import {join} from "node:path";
 import {after, before, describe, test} from "node:test";
 import {walk} from "../../scripts/lib.mjs";
 import {periodLabel} from "../../src/lib/period.js";
-import {DIST, REQUIRE_BROWSER, distBuilt, launchBrowser, openPage, serve} from "./support.mjs";
+import {DIST, REQUIRE_BROWSER, distBuilt, launchBrowser, markIndex, openPage, serve} from "./support.mjs";
 
 const NOW = "2026-11-04T12:00:00Z";
 const TIMEOUT = 20000;
@@ -52,10 +52,11 @@ after(async () => {
   await site?.close();
 });
 
-async function withPage(t, hash, fn) {
+async function withPage(t, hash, fn, {index = null} = {}) {
   if (!browser) return t.skip(reason);
   const {page, context, log} = await openPage(browser, site.origin, {fixedTime: NOW});
   try {
+    if (index) await markIndex(context, index); // SYNTHETIC scale_hint = index (A1.5); see support.mjs
     await page.goto(`${site.origin}/explorer${hash}`);
     await page.waitForSelector(READY, {timeout: TIMEOUT});
     await page.waitForLoadState("networkidle");
@@ -227,7 +228,15 @@ describe("R14: About these series and units", () => {
     });
   });
 
-  test("rebased series use the index unit text everywhere (AC-RD-42)", async (t) => {
+  test("A1.5: no rebase control and no base period on the series of this export (none is stored as an index)", async (t) => {
+    await withPage(t, HASH, async ({page}) => {
+      assert.equal(await page.locator("#explorer-rebase").count(), 0);
+      assert.equal(await page.locator("#rebase-note").count(), 0);
+      assert.equal(await page.locator("#explorer-base").count(), 0);
+    });
+  });
+
+  test("rebased series use the index unit text everywhere (AC-RD-42), for an indicator with a synthetic scale_hint = index", async (t) => {
     await withPage(t, HASH, async ({page}) => {
       await page.check("#explorer-rebase");
       await page.waitForSelector("#rebase-note", {timeout: TIMEOUT});
@@ -237,7 +246,7 @@ describe("R14: About these series and units", () => {
       const texts = await page.$$eval("#explorer-figure svg text", (x) => x.map((n) => n.textContent.trim()));
       assert.ok(texts.some((x) => x.endsWith(m[1]) && !/^(Germany|France): /.test(x)), "axis title is the index text");
       for (const c of await page.$$eval("#series-captions tbody tr", (r) => r.map((x) => x.children[4].textContent.trim()))) assert.equal(c, m[1]);
-    });
+    }, {index: ["M09"]});
   });
 
   test("no forecast or projection element on the page (AC-RD-44)", async (t) => {
@@ -439,5 +448,21 @@ describe("L21: PG-SERIES filter bar (AC-DB-01, 02, 03; AC-RD-31, 34)", () => {
       assert.equal(await page.inputValue("#explorer-from"), "");
       assert.equal(await page.locator("#explorer-hash-note").count(), 1);
     });
+  });
+});
+
+// V13 (A1.5, AC-V2-73 amended): the rebase toggle and the base-period select are absent on PG-SERIES unless stored metadata says scale_hint = index (CR-18), also for an index series with a
+// stored base_period and a unit_label that reads index. (The older rebase smoke tests above assume an active control; see the report of the Group C run.)
+describe("V13 A1.5: no rebase control on PG-SERIES", () => {
+  test("absent for a level series and for an index series", async (t) => {
+    if (!browser) return t.skip(reason);
+    const ids = ["M09", "P01"].filter((id) => indicators.some((i) => i.indicator_id === id) && withFile(id));
+    if (ids.length === 0) return t.skip("no M09 or P01 series file in this export");
+    for (const ind of ids) {
+      await withPage(t, `#i=${ind}`, async ({page}) => {
+        assert.equal(await page.locator("#explorer-rebase, #explorer-base").count(), 0, `${ind}: no rebase control`);
+        assert.doesNotMatch(await page.locator("#explorer-main").innerText(), /rebased|rebase/i);
+      });
+    }
   });
 });

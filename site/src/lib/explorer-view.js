@@ -3,12 +3,13 @@
 // D6: every number drawn or printed is a stored column (or the display-only rebase of one); no statistic is computed here.
 import {entityChoices, groupChoices, isoDate, nameOf, periodsOf, selectedEntities, transformChoices, yearsOf} from "./explorer.js";
 import {
-  ALERTS_HEADING, ALERT_NOT_DRAWN, DRAFT_BAND_TITLES, DRAFT_CHART_MARKS, DRAFT_CHART_SHOWS, DRAFT_CHOOSE_COUNTRIES_HINT, HASH_FALLBACK_NOTE, HASH_NO_ROWS_NOTE, DRAFT_FACET_STATEMENT, DRAFT_FREE_Y_LABEL, DRAFT_NEXT_SERIES, DRAFT_REBASE_MARKS, DRAFT_REGIONS,
+  ALERTS_HEADING, ALERT_NOT_DRAWN, DRAFT_REBASE_STATEMENT, DRAFT_BAND_TITLES, DRAFT_CHART_MARKS, DRAFT_CHART_SHOWS, DRAFT_CHOOSE_COUNTRIES_HINT, HASH_FALLBACK_NOTE, HASH_NO_ROWS_NOTE, DRAFT_FACET_STATEMENT, DRAFT_FREE_Y_LABEL, DRAFT_NEXT_SERIES, DRAFT_REBASE_MARKS, DRAFT_REGIONS,
   DRAFT_SELECT_GROUP, DRAFT_SUBREGION_CONSEQUENCE, DRAFT_TITLE_UNIT, DRAFT_Y_MODE, NO_SERIES, NO_SERIES_FILE, REBASE_NOTE, REBASE_TOGGLE_LABEL, SELECTION_LABEL
 } from "./copy.js";
 import {barChart, barsAvailable, modeFor} from "./bar-chart.js";
 import {chartFigure, seriesFigureLabel, viewAsTable} from "./figure.js";
 import {installTipDismiss, pointReader} from "./point-reader.js";
+import {rebaseOffered} from "./rebase.js";
 import {aboutSeriesTable} from "./series-meta.js";
 import {emptyBlock, errorBlock} from "./state-blocks.js";
 import {pointValueText, readerText, seriesTipLines, tipText, valueWithUnit} from "./tip.js";
@@ -70,7 +71,9 @@ export function explorerControls(html, ctx, indicatorId, rows, initial = {indica
   const tfs = transformChoices(ctx, indicatorId, rows);
   const ents = entityChoices(ctx, rows);
   const years = yearsOf(rows).map((y) => ({id: String(y), label: String(y)}));
-  const toggle = html`<label><input type="checkbox" id="explorer-rebase"> ${REBASE_TOGGLE_LABEL}</label>`;
+  // A1.5: the rebase control and its base period exist only for an indicator that stored metadata marks as an index (scale_hint = index, CR-18).
+  const offered = rebaseOffered(ctx.indicatorById.get(indicatorId));
+  const toggle = offered ? html`<label><input type="checkbox" id="explorer-rebase"> ${REBASE_TOGGLE_LABEL}</label>` : null;
   const free = html`<label><input type="checkbox" id="explorer-free-y"> ${DRAFT_FREE_Y_LABEL}</label>`;
   const sel = selectedEntities(initial, indicatorId, ents);
   return {
@@ -83,7 +86,7 @@ export function explorerControls(html, ctx, indicatorId, rows, initial = {indica
     from: selectBox(html, {id: "explorer-from", label: "From year", options: [{id: "", label: "first"}, ...years]}),
     to: selectBox(html, {id: "explorer-to", label: "To year", options: [{id: "", label: "last"}, ...years]}),
     rebase: toggle,
-    base: selectBox(html, {id: "explorer-base", label: "Base period", options: [{id: "auto", label: "first common period"}, ...periodsOf(rows)]}),
+    base: offered ? selectBox(html, {id: "explorer-base", label: "Base period", options: [{id: "auto", label: "first common period"}, ...periodsOf(rows)]}) : null,
     free
   };
 }
@@ -93,7 +96,7 @@ export function explorerControls(html, ctx, indicatorId, rows, initial = {indica
 export function explorerLayout(html, {indicator, box}) {
   const note = box.note ? html`<p class="mm-note" id="explorer-hash-note" role="status">${HASH_FALLBACK_NOTE}</p>` : "";
   const noRows = box.noRows?.length ? html`<p class="mm-note" id="explorer-norows-note" role="status">${HASH_NO_ROWS_NOTE(box.noRows)}</p>` : "";
-  const rail = html`<details class="mm-selection" id="explorer-selection" open><summary>${SELECTION_LABEL}</summary>${note}${noRows}<div class="mm-controls">${indicator}${box.transform}${box.from}${box.to}${box.rebase}${box.base}${box.free}</div><div class="mm-controls">${box.entities}</div></details>`;
+  const rail = html`<details class="mm-selection" id="explorer-selection" open><summary>${SELECTION_LABEL}</summary>${note}${noRows}<div class="mm-controls">${indicator}${box.transform}${box.from}${box.to}${box.rebase ?? ""}${box.base ?? ""}${box.free}</div><div class="mm-controls">${box.entities}</div></details>`;
   const main = html`<div class="mm-explorer-main" id="explorer-main"></div>`;
   const el = html`<div class="mm-explorer mm-explorer-layout">${rail}${main}</div>`;
   if (typeof matchMedia === "function") {
@@ -285,7 +288,7 @@ export function explorerBlock(html, Plot, model, error, {free = false, href = nu
 ${error ? errorBlock(html, {region: DRAFT_REGIONS.series, kind: "missing", id: "explorer-error", consequence: error === NO_SERIES_FILE ? `${NO_SERIES_FILE} ${DRAFT_SUBREGION_CONSEQUENCE}` : DRAFT_SUBREGION_CONSEQUENCE}) : ""}
 <h2 class="mm-visually-hidden">${DRAFT_BAND_TITLES.overTime}</h2>
 <h3 id="explorer-title">${model.indicatorName}: ${model.transformLabel}${model.rebase && model.baseDate ? html`, rebased to 100 at ${model.baseDate}` : ""}${DRAFT_TITLE_UNIT(model.titleUnit)}</h3>
-${model.rebase ? html`<p class="mm-note" id="rebase-note">${REBASE_NOTE}</p>` : ""}
+${model.rebase ? html`<p class="mm-note" id="rebase-note">${REBASE_NOTE}</p>${model.baseDate ? html`<p class="mm-note" id="rebase-statement">${DRAFT_REBASE_STATEMENT(model.baseDate)}</p>` : ""}` : ""}
 ${model.notShown.length ? html`<ul id="not-shown">${model.notShown.map((n) => html`<li data-entity="${n.entity}">${n.name}: not shown, ${n.reason}.</li>`)}</ul>` : ""}
 ${c ? html`<p class="mm-figure-note" id="chart-explain">${DRAFT_CHART_SHOWS} ${DRAFT_CHART_MARKS}${model.rebase ? ` ${DRAFT_REBASE_MARKS}` : ""}</p>
 ${model.facets ? html`<p class="mm-figure-note" id="y-mode" data-free="${free}">${DRAFT_FACET_STATEMENT} ${DRAFT_Y_MODE(free)}</p>` : ""}

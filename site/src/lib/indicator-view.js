@@ -6,10 +6,10 @@ import {
   BIN_LABELS, DRAFT_BAND_TABLE, DRAFT_BAND_TITLES, DRAFT_DOWNLOAD, DRAFT_EMPTY_CARD, DRAFT_INDICATOR_COLUMNS as ICOL, DRAFT_INDICATOR_COLUMNS_MORE as MORE,
   INDICATOR_SERIES_LINK, DRAFT_LEGEND_BINS,
   DRAFT_NEXT_GROUP, DRAFT_OFFSET_FLAG, DRAFT_OPEN_AS_SERIES, DRAFT_PEER_FIGURE_LABEL, SERIES_LINK_LABEL, DRAFT_TRANSFORMED_HEADER, DRAFT_VALUE_NEUTRAL_LEGEND, EMPTY_GROUP,
-  FILTER_NOTE, FLAG_AHEAD, FLAG_INHERITED, FLAG_LAGGING, FLAG_UNALIGNED, NO_RANKING_SPREAD, PERCENTILE_COLUMN_LABEL
+  DRAFT_STATE_COLUMN, FILTER_NOTE, FLAG_AHEAD, FLAG_INHERITED, FLAG_LAGGING, FLAG_UNALIGNED, NO_RANKING_SPREAD, PERCENTILE_COLUMN_LABEL
 } from "./copy.js";
 import {aboutDetails} from "./about-value.js";
-import {chip, sourceCell, valueCell} from "./country-view.js";
+import {chip, sourceCell, stateCell, valueCell} from "./country-view.js";
 import {chartFigure} from "./figure.js";
 import {glyph, glyphSprite} from "./glyphs.js";
 import {serializeHash} from "./hash.js";
@@ -94,7 +94,7 @@ function transformedCell(html, r, label) {
 function valueRow(html, r, ctx) {
   const about = {...r, indicatorId: ctx.indicatorId, name: ctx.indicatorName};
   const id = `about-${ctx.indicatorId}-${r.entityId}`;
-  return html`<tr role="row" data-entity="${r.entityId}" data-has-value="true" data-state="${r.state.key}" data-focus="${ctx.focus === r.entityId}">${countryCell(html, r)}${valueCell(html, r)}${periodCell(html, r)}${offsetCell(html, r)}${ctx.transformed ? transformedCell(html, r, ctx.transformLabel) : ""}${chip(html, r)}${flagsCell(html, r)}${sourceCell(html, r)}<td class="mm-actions" data-label="${MORE.actions}"><a href="${seriesHref(ctx.indicatorId, [r.entityId])}" data-link="series" aria-label="${SERIES_LINK_LABEL(ctx.indicatorName, r.name)}">${INDICATOR_SERIES_LINK}</a></td></tr><tr class="mm-sub-row" data-for-entity="${r.entityId}"><td colspan="${ctx.columns}">${aboutDetails(html, about, r.name, id)}</td></tr>`;
+  return html`<tr role="row" data-entity="${r.entityId}" data-has-value="true" data-state="${r.state.key}" data-focus="${ctx.focus === r.entityId}">${countryCell(html, r)}${valueCell(html, r)}${periodCell(html, r)}${offsetCell(html, r)}${ctx.transformed ? transformedCell(html, r, ctx.transformLabel) : ""}${ctx.percentile ? chip(html, r) : stateCell(html, r)}${flagsCell(html, r)}${sourceCell(html, r)}<td class="mm-actions" data-label="${MORE.actions}"><a href="${seriesHref(ctx.indicatorId, [r.entityId])}" data-link="series" aria-label="${SERIES_LINK_LABEL(ctx.indicatorName, r.name)}">${INDICATOR_SERIES_LINK}</a></td></tr><tr class="mm-sub-row" data-for-entity="${r.entityId}"><td colspan="${ctx.columns}">${aboutDetails(html, about, r.name, id)}</td></tr>`;
 }
 
 // A row without a value: the code, its signature and the one reason sentence of spec 5.1, in one cell that spans the other columns.
@@ -104,13 +104,15 @@ function reasonRow(html, r, ctx) {
   return html`<tr role="row" data-entity="${r.entityId}" data-has-value="false" data-state="${st.key}" data-focus="${ctx.focus === r.entityId}">${countryCell(html, r)}<td colspan="${ctx.reasonSpan}" class="mm-reason" data-label="${MORE.reason}" data-state="${st.key}" data-signature="${st.signature}"><span class="mm-cell">${base.glyph ? glyph(html, base.glyph) : ""}<span class="mm-code">${base.code ?? ""}</span></span> <span class="mm-sentence">${st.sentence}</span></td></tr>`;
 }
 
-export function indicatorTable(html, model, rows, sortState, focus) {
+// T2 (V22, ADR-037 decision 3): the percentile column and chip are the percentile layer and are opt-in (`percentile`, the pc switch); without it the stored state of the value
+// (stale, ahead, lagging, unaligned, inherited) is the State column. The sort by percentile is a sort of the layer and is offered with it only.
+export function indicatorTable(html, model, rows, sortState, focus, {percentile = false} = {}) {
   const h = model.header;
   const transformed = rows.withValue.some((r) => r.transformedText !== null);
   const columns = transformed ? 9 : 8;
   const reasonSpan = transformed ? 8 : 7;
-  const ctx = {indicatorId: h.indicatorId, indicatorName: h.name, focus, transformed, transformLabel: h.transformLabel ?? h.transformId, columns, reasonSpan};
-  const head = html`<thead><tr>${headerCell(html, ICOL.country, "name", sortState)}${headerCell(html, ICOL.value, "value", sortState, "mm-num")}${headerCell(html, ICOL.period, "refPeriodEnd", sortState)}${headerCell(html, ICOL.offset, null, sortState, "mm-num")}${transformed ? headerCell(html, DRAFT_TRANSFORMED_HEADER(ctx.transformLabel), null, sortState, "mm-num") : ""}${headerCell(html, ICOL.percentile, "percentile", sortState, "mm-num")}${headerCell(html, MORE.flags, null, sortState)}${headerCell(html, MORE.source, null, sortState)}${headerCell(html, MORE.actions, null, sortState)}</tr></thead>`;
+  const ctx = {indicatorId: h.indicatorId, indicatorName: h.name, focus, transformed, transformLabel: h.transformLabel ?? h.transformId, columns, reasonSpan, percentile};
+  const head = html`<thead><tr>${headerCell(html, ICOL.country, "name", sortState)}${headerCell(html, ICOL.value, "value", sortState, "mm-num")}${headerCell(html, ICOL.period, "refPeriodEnd", sortState)}${headerCell(html, ICOL.offset, null, sortState, "mm-num")}${transformed ? headerCell(html, DRAFT_TRANSFORMED_HEADER(ctx.transformLabel), null, sortState, "mm-num") : ""}${percentile ? headerCell(html, ICOL.percentile, "percentile", sortState, "mm-num") : headerCell(html, DRAFT_STATE_COLUMN, null, sortState)}${headerCell(html, MORE.flags, null, sortState)}${headerCell(html, MORE.source, null, sortState)}${headerCell(html, MORE.actions, null, sortState)}</tr></thead>`;
   const withGroup = rows.withValue.length === 0 ? "" : html`<tbody data-group="with-value">${rows.withValue.map((r) => valueRow(html, r, ctx))}</tbody>`;
   const withoutGroup = rows.withoutValue.length === 0 ? "" : html`<tbody data-group="without-value"><tr class="mm-group-row"><th scope="rowgroup" colspan="${columns}">${model.withoutValueHeading}</th></tr>${rows.withoutValue.map((r) => reasonRow(html, r, ctx))}</tbody>`;
   return html`<div class="mm-ind-scroll" tabindex="0" role="region" aria-label="${model.labels.caption}"><table class="mm-indicator-table" id="indicator-table"><caption>${model.labels.caption}</caption>${head}${withGroup}${withoutGroup}</table></div>`;
@@ -149,13 +151,13 @@ export function dotCardBody(html, Plot, model, rows, focus) {
 }
 
 // The Table band card body: the links (C-IND-6, C-IND-7) and the all-country table (C-IND-5) or the empty state of a group with no members.
-export function resultsBlock(html, model, state, groups, downloadHref = null) {
+export function resultsBlock(html, model, state, groups, downloadHref = null, {percentile = false} = {}) {
   const rows = viewRows(model, state, groups.members);
   const shown = [...rows.withValue, ...rows.withoutValue];
   const h = model.header;
   const links = html`<p class="mm-ind-links"><a href="${seriesHref(h.indicatorId, seriesCountries(shown, state.focus))}" id="open-series" data-link="series-all">${DRAFT_OPEN_AS_SERIES}</a>${downloadHref ? html` <a href="${downloadHref}" download id="indicator-download" data-link="download">${DRAFT_DOWNLOAD}</a>` : ""}</p>`;
   if (shown.length === 0) return html`<div class="mm-ind-results" data-group="${state.group}" data-sort="${state.sort}">${links}${emptyBlock(html, {id: "empty-group", text: EMPTY_GROUP, next: DRAFT_NEXT_GROUP})}</div>`;
-  return html`<div class="mm-ind-results" data-group="${state.group}" data-sort="${state.sort}">${links}${indicatorTable(html, model, rows, rows.sort, state.focus)}</div>`;
+  return html`<div class="mm-ind-results" data-group="${state.group}" data-sort="${state.sort}">${links}${indicatorTable(html, model, rows, rows.sort, state.focus, {percentile})}</div>`;
 }
 
 // The page links of the C-RANK card, one level down from the site root.

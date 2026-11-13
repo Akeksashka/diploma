@@ -25,7 +25,8 @@ export function alignmentTable(html, view) {
 // Order on the page (ADR-026 decision 3): notices, the standing caveat, the peer-set note, the description of the figure, the
 // heatmap, then the legend (orientation note first), the alignment table and the detail table in <details>.
 // card: true (L24) puts the block inside a card under a band: the name becomes the card title (h3) because the band carries the h2.
-export function domainBlock(html, view, {card = false} = {}) {
+// `orientation`: the percentile layer is visible (pc on), so the orientation sentence is printed (ADR-037 decision 3); off by default.
+export function domainBlock(html, view, {card = false, orientation = false} = {}) {
   const model = heatmapModel(view);
   const root = html`<div class="mm-sc">
 ${glyphSprite(html)}
@@ -35,8 +36,8 @@ ${view.notices.map((n) => html`<p class="mm-notice">${n}</p>`)}
 ${view.peerNote ? html`<p class="mm-peer-note" id="peer-set-note">${view.peerNote}</p>` : ""}
 ${view.ranked ? html`<p>The country figure is the ${view.label}. ${NOT_DOMAIN_PERCENTILE}</p>` : html`<p>${UNRANKED_DOMAIN_STATEMENT}</p>`}
 <p class="mm-skip-values"><a href="#domain-values" id="skip-to-values">${SKIP_TO_TABLE}</a></p>
-${heatmapFigure(html, model)}
-${legendBlock(html, {states: model.states, bins: model.hasBins})}
+${heatmapFigure(html, model, {orientation})}
+${legendBlock(html, {states: model.states, bins: model.hasBins, orientation})}
 ${alignmentTable(html, view)}
 <details class="mm-values" id="domain-values"><summary>${DETAILS_SUMMARY}</summary>${detailTable(html, view)}</details></div>`;
   if (typeof root?.addEventListener === "function") {

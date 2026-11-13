@@ -87,7 +87,7 @@ describe("R18 PG-HOME", () => {
       for (const i of indicators) assert.ok(hs.includes(`./indicator/${i.indicator_id}`), i.indicator_id);
       for (const h of ["./explorer", "./domains", "./revisions"]) assert.ok(hs.includes(h), h);
       for (const h of hs) if (!/^[a-z]+:/.test(h) && !h.startsWith("#")) assert.ok(builtFile(resolvePath("/", h)), `broken link ${h}`);
-      assert.deepEqual(await page.locator(".mm-nav a").allInnerTexts(), ["Home", "Time series", "Domains", "Revisions"]);
+      assert.deepEqual(await page.locator(".mm-nav a").allInnerTexts(), ["Home", "Country", "Compare", "Time series", "Domains", "Revisions"]); // six pages (D-1)
       assert.equal(await page.locator('a[href*="/status"], a[href*="/guide"]').count(), 0);
       assert.equal(await page.locator("#observablehq-main h1").count(), 1);
       assert.equal(await page.locator("table:not(.mm-card *), svg:not(.mm-card *):not(.mm-dlegend *), #domain-heatmap").count(), 0);
@@ -150,11 +150,14 @@ describe("R18 PG-HOME", () => {
     });
   });
 
-  test("home link labels equal the nav labels (G-STR4)", async (t) => {
+  test("home link labels equal their nav labels; the header nav is the six pages (G-STR4, D-1)", async (t) => {
     await withPage(t, "/", "#band-overview", async ({page}) => {
       await page.evaluate(() => { document.getElementById("browse").open = true; });
       const labels = await page.$$eval("#home-links a", (as) => as.map((a) => a.textContent));
       assert.deepEqual(labels, [HOME_LINKS.series, HOME_LINKS.domains, HOME_LINKS.revisions]);
+      // D-1: the header holds the six pages of spec section 2; the Browse links are three of them and use the same labels
+      const nav = await page.$$eval("nav.mm-nav a", (as) => as.map((a) => a.textContent));
+      assert.deepEqual(nav, ["Home", "Country", "Compare", HOME_LINKS.series, HOME_LINKS.domains, HOME_LINKS.revisions]);
     });
   });
 

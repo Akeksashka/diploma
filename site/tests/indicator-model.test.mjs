@@ -148,12 +148,12 @@ test("generated page: one h1 = name, one shell nav only, breadcrumb, first-domai
   assert.ok(src.indexOf("mm-crumb") < src.indexOf("<h1"));
   assert.ok(!/<nav[\s>]/.test(src), "indicator page adds no second <nav>");
   assert.ok(src.includes('FileAttachment("../data/scorecard/growth.json")'));
-  assert.ok(!src.includes('scorecard/fin.json'), "only the first domain's scorecard");
+  assert.ok(src.includes('scorecard/fin.json'), "V23: Compare reads every domain's scorecard (Domain control, C5)");
   assert.ok(src.includes("<li>A &amp; &lt;B&gt;</li>"));
   assert.ok(src.includes('href="../domain/growth"') && src.includes('href="../domain/fin"'));
   assert.ok(src.includes("<dd>LEVEL</dd>") && src.includes("<dd>SYNTH_UNIT</dd>"));
-  assert.ok(src.indexOf("mm-caveat") < src.indexOf("mm-orientation"));
-  assert.ok(src.includes("model.showsPercentiles"));
+  assert.ok(src.includes("comparePage(html, Plot, inputs") && src.includes('fixedIndicator: "T01"'), "V23: Compare mode with the indicator fixed");
+  assert.ok(!src.includes("ORIENTATION_NOTE") && !src.includes("mm-orientation"), "the orientation sentence is printed by comparePage, only while pc is on (ADR-037 decision 3)");
   assert.throws(() => indicatorPageSource({indicator_id: "../x", domain_ids: ["growth"]}, domains));
   assert.throws(() => indicatorPageSource({indicator_id: "X1", domain_ids: ["a/b"]}, domains));
   assert.throws(() => indicatorPageSource({indicator_id: "X1", domain_ids: []}, domains));
@@ -190,13 +190,11 @@ test("hasCountryPage is false for an entity absent from meta/entities.json, true
   assert.equal(m.rows.find((r) => r.entityId === "SY01").hasCountryPage, true);
 });
 
-test("download link (C-IND-7): only a .parquet path is ever used, even when the manifest also lists a .json", () => {
-  const both = {files: [{path: "series/T01.json"}, {path: "series/T01.parquet"}]};
+test("V23: the generated page attaches one lazy series file per manifest entry (the parquet when both exist is a Group-C matter), none without a manifest", () => {
+  const both = {files: [{path: "series/T01.parquet"}, {path: "series/T02.parquet"}]};
   const src = indicatorPageSource(ind("T01"), domains, "LEVEL", both);
-  assert.ok(src.includes('FileAttachment("../data/series/T01.parquet")'));
-  assert.ok(!src.includes("series/T01.json"));
-  const jsonOnly = indicatorPageSource(ind("T01"), domains, "LEVEL", {files: [{path: "series/T01.json"}]});
-  assert.ok(jsonOnly.includes("const seriesFile = null;") && !jsonOnly.includes("series/T01.json"));
+  assert.ok(src.includes('"T01": FileAttachment("../data/series/T01.parquet")') && src.includes('"T02": FileAttachment("../data/series/T02.parquet")'));
+  assert.ok(indicatorPageSource(ind("T01"), domains, "LEVEL").includes("const seriesFiles = {};"));
 });
 
 test("indicatorsWithoutDomain lists entries with missing or empty domain_ids (the build fails on any)", () => {

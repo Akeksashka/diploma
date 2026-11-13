@@ -25,7 +25,8 @@ const MEANING = Object.freeze({
 export const LEGEND_KEYS = Object.freeze(Object.keys(MEANING));
 
 // `states`: keys present on the page (heatmapModel().states). `bins`: false for an informational domain (no colour scale).
-export function legendBlock(html, {states = [], bins = true, idPrefix = "domain-legend"} = {}) {
+// `orientation` (ADR-037 decision 3, ADR-026 decision 3): the orientation sentence is printed only when the caller says the percentile layer is visible (pc on); the default is off.
+export function legendBlock(html, {states = [], bins = true, idPrefix = "domain-legend", orientation = false} = {}) {
   for (const k of states) if (!(k in MEANING)) throw new Error(`no legend entry for state ${JSON.stringify(k)}`);
   const item = (k) => {
     const base = STATES[k] ?? DECORATIONS[k];
@@ -34,7 +35,7 @@ export function legendBlock(html, {states = [], bins = true, idPrefix = "domain-
   };
   return html`<section class="mm-legend" id="${idPrefix}" aria-labelledby="${idPrefix}-title"><h3 id="${idPrefix}-title">${DRAFT_LEGEND_TITLE}</h3>${
     bins
-      ? html`<p class="mm-orientation">${ORIENTATION_NOTE}</p><p class="mm-legend-head">${DRAFT_LEGEND_BINS}</p><ol class="mm-legend-bins">${BIN_LABELS.map((label, k) => html`<li data-bin="${[1, 2, 3, 4, 5][k]}"><span class="mm-swatch" data-bin="${[1, 2, 3, 4, 5][k]}"></span> ${label}</li>`)}</ol>`
+      ? html`${orientation ? html`<p class="mm-orientation">${ORIENTATION_NOTE}</p>` : ""}<p class="mm-legend-head">${DRAFT_LEGEND_BINS}</p><ol class="mm-legend-bins">${BIN_LABELS.map((label, k) => html`<li data-bin="${[1, 2, 3, 4, 5][k]}"><span class="mm-swatch" data-bin="${[1, 2, 3, 4, 5][k]}"></span> ${label}</li>`)}</ol>`
       : ""
   }${states.length === 0 ? "" : html`<p class="mm-legend-head">${DRAFT_LEGEND_STATES}</p><ul class="mm-legend-states">${states.map(item)}</ul>`}</section>`;
 }

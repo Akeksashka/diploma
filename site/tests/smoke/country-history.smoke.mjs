@@ -2,12 +2,16 @@
 // Runs against a built site (npm run build). It needs a country page with a value row whose indicator has a series file in the
 // manifest (the CI fixture export has M09 and P01; the SYNTHETIC sparse export has none for its T.. indicators, so there these
 // tests skip). Failure case by route interception. Localhost only; off-origin requests abort.
+// AC-RD-14, 51 and 53 are AMENDED for PG-COUNTRY by the user's decision of 2026-11-13 (plan V12, spec L1: the first two L1 cards are open): after the `load` event the page
+// reads exactly the series files of the first two (open) L1 cards, each once, and nothing else until a user action (expanding a card, Show more, a history button).
+// A spec/ADR erratum by the architect is still open (docs/ops/dashboard-v2-decisions.md).
 // Skips without a browser unless MM_SMOKE_REQUIRE_BROWSER=1 (CI).
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
 import {after, before, describe, test} from "node:test";
 import {periodLabel} from "../../src/lib/period.js";
+import {FACET_PAGE} from "../../src/lib/small-multiples.js";
 import {walk} from "../../scripts/lib.mjs";
 import {DIST, REQUIRE_BROWSER, distBuilt, launchBrowser, openPage, serve} from "./support.mjs";
 import {horizontalOverflow, setViewport} from "./ux-support.mjs";
@@ -26,6 +30,9 @@ let site = null;
 let entities = [];
 let manifest = null;
 let target = null; // {entity, domain, indicator}
+let domainList = [];
+let seriesMeta = [];
+let scorecards = {};
 
 const dataJson = (rel) => {
   const stem = rel.replace(/\.json$/, "");
@@ -51,6 +58,9 @@ before(async () => {
   manifest = dataJson("manifest.json");
   const withFile = new Set(manifest.files.map((f) => /^series\/([A-Za-z0-9_]+)\.parquet$/.exec(f.path)?.[1]).filter(Boolean));
   const domains = dataJson("meta/domains.json").domains;
+  domainList = domains;
+  seriesMeta = dataJson("meta/series.json").series;
+  for (const d of domains) scorecards[d.domain_id] = dataJson(`scorecard/${d.domain_id}.json`);
   // First country/domain/indicator whose stored scorecard cell has a value and whose indicator has a series file.
   outer: for (const e of entities.filter((x) => x.is_global !== true)) {
     for (const d of domains) {
@@ -69,6 +79,20 @@ after(async () => {
   await browser?.close();
   await site?.close();
 });
+
+// The series files the first two L1 cards of the country page read after `load`: per domain with a scorecard row for the entity (meta/domains.json order, as the page builds
+// them), the indicators of the first FACET_PAGE panels (one per stored series of the pair) that have a series file in the manifest. Parquet paths, each once.
+function expectedL1(entityId) {
+  const listed = new Set(manifest.files.map((f) => f.path));
+  const bands = domainList.filter((d) => scorecards[d.domain_id]?.entities?.some((e) => e.entity_id === entityId));
+  const out = [];
+  for (const d of bands.slice(0, 2)) {
+    const panels = d.indicator_ids.flatMap((id) => seriesMeta.filter((s) => s.indicator_id === id && s.entity_id === entityId).map(() => id)).slice(0, FACET_PAGE);
+    for (const id of panels) if (listed.has(`series/${id}.parquet`) && !out.includes(`series/${id}.parquet`)) out.push(`series/${id}.parquet`);
+  }
+  return out.sort();
+}
+const seriesPaths = (urls) => urls.filter((u) => SERIES_REQ.test(u)).map((u) => `series/${/\/series\/([A-Za-z0-9_]+)\./.exec(u)[1]}.parquet`).sort();
 
 const clean = (log) => {
   assert.deepEqual(log.errors.filter((e) => !/Failed to load resource/.test(e)), [], "page or console errors");
@@ -92,20 +116,24 @@ async function withTarget(t, fn, {width = null, routes = []} = {}) {
 }
 
 describe("R8 PG-COUNTRY About this value and Show history", () => {
-  test("AC-RD-14: nothing is fetched until activation; then exactly one series file; the chart is this entity only, unit on the axis", async (t) => {
+  test("AC-RD-14 (amended for PG-COUNTRY): after load only the series files of the first two open L1 cards are read, each once; the history button then reads at most the one more file of its row; the chart is this entity only, unit on the axis", async (t) => {
     await withTarget(t, async ({page, log, btn, panel}) => {
-      await page.waitForTimeout(800);
-      assert.deepEqual(log.requests.filter((u) => SERIES_REQ.test(u)), [], "no series file before activation");
-      assert.deepEqual(log.requests.filter((u) => READER_REQ.test(u)), [], "the Parquet reader (wasm) is not initialised before activation");
+      await page.waitForLoadState("load");
+      await page.waitForTimeout(1500);
+      const expected = expectedL1(target.entity);
+      assert.deepEqual(seriesPaths(log.requests), expected, "exactly the series files of the first two open L1 cards, each once, nothing else");
+      assert.equal(log.requests.some((u) => READER_REQ.test(u)), expected.length > 0, "the Parquet reader (wasm) is initialised iff an open card reads a series file");
       assert.equal(await btn.getAttribute("aria-expanded"), "false");
       assert.equal(await panel.isHidden(), true);
       assert.equal(await panel.getAttribute("data-state"), "idle");
+      const before = seriesPaths(log.requests).length;
       await btn.click();
       await page.waitForSelector(`#history-${target.domain}-${target.indicator}[data-state="loaded"]`, {timeout: TIMEOUT});
-      const reqs = log.requests.filter((u) => SERIES_REQ.test(u));
-      assert.equal(reqs.length, 1, `exactly one series file: ${reqs}`);
-      assert.ok(log.requests.some((u) => READER_REQ.test(u)), "the reader is initialised on activation");
-      assert.ok(new RegExp(`/series/${target.indicator}\\.[0-9a-f]+\\.parquet`).test(reqs[0]), reqs[0]);
+      const reqs = seriesPaths(log.requests);
+      const own = `series/${target.indicator}.parquet`;
+      assert.deepEqual([...new Set(reqs)].sort(), [...new Set([...expected, own])].sort(), "no series file beyond the open L1 cards and the row of the clicked button");
+      assert.ok(reqs.length - before <= 1, `the click requests at most the one file of its row (${reqs.length - before} new)`);
+      assert.equal(reqs.filter((p) => p === own).length, expected.includes(own) ? 1 + (reqs.length - before) : 1, "the row's own file");
       assert.equal(await btn.getAttribute("aria-expanded"), "true");
       const fig = panel.locator("figure[role=img]");
       assert.equal(await fig.count(), 1);
@@ -122,11 +150,31 @@ describe("R8 PG-COUNTRY About this value and Show history", () => {
       assert.ok(cells.length > 0);
       assert.ok(cells.every((c) => c.trim().endsWith(unit)), "every table value carries the unit");
       // Hiding and showing again does not fetch again.
+      const afterClick = seriesPaths(log.requests).length;
       await btn.click();
       assert.equal(await panel.isHidden(), true);
       await btn.click();
       assert.equal(await panel.isVisible(), true);
-      assert.equal(log.requests.filter((u) => SERIES_REQ.test(u)).length, 1);
+      assert.equal(seriesPaths(log.requests).length, afterClick);
+      clean(log);
+    });
+  });
+
+  test("AC-RD-14 (amended): a user action reads exactly what it opens: a closed L1 card, once, and nothing before the action", async (t) => {
+    await withTarget(t, async ({page, log}) => {
+      await page.waitForTimeout(1500);
+      const expected = expectedL1(target.entity);
+      const closed = page.locator("details.mm-l1:not([open])");
+      if ((await closed.count()) === 0) return t.skip("every L1 card is open on this export");
+      const domainId = await closed.first().getAttribute("data-domain");
+      const d = domainList.find((x) => x.domain_id === domainId);
+      const listed = new Set(manifest.files.map((f) => f.path));
+      const panels = d.indicator_ids.flatMap((id) => seriesMeta.filter((s) => s.indicator_id === id && s.entity_id === target.entity).map(() => id)).slice(0, FACET_PAGE);
+      const more = [...new Set(panels)].map((id) => `series/${id}.parquet`).filter((p) => listed.has(p) && !expected.includes(p));
+      assert.deepEqual(seriesPaths(log.requests), expected, "nothing more before the action");
+      await closed.first().locator("summary").click();
+      await page.waitForTimeout(1500);
+      assert.deepEqual(seriesPaths(log.requests), [...expected, ...more].sort(), `opening the ${domainId} card reads its series files, once each`);
       clean(log);
     });
   });
@@ -134,6 +182,7 @@ describe("R8 PG-COUNTRY About this value and Show history", () => {
   test("AC-RD-14: a failed fetch shows one inline error block and leaves the rest of the page intact", async (t) => {
     await withTarget(t, async ({page, log, btn, panel}) => {
       const rowsBefore = await page.locator("tr[data-indicator]").count();
+      await page.waitForTimeout(1500); // the open L1 cards have tried (and failed) to read their series files
       await btn.click();
       await page.waitForSelector(`#history-${target.domain}-${target.indicator}[data-state="error"]`, {timeout: TIMEOUT});
       const alert = panel.locator("[role=alert]");
@@ -144,6 +193,7 @@ describe("R8 PG-COUNTRY About this value and Show history", () => {
       assert.equal(await panel.locator("svg, table").count(), 0, "no partial chart");
       assert.equal(await page.locator("tr[data-indicator]").count(), rowsBefore, "the table is intact");
       assert.equal(await page.locator(".mm-country-domain h2").count() > 0, true);
+      await page.waitForFunction(() => document.querySelectorAll('[aria-busy="true"]').length === 0, null, {timeout: TIMEOUT});
       assert.equal(await page.locator('[aria-busy="true"]').count(), 0, "nothing left busy");
       assert.equal(await page.locator("#observablehq-main .observablehq--error").count(), 0, "no Framework error cell");
       clean(log);
@@ -198,13 +248,15 @@ describe("R8 PG-COUNTRY About this value and Show history", () => {
     });
   });
 
-  test("AC-RD-51: only same-origin files named in manifest files[] are fetched; at most the one series file", async (t) => {
+  test("AC-RD-51 (amended): only same-origin files named in manifest files[] are fetched; the series files are those of the first two open L1 cards, plus at most the one of a clicked history button", async (t) => {
     await withTarget(t, async ({page, log, btn, panel}) => {
+      await page.waitForTimeout(1500);
       await btn.click();
       await page.waitForSelector(`#history-${target.domain}-${target.indicator}[data-state="loaded"]`, {timeout: TIMEOUT});
-      // Spec section 3 (PG-COUNTRY reads): the five meta files, every scorecard except global, the manifest itself, and on demand one series file.
+      // Spec section 3 (PG-COUNTRY reads): the five meta files, every scorecard except global, the manifest itself, and the series files of the open L1 cards and of a clicked row.
       const domainIds = dataJson("meta/domains.json").domains.map((d) => d.domain_id).filter((d) => d !== "global");
-      const allowed = new Set(["manifest.json", "meta/entities.json", "meta/groups.json", "meta/domains.json", "meta/indicators.json", "meta/series.json", ...domainIds.map((d) => `scorecard/${d}.json`), `series/${target.indicator}.parquet`]);
+      const l1 = expectedL1(target.entity);
+      const allowed = new Set(["manifest.json", "meta/entities.json", "meta/groups.json", "meta/domains.json", "meta/indicators.json", "meta/series.json", ...domainIds.map((d) => `scorecard/${d}.json`), ...l1, `series/${target.indicator}.parquet`]);
       const named = new Set(manifest.files.map((f) => f.path).concat("manifest.json")); // and each must still be a file the manifest names
       const data = log.requests.filter((u) => /\/_file\/data\//.test(u)).map((u) => new URL(u).pathname.replace(/^.*\/_file\/data\//, "").replace(/\.[0-9a-f]{8,}(\.[a-z]+)$/, "$1"));
       assert.ok(data.length > 0);
@@ -213,7 +265,7 @@ describe("R8 PG-COUNTRY About this value and Show history", () => {
         assert.ok(named.has(p), `${p} is not in manifest files[]`);
       }
       assert.equal(data.includes("scorecard/global.json"), false, "scorecard/global.json is not requested");
-      assert.deepEqual(data.filter((p) => p.startsWith("series/")), [`series/${target.indicator}.parquet`]);
+      assert.deepEqual([...new Set(data.filter((p) => p.startsWith("series/")))].sort(), [...new Set([...l1, `series/${target.indicator}.parquet`])].sort());
       assert.equal((await panel.innerHTML()).includes("http"), false, "no URL in the history markup");
       clean(log);
     });

@@ -108,7 +108,7 @@ test("repository tokens: every declared pair passes in both themes, no undeclare
   const {PAIRS, NON_COLOUR_PREFIXES} = await import("../scripts/contrast-pairs.mjs");
   const report = checkPairs(resolveThemes(realCss(), NON_COLOUR_PREFIXES), PAIRS);
   assert.deepEqual(report.errors, []);
-  assert.equal(report.results.length, PAIRS.length * 2);
+  assert.equal(report.results.length, PAIRS.length * 2 - PAIRS.filter((p) => p.lightOnly === true).length, "a light-only pair (spec A2.5) is checked in the light theme only");
   const failed = report.results.filter((r) => !r.ok).map((r) => `${r.theme} ${r.fg} on ${r.bg} ${r.ratio}`);
   assert.deepEqual(failed, []);
 });

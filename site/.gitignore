@@ -12,3 +12,6 @@ src/revisions.md
 test-artifacts/
 src/domains.md
 src/index.md
+src/country.md
+src/compare.md
+dist-*/

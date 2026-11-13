@@ -80,7 +80,7 @@ const ALLOW = [
   {file: "lib/filter-period.js", rule: "subtraction", contains: "bounds.to - bounds.from + 1", clause: "L9: the number of calendar years the Period selects list, from the stored bounds; a count of options, not a data value"},
   {file: "lib/filter-period.js", rule: "addition", contains: "bounds.to - bounds.from + 1", clause: "L9: the number of calendar years the Period selects list, from the stored bounds; a count of options, not a data value"},
   {file: "lib/filter-model.js", rule: "subtraction", contains: "bounds.to - (n - 1)", clause: "amendment 2.2 preset arithmetic: 'Last 10 years' = known_cutoff year minus 9; calendar years, not data values"},
-  {file: "lib/filter-model.js", rule: "subtraction", contains: "rows.length - splitByPeriod", clause: "AC-DB-36: countPeriodHiddenRows, rows before minus rows after the Period filter; the single whitelisted browser-side count (ADR-034 A1 item 1)"},
+  {file: "lib/filter-model.js", rule: "compound assignment or increment", contains: "counts.total += 1", clause: "AC-DB-36 / ADR-036 Amendment 1: countHiddenRowsByReason, a tally of the stored reasons of ONE hidden array; the single whitelisted browser-side count (ADR-037 A1.4)"},
   // Layout L19 / L20 (series card): paging and tick selection by position, and facet ordering; never a value.
   {file: "lib/series-card.js", rule: "compound assignment or increment", contains: "facetCount += FACET_PAGE", clause: "L19 amendment 4.10: 'Show more' adds the next block of facets; a count of facets drawn, not a data value"},
   {file: "lib/small-multiples.js", rule: "subtraction", contains: "rank.get(a.entity) - rank.get(b.entity)", clause: ORDERING + " (position in the C-RANK order of the comparison set)"},
@@ -358,7 +358,7 @@ test("R22: no rule after the print hide re-shows .mm-filter", () => {
 });
 
 // ------------------------------------------------------------------------------------------ L5 (AC-DB-22, AC-DB-36)
-test("AC-DB-36: filter-model.js has exactly two allow-listed hits (preset arithmetic and countPeriodHiddenRows); any other count fails", () => {
+test("AC-DB-36: filter-model.js has exactly two allow-listed hits (preset arithmetic and countHiddenRowsByReason); any other count fails", () => {
   const {hits} = moduleHits(src);
   const mine = hits["lib/filter-model.js"];
   assert.ok(mine, "filter-model.js is scanned");
@@ -366,6 +366,7 @@ test("AC-DB-36: filter-model.js has exactly two allow-listed hits (preset arithm
   assert.equal(mine.length, 2, JSON.stringify(mine));
   const seeded = [
     "export const countRows = (rows) => rows.length - other.length;",
+    "export function tallyByReason(h) { const c = {}; for (const x of h) c[x.reason] += 1; return c; }",
     "export function nCountries(es) { let n = 0; for (const e of es) n += 1; return n; }",
     "export const total = (xs) => xs.reduce((s, x) => s + x, 0);"
   ];
@@ -385,11 +386,14 @@ const stripComments = (t) => t.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^
 
 // Rule 1: no Total / sum / average label in any string, template text or page (word match, comments excluded).
 const LABEL_RE = /\b(?:grand\s+total|totals?|sums?|averages?|avg|overall|aggregate\s+row)\b/i;
-const labelFindings = (name, text) => stripComments(text).split("\n").flatMap((l, k) => (LABEL_RE.test(l) ? [`${name}:${k + 1}: total/average label: ${l.trim().slice(0, 80)}`] : []));
+// The one `total` the spec names: the `total` field of the countHiddenRowsByReason result (ADR-036 Amendment 1; a tally of ONE hidden array, shown only as the
+// "{N} rows hidden" count). Only the exact reads of that result and its initialiser are exempt; any other word "total" still fails.
+const HIDDEN_TOTAL_FIELD = /(?:\bcounts\??|\.counts|countHiddenRowsByReason\([^)]*\))\??\.total\b|\{total: 0\b/g;
+const labelFindings = (name, text) => stripComments(text).split("\n").flatMap((l, k) => (LABEL_RE.test(l.replace(HIDDEN_TOTAL_FIELD, "")) ? [`${name}:${k + 1}: total/average label: ${l.trim().slice(0, 80)}`] : []));
 
 // Rule 2: a helper DEFINED with a total / sum / average / count name (function, const, let, var), and the entity-count reads.
 const HELPER_DEF = /\b(?:function|const|let|var)\s+((?:total|sum|avg|average|mean|tally|count|n)(?:[A-Z_]\w*)?|\w*(?:Total|Sum|Average|Mean|Count|Tally)s?)\s*(?=[=(;])/g;
-const WHITELISTED_COUNT = {file: "lib/filter-model.js", name: "countPeriodHiddenRows"}; // ADR-036, AC-DB-36: the single named exception
+const WHITELISTED_COUNT = {file: "lib/filter-model.js", name: "countHiddenRowsByReason"}; // ADR-036 Amendment 1, AC-DB-36: the single named exception
 const helperFindings = (file, code) => [...stripNoise(code).matchAll(HELPER_DEF)].filter((m) => m[1] !== "n" && !(file === WHITELISTED_COUNT.file && m[1] === WHITELISTED_COUNT.name)).map((m) => `${file}: helper ${m[1]}`);
 // `.length` / `.size` read whose value is used (passed on, returned, stored, put in a label) rather than compared or tested.
 const COMPARED = /[\w$.?()[\]!]*?\.(?:length|size)\s*(?:===?|!==?|>=?|<=?|<|>)\s*[\w.]+/g;
@@ -405,7 +409,6 @@ const hiddenLengthHits = (file, code) => (file === "lib/filter-model.js" ? [] : 
 // Entries marked [pre-L] predate the layout tasks (R-series, T-series) and are reported to the user in the L26 section of
 // docs/ops/dashboard-layout-measurements.md; they are listed so that a NEW count fails, not to endorse them.
 const COUNT_ALLOW = [
-  {file: "lib/filter-model.js", contains: "rows.length - splitByPeriod", clause: "AC-DB-36: countPeriodHiddenRows, the single whitelisted browser-side count"},
   {file: "lib/filter-country.js", contains: "DRAFT_COUNTRY_SELECTED(selected.length)", clause: "L10 chip summary: how many countries the reader has picked (at most 5, own selection), not a count of data entities [report]"},
   {file: "lib/filter-country.js", contains: "querySelectorAll(", clause: "L10: visible-item test for the text filter heading; compared to zero on the next line, never shown"},
   {file: "lib/bar-chart.js", contains: "Math.ceil(labels.length / max)", clause: "L20: tick spacing by position; see the AC-UX-10 entry"},
@@ -476,12 +479,12 @@ test("AC-DB-22 (L26): no Total / average / sum label and no total/sum/average/co
   const r = layoutScan(src);
   assert.deepEqual(r.labels, []);
   assert.deepEqual(helperViolations(r.helpers, HELPER_ALLOW), []);
-  assert.deepEqual(r.helpers.filter((h) => h.endsWith("countPeriodHiddenRows")), [], "the whitelisted function is skipped only in filter-model.js");
+  assert.deepEqual(r.helpers.filter((h) => h.endsWith("countHiddenRowsByReason")), [], "the whitelisted function is skipped only in filter-model.js");
   for (const a of HELPER_ALLOW) assert.ok(r.helpers.includes(`${a.file}: helper ${a.name}`), `stale helper exception ${a.file} ${a.name}`);
 });
 
-test("AC-DB-22 (L26): countPeriodHiddenRows is defined once, in filter-model.js, and no module computes a second entity count", () => {
-  const defs = libFiles().filter((f) => /\b(?:function|const)\s+countPeriodHiddenRows\b/.test(stripNoise(readFileSync(f, "utf8")))).map((f) => rel(src, f));
+test("AC-DB-22 (L26): countHiddenRowsByReason is defined once, in filter-model.js, and no module computes a second entity count", () => {
+  const defs = libFiles().filter((f) => /\b(?:function|const)\s+countHiddenRowsByReason\b/.test(stripNoise(readFileSync(f, "utf8")))).map((f) => rel(src, f));
   assert.deepEqual(defs, ["lib/filter-model.js"]);
   const r = layoutScan(src);
   const {violations, unused} = countViolations(r.reads, COUNT_ALLOW);
@@ -493,12 +496,14 @@ test("AC-DB-22 (L26): countPeriodHiddenRows is defined once, in filter-model.js,
 
 test("AC-DB-22 (L26): seeded totals, averages, counts and hidden-list lengths each fail", () => {
   for (const s of ['const row = {name: "Total", value: 1};', "html`<tr><th>Average</th></tr>`", 'const t = "Sum of values";', "<th>Overall</th>", 'const l = "Grand total";', "const t = 'Totals';"]) assert.equal(labelFindings("lib/x.js", s).length, 1, s);
+  for (const s of ["const n = counts.total;", "const c = {total: 0, no_data: 0};", "const k = countHiddenRowsByReason(split.hidden).total;"]) assert.deepEqual(labelFindings("lib/x.js", s), [], `the hidden-count total field is exempt: ${s}`);
+  for (const s of ["const n = rows.total;", "const n = stats.total + 1;", 'const l = "counts total";']) assert.equal(labelFindings("lib/x.js", s).length, 1, s);
   for (const s of ["// a total row is never drawn", "const label = 'Aggregates';", "const all = 'Browse';"]) assert.deepEqual(labelFindings("lib/x.js", s), [], s);
   for (const s of ["const total = (xs) => 0;", "function sumOf(xs) { return 0; }", "const meanOf = (xs) => 0;", "let rowCount = 0;", "const nCountries = (es) => es.length;", "function count(xs) {}", "const countRows = (r) => 0;"]) {
     assert.equal(helperFindings("lib/x.js", s).length, 1, s);
   }
-  assert.equal(helperFindings("lib/rank-view.js", "const countPeriodHiddenRows = () => 0;").length, 1, "the exception is bound to filter-model.js");
-  assert.deepEqual(helperFindings("lib/filter-model.js", "export function countPeriodHiddenRows(r) {}"), []);
+  assert.equal(helperFindings("lib/rank-view.js", "const countHiddenRowsByReason = () => 0;").length, 1, "the exception is bound to filter-model.js");
+  assert.deepEqual(helperFindings("lib/filter-model.js", "export function countHiddenRowsByReason(r) {}"), []);
   assert.deepEqual(helperFindings("lib/x.js", "const country = 1; const counter = 2; const countryGroups = () => []; const n = 3;"), []);
   for (const s of ["const nEntities = entities.length;", "return rows.length;", "const label = `${rows.length} rows`;", "const s = DRAFT_X(ids.length);", "root.dataset.n = String(set.size);", "const k = {count: xs.length};"]) {
     assert.equal(countReads(s).length, 1, s);
@@ -507,7 +512,7 @@ test("AC-DB-22 (L26): seeded totals, averages, counts and hidden-list lengths ea
   for (const s of ["if (!rows.length) return;", "const empty = rows.length === 0;", "const ok = rows.length > 0 && x;", "const t = rows.length ? 1 : 2;", "if (a.length) { go(); }", "const e = !rows.length;"]) assert.deepEqual(countReads(s), [], s);
   for (const s of ["const n = hidden.length;", "if (split.hidden.length > 0) go();", "const k = hiddenRows?.size;"]) assert.equal(hiddenLengthHits("lib/rank-view.js", s).length, 1, s);
   assert.deepEqual(hiddenLengthHits("lib/filter-model.js", "const n = hidden.length;"), [], "only filter-model.js may read it");
-  assert.equal(countViolations({"lib/filter-model.js": countReads("return rows.length - splitByPeriod(rows, from, to, opts).kept.length;")}, COUNT_ALLOW).violations.length, 0, "the whitelisted line passes");
+  assert.equal(countViolations({"lib/filter-model.js": countReads("return rows.length - splitByPeriod(rows, from, to, opts).kept.length;")}, COUNT_ALLOW).violations.length, 1, "the retired countPeriodHiddenRows line is no longer whitelisted");
   assert.equal(countViolations({"lib/filter-model.js": countReads("return a.length - b.length;")}, COUNT_ALLOW).violations.length, 1, "any other line in filter-model.js fails");
 });
 
@@ -592,4 +597,147 @@ test("AC-DB-22 (L26): every layout module and page is in the colour and inline-s
     assert.deepEqual(scan(readFileSync(join(src, m), "utf8")), [], m);
   }
   assert.ok(scan(`export const c = "${"steel" + "blue"}"; // layout`).includes("named colour"));
+});
+
+// ------------------------------------------------------------------------------------------ V6 (dashboard v2: AC-V2-44, 50, 90, 91; AC-RD-50, 62; A1.1)
+// Modules that existed before the v2 plan. Every other module in src/lib is a v2 module (chart, caption, compatibility, hidden rows, mode, picker ...) and is
+// scanned strictly: it computes nothing, has no allow-list entry, and uses none of the statistics below. A new v2 module is covered without being listed.
+const PRE_V2 = new Set(["about-value", "attribution", "bar-chart", "bins", "carry", "copy", "country-model", "country-page", "country-view", "domain-page", "domains-list", "explorer-filters", "explorer-view", "explorer", "facts-card", "figure", "filter-bar-options", "filter-bar", "filter-chip", "filter-country", "filter-model", "filter-period", "filter-proof", "filter-store", "glyphs", "hash", "heatmap-card", "heatmap-view", "heatmap", "history", "home-dashboard", "home-lists", "indicator-model", "indicator-view", "kpi-model", "kpi-view", "legend", "manifest", "meta", "missing", "peers-view", "peers", "period", "point-reader", "profile-chart", "rank-model", "rank-view", "rebase", "revisions-view", "revisions", "scorecard-view", "scorecard", "series-card", "series-meta", "shell", "small-multiples", "sort", "stale", "state-blocks", "states", "table-card", "tip", "tokens", "units", "value-chart"]);
+const V2_NAMED = ["compare-page", "blocked", "compare-controls", "compare-data", "hatch", "multi-line", "bar-list", "choropleth", "choropleth-model", "scatter", "time-heatmap", "caption", "caption-view", "compat", "hidden-rows", "l1-card", "mode-switch", "peer-strip", "picker", "country-list", "series-chart"]; // the v2 modules that exist now; the scans below fail if one disappears
+const v2Modules = (root = src) => readdirSync(join(root, "lib")).filter((n) => n.endsWith(".js")).map((n) => n.slice(0, -3)).filter((n) => !PRE_V2.has(n));
+
+// A statistic by name or by d3: mean, median, quantile, sum, regression, correlation (AC-V2-44, AC-V2-50). Judged on code without strings and comments.
+const V2_STATS = /\bd3\s*\.\s*(?:mean|median|quantile|quantileSorted|sum|cumsum|deviation|variance|rank|least|bin|group|rollup|regress\w*|correlat\w*)\b|(?<![\w$])(?:regress|correlat|quantile|median|percentileOf|zscore)\w*\s*\(/;
+const v2StatFindings = (file, code) => stripNoise(code).split("\n").flatMap((l, k) => (V2_STATS.test(l) ? [`${file}:${k + 1}: statistic`] : []));
+// Math used to compute a rank or a percent (AC-RD-50): any Math call, or a `* 100` / `/ 100` percent form, in a v2 module.
+const V2_MATH = /\bMath\s*\.\s*\w+|[\w)\]]\s*[*/]\s*100\b/;
+const v2MathFindings = (file, code) => stripNoise(code).split("\n").flatMap((l, k) => (V2_MATH.test(l) ? [`${file}:${k + 1}: Math or percent form`] : []));
+
+test("V6 (AC-RD-50, AC-V2-44, 50): every v2 module computes nothing, has no allow-list entry and no statistic, regression, correlation or Math rank/percent", () => {
+  const mods = v2Modules();
+  for (const m of V2_NAMED) assert.ok(mods.includes(m), `${m} is not scanned as a v2 module`);
+  const {hits} = moduleHits(src);
+  for (const m of mods) {
+    const f = `lib/${m}.js`;
+    assert.deepEqual(hits[f], [], `${f} computes something: ${JSON.stringify(hits[f])}`);
+    assert.ok(!ALLOW.some((a) => a.file === f), `${f} must not be allow-listed`);
+    const code = readFileSync(join(src, f), "utf8");
+    assert.deepEqual([...v2StatFindings(f, code), ...v2MathFindings(f, code)], []);
+  }
+});
+
+test("V6 seeded negatives: statistic, regression, correlation, Math rank and a percent form each fail in a v2 module", () => {
+  for (const s of ["const m = d3.mean(xs);", "const t = d3.sum(xs);", "const q = d3.quantile(xs, 0.5);", "const r = d3.regressionLinear();", "const c = correlation(a, b);", "const k = regress(xs);", "const md = median(xs);", "import {rank} from 'x'; d3.rank(xs);"]) assert.equal(v2StatFindings("lib/new-chart.js", s).length, 1, s);
+  for (const s of ["const r = Math.round(x);", "const p = (a / b) * 100;", "const p = a / 100;", "const m = Math.max(...v);"]) assert.equal(v2MathFindings("lib/new-chart.js", s).length, 1, s);
+  for (const s of ["const label = 'mean percentile';", "// d3.mean is not used", "const stored = row.value;"]) assert.deepEqual([...v2StatFindings("lib/new-chart.js", s), ...v2MathFindings("lib/new-chart.js", s)], [], s);
+  const dir = mkdtempSync(join(tmpdir(), "mm-v6-"));
+  try {
+    mkdirSync(join(dir, "lib"));
+    writeFileSync(join(dir, "lib", "c9-new-chart.js"), "export const f = (xs) => d3.mean(xs);\n");
+    assert.deepEqual(v2Modules(dir), ["c9-new-chart"], "a module not in the pre-v2 set is scanned strictly without being listed");
+    assert.ok(v2StatFindings("lib/c9-new-chart.js", readFileSync(join(dir, "lib", "c9-new-chart.js"), "utf8")).length > 0);
+  } finally {
+    rmSync(dir, {recursive: true, force: true});
+  }
+});
+
+test("V6: the pre-v2 set names only modules that still exist (a rename cannot make a module escape the strict scan)", () => {
+  const onDisk = new Set(readdirSync(join(src, "lib")).filter((n) => n.endsWith(".js")).map((n) => n.slice(0, -3)));
+  assert.deepEqual([...PRE_V2].filter((n) => !onDisk.has(n)), []);
+});
+
+// No module reads `projection/` unless it is an L2 or C1 module (ADR-037 decision 3; plan V6). Phase 1: none is allowed, so any read fails (vacuous while nothing reads it).
+const PROJECTION_READERS = []; // L2 and C1 modules are added here by their tasks, with the task id
+const projectionFindings = (file, text) => (PROJECTION_READERS.includes(file) ? [] : stripComments(text).split("\n").flatMap((l, k) => (/projection\//.test(l) ? [`${file}:${k + 1}: reads projection/`] : [])));
+
+test("V6: no module or page reads projection/ outside the L2 and C1 modules (none is listed in phase 1)", () => {
+  const files = listFiles(src, (n) => /\.(js|md)$/.test(n));
+  assert.ok(files.length >= 25);
+  assert.deepEqual(files.flatMap((f) => projectionFindings(rel(src, f), readFileSync(f, "utf8"))), []);
+  assert.deepEqual(PROJECTION_READERS, [], "phase 1: no projection reader is allowed (ADR-032 is not built)");
+});
+
+test("V6 seeded negatives: a projection/ read fails, also in a page and with a template path; a comment does not", () => {
+  for (const s of ['fetch("data/projection/M09.json")', "const u = `${base}/projection/${id}.json`;", "import(\"./projection/x.js\")"]) assert.equal(projectionFindings("lib/new-chart.js", s).length, 1, s);
+  assert.equal(projectionFindings("indicator/M09.md", 'FileAttachment("projection/M09.json")').length, 1);
+  assert.deepEqual(projectionFindings("lib/new-chart.js", "// projection/ is not read here"), []);
+  assert.deepEqual(projectionFindings("lib/new-chart.js", "const p = projections;"), []);
+});
+
+// AC-V2-91: no chart or compatibility module tests unit_label or unit_text by regex or substring (the title shows unit_label verbatim; compat compares unit_code etc.).
+// Judged on code without strings and comments: the field followed by a string/regex method on the same line, or a regex method whose argument is the field.
+const UNIT_FIELD = "(?:unit_label|unit_text\\w*|unitLabel|unitText\\w*)";
+const UNIT_METHOD = "(?:match|matchAll|test|exec|includes|startsWith|endsWith|indexOf|lastIndexOf|search|replace|replaceAll|split|slice|substring|substr|toLowerCase|toUpperCase)";
+const UNIT_PARSE = new RegExp(`\\b${UNIT_FIELD}\\b[^;\\n]*?(?:\\?\\.|\\.)\\s*${UNIT_METHOD}\\s*\\(|\\.\\s*${UNIT_METHOD}\\s*\\([^;\\n]*\\b${UNIT_FIELD}\\b|\\b(?:const|let)\\s+(?:label|\\w+)\\s*=\\s*[^;\\n]*\\b${UNIT_FIELD}\\b[^;\\n]*\\.\\s*${UNIT_METHOD}\\s*\\(`);
+// Known pre-v2 finding (reported, not endorsed): the C-RANK mixed-unit rule reads `unit_label` for ", " until CR-5 (`unit_text_varies`) is exported (rank-model.js hasSingleUnit,
+// layout amendment 4.7). It is the only exception; a new v2 module cannot use it, and the user decides whether C-RANK is reworked under AC-V2-91.
+const UNIT_PARSE_PRE_V2 = [{file: "lib/rank-model.js", contains: "label.includes(", clause: "pre-v2 C-RANK mixed-unit rule (amendment 4.7) until CR-5 exports unit_text_varies; reported to the user, not a v2 module"}];
+const unitParseFindings = (file, code) => {
+  const lines = stripNoise(code).split("\n");
+  // a local alias of the field (`const label = indicator?.unit_label;`) stands for the field in the next ALIAS_WINDOW lines
+  const ALIAS_WINDOW = 12;
+  const aliasDef = new RegExp(`\\b(?:const|let|var)\\s+(\\w+)\\s*=[^;\\n]*\\b${UNIT_FIELD}\\b`);
+  const defs = lines.map((l) => aliasDef.exec(l)?.[1] ?? null);
+  return lines.flatMap((l, k) => {
+    const aliases = defs.slice(Math.max(0, k - ALIAS_WINDOW), k + 1).filter(Boolean);
+    const re = aliases.length ? new RegExp(UNIT_PARSE.source.replaceAll(UNIT_FIELD, `(?:${UNIT_FIELD.slice(3, -1)}|${aliases.join("|")})`)) : UNIT_PARSE;
+    return re.test(l) ? [{file, line: k + 1, text: l.trim()}] : [];
+  });
+};
+
+test("V6 (AC-V2-91): no module tests unit_label or unit_text by regex or substring, apart from the one reported pre-v2 C-RANK line", () => {
+  const hits = libFiles().flatMap((f) => unitParseFindings(rel(src, f), readFileSync(f, "utf8")));
+  const open = hits.filter((h) => !UNIT_PARSE_PRE_V2.some((a) => a.file === h.file && h.text.includes(a.contains)));
+  assert.deepEqual(open.map((h) => `${h.file}:${h.line}: ${h.text}`), []);
+  assert.equal(hits.filter((h) => UNIT_PARSE_PRE_V2.some((a) => a.file === h.file)).length, UNIT_PARSE_PRE_V2.length, "the pre-v2 exception still matches (remove it when the line is gone)");
+  for (const m of [...V2_NAMED, ...v2Modules()]) assert.deepEqual(unitParseFindings(`lib/${m}.js`, readFileSync(join(src, "lib", `${m}.js`), "utf8")), [], `${m} parses a unit text`);
+});
+
+test("V6 seeded negatives (AC-V2-91): substring, regex and split on unit_label or unit_text fail; verbatim use and unit_code tests do not", () => {
+  for (const s of ["const multi = ind.unit_label.includes(', ');", "const ok = /index/i.test(ind.unit_label);", "const p = indicator?.unit_label?.split(',');", "const m = series.unit_text.match(/(\\d+)/);", "const t = unitLabel.toLowerCase().startsWith('i');", "const x = String(s.unit_label).replace('%', '');", "const label = ind.unit_label;\nconst multi = !label.includes(', ');", "if (label.startsWith('x') && ind.unit_label) {}".replace("label.startsWith('x') && ", "") + " const m = /a/.exec(ind.unit_label);"]) {
+    assert.ok(unitParseFindings("lib/new-chart.js", s).length > 0, s);
+  }
+  for (const s of ["const t = `${name} (${ind.unit_label})`;", "const u = ind.unit_label ?? null;", "const same = a.unit_code === b.unit_code;", "const m = unitCode.includes('EUR');", "const label = present(i.unit_label) ? i.unit_label : null;"]) {
+    assert.deepEqual(unitParseFindings("lib/new-chart.js", s), [], s);
+  }
+});
+
+// A1.1: the hatch pattern is reserved for blank cells; stale rows use a dashed outline plus the text code, and stale series a square last-point marker. No v2 code or rule hatches "stale".
+// Pre-v2 state signature of the heatmap/scorecard cells (ADR-025 state glyphs), listed so that a NEW use fails.
+const HATCH_STALE_PRE_V2 = [{file: "lib/states.js", contains: 'stale: row(STATE_CODES.stale, "hatch-clock"'}];
+// A hatch hit is a hatch/pattern line with a "stale" mention on the same line or within one line either side (a 3-line window), so a pattern fill
+// split over two lines (`const fill = row.is_stale` then `? "url(#hatch)"`) is still caught. The listed pre-v2 line is exempt as hatch and as stale.
+const HATCH_RE = /hatch|repeating-(?:linear|radial|conic)-gradient|<pattern\b|patternUnits/i;
+const hatchStale = (file, code) => {
+  const lines = stripComments(code).split("\n");
+  const exempt = lines.map((l) => HATCH_STALE_PRE_V2.some((a) => a.file === file && l.includes(a.contains)));
+  const stale = lines.map((l, k) => !exempt[k] && /stale/i.test(l));
+  return lines.flatMap((l, k) => (!exempt[k] && HATCH_RE.test(l) && [k - 1, k, k + 1].some((j) => stale[j]) ? [`${file}:${k + 1}: hatch used with stale`] : []));
+};
+// Pre-v2 CSS rules for `data-state="stale"` cells of the heatmap, scorecard and KPI tiles (ADR-025 state glyphs). They predate A1.1 and are listed so that a NEW one fails.
+const STALE_CSS_PRE_V2 = ['td[data-state="stale"] .mm-cell, .mm-key[data-state="stale"]', '.mm-tile-pct[data-state="stale"] .mm-cell'];
+const staleCssFindings = (css) => [...css.replace(/\/\*[\s\S]*?\*\//g, "").matchAll(/([^{}]+)\{([^{}]*)\}/g)].flatMap(([, sel, body]) => (/stale/i.test(sel) && /repeating-(?:linear|radial|conic)-gradient|hatch|url\(\s*#|pattern/i.test(body) && !STALE_CSS_PRE_V2.includes(sel.trim()) ? [`${sel.trim()}: hatch on stale`] : []));
+
+test("V6 (A1.1): no v2 module and no new CSS rule uses the hatch pattern for stale", () => {
+  const files = listFiles(src, (n) => /\.(js|md)$/.test(n));
+  assert.deepEqual(files.flatMap((f) => hatchStale(rel(src, f), readFileSync(f, "utf8"))), []);
+  assert.deepEqual(staleCssFindings(readFileSync(join(src, "style.css"), "utf8")), []);
+  assert.ok(readFileSync(join(src, "lib", "states.js"), "utf8").includes(HATCH_STALE_PRE_V2[0].contains), "pre-v2 JS exception no longer matches");
+  const legacy = readFileSync(join(src, "style.css"), "utf8");
+  for (const sel of STALE_CSS_PRE_V2) assert.ok(legacy.includes(sel), `pre-v2 exception no longer matches: ${sel}`);
+});
+
+test("V6 seeded negatives (A1.1): hatch on stale fails in a module and in a new rule; blank-cell hatch passes", () => {
+  assert.equal(hatchStale("lib/new-chart.js", 'const fill = row.is_stale ? "url(#hatch)" : null;').length, 1);
+  assert.equal(hatchStale("lib/new-chart.js", "const stale = cell.stale && patternUnits;").length, 1);
+  assert.equal(hatchStale("lib/new-chart.js", 'const fill = row.is_stale\n  ? "url(#hatch)"\n  : null;').length, 1, "two-line form: stale on the line above the hatch");
+  assert.equal(hatchStale("lib/new-chart.js", 'const pat = "url(#hatch)";\nconst use = cell.stale ? pat : null;').length, 1, "two-line form: stale on the line below the hatch");
+  assert.equal(hatchStale("lib/new-chart.js", 'const pat = "url(#hatch)";\nconst a = 1;\nconst b = 2;\nconst use = cell.stale ? 1 : null;').length, 0, "outside the 3-line window");
+  assert.equal(hatchStale("lib/states.js", 'stale: row(STATE_CODES.stale, "hatch-clock", "clock"),').length, 0, "listed pre-v2 signature");
+  assert.equal(hatchStale("lib/new-states.js", 'stale: row(STATE_CODES.stale, "hatch-clock", "clock"),').length, 1, "the exception is bound to states.js");
+  assert.deepEqual(hatchStale("lib/new-chart.js", 'const fill = cell.blank ? "url(#hatch)" : null;'), []);
+  assert.equal(staleCssFindings('.mm-c4 [data-stale="1"] { background: repeating-linear-gradient(45deg, #000 0 1px, #fff 1px 2px); }').length, 1);
+  assert.equal(staleCssFindings('.mm-c4 td[data-stale="1"] { outline: 2px dashed currentColor; }').length, 0);
+  assert.equal(staleCssFindings('.mm-c4 td[data-blank="1"] { background: repeating-linear-gradient(45deg, transparent 0 4px, currentColor 4px 5px); }').length, 0);
+  assert.equal(staleCssFindings('.mm-tile-pct[data-state="stale"] .mm-cell { background: repeating-linear-gradient(135deg, transparent 0 5px, var(--mm-border) 5px 6px); }').length, 0, "listed pre-v2 rule");
 });

@@ -21,7 +21,9 @@ const series = load("meta/series.json").series;
 const domains = load("meta/domains.json").domains;
 const scorecards = Object.fromEntries(domains.map((d) => [d.domain_id, load(`scorecard/${d.domain_id}.json`)]));
 const model = (id) => countryModel({entity: entities.find((e) => e.entity_id === id), domains, scorecards, indicators, series, groups: []});
+// The page without the percentile layer (the default) and with it (pc on: v2.percentile, ADR-037 decision 3).
 const page = (id) => String(countryBlock(html, fakePlot, model(id), switcherOptions(entities)));
+const pagePc = (id) => String(countryBlock(html, fakePlot, model(id), switcherOptions(entities), null, null, {percentile: true}));
 // Plot stand-in: records the marks, returns a marker string so profileFigure can wrap it.
 const calls = [];
 const fakePlot = {
@@ -91,12 +93,17 @@ test("every indicator of a domain is in its table exactly once; links carry #i= 
   assert.match(out, new RegExp(`>${copy.COMPARE_COUNTRIES}<`));
 });
 
-test("values carry their unit, the estimate mark, and the stored percentile with its bin (AC-RD-11, 42, 45)", () => {
-  const out = page("SY01");
+test("values carry their unit, the estimate mark, and (pc on) the stored percentile with its bin (AC-RD-11, 42, 45)", () => {
+  const out = pagePc("SY01");
   assert.match(out, /<td class="mm-num" data-label="Latest value"><span class="mm-fig">10<\/span> <span class="mm-unit">SYNTH_UNIT<\/span>/);
   assert.match(out, /data-mark="estimate"/);
   assert.match(out, /data-state="ranked" data-signature="solid" data-bin="2"><span class="mm-cell"><span class="mm-fig">0\.20<\/span>/);
   assert.match(out, /percentile vs all ranked countries/);
+  // V15 (AC-V2-25, 26): by default no percentile column, chip or number; the State column replaces it
+  const off = page("SY01");
+  assert.doesNotMatch(off, /percentile vs all ranked countries|data-bin="[1-5]"|mm-pct/);
+  assert.match(off, /<th scope="col">State<\/th>/);
+  assert.match(off, /<td class="mm-num" data-label="Latest value"><span class="mm-fig">10<\/span> <span class="mm-unit">SYNTH_UNIT<\/span>/);
 });
 
 test("rows without a value sit in a second group with code and sentence; the filter hides only that group (AC-RD-15, 40)", () => {
@@ -105,11 +112,13 @@ test("rows without a value sit in a second group with code and sentence; the fil
   assert.match(out, new RegExp(`<span class="mm-code">n/a</span></span> <span class="mm-sentence">${copy.DRAFT_NA_DEFINED_SENTENCE}`));
   assert.match(out, /<fieldset id="country-filter-growth"/, "one Show control per table card (L22)");
   assert.match(out, new RegExp(`${copy.DRAFT_COUNTRY_FILTER_VALUE}`));
-  assert.doesNotMatch(out, /\b\d+ (rows? )?hidden/);
+  // AC-RD-15: the Show filter of the table card prints no count. (K1 above it has its own hidden-rows disclosure, AC-V2-13, ADR-036.)
+  for (const card of out.split('data-table-card="').slice(1)) assert.doesNotMatch(card.split("</section>")[0], /\b\d+ (rows? )?hidden/);
+  assert.match(out, /class="mm-hidden-rows"/, "K1 lists the indicators without a stored value in its disclosure");
 });
 
-test("ranked domain shows the stored label and figure; unranked domain shows no percentile fields (AC-RD-12)", () => {
-  const out = page("SY01");
+test("ranked domain shows the stored label and figure; unranked domain shows no percentile fields (AC-RD-12; pc on)", () => {
+  const out = pagePc("SY01");
   const growth = /id="domain-growth"[\s\S]*?<\/section>/.exec(out)[0];
   assert.match(growth, /mean percentile of the domain&#39;s indicators|mean percentile of the domain's indicators/);
   assert.match(growth, /0\.35/);
@@ -117,9 +126,9 @@ test("ranked domain shows the stored label and figure; unranked domain shows no 
   assert.match(growth, /data-field="percentile-rank">0\.35<\/span>/);
   assert.match(growth, /2 of 4 indicators available; position 3 of 3/);
   const agri = /id="domain-agri"[\s\S]*?<\/section>/.exec(out)[0];
-  assert.doesNotMatch(agri, /data-tile=|role="img"/);
+  assert.doesNotMatch(agri, /data-tile="domain-figure"|role="img"/); // K1 cards (data-tile="k1") are not the percentile tile
   assert.match(agri, /informational, unranked/);
-  const agg = /id="domain-growth"[\s\S]*?<\/section>/.exec(page("SYA1"))[0];
+  const agg = /id="domain-growth"[\s\S]*?<\/section>/.exec(pagePc("SYA1"))[0];
   assert.match(agg, /aggregate \(not ranked\)/);
 });
 
@@ -138,8 +147,8 @@ test("the switcher has an explicit Go button and no change-triggered navigation 
   assert.match(fn, /e\.key === "Enter"/);
 });
 
-test("L22: band per domain in stored order; tile span 4, strip span 8, table card span 12; no Trend column, no sparkline", () => {
-  const out = page("SY01");
+test("L22: band per domain in stored order; tile span 4, strip span 8 (pc on), table card span 12; no Trend column, no sparkline", () => {
+  const out = pagePc("SY01");
   const ids = [...out.matchAll(/<section class="mm-dband mm-country-domain" id="domain-([a-z_]+)"/g)].map((m) => m[1]);
   assert.deepEqual(ids, domains.map((d) => d.domain_id).filter((id) => model("SY01").domains.some((x) => x.domainId === id)));
   const growth = /id="domain-growth"[\s\S]*?<\/section>/.exec(out)[0];

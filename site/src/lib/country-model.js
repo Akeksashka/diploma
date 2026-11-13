@@ -4,6 +4,7 @@
 // (the global domain holds WLD only). Rows with a value come first (order of `indicator_ids`), then rows without a value.
 import {binOf} from "./bins.js";
 import {DRAFT_COUNTRY_GROUPS_LABEL, DRAFT_COUNTRY_KIND_LABEL, DRAFT_COUNTRY_NO_GROUPS, DRAFT_CRUMB_COUNTRIES, DRAFT_CRUMB_HOME, DRAFT_CRUMB_LABEL, DRAFT_WITHOUT_VALUE_GROUP, DRAFT_FIGURE_COVERAGE, DRAFT_FIGURE_POSITION} from "./copy.js";
+import {splitByCoverage} from "./filter-model.js";
 import {mapCellState, mapDomainSummaryState, seriesDefinedSet} from "./missing.js";
 import {periodLabel} from "./period.js";
 import {directionOf, formatPercentile, formatValue} from "./scorecard.js";
@@ -94,10 +95,20 @@ export function countryModel({entity, domains, scorecards, indicators, series, g
       notices: [...(domain.notices ?? [])],
       figure: ranked ? figureLine(row, domain, mapDomainSummaryState(row, ctx)) : null,
       rows: [...withValue, ...withoutValue],
+      ordered: rows, // the rows in the stored `indicator_ids` order of the domain (L1 follows it, whatever the value state)
       withValue,
       withoutValue
     });
   }
   const anyPercentile = out.some((d) => d.rows.some((r) => r.percentile !== null));
   return {header: countryHeader(entity, groups), withoutValueHeading: DRAFT_WITHOUT_VALUE_GROUP, domains: out, showsPercentiles: anyPercentile};
+}
+
+// V11 (K1, spec 3, A1.1 as decided in E-3): the latest-value cards of one domain band. A card is drawn for each indicator with a stored value; a stale card is
+// still drawn (it carries the stale marker and its stored period: K1 is a series-currency view, so staleness is never a hide reason here); an indicator with
+// no stored value is in `hidden` (reason no_data), the one array that the card's hidden-rows disclosure renders. Period and Frequency do not apply to K1.
+// No delta, arrow or direction is built here: the scorecard row stores none (A2.4; the neutral delta needs CR-6 or CR-11).
+export function k1Model(domain) {
+  const {drawn, hidden} = splitByCoverage(domain?.rows ?? [], {requireValue: true, hasValue: (r) => r.hasValue});
+  return {cards: drawn.map((r) => ({...r, stale: r.cell?.is_stale === true})), hidden};
 }

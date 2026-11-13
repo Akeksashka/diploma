@@ -1,0 +1,31 @@
+{
+ "schema_version": "1.0",
+ "backlog": {
+  "n_unloaded": 0,
+  "oldest_age_days": null
+ },
+ "groups": [],
+ "last_run": {
+  "alerts_opened": 0,
+  "finished_at": "2026-11-03T00:00:00Z",
+  "ingest_run_id": 0,
+  "mode": "refresh",
+  "new_observations": 0,
+  "new_raw_objects": 0,
+  "revisions": 0,
+  "started_at": "2026-11-03T00:00:00Z"
+ },
+ "manual_sources": [],
+ "schedule_check": {
+  "generated_at": "2026-11-03T00:05:00Z",
+  "text": "Synthetic fixture; no schedule."
+ },
+ "validation": {
+  "counts": [],
+  "cov01": [],
+  "open_drift": {
+   "by_kind": {},
+   "n_open": 0
+  }
+ }
+}

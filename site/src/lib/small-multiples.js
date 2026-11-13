@@ -6,7 +6,7 @@
 // (phase A has no `recent` arrays, AC-DB-26). Period clips the x-domain (not a row filter here); Frequency keeps the stored `frequency`.
 // D6: nothing is computed. An entity with no stored value in the file is not dropped: it is listed with the empty-card sentence.
 import {buildModel} from "./explorer.js";
-import {comparisonSet, seriesOfFrequency} from "./filter-model.js";
+import {comparisonSet, indicatorsOfFrequency, seriesOfFrequency, splitByCoverage} from "./filter-model.js";
 import {buildComparison, DEFAULT_RANK_SORT} from "./rank-model.js";
 import {sortRows} from "./sort.js";
 
@@ -39,4 +39,43 @@ export function multiplesModel(ectx, indicatorId, rows, state, order, count = FA
   const have = new Set(narrowed.map((r) => r.entity));
   const noData = visible.filter((id) => !have.has(id));
   return {model: {...model, series, facets: true}, visible, noData, more: order.length > visible.length};
+}
+
+// ---- V12 (L1, spec 3; AC-V2-14..18): the domain small multiples of the COUNTRY page. One panel per (indicator, stored series of this country), in the stored
+// order of the domain's indicator_ids; the Frequency control keeps only the series of that stored frequency (no resampling) and an indicator with several stored
+// frequencies gets one panel per frequency. Pure: the series files are read by the view. `domain` is a country-model domain ({ordered, rows}; `ordered` = stored indicator_ids order); `series` the stored
+// meta/series.json rows. Returns {items, none}: items = [{key, row, meta}], none = the rows of indicators the pair has no series for (hidden, no_data).
+export function l1Items({domain, indicators = [], series = [], entityId, frequency = null} = {}) {
+  const rows = domain?.ordered ?? domain?.rows ?? [];
+  const ids = new Set(rows.map((r) => r.indicatorId));
+  const kept = frequency ? new Set(indicatorsOfFrequency(indicators.filter((i) => ids.has(i.indicator_id)), frequency).map((i) => i.indicator_id)) : ids;
+  const items = [];
+  const none = [];
+  for (const row of rows) {
+    if (!kept.has(row.indicatorId)) continue;
+    const metas = series.filter((s) => s.indicator_id === row.indicatorId && s.entity_id === entityId && (!frequency || s.frequency === frequency));
+    if (metas.length === 0) none.push(row);
+    else for (const meta of metas) items.push({key: `${row.indicatorId}-${meta.series_id}`, row, meta});
+  }
+  return {items, none};
+}
+
+// The stored staleness of one panel: the scorecard cell's is_stale, for the cell's own series (a cell that names no series applies to every panel of the indicator).
+export const l1Stale = (item) => item.row?.cell?.is_stale === true && (item.row.cell.series_id === undefined || item.row.cell.series_id === null || item.row.cell.series_id === item.meta?.series_id);
+
+// The one selection of the L1 card (ADR-036 Amendment 1): `none` rows and panels whose series file holds no stored value are hidden with reason no_data;
+// `built` = [{item, facet}] with facet = series-chart.js seriesFacet(). Time-series panels never hide a stale series (AC-V2-82).
+export function l1Split({none = [], built = []} = {}) {
+  const entries = [...none.map((row) => ({row, hasSeries: false})), ...built.map(({item, facet}) => ({row: item.row, facet, hasSeries: true}))];
+  const {drawn, hidden} = splitByCoverage(entries, {requireValue: true, hasSeries: (e) => e.hasSeries, hasValue: (e) => e.facet?.hasValue === true});
+  return {drawn: drawn.map((e) => e.facet), hidden};
+}
+
+// "Show more" (spec L1: at most FACET_PAGE panels, then the next block): the keys of the panels shown are a list, so a block is the next FACET_PAGE items not shown yet
+// (list selection only; no count is kept or printed). Keys of panels that no longer exist (a Frequency change) are dropped; an empty list starts again at the first block.
+export function l1Reveal(items = [], shown = [], more = false) {
+  const keys = new Set(items.map((it) => it.key));
+  const kept = shown.filter((k) => keys.has(k));
+  if (kept.length > 0 && !more) return kept;
+  return [...kept, ...items.filter((it) => !kept.includes(it.key)).slice(0, FACET_PAGE).map((it) => it.key)];
 }

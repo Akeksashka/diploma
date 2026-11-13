@@ -46,7 +46,7 @@ export function mountHeatmapCard(html, dash, {data, doc = globalThis.document}) 
       }
       const model = heatmapModel(view);
       const sprite = doc.getElementById("mm-g-dash") ? [] : [glyphSprite(html)];
-      dash.legend.replaceChildren(...sprite, legendBlock(html, {states: model.states, bins: model.hasBins, idPrefix: "home-legend"}));
+      dash.legend.replaceChildren(...sprite, legendBlock(html, {states: model.states, bins: model.hasBins, idPrefix: "home-legend", orientation: model.hasBins}));
       body.replaceChildren(heatmapFigure(html, model, {idPrefix: HOME_HEATMAP_ID, hrefs: HOME_HREFS, carry: true, orientation: false}));
     } catch {
       dash.legend.replaceChildren();

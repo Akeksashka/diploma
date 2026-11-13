@@ -59,7 +59,7 @@ export function peerChart(Plot, pv, st) {
   });
 }
 
-function chartBlock(html, Plot, pv, st) {
+function chartBlock(html, Plot, pv, st) { // only called while pc is on (peersBlock): the orientation sentence belongs to the percentile layer
   const chart = peerChart(Plot, pv, st);
   if (chart === null) return "";
   const n = st.rows.filter((r) => r.percentile !== null).length;
@@ -85,5 +85,5 @@ export function peersBlock(html, Plot, pv, state) {
 ${ind === null ? html`<p id="no-indicators">${NO_INDICATORS}</p>` : html`<h3 id="peer-indicator-name">${ind.name}</h3>
 ${ind.notes.map((n) => html`<p class="mm-indicator-note" id="indicator-note">${n}</p>`)}
 ${spread ? html`<p class="mm-spread" id="reference-spread">${spread}</p>` : html`<p class="mm-spread" id="reference-spread">${NO_RANKING_SPREAD}</p>`}
-${st.empty ? emptyBlock(html, {id: "empty-group", text: EMPTY_GROUP, next: DRAFT_NEXT_GROUP}) : html`${pv.ranked ? chartBlock(html, Plot, pv, st) : ""}${peerTable(html, pv, st, {onFocus})}`}`}</div>`;
+${st.empty ? emptyBlock(html, {id: "empty-group", text: EMPTY_GROUP, next: DRAFT_NEXT_GROUP}) : html`${pv.ranked && state?.pc === true ? chartBlock(html, Plot, pv, st) : ""}${peerTable(html, pv, st, {onFocus})}`}`}</div>`;
 }

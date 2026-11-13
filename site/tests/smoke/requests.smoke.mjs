@@ -126,11 +126,29 @@ describe("AC-RD-51 requests per page type equal the files of spec section 3", ()
     if (r) assert.deepEqual(r, ["manifest.json"], "/domains");
   });
 
-  test("PG-COUNTRY: meta/*, one scorecard per domain except global, no series file before 'Show history'", async (t) => {
-    const r = await load(t, `/country/${firstCountry()}`, ".mm-country-domain table tbody tr");
+  test("V9 (AC-V2-62): the country list page and its picker request the manifest, meta/entities.json and meta/groups.json, each once, and nothing else", async (t) => {
+    const r = await load(t, "/country", "#picker-slot select", {keepDuplicates: true});
+    if (r) assert.deepEqual(r, sorted(["manifest.json", ...metaPaths("entities", "groups")]), "/country");
+  });
+
+  test("V8: PG-COMPARE (shell only until V17) reads no data file but the manifest", async (t) => {
+    const r = await load(t, "/compare", ".mm-asof");
+    if (r) assert.deepEqual(r, ["manifest.json"], "/compare");
+  });
+
+  // V12 (spec 3, L1: one series file per indicator on demand; the first two domain cards are open): after the load event the page reads the series file of each indicator that the first two
+  // domains list and the country has a stored series for, once each, and no other series file until a card is opened or a history button is used.
+  test("PG-COUNTRY: meta/*, one scorecard per domain except global, and the series files of the indicators of the first two (open) L1 cards", async (t) => {
+    const id = firstCountry();
+    const r = await load(t, `/country/${id}`, ".mm-country-domain table tbody tr", {keepDuplicates: true}); // a list: each file is requested exactly once
     if (!r) return;
-    const domains = meta("domains").domains.map((d) => d.domain_id).filter((d) => d !== "global");
-    assert.deepEqual(r, sorted(["manifest.json", ...metaPaths("entities", "groups", "domains", "indicators", "series"), ...domains.map((d) => `scorecard/${d}.json`)]));
+    const domains = meta("domains").domains.filter((d) => d.domain_id !== "global");
+    const stored = new Set(meta("series").series.filter((s) => s.entity_id === id).map((s) => s.indicator_id));
+    const listed = new Set(manifest.files.map((f) => f.path));
+    const l1 = new Set(domains.slice(0, 2).flatMap((d) => d.indicator_ids).filter((i) => stored.has(i)).flatMap((i) => ["parquet", "json"].map((x) => `series/${i}.${x}`)).filter((p) => listed.has(p)));
+    assert.deepEqual(r, sorted(["manifest.json", ...metaPaths("entities", "groups", "domains", "indicators", "series"), ...domains.map((d) => `scorecard/${d.domain_id}.json`), ...l1]));
+    assert.equal(r.filter((p) => p.startsWith("series/")).length, l1.size, "each series file once");
+    assert.ok(!r.some((p) => p.startsWith("projection/") || p.startsWith("peer_stats/") || p.startsWith("series_by_entity/")), "no file outside the export contract");
   });
 
   test("PG-INDICATOR: meta/* and the scorecard of the first domain of the indicator only", async (t) => {

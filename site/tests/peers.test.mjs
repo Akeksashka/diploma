@@ -55,7 +55,7 @@ const Plot = {
   dot: (data, o) => ({kind: "dot", data, o}),
   ruleX: (data, o) => ({kind: "rule", data, o})
 };
-const render = (state) => peersBlock(html, Plot, pv(), state).s;
+const render = (state) => peersBlock(html, Plot, pv(), {pc: true, ...state}).s;
 
 test("the filter only filters: stored percentile texts are identical with and without it (D6)", () => {
   const v = pv();
@@ -75,7 +75,7 @@ test("unknown group id keeps all rows; an empty group renders the empty message,
   const v = pv();
   assert.equal(filterRows(v.indicators[0].rows, "nope", v.members).length, 6);
   const e = peerView(sc(), {...meta, groups: [grp("g7", ["XXX"])]});
-  const out = peersBlock(html, Plot, e, {indicator: "M09", group: "g7"}).s;
+  const out = peersBlock(html, Plot, e, {pc: true, indicator: "M09", group: "g7"}).s;
   assert.ok(out.includes('id="empty-group"') && !out.includes("<table"));
 });
 
@@ -124,7 +124,7 @@ test("the reference-period spread of the ranked set is the stored figure", () =>
   assert.ok(render({indicator: "M09"}).includes(text));
   assert.equal(spreadText({spreadDays: null, rankReferencePeriod: null}), null);
   const none = sc({alignment: [{...align, rank_reference_period: null, reference_period_spread_days: null, n_ranked: null}]});
-  assert.match(peersBlock(html, Plot, peerView(none, meta), {indicator: "M09"}).s, /No ranking for this indicator/);
+  assert.match(peersBlock(html, Plot, peerView(none, meta), {pc: true, indicator: "M09"}).s, /No ranking for this indicator/);
 });
 
 test("the percentile column label, caveat and filter note are fixed text", () => {
@@ -149,13 +149,13 @@ test("M18: the exported non-euro note is shown and non-euro countries are marked
   assert.ok(!rows.get("DEU").flags.includes(NON_EURO_MARK));
   assert.ok(!rows.get("EA").flags.includes(NON_EURO_MARK));
   assert.ok(rows.get("USA").flags.includes(NON_EURO_MARK) && rows.get("POL").flags.includes(NON_EURO_MARK));
-  const out = peersBlock(html, Plot, v, {indicator: "M18"}).s;
+  const out = peersBlock(html, Plot, v, {pc: true, indicator: "M18"}).s;
   assert.ok(out.includes(`id="indicator-note">${note}</p>`));
   assert.ok(!out.includes("<svg"), "no chart for an unranked domain");
   // no euro_area group in the export: the note is still shown, nobody is marked
   const w = peerView(s, {...meta, groups: [], indicators: [{indicator_id: "M18", name: "x", notes: [note]}]});
   assert.ok(w.indicators[0].rows.every((r) => !r.flags.includes(NON_EURO_MARK)));
-  assert.ok(peersBlock(html, Plot, w, {indicator: "M18"}).s.includes(note));
+  assert.ok(peersBlock(html, Plot, w, {pc: true, indicator: "M18"}).s.includes(note));
 });
 
 test("group membership is evaluated on the manifest date", () => {
@@ -196,7 +196,7 @@ test("rendered fixture domains: peer groups, lagging, unaligned, spread, M18 (ge
   const load = (p) => JSON.parse(readFileSync(`${dir}/${p}`, "utf8"));
   const m = {entities: listOf(load("meta/entities.json"), "entities"), indicators: listOf(load("meta/indicators.json"), "indicators"), groups: listOf(load("meta/groups.json"), "groups"), knownCutoff: load("manifest.json").known_cutoff};
   const labour = peerView(load("scorecard/labour.json"), m);
-  const out = (state) => peersBlock(html, Plot, labour, state).s;
+  const out = (state) => peersBlock(html, Plot, labour, {pc: true, ...state}).s;
   assert.ok(labour.groupOptions.length >= 4);
   const all = out({indicator: "M09", group: "all"});
   assert.match(all, /data-entity="USA" data-status="unranked" data-mark="lagging"/);
@@ -208,7 +208,7 @@ test("rendered fixture domains: peer groups, lagging, unaligned, spread, M18 (ge
   const cell = (h) => h.match(/data-entity="DEU"[^]*?<\/tr>/)[0];
   assert.equal(cell(all), cell(g7));
   const fin = peerView(load("scorecard/fin.json"), m);
-  const f = peersBlock(html, Plot, fin, {indicator: "M18", group: "all"}).s;
+  const f = peersBlock(html, Plot, fin, {pc: true, indicator: "M18", group: "all"}).s;
   assert.ok(f.includes("local-currency yield spread (includes inflation/FX expectations), not sovereign credit risk"));
   assert.match(f, /data-entity="USA"[^]*?non-euro: see the note above/);
   assert.ok(!/data-entity="DEU"[^]*?<\/tr>/.exec(f)[0].includes("non-euro"));
@@ -235,7 +235,7 @@ test("T117: dot plot draws only stored percentiles, labels carry the stored valu
 
 test("T117: figure has an aria-label and a table alternative; orientation and direction sit next to the chart", () => {
   const v = peerView(sc(), {...meta, indicators: [{...indicators[0], good_dir: -1}]});
-  const out = peersBlock(html, Plot, v, {indicator: "M09"}).s;
+  const out = peersBlock(html, Plot, v, {pc: true, indicator: "M09"}).s;
   assert.match(out, /<figure class="mm-figure" id="peer-figure" role="img" aria-label="Dot plot of the percentile vs all ranked countries for Unemployment rate, 3 countries\. The table below lists the same values\.">/);
   assert.ok(out.includes("Higher percentile means a more favourable position by each indicator&#39;s stated direction.") || out.includes("Higher percentile means a more favourable position by each indicator's stated direction."));
   assert.ok(out.includes("Direction of this indicator: lower is better."));
@@ -256,7 +256,7 @@ test("T117/T119: hollow marks for estimate or inherited values; reference offset
   assert.equal(rows.get("JPN").refOffsetDays, 12);
   assert.equal(rows.get("DEU").hollow, false);
   assert.equal(rows.get("DEU").refOffsetDays, null);
-  const out = peersBlock(html, Plot, v, {indicator: "M09"}).s;
+  const out = peersBlock(html, Plot, v, {pc: true, indicator: "M09"}).s;
   assert.ok(out.includes("Reference offset (days)"));
   assert.match(out, /data-entity="JPN"[^]*?data-label="Reference offset \(days\)" class="mm-num">12</);
   assert.match(out, /data-entity="DEU"[^]*?data-label="Reference offset \(days\)" class="mm-num mm-na">n\/a</);
@@ -269,7 +269,7 @@ test("T118: focus hash parse accepts only known ids; focus is highlighted in cha
   assert.equal(focusHash("DEU"), "#c=DEU");
   assert.equal(pv().entityIds.has("DEU"), true);
   calls.length = 0;
-  const out = peersBlock(html, Plot, pv(), {indicator: "M09", focus: "JPN"}).s;
+  const out = peersBlock(html, Plot, pv(), {pc: true, indicator: "M09", focus: "JPN"}).s;
   assert.match(out, /data-entity="JPN" data-status="ranked" data-mark="" data-focus="true"/);
   assert.match(out, /data-entity="DEU"[^>]*data-focus="false"/);
   assert.match(out, /class="mm-focus-btn" data-entity="JPN" aria-pressed="true"/);
@@ -293,4 +293,12 @@ test("T118: no cookie or storage in the peers modules and page", () => {
   files.push(domainPageSource("labour"), readFileSync(new URL("../src/lib/indicator-view.js", import.meta.url), "utf8"));
   for (const t of files) assert.ok(!/localStorage|sessionStorage|document\.cookie/.test(t));
   assert.ok(!files.at(-1).includes("radioGroup(html"), "L23: the peer group control is the filter bar's Group select");
+});
+
+test("ADR-037 decision 3: the percentile chart and its orientation sentence are absent unless pc is on", () => {
+  const off = peersBlock(html, Plot, pv(), {indicator: "M09"}).s;
+  assert.ok(!off.includes("peer-orientation") && !off.includes("peer-figure"), "no percentile chart, no orientation sentence");
+  assert.ok(off.includes('id="peer-table"'), "the table stays");
+  const on = peersBlock(html, Plot, pv(), {indicator: "M09", pc: true}).s;
+  assert.ok(on.includes("peer-orientation") && on.includes("peer-figure"));
 });

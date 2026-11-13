@@ -1,6 +1,6 @@
 // Filter view-model (layout amendment 2.2, AC-DB-03). Pure functions over stored fields only: they select, order by a stored
-// field's position, and clip. Nothing here computes a statistic, a rank or a percentile; the one count is countPeriodHiddenRows (D6, AC-RD-50, AC-DB-36).
-// Hiding rows is selection. The only count is countPeriodHiddenRows (amendment 2.2, AC-DB-36).
+// field's position, and clip. Nothing here computes a statistic, a rank or a percentile; the one count is countHiddenRowsByReason (D6, AC-RD-50, AC-DB-36, ADR-036 Amendment 1).
+// Hiding rows is selection. The only count is countHiddenRowsByReason (amendment 2.2, AC-DB-36, ADR-036 Amendment 1).
 const FREQUENCY_ORDER = ["D", "M", "Q", "A"];
 
 const yearOf = (isoDate) => {
@@ -89,21 +89,63 @@ export function clipToPeriod(values = [], from = null, to = null, {dateKey = "re
   return values.filter((v) => inRange(yearOf(v?.[dateKey]), from, to));
 }
 
+// The Period rule of one row: true when its stored date has a year outside from..to. A row without a date (or no valid range) is never outside.
+const outsidePeriod = (row, from, to, dateKey) => {
+  const y = yearOf(row?.[dateKey]);
+  return hasRange(from, to) && y !== null && !inRange(y, from, to);
+};
+
 // Scorecard rows whose latest ref_period_end year is outside from..to are hidden (user answer to ADR-034 Q3). A row without a
 // reference date (a state row: n/a, not published) is never hidden. Returns the kept rows and the hidden rows as lists.
 export function splitByPeriod(rows = [], from = null, to = null, {dateKey = "ref_period_end"} = {}) {
   if (!hasRange(from, to)) return {kept: rows, hidden: []};
   const kept = [];
   const hidden = [];
-  for (const r of rows) {
-    const y = yearOf(r?.[dateKey]);
-    (y === null || inRange(y, from, to) ? kept : hidden).push(r);
-  }
+  for (const r of rows) (outsidePeriod(r, from, to, dateKey) ? hidden : kept).push(r);
   return {kept, hidden};
 }
 
-// The one named browser-side count (amendment 2.2, AC-DB-36): rows before minus rows after the Period row filter of ONE card, from the
-// card's loaded rows and from/to only. The scans whitelist exactly this function. Callers render DRAFT_HIDDEN_ROWS(n): no sentence at 0.
-export function countPeriodHiddenRows(rows = [], from = null, to = null, opts = {}) {
-  return rows.length - splitByPeriod(rows, from, to, opts).kept.length;
+// Hidden-row reasons, in precedence order (ADR-037 A1.4): a hidden row is in exactly one category, the first that applies.
+export const HIDDEN_REASONS = Object.freeze(["no_data", "stale", "other_period", "other"]);
+
+const isNumber = (v) => typeof v === "number" && Number.isFinite(v);
+
+// One selection function per chart (ADR-037 A1.4; builds on splitByPeriod's Period rule). Returns {drawn, hidden}; `drawn` keeps the input order and
+// `hidden` is a list of {row, reason}, `reason` one of HIDDEN_REASONS, assigned from stored fields only. The list renders `hidden` and the counts come
+// from countHiddenRowsByReason(hidden): one array, one source. Nothing here reads a value except to test that a stored value exists.
+// context (every key optional; with none of the coverage keys the result is the Period split alone):
+//   from, to, dateKey          Period years (as splitByPeriod; a row without the date is never hidden by Period)
+//   requireValue               true: a row without a stored finite value is `no_data` (also `hasValue(row)` = false, or `hasSeries(row)` = false).
+//                              Defaults to true when referencePeriod or hideStale is set (a snapshot chart: a row with no value is `no_data`, which takes
+//                              precedence over `stale` and `other_period`); pass false explicitly to keep value-less rows.
+//   hideStale                  true: a row whose stored `is_stale` is true is `stale` (snapshot charts; time-series charts and K1 leave it false)
+//   referencePeriod            the chart's stored reference period; a row whose stored `dateKey` value differs, or whose stored `alignment` is
+//                              "unaligned", is `other_period` unless includeOtherPeriods is true
+//   includeOtherPeriods        true: such rows are drawn (the `oth` toggle); the Period filter still applies
+//   isOther(row)               stored state that removes the row for another reason (for example not ranked where ranking is shown)
+export function splitByCoverage(rows = [], context = {}) {
+  const {from = null, to = null, dateKey = "ref_period_end", hideStale = false, referencePeriod = null, includeOtherPeriods = false, hasSeries = null, hasValue = null, isOther = null} = context;
+  const requireValue = context.requireValue ?? (referencePeriod !== null || hideStale === true);
+  const drawn = [];
+  const hidden = [];
+  for (const row of rows) {
+    let reason = null;
+    if (requireValue && (hasSeries?.(row) === false || (hasValue ? !hasValue(row) : !isNumber(row?.value)))) reason = "no_data";
+    else if (hideStale && row?.is_stale === true) reason = "stale";
+    else if (outsidePeriod(row, from, to, dateKey)) reason = "other_period";
+    else if (!includeOtherPeriods && referencePeriod !== null && (row?.alignment === "unaligned" || row?.[dateKey] !== referencePeriod)) reason = "other_period";
+    else if (isOther?.(row) === true) reason = "other";
+    if (reason === null) drawn.push(row);
+    else hidden.push({row, reason});
+  }
+  return {drawn, hidden};
+}
+
+// The one named browser-side count (ADR-036 Amendment 1, ADR-037 A1.4; AC-DB-36): a tally of the stored rows of ONE hidden array by their stored
+// reason, nothing else. Returns {total, no_data, stale, other_period, other}; total = the sum of the four, each row in exactly one (an unknown reason
+// counts as `other`). The scans whitelist exactly this function; callers render the sentence from copy.js and render nothing at total 0 (I7).
+export function countHiddenRowsByReason(hidden = []) {
+  const counts = {total: 0, no_data: 0, stale: 0, other_period: 0, other: 0};
+  for (const h of hidden) { counts.total += 1; counts[HIDDEN_REASONS.includes(h?.reason) ? h.reason : "other"] += 1; }
+  return counts;
 }

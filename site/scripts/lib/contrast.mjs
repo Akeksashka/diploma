@@ -154,6 +154,7 @@ export function checkPairs(themes, pairs) {
       if (!used.has(name)) errors.push(`${theme}: token ${name} has no declared contrast pair`);
     }
     for (const p of pairs) {
+      if (p.lightOnly === true && theme === "dark") continue; // A2.5: new tokens are asserted for the light theme only
       const missing = [p.fg, p.bg].filter((t) => !Object.hasOwn(tokens, t));
       if (missing.length) {
         errors.push(`${theme}: pair ${p.fg} on ${p.bg} references undeclared token(s) ${missing.join(", ")}`);

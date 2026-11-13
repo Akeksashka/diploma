@@ -137,7 +137,7 @@ test("a domain without a row for the entity is omitted; an absent cell is a row 
   assert.equal(dom(m, "growth").rows.length, 4);
 });
 
-test("showsPercentiles drives the orientation line: only where a stored percentile exists", () => {
+test("showsPercentiles is true only where a stored percentile exists (it no longer gates the orientation sentence, which follows pc alone)", () => {
   assert.equal(build("SY01").showsPercentiles, true);
   assert.equal(build("SY20").showsPercentiles, false);
 });
@@ -158,8 +158,11 @@ test("generated page: one h1 = entity name, breadcrumb, caveat before orientatio
   assert.ok(!/<nav[\s>]/.test(src), "country page adds no second <nav> beyond the shell nav");
   assert.ok(src.includes("Groups: G7."));
   assert.ok(src.includes('FileAttachment("../data/scorecard/growth.json")') && src.includes('FileAttachment("../data/scorecard/fin.json")'));
-  assert.ok(src.indexOf("mm-caveat") < src.indexOf("mm-orientation"));
-  assert.ok(src.includes("model.showsPercentiles"));
+  // C-CTRY-6 / AC-RD-62: the page source prints neither line; countryPage prints the caveat once per page whatever pc is, and the orientation sentence after it whenever pc=1.
+  assert.ok(!src.includes("mm-caveat") && !src.includes("mm-orientation"));
+  const page = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "..", "src", "lib", "country-page.js"), "utf8");
+  assert.ok(page.indexOf("mm-caveat") < page.indexOf("mm-orientation"));
+  assert.match(page, /pcNotes = \(html, on\) => html`<p class="mm-caveat">\$\{CAVEAT\}<\/p>\$\{on \?/, "the caveat does not depend on pc");
   assert.throws(() => countryPageSource({entity_id: "../x", name: "x"}, [], []));
   assert.throws(() => countryPageSource({entity_id: "SY01", name: "x"}, [], ["a/b"]));
 });

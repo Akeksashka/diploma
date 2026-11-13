@@ -80,6 +80,20 @@ test("AC-RD-62: the redesign section of copy.js has no unlisted prose", () => {
   assert.deepEqual(proseFindings(entries, allowedNames), []);
 });
 
+test("V6 (AC-RD-62): the v2 strings, including the template outputs, are single short sentences or labels", () => {
+  const flat = {
+    ...Object.fromEntries(["DRAFT_NOT_STATED", "DRAFT_NO_ALIGNED", "DRAFT_MARKED_SEASONAL", "DRAFT_MODE_SWITCH_LABEL", "DRAFT_SHOW_PERCENTILE", "DRAFT_SHOW_STALE", "DRAFT_INCLUDE_OTHER_PERIODS", "DRAFT_CONTEXT_LINES", "DRAFT_STALE_CODE"].map((n) => [n, copy[n]])),
+    ...Object.fromEntries(["DRAFT_CAPTION_LABELS", "DRAFT_CAPTION_SEASONAL", "DRAFT_CAPTION_LEGEND", "DRAFT_HIDDEN_REASON_LABELS", "DRAFT_BLOCKED_FIELD_LABELS", "DRAFT_MODE_LABELS", "DRAFT_PICKER_LABELS"].flatMap((n) => Object.entries(copy[n]).map(([k, v]) => [`${n}.${k}`, v]))),
+    HIDDEN_SUMMARY: copy.DRAFT_HIDDEN_SUMMARY({total: 8, no_data: 4, stale: 2, other_period: 1, other: 1}),
+    HIDDEN_ITEM: copy.DRAFT_HIDDEN_LIST_ITEM("Germany", "Stale", "2023", "stale: no rank"),
+    BLOCKED: copy.DRAFT_BLOCKED_MESSAGE(["unit code", "price basis", "base period"]),
+    REBASE: copy.DRAFT_REBASE_STATEMENT("2015"),
+    VINTAGE: copy.DRAFT_CAPTION_VINTAGE("2026-11-03")
+  };
+  assert.ok(Object.keys(flat).length > 30);
+  assert.deepEqual(proseFindings(flat, new Set()), []);
+});
+
 test("AC-RD-62: the redesign modules carry no prose strings (data and labels only)", () => {
   const hits = ["hash", "period", "units", "sort", "missing", "profile-chart", "value-chart"].flatMap((n) => literalFindings(`lib/${n}.js`, readFileSync(join(src, "lib", `${n}.js`), "utf8")));
   assert.deepEqual(hits, []);
@@ -100,7 +114,7 @@ test("AC-RD-62: seeded unlisted prose fails (long string, two sentences, and an 
 // L26 (AC-DB-32): the layout modules L1-L24 carry data and labels only. Every string literal of each module is checked with the
 // same length and sentence rules; a module on the exception list below carries a documented, reported finding. The list of
 // modules is explicit (so a rename fails) and the directory walk below catches any other module added later.
-const LAYOUT_MODULES = ["bar-chart", "carry", "country-page", "domain-page", "explorer-filters", "facts-card", "filter-bar-options", "filter-bar", "filter-chip", "filter-country", "filter-model", "filter-period", "filter-proof", "filter-store", "heatmap-card", "home-dashboard", "kpi-model", "kpi-view", "rank-model", "rank-view", "series-card", "small-multiples", "table-card"];
+const LAYOUT_MODULES = ["compare-page", "blocked", "compare-controls", "compare-data", "hatch", "multi-line", "home-constants", "bar-list", "choropleth", "choropleth-model", "scatter", "time-heatmap", "bar-chart", "caption", "caption-view", "carry", "compat", "country-page", "domain-page", "explorer-filters", "facts-card", "filter-bar-options", "filter-bar", "filter-chip", "filter-country", "filter-model", "filter-period", "filter-proof", "filter-store", "heatmap-card", "hidden-rows", "home-dashboard", "kpi-model", "kpi-view", "l1-card", "mode-switch", "peer-strip", "picker", "country-list", "rank-model", "rank-view", "series-card", "series-chart", "small-multiples", "table-card"];
 const allLibModules = () => readdirSync(join(src, "lib")).filter((n) => n.endsWith(".js") && n !== "copy.js").map((n) => n.slice(0, -3));
 // Modules whose literals are not yet clean (none expected). Each is a reported finding with file and reason, never silent.
 const PROSE_EXCEPTIONS = {};

@@ -1,0 +1,28 @@
+{
+  "source": "Natural Earth admin-0 countries, Ukraine point of view (ne_10m_admin_0_countries_ukr), 1:10m",
+  "url": "https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-admin-0-countries/",
+  "terms_url": "https://www.naturalearthdata.com/about/terms-of-use/",
+  "licence": "public domain",
+  "version": "5.1.1",
+  "accessed": "2026-11-13",
+  "input_file": "ne_10m_admin_0_countries_ukr.shp",
+  "input_sha256": {
+    "shp": "ec923b81a27e36efce7bb293c45ce87134f967330ef137d04e1be9c4940b6d82",
+    "dbf": "4fe3184c24f5cb7516aee1c20ebc6326a3ad6c2158cf844bcb5a1620c3670862"
+  },
+  "feature_id_field": "ADM0_A3",
+  "extent": {
+    "minLon": -25,
+    "maxLon": 45,
+    "minLat": 34,
+    "maxLat": 72
+  },
+  "coordinate_decimals": 2,
+  "simplify_tolerance_degrees": 0.02,
+  "ring_winding": "exterior clockwise (shapefile and d3-geo convention, not RFC 7946)",
+  "features": 64,
+  "asset_bytes": 257819,
+  "asset_gzip_bytes": 75223,
+  "crimea_checked_by_user": null,
+  "crimea_checked_date": null
+}

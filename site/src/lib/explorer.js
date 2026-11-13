@@ -9,7 +9,7 @@ import {groupLabel, groupMembers} from "./peers.js";
 import {indicatorUnit, rebaseUnit} from "./units.js";
 import {isLevelDefault, shortUnit} from "./series-meta.js";
 import {transformLabel} from "./indicator-model.js";
-import {isRebasable, rebase} from "./rebase.js";
+import {isRebasable, rebase, rebaseOffered} from "./rebase.js";
 
 export const INTERACTION_LIMIT_BYTES = 5_000_000; // spec section 8: data fetched by one interaction
 export const SA_OK = Object.freeze(["SA", "SCA"]); // analytics/transforms.py SA_OK
@@ -67,10 +67,12 @@ export function rowsFromTable(table) {
 
 // JSON fallback (manifest format "json"): a bare array of row objects or {rows: [...]} with the Parquet column names.
 // The spec fixes no JSON layout for series files; this is the assumption (recorded in docs/ops/spike-results.md).
+// Also accepted (the synthetic v2 fixture): {columns: [names], rows: [[values]]}, each row an array in the order of `columns`.
 export function rowsFromJson(doc) {
   const list = Array.isArray(doc) ? doc : doc?.rows;
   if (!Array.isArray(list)) throw new ExplorerError("series JSON file has no rows list");
-  return rowsFromTable(list);
+  const names = Array.isArray(doc?.columns) ? doc.columns : null;
+  return rowsFromTable(names ? list.map((r) => (Array.isArray(r) ? Object.fromEntries(names.map((c, k) => [c, r[k]])) : r)) : list);
 }
 
 export function seriesFileEntries(manifest) {
@@ -212,15 +214,13 @@ export const yearOf = (ms) => new Date(ms).getUTCFullYear();
 export const yearsOf = (rows) => [...new Set(rows.map((r) => yearOf(r.end)))].sort((a, b) => a - b);
 export const periodsOf = (rows) => [...new Set(rows.map((r) => r.end))].sort((a, b) => a - b).map((ms) => ({id: isoDate(ms), label: isoDate(ms)}));
 
-// Default base period: the earliest period at which every shown series has a rebasable value; if there is
-// none, the earliest at which any has one; null if no series has one.
+// Default base period (spec 6.4): the earliest period at which EVERY shown series has a rebasable value. If the series share none (or one has none), there is no base and no
+// rebase: null, never a period that only some series have.
 export function autoBase(seriesList) {
-  const live = seriesList.filter((s) => s.points.some((p) => isRebasable(p.value)));
-  if (live.length === 0) return null;
-  const sets = live.map((s) => new Set(s.points.filter((p) => isRebasable(p.value)).map((p) => p.ms)));
-  const all = [...sets[0]].filter((ms) => sets.every((s) => s.has(ms))).sort((a, b) => a - b);
-  if (all.length > 0) return all[0];
-  return Math.min(...sets.flatMap((s) => [...s]));
+  if (seriesList.length === 0) return null;
+  const sets = seriesList.map((s) => new Set(s.points.filter((p) => isRebasable(p.value)).map((p) => p.ms)));
+  const common = [...sets[0]].filter((ms) => sets.every((x) => x.has(ms))).sort((a, b) => a - b);
+  return common.length > 0 ? common[0] : null;
 }
 
 function unitText(ctx, ind, meta, column, rebaseBase) {
@@ -275,9 +275,13 @@ export function buildModel(ctx, indicatorId, rows, state) {
   const selected = (state.entities ?? []).filter((e) => series.some((s) => s.entity === e));
   series = series.map((s) => ({...s, order: selected.indexOf(s.entity)}));
   let baseMs = null;
-  if (state.rebase) {
-    const picked = state.base && state.base !== "auto" ? toMs(state.base) : null;
-    baseMs = picked ?? autoBase(series);
+  // A1.5: the display-only rebase runs only for an indicator the stored metadata marks as an index (scale_hint = index); otherwise the state is ignored.
+  const picked = state.base && state.base !== "auto" ? toMs(state.base) : null;
+  const autoMs = Boolean(state.rebase) && rebaseOffered(ind) && picked === null ? autoBase(series) : null;
+  // No period common to every series and none chosen: no rebase, levels as stored (spec 6.4).
+  const wantRebase = Boolean(state.rebase) && rebaseOffered(ind) && (picked !== null || autoMs !== null);
+  if (wantRebase) {
+    baseMs = picked ?? autoMs;
     const kept = [];
     for (const s of series) {
       const rebased = baseMs === null ? s.points.map((p) => ({...p, value: null})) : rebase(s.points.map((p) => ({...p, period: p.ms})), baseMs);
@@ -289,7 +293,7 @@ export function buildModel(ctx, indicatorId, rows, state) {
     }
     series = kept;
   }
-  const rebased = Boolean(state.rebase);
+  const rebased = wantRebase;
   const rebaseBase = rebased && baseMs !== null ? isoDate(baseMs) : null;
   // Each series keeps its null points: a missing period stays a gap in the line (D16); nothing is filled or interpolated.
   series = series.map((s) => {
@@ -328,12 +332,12 @@ export function buildModel(ctx, indicatorId, rows, state) {
     indicatorName: ind?.name ?? indicatorId,
     column,
     transformLabel: TRANSFORM_COLUMNS[column],
-    rebase: Boolean(state.rebase),
+    rebase: wantRebase,
     baseDate: baseMs === null ? null : isoDate(baseMs),
     baseMs,
     facets: series.length > FACET_ABOVE,
-    yLabel: state.rebase ? (rebaseBase ? rebaseUnit(rebaseBase) : REBASED_Y_LABEL) : unitText(ctx, ind, null, column, null) ?? distinctText(captions.map((c) => c.unit)),
-    titleUnit: state.rebase ? (rebaseBase ? rebaseUnit(rebaseBase) : REBASED_Y_LABEL) : shortUnit({indicator: ind, series: null, column, rebaseBase: null}) ?? distinctText(series.map((s) => s.unit)),
+    yLabel: wantRebase ? (rebaseBase ? rebaseUnit(rebaseBase) : REBASED_Y_LABEL) : unitText(ctx, ind, null, column, null) ?? distinctText(captions.map((c) => c.unit)),
+    titleUnit: wantRebase ? (rebaseBase ? rebaseUnit(rebaseBase) : REBASED_Y_LABEL) : shortUnit({indicator: ind, series: null, column, rebaseBase: null}) ?? distinctText(series.map((s) => s.unit)),
     series,
     plotted,
     markers,

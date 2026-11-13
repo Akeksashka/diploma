@@ -2,8 +2,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  clipToPeriod, comparisonSet, countPeriodHiddenRows, countryOptions, frequencyOptions, indicatorList, indicatorsOfDomain,
-  indicatorsOfFrequency, periodBounds, presetRange, seriesOfFrequency, splitByPeriod
+  HIDDEN_REASONS, clipToPeriod, comparisonSet, countHiddenRowsByReason, countryOptions, frequencyOptions, indicatorList, indicatorsOfDomain,
+  indicatorsOfFrequency, periodBounds, presetRange, seriesOfFrequency, splitByCoverage, splitByPeriod
 } from "../src/lib/filter-model.js";
 import {DRAFT_HIDDEN_ROWS} from "../src/lib/copy.js";
 
@@ -116,15 +116,92 @@ test("AC-DB-03 period: scorecard rows with a latest year outside from..to are hi
   assert.deepEqual(splitByPeriod(rows, 2013, 2013, {dateKey: "x"}).hidden, [], "a row without the date key is never hidden");
 });
 
-test("AC-DB-36: countPeriodHiddenRows = rows before minus rows after; N = 0 renders no sentence; no percentage or total", () => {
+const tally = (rows, from, to, opts = {}) => countHiddenRowsByReason(splitByCoverage(rows, {from, to, ...opts}).hidden);
+
+test("AC-DB-36 / ADR-036 Amendment 1: the Period-only split counts as other_period; N = 0 renders no sentence; no percentage or total", () => {
   const rows = [{ref_period_end: "2026-06-30"}, {ref_period_end: "2019-12-31"}, {ref_period_end: "2012-12-31"}, {ref_period_end: null}];
-  assert.equal(countPeriodHiddenRows(rows, 2017, 2026), 1);
-  assert.equal(countPeriodHiddenRows(rows, 2020, 2026), 2);
-  assert.equal(countPeriodHiddenRows(rows, 2000, 2026), 0);
-  assert.equal(countPeriodHiddenRows(rows, null, null), 0);
-  assert.equal(countPeriodHiddenRows([], 2017, 2026), 0);
-  assert.equal(countPeriodHiddenRows(rows, 2020, 2026), splitByPeriod(rows, 2020, 2026).hidden.length);
-  assert.equal(DRAFT_HIDDEN_ROWS(countPeriodHiddenRows(rows, 2000, 2026)), "");
-  assert.equal(DRAFT_HIDDEN_ROWS(countPeriodHiddenRows(rows, 2020, 2026)), "2 rows hidden by the period filter");
+  assert.equal(tally(rows, 2017, 2026).total, 1);
+  assert.deepEqual(tally(rows, 2020, 2026), {total: 2, no_data: 0, stale: 0, other_period: 2, other: 0});
+  assert.equal(tally(rows, 2000, 2026).total, 0);
+  assert.equal(tally(rows, null, null).total, 0);
+  assert.equal(tally([], 2017, 2026).total, 0);
+  assert.equal(tally(rows, 2020, 2026).total, splitByPeriod(rows, 2020, 2026).hidden.length, "same Period rule as splitByPeriod");
+  assert.deepEqual(splitByCoverage(rows, {from: 2020, to: 2026}).drawn, splitByPeriod(rows, 2020, 2026).kept);
+  assert.equal(DRAFT_HIDDEN_ROWS(tally(rows, 2000, 2026).total), "");
+  assert.equal(DRAFT_HIDDEN_ROWS(tally(rows, 2020, 2026).total), "2 rows hidden by the period filter");
   assert.ok(!/%|total|of \d/.test(DRAFT_HIDDEN_ROWS(2)));
+  assert.deepEqual(countHiddenRowsByReason(), {total: 0, no_data: 0, stale: 0, other_period: 0, other: 0});
+});
+
+const cov = [
+  {id: "ok", value: 1, ref_period_end: "2025-12-31", is_stale: false, alignment: "aligned"},
+  {id: "nov", value: null, ref_period_end: null, is_stale: false},
+  {id: "nov-stale", value: null, ref_period_end: "2025-12-31", is_stale: true},
+  {id: "stale", value: 2, ref_period_end: "2025-12-31", is_stale: true},
+  {id: "stale-old", value: 3, ref_period_end: "2023-12-31", is_stale: true},
+  {id: "uns", value: 4, ref_period_end: "2025-12-31", alignment: "unaligned"},
+  {id: "old", value: 5, ref_period_end: "2024-12-31", alignment: "aligned"},
+  {id: "far", value: 6, ref_period_end: "2012-12-31", alignment: "aligned"},
+  {id: "nr", value: 7, ref_period_end: "2025-12-31", alignment: "aligned", ranked: false}
+];
+const snap = {requireValue: true, hideStale: true, referencePeriod: "2025-12-31", from: 2020, to: 2026, isOther: (r) => r.ranked === false};
+const reasons = (res) => Object.fromEntries(res.hidden.map((h) => [h.row.id, h.reason]));
+
+test("V4 splitByCoverage: each hidden row has exactly one reason by precedence no_data, stale, other_period, other", () => {
+  const r = splitByCoverage(cov, snap);
+  assert.deepEqual(r.drawn.map((x) => x.id), ["ok"]);
+  assert.deepEqual(reasons(r), {nov: "no_data", "nov-stale": "no_data", stale: "stale", "stale-old": "stale", uns: "other_period", old: "other_period", far: "other_period", nr: "other"});
+  assert.equal(r.drawn.length + r.hidden.length, cov.length, "drawn and hidden partition the input");
+  assert.deepEqual(r.drawn, [cov[0]], "drawn rows are the input objects, unaltered, in input order");
+});
+
+test("V4 splitByCoverage: no_data comes from a missing series or a missing stored value, never from a computation", () => {
+  const rows = [{id: "a", value: 0}, {id: "b", value: NaN}, {id: "c", value: "x"}, {id: "d", value: 1, series: false}];
+  const r = splitByCoverage(rows, {requireValue: true, hasSeries: (x) => x.series !== false});
+  assert.deepEqual(r.drawn.map((x) => x.id), ["a"], "a stored zero is a value");
+  assert.deepEqual(r.hidden.map((h) => h.row.id), ["b", "c", "d"]);
+  assert.ok(r.hidden.every((h) => h.reason === "no_data"));
+  assert.deepEqual(splitByCoverage([{id: "z", hasValue: false}], {requireValue: true, hasValue: (x) => x.hasValue}).hidden.map((h) => h.reason), ["no_data"]);
+  assert.equal(splitByCoverage([{id: "n"}], {}).hidden.length, 0, "without requireValue a row with no value is not hidden (tables keep such rows)");
+});
+
+test("V4 splitByCoverage: with referencePeriod or hideStale set, requireValue defaults to true so no_data wins over other_period and stale", () => {
+  const rows = [{id: "a", value: null, ref_period_end: "2024-12-31", alignment: "unaligned", is_stale: true}, {id: "b", ref_period_end: "2024-12-31"}, {id: "ok", value: 1, ref_period_end: "2025-12-31"}];
+  const byRef = splitByCoverage(rows, {referencePeriod: "2025-12-31"});
+  assert.deepEqual(reasons(byRef), {a: "no_data", b: "no_data"});
+  assert.deepEqual(byRef.drawn.map((x) => x.id), ["ok"]);
+  assert.deepEqual(reasons(splitByCoverage(rows, {hideStale: true})), {a: "no_data", b: "no_data"});
+  assert.deepEqual(reasons(splitByCoverage(rows, {referencePeriod: "2025-12-31", hideStale: true, requireValue: false})), {a: "stale", b: "other_period"}, "an explicit false is respected");
+  assert.equal(splitByCoverage(rows, {}).hidden.length, 0, "neither key set: default stays false");
+  assert.equal(splitByCoverage(rows, {from: 2020, to: 2026}).hidden.length, 0, "Period alone does not require a value");
+});
+
+test("V4 splitByCoverage: time-series charts keep stale rows (hideStale off); the stl toggle and oth toggle remove rows from the hidden array", () => {
+  const off = splitByCoverage(cov, {...snap, hideStale: false});
+  assert.ok(!Object.values(reasons(off)).includes("stale"));
+  assert.ok(off.drawn.some((x) => x.id === "stale"), "stale row is drawn when staleness does not hide");
+  const oth = splitByCoverage(cov, {...snap, includeOtherPeriods: true});
+  assert.ok(oth.drawn.some((x) => x.id === "uns") && oth.drawn.some((x) => x.id === "old"), "other-period rows are drawn with oth=1");
+  assert.deepEqual(oth.hidden.map((h) => h.row.id).sort(), ["far", "nov", "nov-stale", "nr", "stale", "stale-old"].sort(), "far is still outside the Period filter");
+  assert.equal(reasons(oth).far, "other_period");
+});
+
+test("V4 property: total equals the hidden array length and the four categories sum to total, for generated inputs", () => {
+  let seed = 12345;
+  const rnd = () => ((seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648);
+  for (let n = 0; n < 200; n += 1) {
+    const rows = Array.from({length: Math.floor(rnd() * 30)}, (_, i) => ({id: i, value: rnd() < 0.3 ? null : rnd(), is_stale: rnd() < 0.3, alignment: rnd() < 0.3 ? "unaligned" : "aligned", ref_period_end: `${2010 + Math.floor(rnd() * 17)}-12-31`, ranked: rnd() < 0.8}));
+    const ctx = {requireValue: rnd() < 0.8, hideStale: rnd() < 0.5, referencePeriod: rnd() < 0.5 ? "2025-12-31" : null, includeOtherPeriods: rnd() < 0.3, from: rnd() < 0.5 ? 2015 : null, to: rnd() < 0.5 ? 2026 : null, isOther: (r) => r.ranked === false};
+    const {drawn, hidden} = splitByCoverage(rows, ctx);
+    const c = countHiddenRowsByReason(hidden);
+    assert.equal(c.total, hidden.length);
+    assert.equal(c.no_data + c.stale + c.other_period + c.other, c.total);
+    assert.equal(drawn.length + hidden.length, rows.length);
+    for (const k of HIDDEN_REASONS) assert.equal(c[k], hidden.filter((h) => h.reason === k).length);
+  }
+});
+
+test("V4 countHiddenRowsByReason: a tally of stored reasons; an unknown reason is counted as other so each row is in one category", () => {
+  assert.deepEqual(countHiddenRowsByReason([{reason: "stale"}, {reason: "stale"}, {reason: "no_data"}, {reason: "weird"}, {}]), {total: 5, no_data: 1, stale: 2, other_period: 0, other: 2});
+  assert.deepEqual([...HIDDEN_REASONS], ["no_data", "stale", "other_period", "other"]);
 });

@@ -223,3 +223,71 @@ describe("L14 KPI tiles (AC-DB-20, AC-DB-21)", () => {
     });
   });
 });
+
+// V11 (K1 latest-value cards of the COUNTRY page; AC-V2-10, 11, 12, 13, 125 absence part). Needs the SYNTHETIC v2 fixture export (EXPORT_DIR=tests/fixtures/v2_export); otherwise skipped.
+describe("V11 K1 latest-value cards on /country/<id>", () => {
+  const isV2 = () => dataJson("meta/indicators.json").indicators.some((i) => i.indicator_id === "V06");
+  async function withCountry(t, id, fn) {
+    if (!browser) return t.skip(reason);
+    if (!isV2()) return t.skip("needs the synthetic v2 fixture export (tests/fixtures/v2_export)");
+    const {page, context, log} = await openPage(browser, site.origin, {fixedTime: NOW});
+    try {
+      await page.goto(`${site.origin}/country/${id}`);
+      await page.waitForSelector('[data-card="k1"] [data-tile="k1"]', {timeout: TIMEOUT});
+      await fn({page, log});
+      assert.deepEqual(log.errors, [], "page or console errors");
+      assert.deepEqual(log.offOrigin, [], "off-origin requests");
+    } finally {
+      await context.close();
+    }
+  }
+  const cellOf = (domainId, id, ind) => dataJson(`scorecard/${domainId}.json`).entities.find((e) => e.entity_id === id).indicators.find((c) => c.indicator_id === ind);
+
+  test("AC-V2-13: the card count equals the indicators with a stored value; the others are in the card's disclosure (ITA labour)", async (t) => {
+    await withCountry(t, "ITA", async ({page}) => {
+      const domain = dataJson("meta/domains.json").domains.find((d) => d.domain_id === "labour");
+      const withValue = domain.indicator_ids.filter((i) => typeof cellOf("labour", "ITA", i).value === "number");
+      assert.equal(await page.locator('#domain-labour [data-tile="k1"]').count(), withValue.length);
+      const hidden = domain.indicator_ids.length - withValue.length;
+      assert.ok(hidden > 0);
+      const box = page.locator('#domain-labour [data-card="k1"] .mm-hidden-rows');
+      assert.equal(await box.locator("li").count(), hidden);
+      assert.match((await box.locator("summary").innerText()).trim(), new RegExp(`^${hidden} rows? hidden: ${hidden} no data$`));
+      assert.equal(await page.locator('#domain-prices [data-card="k1"] .mm-hidden-rows').count(), 0, "nothing is rendered at N = 0");
+    });
+  });
+
+  test("AC-V2-10, 12: a card prints name, the stored value with its unit, the reference period and the source; an estimate has the hollow marker", async (t) => {
+    await withCountry(t, "DEU", async ({page}) => {
+      const card = page.locator('#domain-fiscal [data-tile="k1"][data-indicator="A05"]');
+      const c = cellOf("fiscal", "DEU", "A05");
+      assert.equal(c.value_kind, "estimate");
+      assert.equal(Number((await card.locator('[data-field="value"]').innerText()).trim()), c.value);
+      assert.equal((await card.locator('[data-field="unit"]').innerText()).trim(), "% of GDP");
+      assert.equal((await card.locator('[data-field="period"]').innerText()).trim(), c.ref_period_end.slice(0, 4));
+      assert.ok((await card.locator('[data-field="source"]').innerText()).trim().length > 0);
+      assert.equal(await card.locator('.mm-mark[data-mark="estimate"] .mm-hollow').count(), 1);
+      assert.ok((await card.locator("h3 a").getAttribute("href")).startsWith("../indicator/A05"));
+    });
+  });
+
+  test("A1.1 (E-3): a stale card is drawn with the stale marker and the stored period, never hidden (FRA M09)", async (t) => {
+    await withCountry(t, "FRA", async ({page}) => {
+      const card = page.locator('#domain-labour [data-tile="k1"][data-indicator="M09"]');
+      assert.equal(await card.getAttribute("data-stale"), "true");
+      assert.equal((await card.locator(".mm-stale").innerText()).trim(), "stale, 2025-12");
+      assert.equal(await card.locator(".mm-stale .mm-square").count(), 1);
+      assert.equal(await page.locator('#domain-labour [data-tile="k1"][data-stale="false"] .mm-stale').count(), 0);
+    });
+  });
+
+  test("AC-V2-11, 125: no delta, arrow or direction colour on any card", async (t) => {
+    await withCountry(t, "DEU", async ({page}) => {
+      const text = await page.locator('[data-card="k1"]').first().innerText();
+      assert.doesNotMatch(text, /[↑↓▲▼]|\b(up|down)\b|delta|y\/y \(stored\)/i);
+      assert.equal(await page.locator('[data-tile="k1"] [data-direction], [data-tile="k1"] .mm-delta').count(), 0);
+      const colours = await page.locator('[data-tile="k1"] .mm-tile-number').evaluateAll((els) => [...new Set(els.map((e) => getComputedStyle(e).color))]);
+      assert.equal(colours.length, 1, "one ink colour for every number");
+    });
+  });
+});

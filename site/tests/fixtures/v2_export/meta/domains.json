@@ -1,0 +1,84 @@
+{
+ "schema_version": "1.0",
+ "domains": [
+  {
+   "domain_id": "labour",
+   "indicator_ids": [
+    "M09",
+    "M10",
+    "M11"
+   ],
+   "min_coverage_for_rank": 0.5,
+   "name": "Labour",
+   "notices": [],
+   "percentile_rank_label": "mean percentile of the domain's indicators",
+   "ranked": true
+  },
+  {
+   "domain_id": "prices",
+   "indicator_ids": [
+    "P01"
+   ],
+   "min_coverage_for_rank": 0.5,
+   "name": "Prices",
+   "notices": [],
+   "percentile_rank_label": "mean percentile of the domain's indicators",
+   "ranked": true
+  },
+  {
+   "domain_id": "fiscal",
+   "indicator_ids": [
+    "A04",
+    "A05"
+   ],
+   "min_coverage_for_rank": 0.5,
+   "name": "Fiscal",
+   "notices": [],
+   "percentile_rank_label": "mean percentile of the domain's indicators",
+   "ranked": true
+  },
+  {
+   "domain_id": "growth",
+   "indicator_ids": [
+    "A02",
+    "Q08"
+   ],
+   "min_coverage_for_rank": 0.5,
+   "name": "Growth",
+   "notices": [],
+   "percentile_rank_label": "mean percentile of the domain's indicators",
+   "ranked": true
+  },
+  {
+   "domain_id": "agri",
+   "indicator_ids": [
+    "A01"
+   ],
+   "min_coverage_for_rank": 0.5,
+   "name": "Agriculture",
+   "notices": [
+    "informational, unranked"
+   ],
+   "percentile_rank_label": "mean percentile of the domain's indicators",
+   "ranked": false
+  },
+  {
+   "domain_id": "qa",
+   "indicator_ids": [
+    "V01",
+    "V02",
+    "V03",
+    "V04",
+    "V05",
+    "V06"
+   ],
+   "min_coverage_for_rank": 0.5,
+   "name": "QA cases (synthetic)",
+   "notices": [
+    "informational, unranked"
+   ],
+   "percentile_rank_label": "mean percentile of the domain's indicators",
+   "ranked": false
+  }
+ ]
+}

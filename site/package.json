@@ -9,6 +9,9 @@
   "scripts": {
     "prepare-data": "node scripts/prepare-data.mjs",
     "build": "npm run prepare-data && observable build",
+    "build:en": "MM_LANG=en npm run build && node scripts/set-html-lang.mjs dist en",
+    "build:uk": "MM_LANG=uk npm run build && node scripts/set-html-lang.mjs dist-uk uk",
+    "build:all": "npm run build:en && npm run build:uk && node scripts/merge-trees.mjs dist dist-uk dist-site",
     "dev": "npm run prepare-data && observable preview",
     "test": "node --test tests/*.test.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",

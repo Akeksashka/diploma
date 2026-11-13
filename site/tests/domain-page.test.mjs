@@ -17,16 +17,27 @@ const meta = {entities: load("meta/entities.json").entities, indicators: load("m
 const dom = meta.domains[0];
 const scorecard = load(`scorecard/${dom.domain_id}.json`);
 const store = {get: () => ({}), subscribe() {}};
+const pcStore = (state) => ({get: () => ({pc: true, ...state}), subscribe() {}});
 
 test("the bar of PG-DOMAIN is Group and Frequency only (amendment 2.4)", () => assert.deepEqual(controlsFor("domain"), ["group", "frequency"]));
 
-test("the domain page is one band (h2: name, link to the list) over one card (h3) holding the heatmap block; one h2 only", () => {
-  const out = String(domainPage(html, domainView(scorecard, meta), {store, inputs: {scorecard, ...meta}}));
-  assert.match(out, new RegExp(`<h2 id="band-domain-heading">${dom.name}</h2><a href="\\.\\./domains">All domains</a>`));
-  assert.equal((out.match(/<h2[ >]/g) ?? []).length, 1);
-  assert.match(out, new RegExp(`<div class="mm-card mm-card--span-12" id="domain-card">[\\s\\S]*<h3>${dom.name}</h3>`));
-  assert.match(out, /id="domain-heatmap"/);
-  assert.equal((out.match(/class="mm-card[ "]/g) ?? []).length, 1, "cards do not nest");
+test("the domain page is one band (h2: name, link to the list) over one card; the percentile heatmap C5 is absent unless pc is on (AC-V2-51 amended)", () => {
+  const off = String(domainPage(html, domainView(scorecard, meta), {store, inputs: {scorecard, ...meta}}));
+  assert.match(off, new RegExp(`<h2 id="band-domain-heading">${dom.name}</h2><a href="\\.\\./domains">All domains</a>`));
+  assert.equal((off.match(/<h2[ >]/g) ?? []).length, 1);
+  assert.doesNotMatch(off, /id="domain-heatmap"|mm-orientation|c5-secondary|percentile vs all ranked/, "no percentile layer without pc");
+  assert.match(off, /id="domain-indicators"/);
+  assert.match(off, /id="pc-toggle"/);
+  assert.equal((off.match(/class="mm-card[ "]/g) ?? []).length, 1, "cards do not nest");
+  const rd = meta.domains.find((d) => d.ranked === true) ?? dom;
+  const rsc = load(`scorecard/${rd.domain_id}.json`);
+  const on = String(domainPage(html, domainView(rsc, meta), {store: {get: () => ({pc: true}), subscribe() {}}, inputs: {scorecard: rsc, ...meta}}));
+  assert.match(on, /<details class="mm-secondary" id="c5-secondary" data-card="c5">/);
+  assert.doesNotMatch(on, /<details class="mm-secondary"[^>]* open/, "collapsed");
+  assert.match(on, /id="domain-heatmap"/);
+  assert.equal((on.match(/class="mm-orientation"/g) ?? []).length, 1, "the orientation sentence goes with the layer");
+  assert.ok(on.indexOf("domain-indicators") < on.indexOf("c5-secondary"), "after the primary content");
+  assert.equal((on.match(/class="mm-card[ "]/g) ?? []).length, 1, "cards do not nest");
 });
 
 test("the generated PG-DOMAIN page mounts the bar for page domain, one h1, no write to the address on load", () => {
@@ -48,7 +59,7 @@ test("the generated PG-REVISIONS page gets a band and a card around unchanged co
 test("PG-DOMAIN heatmap ignores a carried Country: the page renders the same with and without c in the store state", () => {
   const g = meta.groups[0].group_id;
   const outside = meta.entities.find((e) => !e.is_global && !meta.groups[0].members.some((m) => m.entity_id === e.entity_id)).entity_id;
-  const at = (state) => String(domainPage(html, domainView(scorecard, meta), {store: {get: () => state, subscribe() {}}, inputs: {scorecard, ...meta}}));
+  const at = (state) => String(domainPage(html, domainView(scorecard, meta), {store: pcStore(state), inputs: {scorecard, ...meta}}));
   assert.equal(at({g, c: [outside]}), at({g, c: []}));
   // sensitivity: the unfiltered cardView would add the carried Country as an outside row
   const rowIds = (c) => cardView(scorecard, {...meta, state: {g, c}}).rows.map((r) => r.entityId);

@@ -1,10 +1,10 @@
 // Redesign R7: the C-CTRY-3 table builder and its cells (spec 4.2, 5.1); L22 moved the page arrangement to country-page.js. `html` (htl) and `Plot` are passed in; this
 // file imports only local modules. Display only: nothing is computed here (D6). Every number printed is a stored field formatted
-// by country-model.js; the filter only hides rows; no count of hidden rows exists anywhere on the page.
+// by country-model.js; the filter only hides rows; the count of hidden rows is countHiddenRowsByReason over one hidden array (A1.4), shown by hidden-rows.js.
 import {
   AHEAD_TAG, COMPARE_COUNTRIES, COMPARE_COUNTRIES_LABEL, INDICATOR_SERIES_LINK, SERIES_LINK_LABEL, DRAFT_COUNTRY_COLUMNS as COL, DRAFT_COUNTRY_FILTER_ALL, DRAFT_COUNTRY_FILTER_LEGEND,
   DRAFT_COUNTRY_FILTER_VALUE, DRAFT_COUNTRY_SWITCHER_GO, DRAFT_COUNTRY_SWITCHER_LABEL, DRAFT_COUNTRY_TABLE_CAPTION, DRAFT_OFFSET_FLAG, FLAG_AHEAD, FLAG_ESTIMATE, FLAG_LAGGING, FLAG_UNALIGNED,
-  DRAFT_UNIT_MISSING_SENTENCE, PERCENTILE_COLUMN_LABEL
+  DRAFT_SHOW_PERCENTILE, DRAFT_STATE_COLUMN, DRAFT_UNIT_MISSING_SENTENCE, PERCENTILE_COLUMN_LABEL
 } from "./copy.js";
 import {carryHref} from "./carry.js";
 import {aboutDetails} from "./about-value.js";
@@ -85,6 +85,17 @@ export function chip(html, r) {
   return html`<td class="mm-pct" data-label="${COL.percentile}" data-state="${st.key}" data-signature="${st.signature}" data-bin="${coloured && r.bin !== null ? r.bin : "none"}"><span class="mm-cell">${inner}</span>${st.sentence ? html` <span class="mm-sentence">${st.sentence}</span>` : ""}</td>`;
 }
 
+// T1 without the percentile layer (V15, ADR-037 decision 3): the stored state of a value row that bears on its currency or alignment (stale, ahead, lagging, unaligned,
+// inherited), as code, glyph and sentence. The cell keeps the data-state and data-signature of the row; rank-dependent states print nothing here.
+const CURRENCY_STATES = Object.freeze(["stale", "ahead", "lagging", "unaligned", "inherited"]);
+export function stateCell(html, r) {
+  const st = r.state;
+  const base = STATES[st.key];
+  const shown = CURRENCY_STATES.includes(st.key);
+  const inner = shown ? html`<span class="mm-cell">${base.glyph ? glyph(html, base.glyph) : ""}${base.code ? html`<span class="mm-code">${base.code}</span>` : ""}</span>${st.sentence ? html` <span class="mm-sentence">${st.sentence}</span>` : ""}` : "";
+  return html`<td class="mm-state-cell" data-label="${DRAFT_STATE_COLUMN}" data-state="${st.key}" data-signature="${st.signature}">${inner}</td>`;
+}
+
 export function sourceCell(html, r) {
   return html`<td data-label="${COL.source}">${r.sourceName ? (r.sourceUrl ? html`<a href="${r.sourceUrl}" rel="noopener">${r.sourceName}</a>` : r.sourceName) : ""}</td>`;
 }
@@ -99,9 +110,9 @@ function indicatorHead(html, r, hrefs = COUNTRY_TABLE_HREFS) {
 
 // A value row is followed by one sub-row holding its "About this value" details and the (hidden) history panel; the sub-row has
 // no data-indicator, so the one-row-per-indicator rule of the table is unchanged.
-function valueRow(html, r, entityId, entityName, domainId, history, hrefs = COUNTRY_TABLE_HREFS) {
+function valueRow(html, r, entityId, entityName, domainId, history, hrefs = COUNTRY_TABLE_HREFS, percentile = false) {
   const id = `about-${historyKey(domainId, r.indicatorId)}`;
-  return html`<tr data-indicator="${r.indicatorId}" data-has-value="true" data-state="${r.state.key}">${indicatorHead(html, r, hrefs)}${valueCell(html, r)}${periodCell(html, r)}${chip(html, r)}${sourceCell(html, r)}${actionsCell(html, r, entityId, entityName, history, domainId, hrefs)}</tr><tr class="mm-sub-row" data-for="${r.indicatorId}"><td colspan="6">${aboutDetails(html, r, entityName, id)}${history && historyButton(html, history, domainId, r) !== "" ? historyPanel(html, domainId, r) : ""}</td></tr>`;
+  return html`<tr data-indicator="${r.indicatorId}" data-has-value="true" data-state="${r.state.key}">${indicatorHead(html, r, hrefs)}${valueCell(html, r)}${periodCell(html, r)}${percentile ? chip(html, r) : stateCell(html, r)}${sourceCell(html, r)}${actionsCell(html, r, entityId, entityName, history, domainId, hrefs)}</tr><tr class="mm-sub-row" data-for="${r.indicatorId}"><td colspan="6">${aboutDetails(html, r, entityName, id)}${history && historyButton(html, history, domainId, r) !== "" ? historyPanel(html, domainId, r) : ""}</td></tr>`;
 }
 
 // A row without a value: the code, its signature and the one reason sentence of spec 5.1, in one cell that spans the value columns.
@@ -111,9 +122,25 @@ function reasonRow(html, r, entityId, countryName, hrefs = COUNTRY_TABLE_HREFS) 
   return html`<tr data-indicator="${r.indicatorId}" data-has-value="false" data-state="${st.key}">${indicatorHead(html, r, hrefs)}<td colspan="4" class="mm-reason" data-label="${COL.reason}" data-state="${st.key}" data-signature="${st.signature}"><span class="mm-cell">${base.glyph ? glyph(html, base.glyph) : ""}<span class="mm-code">${base.code ?? ""}</span></span> <span class="mm-sentence">${st.sentence}</span></td>${actionsCell(html, r, entityId, countryName, null, "", hrefs)}</tr>`;
 }
 
-export function domainTable(html, d, countryName, entityId, history = null, hrefs = COUNTRY_TABLE_HREFS) {
-  const head = html`<thead><tr><th scope="col">${COL.indicator}</th><th scope="col" class="mm-num">${COL.value}</th><th scope="col">${COL.period}</th><th scope="col">${COL.percentile}</th><th scope="col">${COL.source}</th><th scope="col">${COL.actions}</th></tr></thead>`;
-  const withGroup = d.withValue.length === 0 ? "" : html`<tbody data-group="with-value">${d.withValue.map((r) => valueRow(html, r, entityId, countryName, d.domainId, history, hrefs))}</tbody>`;
+// `percentile` (V15, pc=1): the percentile column and bin chip; off by default, the column is then the stored state (T1).
+export function domainTable(html, d, countryName, entityId, history = null, hrefs = COUNTRY_TABLE_HREFS, {percentile = false} = {}) {
+  // The percentile column header is printed only if some row of the table holds a stored percentile; otherwise the column stays the stored state (decided 2026-11-13, D3).
+  const pctHeader = percentile && [...d.withValue, ...d.withoutValue].some((r) => r.percentile !== null && r.percentile !== undefined);
+  const head = html`<thead><tr><th scope="col">${COL.indicator}</th><th scope="col" class="mm-num">${COL.value}</th><th scope="col">${COL.period}</th><th scope="col">${pctHeader ? COL.percentile : DRAFT_STATE_COLUMN}</th><th scope="col">${COL.source}</th><th scope="col">${COL.actions}</th></tr></thead>`;
+  const withGroup = d.withValue.length === 0 ? "" : html`<tbody data-group="with-value">${d.withValue.map((r) => valueRow(html, r, entityId, countryName, d.domainId, history, hrefs, percentile))}</tbody>`;
   const withoutGroup = d.withoutValue.length === 0 ? "" : html`<tbody data-group="without-value"><tr class="mm-group-row"><th scope="rowgroup" colspan="6">${d.withoutValueHeading}</th></tr>${d.withoutValue.map((r) => reasonRow(html, r, entityId, countryName, hrefs))}</tbody>`;
   return html`<div class="mm-ctry-scroll" tabindex="0" role="region" aria-label="${DRAFT_COUNTRY_TABLE_CAPTION(d.name, countryName)}"><table class="mm-country-table" id="table-${d.domainId}"><caption>${DRAFT_COUNTRY_TABLE_CAPTION(d.name, countryName)}</caption>${head}${withGroup}${withoutGroup}</table></div>`;
+}
+
+// V15 (AC-V2-25, 26; ADR-037 decision 3): the "Show percentile" control of the country page. A native checkbox that writes the hash key `pc` through the filter store.
+export function pcToggle(html, store) {
+  const root = html`<label class="mm-percentile-toggle"><input type="checkbox" id="show-percentile" checked=${Boolean(store?.get?.().pc)}> ${DRAFT_SHOW_PERCENTILE}</label>`;
+  if (store && typeof root?.querySelector === "function") {
+    const box = root.querySelector("input");
+    box.addEventListener("change", () => store.set({pc: box.checked}));
+    store.subscribe((s) => {
+      box.checked = Boolean(s.pc);
+    });
+  }
+  return root;
 }

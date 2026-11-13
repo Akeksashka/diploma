@@ -6,6 +6,7 @@ import {mountCountryChip} from "./filter-country.js";
 import {mountPeriodChip} from "./filter-period.js";
 import {controlsFor, domainOptions, frequencySelectOptions, groupOptions, indicatorOptionGroups, patchWithIndicatorRule, summaryParts} from "./filter-bar-options.js";
 import {DRAFT_PRINT_FILTERS} from "./copy.js";
+import {mountModeSwitch} from "./mode-switch.js";
 
 const RENDERED = ["group", "country", "domain", "indicator", "period", "frequency"]; // all controls of the matrix
 const MULTI_COUNTRY_PAGES = ["home", "series"]; // amendment 2.4: the Country multi-select is on these pages only
@@ -15,7 +16,9 @@ const WIDE = "(min-width: 40rem)"; // below it the bar is compact (amendment 2.5
 // leading (L22): an optional node placed first in the bar (the PG-COUNTRY switcher with its Go button; it navigates, it is not filter state).
 // only (L21): an optional subset of the page's controls to render (PG-SERIES shows Domain, Frequency and Period; its Country and Indicator stay in
 // the rail). Reset then clears only the filters rendered, and the compact chips and print line list only those.
-export function mountFilterBar(html, {page, store, data, leading = null, only = null}) {
+// mode (V8): optional {mode, hrefs, set}: the Country / Compare switch, placed first in the form (above the controls, always visible). It navigates (real links,
+// carry.js keeps the keys that stay meaningful); it is not filter state.
+export function mountFilterBar(html, {page, store, data, leading = null, only = null, mode = null}) {
   const want = controlsFor(page).filter((c) => RENDERED.includes(c) && (c !== "country" || MULTI_COUNTRY_PAGES.includes(page)) && (!only || only.includes(c)));
   const opt = (o) => html`<option value="${o.value}">${o.label}</option>`;
   const selects = {};
@@ -61,7 +64,7 @@ export function mountFilterBar(html, {page, store, data, leading = null, only = 
   // one row. From 40 rem the <details> is kept open and its summary is hidden, so the controls are always visible.
   const chips = html`<p class="mm-filterbar-chips" id="filterbar-chips"></p>`;
   const more = html`<details class="mm-filterbar-more" id="filterbar-more"><summary id="filterbar-more-summary">${L.filters}</summary><div class="mm-filterbar-controls">${fields}${reset}</div></details>`;
-  const form = html`<form role="group" aria-label="${L.filters}" class="mm-filterbar" id="filterbar" data-page="${page}">${more}${chips}</form>`;
+  const form = html`<form role="group" aria-label="${L.filters}" class="mm-filterbar" id="filterbar" data-page="${page}">${mode ? mountModeSwitch(html, mode) : ""}${more}${chips}</form>`;
   form.addEventListener("submit", (e) => e.preventDefault());
   const doc = form.ownerDocument;
   const win = doc.defaultView;

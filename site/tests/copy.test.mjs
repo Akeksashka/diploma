@@ -157,6 +157,18 @@ export const LAYOUT_L3 = {
   DRAFT_RANK_COLUMNS: [(v) => ({...v}), {bar: "Bar", dot: "Percentile position"}]
 };
 const DRAFT = [
+  // Dashboard v2 Compare mode (plan V17 to V23; pinned in the V17-V23 test below)
+  "DRAFT_COMPARE_CARD_TITLES", "DRAFT_COMPARE_CONTROL_LABELS", "DRAFT_COMPARE_CONTROLS_LABEL", "DRAFT_COMPARE_CHOOSE_INDICATOR", "DRAFT_COMPARE_CHOOSE_PAIR", "DRAFT_COMPARE_SORTS", "DRAFT_COMPARE_DEFAULT_COUNTRIES", "DRAFT_C2_NO_RANK_REFERENCE", "DRAFT_COMPARE_SERIES_PENDING", "DRAFT_COMPARE_SECONDARY", "DRAFT_C1_MARKS", "DRAFT_C1_FIGURE_LABEL", "DRAFT_C2_FIGURE_LABEL", "DRAFT_C2_MARKS", "DRAFT_C2_TABLE_CAPTION", "DRAFT_C3_FIGURE_LABEL", "DRAFT_C3_TABLE_CAPTION", "DRAFT_C3_NO_COMMON", "DRAFT_C3_MARKS", "DRAFT_NO_VALUE_FOR", "DRAFT_C4_FIGURE_LABEL", "DRAFT_C4_SCALE", "DRAFT_C4_BLANK", "DRAFT_C4_MARKS", "DRAFT_C4_TABLE_CAPTION", "DRAFT_C4_OUTLINE_MARK", "DRAFT_C4_LEGEND",
+  // Dashboard v2 C6 choropleth map (plan V53 to V55; pinned in the V53-V55 test below)
+  "DRAFT_C6_CARD_TITLE", "DRAFT_C6_FIGURE_LABEL", "DRAFT_C6_SCALE", "DRAFT_C6_LEGEND_UNIT", "DRAFT_C6_MARKS", "DRAFT_C6_AGGREGATES_NOTE", "DRAFT_C6_SOURCE_NOTE", "DRAFT_C6_TABLE_CAPTION", "DRAFT_C6_SKIP_TO_TABLE", "DRAFT_C6_NOT_MAPPED", "DRAFT_C6_NOT_MAPPED_SENTENCE", "DRAFT_C6_GEO_PENDING", "DRAFT_C6_GEO_UNREADABLE", "DRAFT_C6_STORED",
+  // Dashboard v2 V5 caption block (pinned in the V5 test below) and V4/V6 strings (pinned in the V6 test below)
+  "DRAFT_HIDDEN_REASON_LABELS", "DRAFT_HIDDEN_SUMMARY", "DRAFT_HIDDEN_LIST_ITEM",
+  "DRAFT_NO_ALIGNED", "DRAFT_BLOCKED_FIELD_LABELS", "DRAFT_BLOCKED_MESSAGE", "DRAFT_MARKED_SEASONAL", "DRAFT_COMPAT_SKIPPED", "DRAFT_MODE_SWITCH_LABEL", "DRAFT_MODE_LABELS", "DRAFT_PICKER_LABELS",
+  "DRAFT_SHOW_PERCENTILE", "DRAFT_SHOW_STALE", "DRAFT_INCLUDE_OTHER_PERIODS", "DRAFT_CONTEXT_LINES", "DRAFT_STALE_CODE", "DRAFT_REBASE_STATEMENT",
+  "DRAFT_NOT_STATED", "DRAFT_CAPTION_LABELS", "DRAFT_CAPTION_SEASONAL", "DRAFT_CAPTION_VINTAGE", "DRAFT_CAPTION_LEGEND",
+  // Dashboard v2 Country mode (plan V11 to V16; pinned in the V11-V16 test below)
+  "DRAFT_COUNTRY_CARD_TITLES", "DRAFT_L1_SUMMARY", "DRAFT_FACET_EXPAND", "DRAFT_FACET_COLLAPSE", "DRAFT_SERIES_UNREADABLE", "DRAFT_STALE_TIP", "DRAFT_STALE_PERIOD", "DRAFT_REVISIONS_LINK_LABEL", "DRAFT_STATE_COLUMN",
+  "DRAFT_P1A_FIGURE_LABEL", "DRAFT_P1A_REFERENCE", "DRAFT_P1A_TABLE_CAPTION", "DRAFT_P1A_MARKS", "DRAFT_P1A_AGGREGATES_NOTE", "DRAFT_P1A_NO_REFERENCE",
   "DRAFT_LOADING", "DRAFT_ERROR_TITLE", "DRAFT_ERROR_VERSION", "DRAFT_ERROR_INVALID", "DRAFT_CONSEQUENCE", "DRAFT_SUBREGION_CONSEQUENCE",
   "DRAFT_NOSCRIPT", "DRAFT_NEXT_GROUP", "DRAFT_NEXT_SERIES", "DRAFT_REGIONS",
   // Stage 1 (T108-T112): written by the implementation, not confirmed; docs/ops/dashboard-ux-baseline.md lists them.
@@ -337,6 +349,75 @@ test("DRAFT strings: exact text, and every DRAFT_ export is pinned here", () => 
   for (const r of Object.values(copy.DRAFT_REGIONS)) assert.ok(!/[/:.\d]|https?/.test(r), r);
 });
 
+test("V5 (AC-V2-70): caption labels, the not-stated marker and the vintage line are DRAFT constants with their exact text", () => {
+  assert.equal(copy.DRAFT_NOT_STATED, "not stated");
+  assert.deepEqual({...copy.DRAFT_CAPTION_LABELS}, {indicator: "Indicator", unit: "Unit", frequency: "Frequency", seasonal: "Seasonal adjustment", period: "Reference period", source: "Source", vintage: "Vintage"});
+  assert.deepEqual({...copy.DRAFT_CAPTION_SEASONAL}, {SA: "SA", NSA: "NSA", NA: "not applicable"});
+  assert.equal(copy.DRAFT_CAPTION_VINTAGE("2026-11-03"), "latest vintage as of 2026-11-03");
+  assert.deepEqual({...copy.DRAFT_CAPTION_LEGEND}, {EST: "estimate", PROV: "provisional"});
+  for (const n of ["DRAFT_CAPTION_LABELS", "DRAFT_CAPTION_SEASONAL", "DRAFT_CAPTION_LEGEND"]) assert.ok(Object.isFrozen(copy[n]), n);
+});
+
+test("V4 (AC-V2-88): hidden-rows summary template and list labels are DRAFT constants with their exact text", () => {
+  assert.deepEqual({...copy.DRAFT_HIDDEN_REASON_LABELS}, {no_data: "No data", stale: "Stale", other_period: "Other period", other: "Other"});
+  assert.ok(Object.isFrozen(copy.DRAFT_HIDDEN_REASON_LABELS));
+  const c = (o) => copy.DRAFT_HIDDEN_SUMMARY({total: 0, no_data: 0, stale: 0, other_period: 0, other: 0, ...o});
+  assert.equal(c({}), "");
+  assert.equal(c({total: 1, no_data: 1}), "1 row hidden: 1 no data");
+  assert.equal(c({total: 7, no_data: 4, stale: 2, other_period: 1}), "7 rows hidden: 4 no data, 2 stale, 1 other period");
+  assert.equal(c({total: 3, no_data: 1, stale: 1, other: 1}), "3 rows hidden: 1 no data, 1 stale, 1 other");
+  assert.equal(copy.DRAFT_HIDDEN_LIST_ITEM("Germany", "Stale", "2023", "stale: no rank"), "Germany: Stale; latest value 2023; stale: no rank");
+  assert.ok(!/%|of \d/.test(c({total: 7, no_data: 4, stale: 2, other_period: 1})), "no percentage or share");
+});
+
+// V6 strings are consumed by the later tasks (charts V12-V23); until then no lib module imports them. The mode switch (V8) and picker (V9) strings are consumed and removed from this list.
+const V6_UNCONSUMED = [];
+
+test("V6 (AC-V2-44, 81, 83, 90, 91): the v2 strings are DRAFT constants with their exact text; none is a bare n/a", () => {
+  assert.equal(copy.DRAFT_NO_ALIGNED, "No aligned values for this selection");
+  assert.deepEqual({...copy.DRAFT_BLOCKED_FIELD_LABELS}, {unit_code: "unit code", unit_mult: "unit multiplier", price_basis: "price basis", flow_basis: "flow basis", base_period: "base period", frequency: "frequency"});
+  assert.equal(copy.DRAFT_BLOCKED_MESSAGE(["unit code", "price basis"]), "Not drawn together; differing stored fields: unit code, price basis");
+  assert.equal(copy.DRAFT_MARKED_SEASONAL, "Mixes SA and NSA series");
+  assert.equal(copy.DRAFT_COMPAT_SKIPPED(["flow_basis"]), "Not compared, no stored value: flow_basis");
+  assert.equal(copy.DRAFT_MODE_SWITCH_LABEL, "Mode");
+  assert.deepEqual({...copy.DRAFT_MODE_LABELS}, {country: "Country", compare: "Compare"});
+  assert.deepEqual({...copy.DRAFT_PICKER_LABELS}, {country: "Country", group: "Group", countries: "Countries", aggregates: "Aggregates", placeholder: "Choose a country"});
+  assert.equal(copy.DRAFT_SHOW_PERCENTILE, "Show percentile");
+  assert.equal(copy.DRAFT_SHOW_STALE, "Show stale rows");
+  assert.equal(copy.DRAFT_INCLUDE_OTHER_PERIODS, "Include rows from other reference periods");
+  assert.equal(copy.DRAFT_CONTEXT_LINES, "Context lines");
+  assert.equal(copy.DRAFT_STALE_CODE, "stale");
+  assert.equal(copy.DRAFT_REBASE_STATEMENT("2015"), "Index, 2015 = 100, rebased for display; stored values unchanged.");
+  for (const n of ["DRAFT_BLOCKED_FIELD_LABELS", "DRAFT_MODE_LABELS", "DRAFT_PICKER_LABELS"]) assert.ok(Object.isFrozen(copy[n]), n);
+  const all = [copy.DRAFT_NO_ALIGNED, copy.DRAFT_MARKED_SEASONAL, copy.DRAFT_SHOW_PERCENTILE, copy.DRAFT_SHOW_STALE, copy.DRAFT_INCLUDE_OTHER_PERIODS, copy.DRAFT_CONTEXT_LINES, copy.DRAFT_STALE_CODE, copy.DRAFT_MODE_SWITCH_LABEL, copy.DRAFT_NOT_STATED, ...Object.values(copy.DRAFT_MODE_LABELS), ...Object.values(copy.DRAFT_PICKER_LABELS), ...Object.values(copy.DRAFT_HIDDEN_REASON_LABELS), ...Object.values(copy.DRAFT_CAPTION_SEASONAL)];
+  assert.deepEqual(all.filter((s) => typeof s !== "string" || /^\s*n\/?a\s*$/i.test(s)), [], "no bare n/a (AC-V2-83)");
+  assert.ok(!/\bn\/a\b/i.test(copy.DRAFT_REBASE_STATEMENT("2015") + copy.DRAFT_BLOCKED_MESSAGE(["x"])));
+  const dict = readFileSync(join(src, "lib", "copy.js"), "utf8").slice(readFileSync(join(src, "lib", "copy.js"), "utf8").indexOf("// DRAFT (not confirmed): Dashboard v2 (ADR-037) V6"));
+  assert.ok(!/\bregress|correlat|projection\//i.test(dict), "no regression, correlation or projection wording in the v2 strings");
+});
+
+test("V11-V16 (Country mode): the strings are DRAFT constants with their exact text; none is a bare n/a", () => {
+  assert.deepEqual({...copy.DRAFT_COUNTRY_CARD_TITLES}, {k1: "Latest values", l1: "Time series", p1: "Position among countries", t1: "Indicator table", l2: "Series"});
+  assert.ok(Object.isFrozen(copy.DRAFT_COUNTRY_CARD_TITLES));
+  assert.equal(copy.DRAFT_L1_SUMMARY("Labour"), "Labour: time series");
+  assert.equal(copy.DRAFT_FACET_EXPAND, "Expand");
+  assert.equal(copy.DRAFT_FACET_COLLAPSE, "Collapse");
+  assert.equal(copy.DRAFT_SERIES_UNREADABLE, "The series file of this indicator could not be read.");
+  assert.equal(copy.DRAFT_STALE_TIP("2025-12"), "stale, latest stored period 2025-12");
+  assert.equal(copy.DRAFT_STALE_PERIOD("2025-12"), "stale, 2025-12");
+  assert.equal(copy.DRAFT_REVISIONS_LINK_LABEL("Unemployment rate"), "Revisions of Unemployment rate");
+  assert.equal(copy.DRAFT_STATE_COLUMN, "State");
+  assert.equal(copy.DRAFT_P1A_FIGURE_LABEL("Debt", "2025", "% of GDP"), "Strip plot of Debt, reference period 2025, in % of GDP; each country is one dot; table below lists the same values");
+  assert.equal(copy.DRAFT_P1A_REFERENCE("2025"), "Reference period: 2025");
+  assert.equal(copy.DRAFT_P1A_TABLE_CAPTION("Debt", "2025"), "Debt: latest stored value by country, reference period 2025");
+  assert.equal(copy.DRAFT_P1A_MARKS, "Ring: the country in focus; hollow dot: an estimate or a value of another reference period");
+  assert.equal(copy.DRAFT_P1A_AGGREGATES_NOTE, "Dashed lines mark the stored value of an aggregate, for reference only.");
+  assert.equal(copy.DRAFT_P1A_NO_REFERENCE, "The scorecard states no reference period for this indicator.");
+  const all = [...Object.values(copy.DRAFT_COUNTRY_CARD_TITLES), copy.DRAFT_FACET_EXPAND, copy.DRAFT_FACET_COLLAPSE, copy.DRAFT_SERIES_UNREADABLE, copy.DRAFT_STATE_COLUMN, copy.DRAFT_P1A_MARKS, copy.DRAFT_P1A_AGGREGATES_NOTE, copy.DRAFT_P1A_NO_REFERENCE, copy.DRAFT_L1_SUMMARY("x"), copy.DRAFT_STALE_TIP("x"), copy.DRAFT_STALE_PERIOD("x"), copy.DRAFT_REVISIONS_LINK_LABEL("x"), copy.DRAFT_P1A_FIGURE_LABEL("x", "y", "z"), copy.DRAFT_P1A_REFERENCE("x"), copy.DRAFT_P1A_TABLE_CAPTION("x", "y")];
+  assert.deepEqual(all.filter((t) => typeof t !== "string" || /^\s*n\/?a\s*$/i.test(t) || /\bn\/a\b/i.test(t)), [], "no n/a (AC-V2-83)");
+  assert.ok(!/\b(up|down|rising|falling|increase|decrease)\b/i.test(all.join(" ")), "no direction wording (no delta, ADR-037 decision 5)");
+});
+
 test("Layout L3 (AC-DB-34): every amendment section 7 string is a DRAFT_ constant with its exact text", () => {
   for (const [name, [get, expected]] of Object.entries(LAYOUT_L3)) {
     assert.ok(name.startsWith("DRAFT_"), name);
@@ -364,8 +445,12 @@ test("copy.js has no imports and every export other than the data label is used 
   const text = readFileSync(join(src, "lib", "copy.js"), "utf8");
   assert.ok(!/^\s*import\b/m.test(text));
   const others = readdirSync(join(src, "lib")).filter((n) => n.endsWith(".js") && n !== "copy.js").map((n) => readFileSync(join(src, "lib", n), "utf8")).join("\n");
-  const unused = Object.keys(copy).filter((k) => k !== "DOMAIN_FIGURE_LABEL" && k !== "FRESHNESS_LABEL" && k !== "STALE_BANNER" && k !== "STALE_BANNER_UNREADABLE" && !(k in LAYOUT_L3) /* L3 constants are consumed by the L6+ filter bar */ && !new RegExp(`\\b${k}\\b`).test(others));
+  const unused = Object.keys(copy).filter((k) => k !== "DOMAIN_FIGURE_LABEL" && k !== "FRESHNESS_LABEL" && k !== "STALE_BANNER" && k !== "STALE_BANNER_UNREADABLE" && !V6_UNCONSUMED.includes(k) && !(k in LAYOUT_L3) /* L3 constants are consumed by the L6+ filter bar */ && !new RegExp(`\\b${k}\\b`).test(others));
   assert.deepEqual(unused, []);
+  // the exemption list must shrink as strings are consumed: a listed name that a lib module now uses is stale and must be removed from it
+  const nowUsed = V6_UNCONSUMED.filter((k) => new RegExp(`\\b${k}\\b`).test(others));
+  assert.deepEqual(nowUsed, [], "remove these names from V6_UNCONSUMED: a lib module consumes them");
+  assert.deepEqual(V6_UNCONSUMED.filter((k) => !(k in copy)), [], "every listed name still exists in copy.js");
 });
 
 test("the pieces of the peer-set note and the domain label match what the view-model and the spec use", () => {
@@ -572,4 +657,59 @@ test("AC-DB-34 (L26): confirmed strings are unchanged (Aggregates, caveat, orien
   assert.equal(copy.HOME_COUNTRIES_HEADING, "Choose a country");
   assert.equal(copy.FRESHNESS_LABEL, "Data cut-off");
   for (const n of ["CAVEAT", "ORIENTATION_NOTE"]) assert.equal(typeof copy[n], "string", n);
+});
+
+test("V17-V23 (Compare mode): the strings are DRAFT constants with their exact text; none is a bare n/a", () => {
+  assert.deepEqual({...copy.DRAFT_COMPARE_CARD_TITLES}, {c1: "Time series by country", c2: "Ranked values", c3: "Two indicators", c4: "Countries by period", c5: "Percentile heatmap", t2: "Indicator table"});
+  assert.deepEqual({...copy.DRAFT_COMPARE_CONTROL_LABELS}, {domain: "Domain", countries: "Countries", x: "X indicator", y: "Y indicator", p: "Reference period", choose: "Choose an indicator", latest: "Default period", sort: "Sort by"});
+  assert.equal(copy.DRAFT_COMPARE_CONTROLS_LABEL("Ranked values"), "Controls: Ranked values");
+  assert.equal(copy.DRAFT_COMPARE_CHOOSE_INDICATOR, "Choose an indicator to compare countries.");
+  assert.equal(copy.DRAFT_COMPARE_CHOOSE_PAIR, "Choose two indicators to compare.");
+  assert.deepEqual({...copy.DRAFT_COMPARE_SORTS}, {value: "Value", name: "Country (A to Z)", percentile: "Percentile"});
+  assert.equal(copy.DRAFT_COMPARE_DEFAULT_COUNTRIES, "No country is chosen: the default countries are shown.");
+  assert.equal(copy.DRAFT_C2_NO_RANK_REFERENCE, "No ranked reference period for this indicator.");
+  assert.equal(copy.DRAFT_COMPARE_SERIES_PENDING, "Loading the series file of this indicator.");
+  assert.equal(copy.DRAFT_COMPARE_SECONDARY("Percentile heatmap"), "Percentile layer: Percentile heatmap");
+  assert.equal(copy.DRAFT_C1_MARKS, "Dashed grey line: a stored aggregate; square marker: the last point of a stale series; hollow marker: an estimate or provisional value");
+  assert.equal(copy.DRAFT_C1_FIGURE_LABEL("GDP", "%", ["A", "B"]), "Line chart of GDP, one line per country, y-axis %: A; B; the table under the chart lists the plotted points");
+  assert.equal(copy.DRAFT_C2_FIGURE_LABEL("Debt", "2025", "% of GDP"), "Bar chart of Debt, reference period 2025, in % of GDP; one bar per country; the table below lists the same values");
+  assert.equal(copy.DRAFT_C2_MARKS, "Hollow bar: another reference period, with its period in the label; dashed outline: an aggregate, for reference only");
+  assert.equal(copy.DRAFT_C2_TABLE_CAPTION("Debt", "2025"), "Debt: stored value by country, reference period 2025");
+  assert.equal(copy.DRAFT_C3_FIGURE_LABEL("A", "%", "B", "EUR", "2025"), "Scatter plot, x-axis A in %, y-axis B in EUR, reference period 2025; one dot per country; the table below lists the same values");
+  assert.equal(copy.DRAFT_C3_TABLE_CAPTION("A", "B", "2025"), "A and B: stored values by country, reference period 2025");
+  assert.equal(copy.DRAFT_C3_NO_COMMON, "No reference period has a stored value of both indicators.");
+  assert.equal(copy.DRAFT_C3_MARKS, "Labelled dots are the countries in focus; every country with both values is a dot and is listed in the table.");
+  assert.equal(copy.DRAFT_NO_VALUE_FOR(["A", "B"]), "no value for A, B");
+  assert.equal(copy.DRAFT_C4_FIGURE_LABEL("Debt", "% of GDP", "2000", "2025"), "Heatmap of Debt, in % of GDP, countries by period, 2000 to 2025; the table below lists the same values");
+  assert.equal(copy.DRAFT_C4_SCALE("1", "9"), "Colour scale: 1 to 9, the lowest and highest cell shown");
+  assert.equal(copy.DRAFT_C4_BLANK, "no stored value");
+  assert.equal(copy.DRAFT_C4_MARKS, "Hatched cell: no stored value");
+  assert.equal(copy.DRAFT_C4_OUTLINE_MARK, "Dashed outline: a stale row, shown because Show stale rows is on");
+  assert.equal(copy.DRAFT_C4_TABLE_CAPTION("Debt", "% of GDP"), "Debt: stored value by country and period, in % of GDP");
+  assert.deepEqual({...copy.DRAFT_C4_LEGEND}, {min: "lowest", max: "highest"});
+  for (const n of ["DRAFT_COMPARE_CARD_TITLES", "DRAFT_COMPARE_CONTROL_LABELS", "DRAFT_COMPARE_SORTS", "DRAFT_C4_LEGEND"]) assert.ok(Object.isFrozen(copy[n]), n);
+  const all = [...Object.values(copy.DRAFT_COMPARE_CARD_TITLES), ...Object.values(copy.DRAFT_COMPARE_CONTROL_LABELS), ...Object.values(copy.DRAFT_COMPARE_SORTS), copy.DRAFT_COMPARE_CHOOSE_INDICATOR, copy.DRAFT_COMPARE_CHOOSE_PAIR, copy.DRAFT_COMPARE_DEFAULT_COUNTRIES, copy.DRAFT_C2_NO_RANK_REFERENCE, copy.DRAFT_C1_MARKS, copy.DRAFT_C2_MARKS, copy.DRAFT_C3_MARKS, copy.DRAFT_C3_NO_COMMON, copy.DRAFT_C4_BLANK, copy.DRAFT_C4_MARKS, copy.DRAFT_C4_OUTLINE_MARK, copy.DRAFT_NO_VALUE_FOR(["x"])];
+  assert.deepEqual(all.filter((t) => typeof t !== "string" || /\bn\/a\b/i.test(t)), [], "no n/a (AC-V2-83)");
+  assert.ok(!/\bregress|correlat|projection\//i.test(all.join(" ")), "no regression or correlation wording (AC-V2-44)");
+});
+
+test("V53-V55 (C6 map): the strings are DRAFT constants with their exact text; each is a short single sentence or label, none is a bare n/a", () => {
+  assert.equal(copy.DRAFT_C6_CARD_TITLE, "Map of values");
+  assert.equal(copy.DRAFT_C6_FIGURE_LABEL("Debt", "2025", "% of GDP"), "Map of Europe: Debt, reference period 2025, in % of GDP; one shape per country; the table below lists the same values");
+  assert.equal(copy.DRAFT_C6_SCALE("1", "9"), "Colour scale: 1 to 9, the lowest and highest country shown; continuous, no classes");
+  assert.equal(copy.DRAFT_C6_LEGEND_UNIT("% of GDP"), "Unit: % of GDP");
+  assert.equal(copy.DRAFT_C6_MARKS, "Hatched: no stored value; plain: a stored value not drawn here; circle: a small country; dashed outline: another reference period");
+  assert.equal(copy.DRAFT_C6_AGGREGATES_NOTE, "Aggregates and countries outside the map are not drawn; they are listed under the hidden rows and in the table.");
+  assert.equal(copy.DRAFT_C6_SOURCE_NOTE, "Map shapes: Natural Earth.");
+  assert.equal(copy.DRAFT_C6_TABLE_CAPTION("Debt", "2025"), "Debt: stored value by country, reference period 2025, as drawn on the map");
+  assert.equal(copy.DRAFT_C6_SKIP_TO_TABLE, "Skip to the table of map values");
+  assert.deepEqual({...copy.DRAFT_C6_NOT_MAPPED}, {aggregate: "an aggregate, not drawn on the map", outside: "outside the map extent", nogeometry: "no map shape for this country"});
+  assert.equal(copy.DRAFT_C6_NOT_MAPPED_SENTENCE("outside the map extent", "5 % (2025)"), "outside the map extent; 5 % (2025)");
+  assert.equal(copy.DRAFT_C6_STORED("5 %", "2025"), "5 % (2025)");
+  assert.equal(copy.DRAFT_C6_GEO_PENDING, "Loading the map shapes.");
+  assert.equal(copy.DRAFT_C6_GEO_UNREADABLE, "The map shapes could not be read, so the map is not drawn; the table lists the same values");
+  assert.ok(Object.isFrozen(copy.DRAFT_C6_NOT_MAPPED));
+  const all = [copy.DRAFT_C6_CARD_TITLE, copy.DRAFT_C6_MARKS, copy.DRAFT_C6_AGGREGATES_NOTE, copy.DRAFT_C6_SOURCE_NOTE, copy.DRAFT_C6_SKIP_TO_TABLE, copy.DRAFT_C6_GEO_PENDING, copy.DRAFT_C6_GEO_UNREADABLE, ...Object.values(copy.DRAFT_C6_NOT_MAPPED)];
+  assert.deepEqual(all.filter((t) => typeof t !== "string" || /\bn\/a\b/i.test(t) || t.length > 160), []);
+  assert.ok(!/\bregress|correlat|projection\//i.test(all.join(" ")), "no regression or correlation wording (AC-V2-44)");
 });

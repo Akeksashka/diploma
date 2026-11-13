@@ -75,7 +75,7 @@ function domainFigureCells(html, row) {
 // Options of the table (L13): `hrefs` {country, indicator} builders (the home page sits at the site root), `carry` marks links with data-carry (L10),
 // `orientation` false leaves the orientation note out of the header (the home card prints it once, in the legend above the card).
 // The defaults are the PG-DOMAIN behaviour.
-const DEFAULTS = {hrefs: {country: countryHref, indicator: indicatorPageHref}, carry: false, orientation: true};
+const DEFAULTS = {hrefs: {country: countryHref, indicator: indicatorPageHref}, carry: false, orientation: false};
 const countryLink = (html, opts, row) =>
   opts.carry
     ? html`<a href="${opts.hrefs.country(row.entityId)}" data-link="country" data-carry>${row.name}</a>`

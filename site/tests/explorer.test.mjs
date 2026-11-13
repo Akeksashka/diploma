@@ -72,6 +72,9 @@ const alerts = [
   {indicator_id: "P01", entity_id: "FRA", series_id: 4, ref_period_end: "2025-03-31", level: "watch", z: 1.1, confidence: "full"}
 ];
 const ctx = explorerContext({manifest, seriesMeta, entities, indicators, alerts});
+// A1.5 (ADR-037, V13): the display-only rebase runs only for an indicator that the stored metadata marks as an index (scale_hint = index, CR-18). The rebase tests below
+// use a context in which M09 carries that marker, so the code path is exercised; the gate itself is tested in tests/rebase.test.mjs and by the test after the rebase tests.
+const indexCtx = explorerContext({manifest, seriesMeta, entities, indicators: indicators.map((i) => (i.indicator_id === "M09" ? {...i, scale_hint: "index"} : i)), alerts});
 const KNOWN = Date.parse("2026-11-01T04:23:41Z");
 const ms = (y, m) => Date.UTC(y, m, 0); // last day of month m (1-12)
 function mk(entity, seriesId, vals, extra = {}) {
@@ -175,7 +178,7 @@ test("selectors: entities, transform column, date range", () => {
 });
 
 test("display-only rebase: scaled by the stored value at the base period, and only the base is 100", () => {
-  const m = buildModel(ctx, "M09", rows, base({rebase: true, base: "2024-03-31"}));
+  const m = buildModel(indexCtx, "M09", rows, base({rebase: true, base: "2024-03-31"}));
   const deu = m.plotted.filter((p) => p.entity === "DEU");
   assert.equal(m.baseDate, "2024-03-31");
   assert.equal(deu.find((p) => p.ms === ms(2024, 3)).value, 100);
@@ -184,17 +187,41 @@ test("display-only rebase: scaled by the stored value at the base period, and on
   assert.equal(m.captions[0].unit, "index, 2024-03-31 = 100");
   assert.equal(m.series[0].unit, "index, 2024-03-31 = 100");
   // automatic base: first period where every shown series has a positive value
-  assert.equal(buildModel(ctx, "M09", rows, base({rebase: true})).baseDate, "2024-01-31");
+  assert.equal(buildModel(indexCtx, "M09", rows, base({rebase: true})).baseDate, "2024-01-31");
   assert.equal(autoBase([]), null);
+});
+
+test("autoBase needs a period common to every series; with none there is no base and the rebase is not applied (spec 6.4, synthetic scale_hint = index)", () => {
+  const pts = (list) => list.map(([m, v]) => ({ms: ms(2024, m), value: v}));
+  assert.equal(autoBase([{points: pts([[1, 5], [2, 6], [3, 7]])}, {points: pts([[2, 9], [3, 10]])}]), ms(2024, 2), "the earliest common period");
+  assert.equal(autoBase([{points: pts([[1, 5], [2, 6]])}, {points: pts([[3, 9], [4, 10]])}]), null, "no common period: no base (never the earliest of any series)");
+  assert.equal(autoBase([{points: pts([[1, 5]])}, {points: pts([[1, null], [2, 0]])}]), null, "a series with no rebasable value leaves no common base");
+  const disjoint = [...mk("DEU", 1, vals(10)).slice(0, 5), ...mk("FRA", 2, vals(20)).slice(8, 14)];
+  const m = buildModel(indexCtx, "M09", disjoint, base({rebase: true}));
+  assert.equal(m.baseDate ?? null, null, "no base date");
+  assert.equal(m.plotted.filter((p) => p.entity === "DEU")[0].value, 10, "levels as stored, not rebased");
+  assert.equal(m.series.length, 2, "both series stay drawn");
+});
+
+test("A1.5: without a stored scale_hint = index the rebase state is ignored (levels as stored); base_period and unit_label never switch it on", () => {
+  const off = buildModel(ctx, "M09", rows, base({rebase: true, base: "2024-03-31"}));
+  assert.equal(off.rebase, false);
+  assert.equal(off.baseDate, null);
+  assert.equal(off.plotted.find((p) => p.entity === "DEU").value, 10);
+  const withBase = explorerContext({manifest, seriesMeta, entities, indicators: indicators.map((i) => (i.indicator_id === "M09" ? {...i, unit_label: "index"} : i)), alerts});
+  assert.equal(buildModel(withBase, "M09", rows, base({rebase: true})).rebase, false, "a unit_label that reads index does not offer the rebase");
+  const p01 = buildModel(ctx, "P01", mk("DEU", 3, vals(100)), base({entities: ["DEU"], rebase: true}));
+  assert.equal(p01.rebase, false, "a series with a stored base_period is not an index marker");
+  assert.equal(buildModel(indexCtx, "M09", rows, base({rebase: true, base: "2024-03-31"})).rebase, true);
 });
 
 test("rebase with an unusable base: the series is listed as not shown, never drawn as zero", () => {
   const odd = [...mk("DEU", 1, [0, 1, 2, 3]), ...mk("FRA", 2, [5, 6, 7, 8])];
-  const m = buildModel(ctx, "M09", odd, base({rebase: true, base: "2024-01-31"}));
+  const m = buildModel(indexCtx, "M09", odd, base({rebase: true, base: "2024-01-31"}));
   assert.deepEqual(m.notShown.map((n) => n.entity), ["DEU"]);
   assert.match(m.notShown[0].reason, /positive\) value at the base period/);
   assert.deepEqual([...new Set(m.plotted.map((p) => p.entity))], ["FRA"]);
-  const gone = buildModel(ctx, "M09", odd, base({rebase: true, base: "1980-01-31"}));
+  const gone = buildModel(indexCtx, "M09", odd, base({rebase: true, base: "1980-01-31"}));
   assert.equal(gone.plotted.length, 0);
   assert.equal(gone.notShown.length, 2);
 });
@@ -211,7 +238,7 @@ test("alert markers: current alerts only, for the shown indicator and countries,
   const other = buildModel(ctx, "P01", mk("FRA", 4, vals(1)), base({entities: ["FRA"]}));
   assert.deepEqual(other.markers.map((a) => a.entity + a.level), ["FRAwatch"]);
   // the marker sits on the rebased value when rebase is on
-  const rb = buildModel(ctx, "M09", rows, base({rebase: true, base: "2024-01-31"}));
+  const rb = buildModel(indexCtx, "M09", rows, base({rebase: true, base: "2024-01-31"}));
   assert.ok(Math.abs(rb.markers.find((a) => a.entity === "DEU").value - (24 / 10) * 100) <= 1e-9);
 });
 
@@ -302,7 +329,7 @@ test("T121/T123: the line keeps null points as gaps, the points table does not l
   assert.equal(lineMark.data[2].value, null);
   assert.deepEqual(tableRowsOf(m).map((r) => r.valueText), ["10", "11", "13", "14"]);
   // the same with rebase: a gap stays a gap
-  const rb = buildModel(ctx, "M09", gap, base({entities: ["DEU"], rebase: true, base: "2024-01-31"}));
+  const rb = buildModel(indexCtx, "M09", gap, base({entities: ["DEU"], rebase: true, base: "2024-01-31"}));
   assert.equal(rb.series[0].lines[2].value, null);
 });
 
@@ -363,7 +390,7 @@ test("T123: year ticks, unit in the y-axis label, index-100 rule and base-period
   assert.match(plots[0].y.label, /labour force/);
   assert.equal(plots[0].x.type, "utc");
   assert.ok(!plots[0].marks.some((x) => x.kind === "ruleY"));
-  const rb = buildModel(ctx, "M09", rows, base({rebase: true, base: "2024-03-31"}));
+  const rb = buildModel(indexCtx, "M09", rows, base({rebase: true, base: "2024-03-31"}));
   chart(Plot, rb);
   const o = plots[1];
   assert.equal(o.y.label, "index, 2024-03-31 = 100");

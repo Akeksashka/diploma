@@ -61,7 +61,9 @@ test("table: heading, source link, re-estimated marker only when true, id kept f
 });
 
 test("AC-RD-42: rebased series use the index unit text in the table, title, axis and end labels", () => {
-  const m = buildModel(ctx, "M09", rows, state({entities: ["DEU"], rebase: true, base: "2024-01-31"}));
+  // A1.5 (plan V13): the rebase runs only for an indicator that stored metadata marks as an index (scale_hint = index, CR-18); this test marks M09 so the code path is exercised.
+  const idx = explorerContext({manifest, seriesMeta, entities, indicators: indicators.map((i) => (i.indicator_id === "M09" ? {...i, scale_hint: "index"} : i)), alerts: []});
+  const m = buildModel(idx, "M09", rows, state({entities: ["DEU"], rebase: true, base: "2024-01-31"}));
   assert.equal(m.series[0].unit, "index, 2024-01-31 = 100");
   assert.equal(m.yLabel, "index, 2024-01-31 = 100");
   assert.equal(aboutSeriesRows(m)[0].unit, "index, 2024-01-31 = 100");
