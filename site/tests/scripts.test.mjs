@@ -178,3 +178,16 @@ test("measure-pages: formatReport prints status, value, limit and the hard flag"
   assert.match(text, /PASS home CLS: 0\.0123 \(limit 0\.1\)/);
   assert.match(text, /N\/A  one history interaction \(country page\): n\/a/);
 });
+
+test("measure-pages (V27): interaction rows per mode page are hard at 5 MB gz, N/A when the page has none", async () => {
+  const {evaluateTargets, hardBreach} = await import("../scripts/lib.mjs");
+  const pages = {country: {gzip: 1, css: 1, cls: 0}};
+  const ok = evaluateTargets({pages, history: null, interactions: {country: {gzip: 5_000_000}, compare: null}});
+  const by = Object.fromEntries(ok.map((r) => [r.id, r.status]));
+  assert.equal(by["interaction:country"], "PASS");
+  assert.equal(by["interaction:compare"], "N/A");
+  assert.equal(hardBreach(ok), false);
+  const over = evaluateTargets({pages, history: null, interactions: {country: {gzip: 5_000_001}}});
+  assert.equal(hardBreach(over), true);
+  assert.equal(evaluateTargets({pages, history: null}).some((r) => r.id.startsWith("interaction:")), false, "absent input adds no rows");
+});

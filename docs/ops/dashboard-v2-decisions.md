@@ -200,3 +200,32 @@ Implemented in `site/` (C1 `multi-line.js`, C2 `bar-list.js`, C3 `scatter.js`, C
 - Pipeline writes done at the user's request ("1"): `macro-monitor analyze` was run twice against `neondb` (only `analytics.*`, no migrations, no other data changed). Run 10 (ingest 100) was stored with `git_sha = 'unknown'` because `GITHUB_SHA` was not set locally, so `export` refuses it (EXP-03). Run 11 (ingest 100, `git_sha` = HEAD c32c25e) was made with `GITHUB_SHA` set and is the one exported. Run 10 stays in `analytics.run` (analytics rows are not edited). Earlier export of run 9 failed with EXP-10 (observations newer than its cutoffs).
 - Site measured on the real export (`build:all`, `measure:landing`, `measure:pages`): home first load 443,659 B gz (OK); landing set 481,282 B gz (OK); country first load worst 2,341,102 B gz (CZE) and indicator worst 2,387,027 B gz (M07): both over the 1,500,000 B gz hard limit (AC-RD-53, AC-V2-40). One history interaction 1,773,451 B gz (OK, limit 5,000,000). The excess is for the user: routes CR-4, CR-16 or CR-20 (plan V27, V33, V36) are not started.
 - `npm test` on the real export: AC-DB-22 (L26) fails because the scan reads stored indicator names ("Total factor productivity growth", "Government debt, total" and similar) in generated pages as a banned "total" label. The fixture had no such names. Needs a decision: exempt stored names from the scan (user or reviewer).
+
+
+## V27, V28, G-DEPLOY, G-LANG-STR, Home default (2026-11-14)
+
+### Decided by the user in chat (2026-11-14)
+- G-DEPLOY: prepare, do not approve. The workflow change is written up in `docs/ops/dashboard-v2-deploy-proposal.md`; `.github/workflows/` and `scripts/ci/` are untouched.
+- G-LANG-STR: prepare, do not approve. `docs/ops/dashboard-v2-uk-string-review.md` lists every `DRAFT_*` string of `site/src/lib/copy.js` with an empty Ukrainian column; no agent translation, no `reviewed` flag set.
+- Home default Indicator: constant plus disclosure of absence. `site/src/lib/home-config.js` holds `HOME_DEFAULT_INDICATOR = A05` (DRAFT with `HOME_KPI_*`, `HOME_HIGHLIGHT`); `effectiveSelection` in `home-dashboard.js` uses A05 when no Indicator, Domain or Frequency is chosen and the catalogue has it, whether or not it has rows; when it is absent the previous default (first ranked domain) stands. `resolveHome` returns a `missing` list for the disclosure; nothing throws. The disclosure is not yet rendered on the page (no Home panel exists to show it, V57/V58).
+
+### V27 (measurement, see `dashboard-v2-measurements.md`)
+- `measure-pages.mjs` now covers `/compare` and the heaviest Country interaction; rows `interaction:<page>` (hard, 5 MB gz). Fixture: all targets pass; Compare interaction is N/A (no matching control). V11b (K1 sparkline) is not decided by this: the Country interaction on the fixture is 19,688 B gz, but the real export is over the first-load hard limit (Real export section above), so the weight call for V11b stays with the user (CR-4, CR-16 or CR-20).
+- Nothing tuned silently; no limit edited.
+
+### V28 (validation record)
+- `docs/ops/dashboard-v2-validation.md` is the user's manual checklist for both journeys. Answers will be recorded here as the user gives them.
+- DRAFT string list in both languages: English complete (347 entries), Ukrainian empty by design (G-LANG-STR). Home constants: DRAFT, listed above.
+
+### Group F, V29 status (not a sign-off)
+V29 depends on Gate E, groups J, K, L, N and V65. Not met in this branch: V44 (dictionaries), V46, V47, V58-V60 (Home four panels) and V65 are not built; groups C and D await Opus gate review; real-export measurement (G-REAL, V30) is open. Phase 1 renders: Country and Compare modes, Home as the ADR-034 dashboard of bands, an English tree and a Ukrainian build tree whose strings are English fallbacks. Unmet or partly met: AC-V2-40 and AC-RD-53 on the real export; AC-V2-119 user inspection of Crimea; AC-V2-120..124 (Home panels). DRAFT remaining: every Ukrainian string, quarter-label forms, Home constants (G-HOME-CONST), 347 English DRAFT strings (G-STR).
+
+### Opus review (gate E style) of this pass: result pass with fixes
+Fixed: interaction settle and `<summary>` accounting in `measure-pages.mjs`; A05 default only when its first domain is a known domain; a Frequency alone keeps A05's Domain (the Indicator stays the first one offered); measurement wording.
+For the user (G-HOME-CONST): when A05 is in the catalogue the Home default Domain is A05's Domain (fiscal on the fixture) and overrides the declared `default_domain` of `meta/domains.json` (amendment 4.1). Confirm or reverse. A05's Domain being unranked is accepted silently.
+
+Confirmed by the user 2026-11-14: A05 and its Domain override the declared `default_domain` on Home (G-HOME-CONST: this point only; the other Home constants stay DRAFT).
+
+### G-DEPLOY approved by the user (2026-11-14)
+Applied: one step "Build Ukrainian tree and merge (V42)" after "Build" in `.github/workflows/ci.yml` (`npm run build:uk`, then `merge-trees.mjs dist dist-uk dist-site`). No new action, permission or secret; no push or dispatch. YAML parses and `tests/unit/test_workflow_security.py` passes (20); local `actionlint` could not run (the pinned binary is linux only), so run it in CI. `check-site` stays on `site/dist`.
+G-LANG-STR: the user's approval is recorded, but no Ukrainian text exists yet to approve (the sheet's Ukrainian column is empty); strings, quarter forms, judgement-word list and names are still to be written (V44, V47).

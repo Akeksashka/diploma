@@ -14,6 +14,7 @@ import {DRAFT_BAND_TITLES as B, DRAFT_CONSEQUENCE, DRAFT_FILTER_LABELS, DRAFT_RE
 import {errorBlock} from "./state-blocks.js";
 import {indicatorList} from "./filter-model.js";
 import {firstDomainId} from "./indicator-model.js";
+import {HOME_DEFAULT_INDICATOR} from "./home-config.js";
 
 export const SLOT_NAMES = Object.freeze(["overview", "compare", "facts", "domain", "indicators", "overTime"]);
 
@@ -28,7 +29,13 @@ export function defaultDomainId(domains = [], declared = null) {
 export function effectiveSelection(state, {domains = [], indicators = [], declaredDomain = null} = {}) {
   const byId = (id) => indicators.find((i) => i.indicator_id === id);
   let domainId = state.d && domains.some((d) => d.domain_id === state.d) ? state.d : null;
-  const chosen = state.i ? byId(state.i) : null;
+  // V56: with no Indicator and no Domain chosen, the Home default Indicator (A05, DRAFT) sets the Domain when the catalogue has it and its first
+  // domain is a known one (rows are not needed); with a Frequency also chosen only the Domain is taken, the Indicator stays the first one offered.
+  // This takes precedence over the declared default_domain (reported to the user, G-HOME-CONST). Otherwise the previous default stands.
+  const homeDefault = !state.i && !state.d ? byId(HOME_DEFAULT_INDICATOR) : null;
+  const homeOk = homeDefault?.domain_ids?.length && domains.some((d) => d.domain_id === firstDomainId(homeDefault));
+  const chosen = state.i ? byId(state.i) : !state.f && homeOk ? homeDefault : null;
+  if (!domainId && homeOk && !state.i) domainId = firstDomainId(homeDefault);
   if (!domainId && chosen?.domain_ids?.length) domainId = firstDomainId(chosen); // AC-RD-24: the first of domain_ids
   domainId ??= defaultDomainId(domains, declaredDomain);
   const domain = domains.find((d) => d.domain_id === domainId) ?? null;

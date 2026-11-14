@@ -1075,6 +1075,8 @@ export function evaluateTargets(measured) {
     row(`cls:${name}`, `${name} CLS`, p.cls ?? null, CLS_TARGET, "");
   }
   row("history", "one history interaction (country page)", measured.history ? measured.history.gzip : null, HISTORY_TARGET_BYTES, "B gz");
+  // V27 / AC-V2-40: the heaviest first interaction per mode page (Country, Compare), gzipped; null when the page offers none (N/A, never a PASS).
+  for (const [name, i] of Object.entries(measured.interactions ?? {})) row(`interaction:${name}`, `heaviest interaction (${name} page)`, i ? i.gzip : null, HISTORY_TARGET_BYTES, "B gz", true);
   return rows;
 }
 
