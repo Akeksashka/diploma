@@ -9,10 +9,19 @@ export function resolveLang(value) {
   return v;
 }
 
-// {lang, base, output}: base always starts and ends with "/".
-export function langSettings(value) {
+// Optional deploy prefix for hosting under a sub-path (GitHub project pages: "/diploma"). "" or undefined = none.
+export function resolvePrefix(value) {
+  if (value === undefined || value === "" || value === "/") return "";
+  const v = String(value);
+  if (v.split("/").some((seg) => /^\.+$/.test(seg)) || !/^\/[A-Za-z0-9._~-]+(\/[A-Za-z0-9._~-]+)*\/?$/.test(v)) throw new Error(`MM_BASE_PREFIX must look like "/name"; got ${JSON.stringify(v)}`);
+  return v.replace(/\/+$/, "");
+}
+
+// {lang, base, output}: base always starts and ends with "/". The prefix changes base only; output dirs stay the same.
+export function langSettings(value, prefix) {
   const lang = resolveLang(value);
-  return lang === DEFAULT_LANG ? {lang, base: "/", output: "dist"} : {lang, base: `/${lang}/`, output: `dist-${lang}`};
+  const pre = resolvePrefix(prefix);
+  return lang === DEFAULT_LANG ? {lang, base: `${pre}/`, output: "dist"} : {lang, base: `${pre}/${lang}/`, output: `dist-${lang}`};
 }
 
 // The single internal-link helper: a root-relative path ("/country", "/", "/country/PL#c=1") under the tree's base.

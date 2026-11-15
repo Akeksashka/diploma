@@ -1,0 +1,59 @@
+name: publish-site
+
+# Exports the dashboard data, builds both language trees under /<repo>/ and publishes them to the gh-pages branch
+# (Settings -> Pages -> Deploy from a branch: gh-pages, /). Secret NEON_URL_MM_READER: connection string of the read-only mm_reader role.
+on:
+  workflow_run:
+    workflows: [monthly-refresh]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mm-publish-site
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  publish:
+    # a manual run always; a workflow_run only after a successful refresh
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: write # push the gh-pages branch
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: site/.nvmrc
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - name: Export the dashboard data (reader role)
+        env:
+          DATABASE_URL: ${{ secrets.NEON_URL_MM_READER }}
+        run: scripts/ci/publish_site.sh export
+      - name: Build the site
+        env:
+          PAGES_PREFIX: /${{ github.event.repository.name }}
+        run: scripts/ci/publish_site.sh build
+      - name: Publish to gh-pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          cp -R site/dist-site/. "$tmp/"
+          git -C "$tmp" init -q -b gh-pages
+          git -C "$tmp" -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" add -A
+          git -C "$tmp" -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -q -m "Publish site ${GITHUB_SHA::7}"
+          git -C "$tmp" -c http.postBuffer=524288000 -c "http.extraheader=AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" push -q --force "https://github.com/${GITHUB_REPOSITORY}.git" gh-pages

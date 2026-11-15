@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import {existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync} from "node:fs";
 import {tmpdir} from "node:os";
 import {join} from "node:path";
-import {langSettings, resolveLang, withBase} from "../scripts/lib/lang-config.mjs";
+import {langSettings, resolveLang, resolvePrefix, withBase} from "../scripts/lib/lang-config.mjs";
 import {mergeTrees} from "../scripts/merge-trees.mjs";
 
 test("English is the default and keeps today's paths", () => {
@@ -14,6 +14,13 @@ test("English is the default and keeps today's paths", () => {
 });
 test("Ukrainian builds under /uk/ into dist-uk", () => {
   assert.deepEqual(langSettings("uk"), {lang: "uk", base: "/uk/", output: "dist-uk"});
+});
+test("a deploy prefix moves both bases and leaves the output dirs alone", () => {
+  assert.deepEqual(langSettings("en", "/diploma"), {lang: "en", base: "/diploma/", output: "dist"});
+  assert.deepEqual(langSettings("uk", "/diploma/"), {lang: "uk", base: "/diploma/uk/", output: "dist-uk"});
+  assert.deepEqual(langSettings("uk", ""), langSettings("uk"));
+  assert.equal(withBase("/country/PL", "/diploma/uk/"), "/diploma/uk/country/PL");
+  for (const bad of ["diploma", "//x", "/a b", "/../x", "https://x.example"]) assert.throws(() => resolvePrefix(bad), /MM_BASE_PREFIX/);
 });
 test("an unknown language fails loudly", () => {
   for (const v of ["de", "UK", "en-GB", "uk "]) assert.throws(() => resolveLang(v), /MM_LANG/);

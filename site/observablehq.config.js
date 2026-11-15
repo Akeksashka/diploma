@@ -5,7 +5,7 @@ import {DRAFT_CRUMB_HOME, DRAFT_MODE_LABELS, HOME_LINKS} from "./src/lib/copy.js
 // Macro Monitor dashboard site (ADR-010, ADR-023). Static build; no request may leave the origin.
 const title = "Macro Monitor";
 // V42 (ADR-037 A2.1): MM_LANG (en default, uk) drives base and output; English stays at "/" in dist, Ukrainian is built under "/uk/" into dist-uk.
-const {base, output} = langSettings(process.env.MM_LANG);
+const {base, output} = langSettings(process.env.MM_LANG, process.env.MM_BASE_PREFIX);
 // Header navigation (AC-RD-01, decisions G-STR4 as replaced by D-1, ADR-037 A2.6 item 2, spec section 2): exactly these six, in this order.
 // "Country" is the static country list page (A1.7); the language switch (A2.1) is not a page and stays outside this list.
 const pages = [{name: DRAFT_CRUMB_HOME, path: "/"}, {name: DRAFT_MODE_LABELS.country, path: "/country"}, {name: DRAFT_MODE_LABELS.compare, path: "/compare"}, {name: HOME_LINKS.series, path: "/explorer"}, {name: HOME_LINKS.domains, path: "/domains"}, {name: HOME_LINKS.revisions, path: "/revisions"}];
