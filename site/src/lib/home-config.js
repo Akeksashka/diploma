@@ -1,11 +1,11 @@
 // V56 / G-HOME-CONST: Home constants in one place. DRAFT: the user confirms or changes them (G-HOME-CONST blocks release).
 // Display defaults only; nothing is computed here. A constant that names an id the export does not carry is reported, never thrown.
-import {DRAFT_HOME_COUNTRIES} from "./home-constants.js";
 
 export const HOME_DEFAULT_INDICATOR = "A05"; // decided by the user 2026-11-13 (ADR-037 A2.3, AC-V2-121); the confirmation of the rest is open
 export const HOME_KPI_ENTITY = "EA"; // DRAFT; if absent, the first aggregate (resolveHome)
 export const HOME_KPI_IDS = Object.freeze(["M09", "M10", "M11", "P01", "A01", "M18"]); // DRAFT
-export const HOME_HIGHLIGHT = DRAFT_HOME_COUNTRIES; // DRAFT, cap 5
+// The one literal: the Home C1 default countries and the Compare C1 default countries (decision D4) both read it (home-constants.js re-exports it).
+export const HOME_HIGHLIGHT = Object.freeze(["DEU", "FRA", "ITA", "ESP", "POL"]); // DRAFT, cap 5
 export const HOME_HIGHLIGHT_CAP = 5;
 
 // Resolve the constants against the stored meta lists. Returns the effective ids and `missing`: [{constant, id}] for the disclosure.
