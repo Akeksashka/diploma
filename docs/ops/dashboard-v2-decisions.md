@@ -256,3 +256,23 @@ For the user: the test-fix commit `e6447d8` exempts link text inside `<a href=".
 
 ### V29 status after this pass (not a sign-off)
 Built since the last status: Home panels and KPI strip (V57-V60), dictionaries and switch (V44, V46), entity names (V47, partial), V65 sweep on the fixture. Still unmet: AC-V2-106 (lang fallback wiring), real-export numbers (V30, G-REAL, G-WEO), AC-V2-119 user inspection (G-CRIMEA), every Ukrainian string and name unreviewed (G-LANG-STR), Home constants other than A05 (G-HOME-CONST), the judgement-word test (list not supplied, test skipped). Gated and not started: V30-V36, V48, V61.
+
+Confirmed by the user 2026-11-15: the AC-DB-22 exemption for link text inside `<a href="./indicator/...">` (commit e6447d8) stays.
+
+### User acceptance, 2026-11-15 (chat: "accepted all, move on")
+- G-HOME-CONST: confirmed as listed: default Indicator A05, KPI entity `EA`, KPI ids M09, M10, M11, P01, A01, M18, highlighted DEU, FRA, ITA, ESP, POL. They stay in `site/src/lib/home-config.js`; the string "DRAFT" is dropped from that file's header only.
+- Not applied from this acceptance, because each needs a specific act or choice by the user: (a) G-LANG-STR: no Ukrainian entry is set `reviewed` (that needs the user's own edit or a named reviewer, per entry); (b) G-CRIMEA: `crimea_checked_by_user` needs the date of the user's own inspection of the geometry file; (c) weight of the real export: which of CR-4, CR-16, CR-20 (or none) is not stated; (d) V30 real-export run: not requested.
+
+### G-CRIMEA recorded (2026-11-15)
+The user stated in chat that the geometry asset was checked (date "today"). `site/src/geo/geo-source.json`: `crimea_checked_by_user: "user"`, `crimea_checked_date: "2026-11-15"`. The AC-V2-119 test still runs on the actual asset and passes (geo-crimea, geo-join).
+
+### V30 and the weight question (2026-11-15)
+The user asked which of CR-4, CR-16, CR-20 is better. Recommendation: none of them now. Reason from the V30 numbers: the page-own weight of Country and Indicator pages is 0.4 to 0.5 MB gz (under the 600 KB target); the excess over 1.5 MB is the Parquet reader (about 1.85 MB gz) started after `load`. CR-4 (per-entity profile files) would not shrink the reader; CR-20 is for an interaction over 5 MB (the measured worst is 1.77 MB); CR-16 only helps a K1 sparkline. Options for the user: (a) accept F10 accounting: the reader counts against the 5 MB interaction rule, not the first-load hard limit (needs the amendment text of AC-RD-53 extended from the explorer to Country and Indicator, and `evaluateTargets` to split `own`/`reader` for those pages); (b) load the reader only on a user action (a site change, no CR). My pick is (a), with (b) if the 1.5 MB first-load rule must hold literally. Not applied: no accounting change was made.
+
+### G-LANG-STR applied (2026-11-15, by the orchestrator on the user's direct instruction "all reviewed")
+- All 513 entries of `site/src/i18n/uk.json` are `reviewed`, `reviewed_on` 2026-11-15; the 47 entity names (rows with Ukrainian text) are `reviewed` in `docs/ops/dashboard-v2-uk-names-review.md` (reviewer `user`, 2026-11-15) and imported into `names.uk.json`. The i18n session declined to do it on a relayed message; the user's chat message is the authority.
+- `mark-fallback-lang.mjs`: no UI entry reviewed marks regions, all reviewed skips, a mix refuses. Tests that encoded "nothing reviewed" were rewritten to the new state (names-review, i18n-parity, i18n-fallback, i18n-built-lang); the `reviewed` gates still require date (and reviewer for names).
+- Known gaps: (1) domain, indicator and source names have no Ukrainian text, so they render English inside Ukrainian regions without `lang="en"` (WCAG 3.1.2); (2) the Ukrainian judgement-word test is still skipped (list not supplied); (3) the quarter label form uk "1 кв. 2024" was accepted with the rest but is not separately tested; (4) the strings were machine-proposed and accepted without a line-by-line read, which is the user's risk, recorded here.
+
+### Ukrainian names for domains, indicators and sources (2026-11-15)
+On the user's request ("adapt these translations for Ukrainian"), the sheet `dashboard-v2-uk-names-review.md` now has hand-written Ukrainian for all 11 domains, 83 indicators and 13 sources (source column `hand`), status `proposed`, so production still shows the English names until the user marks them `reviewed` (then `node scripts/names-import.mjs`). Terminology choices to check: "сектор загального державного управління" for general government, "ПКС" for PPP, "ГІСЦ" for HICP, "розрив випуску" for output gap, "WEO", "ERS", "ADR-028" and the product names kept as is. The generator `names-review-sheet.mjs` must not be re-run (it would overwrite the sheet).

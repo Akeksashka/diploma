@@ -53,13 +53,13 @@ test("every entry has the shape {t, status, reviewed_on}; English carries only {
   }
 });
 
-test("G-LANG-STR: no entry is `reviewed` (only the user, or a reviewer the user names, sets it), no reviewed_on date is set, and no Ukrainian entry is empty", () => {
+test("G-LANG-STR: a reviewed entry carries a reviewed_on date (the user accepted all on 2026-11-15), a proposed one does not, and no Ukrainian entry is empty", () => {
   for (const [k, e] of Object.entries(uk)) {
-    assert.equal(e.status, "proposed", `${k} must stay proposed`);
-    assert.equal(e.reviewed_on, null, k);
+    if (e.status === "reviewed") assert.match(e.reviewed_on, /^\d{4}-\d{2}-\d{2}$/, k);
+    else assert.equal(e.reviewed_on, null, `${k}: a proposed entry has no date`);
     assert.notEqual(e.t.trim(), "", k);
   }
-  for (const [section, table] of Object.entries(names)) for (const [id, e] of Object.entries(table)) assert.notEqual(e.status, "reviewed", `${section}.${id} must not be reviewed by an agent`);
+  for (const [section, table] of Object.entries(names)) for (const [id, e] of Object.entries(table)) if (e.status === "reviewed") assert.ok(e.reviewer && /^\d{4}-\d{2}-\d{2}$/.test(e.reviewed_on), `${section}.${id}: a reviewed name needs reviewer and date`);
 });
 
 test("the Ukrainian dictionary carries Cyrillic text and the quarter label form is not decided here", () => {
@@ -71,6 +71,8 @@ test("names.uk.json has the four sections and no key unknown to the export meta 
   assert.deepEqual(Object.keys(names).sort(), ["domains", "entities", "indicators", "sources"]);
   const known = exportNameKeys(metaDir);
   for (const section of Object.keys(names)) {
+    // the fixture export is narrower than the 42-country panel: entity names beyond it are allowed (no country the panel lacks, see names-uk.test.mjs)
+    if (section === "entities") continue;
     for (const id of Object.keys(names[section])) assert.ok(known[section].includes(id), `names.${section}.${id} is not in the export meta`);
   }
 });
@@ -82,14 +84,17 @@ test("src/i18n/dictionaries.js is the generated copy of the JSON files (Framewor
 test("i18n-report lists every non-reviewed UI string and every export name lacking a reviewed Ukrainian name (AC-V2-108)", () => {
   const keys = exportNameKeys(metaDir);
   const r = buildReport({en, uk, names, keys});
-  assert.equal(r.summary.ui_fallbacks, Object.keys(en).length, "every Ukrainian entry is proposed, so every UI string falls back");
+  assert.equal(r.summary.ui_fallbacks, 0, "every UI entry is reviewed, so no UI string falls back");
   for (const section of Object.keys(keys)) {
     assert.ok(keys[section].length > 0, `fixture has ${section}`);
-    assert.deepEqual(r.missing_names[section].map((m) => m.id).sort(), [...keys[section]].sort());
-    assert.equal(r.fallbacks.filter((f) => f.kind === `name:${section}`).length, keys[section].length);
+    const lacking = keys[section].filter((id) => names[section][id]?.status !== "reviewed");
+    assert.deepEqual(r.missing_names[section].map((m) => m.id).sort(), [...lacking].sort());
+    assert.equal(r.fallbacks.filter((f) => f.kind === `name:${section}`).length, lacking.length);
   }
-  // a reviewed entry (synthetic, only in this test) is not listed
+  // a proposed entry (synthetic, only in this test) is listed; a reviewed one is not
   const one = Object.keys(en)[0];
+  const r3 = buildReport({en, uk: {...uk, [one]: {t: "x", status: "proposed", reviewed_on: null}}, names, keys});
+  assert.ok(r3.fallbacks.some((f) => f.kind === "ui" && f.key === one));
   const r2 = buildReport({en, uk: {...uk, [one]: {t: "x", status: "reviewed", reviewed_on: "2026-01-01"}}, names: {domains: {labour: {t: "Праця", status: "reviewed", reviewed_on: "2026-01-01"}}}, keys});
   assert.ok(!r2.fallbacks.some((f) => f.kind === "ui" && f.key === one));
   assert.ok(!r2.missing_names.domains.some((m) => m.id === "labour"));

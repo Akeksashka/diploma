@@ -62,15 +62,15 @@ test("a template parameter that is not supplied is an error, not the text 'undef
   assert.throws(() => makeI18n({lang: "en", dicts}).t("NOPE"), /unknown key/);
 });
 
-test("the shipped dictionaries in a production Ukrainian build render English for every entry (all are proposed)", async () => {
+test("the shipped dictionaries in a production Ukrainian build render the reviewed Ukrainian text (all UI entries are reviewed)", async () => {
   const {dictionaries} = await import("../src/i18n/dictionaries.js");
   const i = makeI18n({lang: "uk", showProposed: false, dicts: dictionaries});
   for (const key of Object.keys(dictionaries.en).filter((k) => !k.includes("#"))) {
     const r = i.resolve(key);
-    assert.equal(r.lang, "en", key);
-    assert.equal(r.text, dictionaries.en[key].t, key);
+    assert.equal(r.lang, "uk", key);
+    assert.equal(r.fallback, false, key);
   }
-  assert.match(i.renderHtml("CAVEAT"), /^<span lang="en">Percentiles/);
+  assert.doesNotMatch(i.renderHtml("CAVEAT"), /lang="en"/);
 });
 
 // The Ukrainian judgement-word list is the user's to supply (G-LANG-STR). Drop it at tests/support/uk-judgement-words.json as a JSON array of words

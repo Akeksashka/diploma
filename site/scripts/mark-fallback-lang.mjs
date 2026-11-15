@@ -1,8 +1,8 @@
 // V44 (AC-V2-106, WCAG 3.1.2): post-build step for the Ukrainian tree. Every UI string of the site is rendered by the page scripts from copy.js, and in a
 // production build an entry that is not `reviewed` renders its English text. So that this English text is not announced as Ukrainian, the page regions that
 // hold it (header, main, footer, noscript) get lang="en" on the built HTML while <html> stays lang="uk" (V43).
-// This is valid only while no Ukrainian UI entry and no Ukrainian name is `reviewed`: a reviewed entry would then be wrongly marked English. The step therefore
-// refuses to run when one exists; the wiring must then become per-element (render-time wrapper, i18n.js renderHtml) before the first entry is reviewed.
+// Whole-region marking is valid only while no Ukrainian UI entry is `reviewed` (all reviewed: skipped; a mix: refused): a reviewed entry would then be wrongly marked English. The step therefore
+// refuses to run on a mix; the wiring must then become per-element (render-time wrapper, i18n.js renderHtml).
 // Usage: node scripts/mark-fallback-lang.mjs <uk-tree-dir>. Idempotent; fails loudly on a page without the regions.
 import {readFileSync, writeFileSync} from "node:fs";
 import {dirname, join} from "node:path";
@@ -34,8 +34,18 @@ export function markFallbackLang(source, name = "(input)") {
   return out.replace(NOSCRIPT, (m, tag, attrs) => setLang(m, tag, attrs));
 }
 
-export function markTree(dir, {reviewed = reviewedEntries()} = {}) {
-  if (reviewed.length > 0) throw new Error(`${reviewed.length} Ukrainian entries are reviewed (first: ${reviewed[0]}): marking whole regions lang="en" would mislabel them; make the fallback per-element first`);
+// Count of UI dictionary entries (uk.json) that are not reviewed. Names (domains, indicators, sources, entities) are not counted: their fallback is per
+// name and recorded in i18n-report.json (known gap, decisions V44).
+export function unreviewedUi(dir = join(here, "..", "src", "i18n")) {
+  return Object.values(readJson(join(dir, "uk.json"))).filter((e) => e?.status !== "reviewed").length;
+}
+
+// Policy: no UI entry reviewed -> every UI string is English, mark the regions; every UI entry reviewed -> nothing to mark (0 files changed);
+// a mix -> refuse (a whole region would mislabel the reviewed part; the wiring must become per-element first).
+export function markTree(dir, {reviewed = reviewedEntries(), unreviewed = unreviewedUi()} = {}) {
+  const uiReviewed = reviewed.filter((r) => r.startsWith("uk.json:")).length;
+  if (uiReviewed > 0 && unreviewed === 0) return 0;
+  if (uiReviewed > 0) throw new Error(`${uiReviewed} Ukrainian UI entries are reviewed and ${unreviewed} are not: marking whole regions lang="en" would mislabel them; make the fallback per-element first`);
   const files = htmlFiles(dir);
   if (files.length === 0) throw new Error(`${dir}: no HTML files found`);
   for (const f of files) {

@@ -54,3 +54,19 @@ Findings while measuring: C2 drew its value labels with a per-row `dx` and `text
 - Build: `EXPORT_DIR=site/tests/fixtures/v2_export npm run build:all`, 17 s wall for both trees plus merge. `dist` 4,996 KB, `dist-uk` 5,052 KB, merged `dist-site` 10,048 KB (`du -sk`). English `<html lang="en">`, Ukrainian `<html lang="uk">` (checked on `dist-site/index.html` and `dist-site/uk/index.html`). `dist-uk/i18n-report.json` is written.
 - `measure-pages.mjs` run on the merged `dist-site` (English paths at `/`): home first load 541,388 B gz, country 411,109, compare 405,223, indicator 492,608, domains 80,587, revisions 302,491; all under the 600,000 target. Home landing 454,253 B gz in 129 files, deferred load 87,135 B gz in 3 files; map geometry 75,223 B gz (budget 100 KB); heaviest Home interaction 7,274 B gz; heaviest Country interaction 19,688 B gz; Compare interaction N/A (no control matched). The Ukrainian tree was not measured separately (its pages are the same code with English text), so no per-tree weight number is claimed.
 - Not run: browser smoke for both trees (the i18n session reported `browser.smoke.mjs` failures that are also on clean HEAD; not compared to a baseline); Node 20.18.1 (not installed); real export (G-REAL).
+
+## V30 real-export run (2026-11-15; the user said "run it")
+- Export: the existing `/private/tmp/mm-export/data`, `build_id` 2026-11-13T16:00Z-r100, `analysis_run_id` 11 (Eurostat-only; no WEO, no new ingest, no new export, no database access in this run). 45 entities, 42 `kind=country`. Groups in `meta/groups.json`: advanced, emerging, euro_area, g7, non_euro_eu. **G20 and EU27 are not present** (OQ-14: P1b stays without them). Geometry join: 29 joined, 13 outside the map extent, 3 markers; every `kind=country` entity has a join row or `outside_extent`.
+- Build: `npm run build` 12 s (one tree). Measured with `measure-pages.mjs --sample=8` (8 country and 8 indicator pages, every other page type once); Node v26.13.1.
+
+| Page type | First load, all responses, B gz | of which page-own | Parquet reader plus series files (loaded after `load`) |
+|---|---|---|---|
+| home | 610,640 (target 600,000: FAIL; hard 1,500,000: PASS) | 542,176 | 68,464 |
+| country (worst of 8: BEL) | 2,362,830 (hard FAIL as the script counts it) | 405,028 on the first page sampled (AUS) | 68,464 on that page |
+| compare | 508,098 | n/a | n/a |
+| indicator (worst of 8: A01) | 2,368,735 (hard FAIL as the script counts it) | 515,674 | 1,853,061 |
+| domains / revisions | 80,951 / 375,286 | | |
+
+- Interactions (limit 5,000,000 B gz, hard): Country history interaction 1,773,451 B gz (ARG, social-A14, 2 files, 5,374,525 B raw): PASS. Home heaviest interaction 1,894,756 B gz (indicator G01): PASS. Compare: N/A. Home landing 466,395 B gz in 129 files, deferred 144,245 B gz in 6 files, map geometry 75,223 B gz (budget 100 KB).
+- Reading: the first-load FAIL on country and indicator pages comes from the Parquet reader (Arrow plus parquet-wasm, about 1.85 MB gz on the indicator page A01), which those pages start after `load` without a user action (decisions F10). `measure-pages.mjs` adds it to the first load for these two page types, but only splits it out for the explorer (AC-RD-53 amendment 2026-11-09). Page-own weight on the indicator page is 515,674 B gz and on the sampled country page 405,028 B gz (the 8-page worst BEL is not split out here). The script's accounting for country and indicator was NOT changed in this run (no silent tuning); counting the reader against the 5 MB interaction rule, as F10 says, would make them PASS (about 1.85 MB against 5 MB). That is a rule change for the user (see decisions).
+- Not covered: WEO charts (C3 with A03 vs A05, C4 annual, C6 for A02-A05): not populated, G-WEO not requested. `--sample=8` is not every page: a full run was not made. Fixture and this export were not measured on Node 20.
