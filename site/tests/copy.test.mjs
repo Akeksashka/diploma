@@ -443,9 +443,9 @@ test("copy.js exports nothing that is not covered above (a new string needs a ve
   assert.deepEqual(Object.keys(copy).filter((k) => !known.has(k)), []);
 });
 
-test("copy.js has no imports and every export other than the data label is used by a lib module", () => {
+test("copy.js imports only the dictionary reader (V44) and every export other than the data label is used by a lib module", () => {
   const text = readFileSync(join(src, "lib", "copy.js"), "utf8");
-  assert.ok(!/^\s*import\b/m.test(text));
+  assert.deepEqual(text.match(/^\s*import\b.*$/gm), ['import {i18n} from "./i18n.js";']);
   const others = readdirSync(join(src, "lib")).filter((n) => n.endsWith(".js") && n !== "copy.js").map((n) => readFileSync(join(src, "lib", n), "utf8")).join("\n");
   const unused = Object.keys(copy).filter((k) => k !== "DOMAIN_FIGURE_LABEL" && k !== "FRESHNESS_LABEL" && k !== "STALE_BANNER" && k !== "STALE_BANNER_UNREADABLE" && !V6_UNCONSUMED.includes(k) && !(k in LAYOUT_L3) /* L3 constants are consumed by the L6+ filter bar */ && !new RegExp(`\\b${k}\\b`).test(others));
   assert.deepEqual(unused, []);
