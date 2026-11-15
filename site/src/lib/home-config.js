@@ -1,4 +1,4 @@
-// V56 / G-HOME-CONST: Home constants in one place. DRAFT: the user confirms or changes them (G-HOME-CONST blocks release).
+// V56 / G-HOME-CONST: Home constants in one place. Confirmed by the user 2026-11-15 as listed (the user may still change them).
 // Display defaults only; nothing is computed here. A constant that names an id the export does not carry is reported, never thrown.
 
 export const HOME_DEFAULT_INDICATOR = "A05"; // decided by the user 2026-11-13 (ADR-037 A2.3, AC-V2-121); the confirmation of the rest is open

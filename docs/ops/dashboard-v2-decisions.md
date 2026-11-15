@@ -258,3 +258,7 @@ For the user: the test-fix commit `e6447d8` exempts link text inside `<a href=".
 Built since the last status: Home panels and KPI strip (V57-V60), dictionaries and switch (V44, V46), entity names (V47, partial), V65 sweep on the fixture. Still unmet: AC-V2-106 (lang fallback wiring), real-export numbers (V30, G-REAL, G-WEO), AC-V2-119 user inspection (G-CRIMEA), every Ukrainian string and name unreviewed (G-LANG-STR), Home constants other than A05 (G-HOME-CONST), the judgement-word test (list not supplied, test skipped). Gated and not started: V30-V36, V48, V61.
 
 Confirmed by the user 2026-11-15: the AC-DB-22 exemption for link text inside `<a href="./indicator/...">` (commit e6447d8) stays.
+
+### User acceptance, 2026-11-15 (chat: "accepted all, move on")
+- G-HOME-CONST: confirmed as listed: default Indicator A05, KPI entity `EA`, KPI ids M09, M10, M11, P01, A01, M18, highlighted DEU, FRA, ITA, ESP, POL. They stay in `site/src/lib/home-config.js`; the string "DRAFT" is dropped from that file's header only.
+- Not applied from this acceptance, because each needs a specific act or choice by the user: (a) G-LANG-STR: no Ukrainian entry is set `reviewed` (that needs the user's own edit or a named reviewer, per entry); (b) G-CRIMEA: `crimea_checked_by_user` needs the date of the user's own inspection of the geometry file; (c) weight of the real export: which of CR-4, CR-16, CR-20 (or none) is not stated; (d) V30 real-export run: not requested.
