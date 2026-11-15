@@ -7,7 +7,7 @@ Prepared 2026-11-14 from `site/src/lib/copy.js` (every exported `DRAFT_*` consta
 1. Quarter label forms: proposed en "Q1 2024", uk "1 кв. 2024" (from the plan). Confirm or change.
 2. The Ukrainian judgement-word list (words the prose scan must reject in Ukrainian text). Not supplied: the test "Ukrainian judgement words" in `site/tests/i18n-fallback.test.mjs` is skipped until the user adds `site/tests/support/uk-judgement-words.json` (a JSON array of words).
 3. Ukrainian entity (country) names: V47 proposes, the user reviews.
-4. Whether Ukrainian entries that are not `reviewed` fall back to English with `lang="en"` (plan default) in production. Implemented as the plan default (`site/src/lib/i18n.js`); today every entry is `proposed`, so the production Ukrainian tree is English text under `<html lang="uk">` until entries are reviewed (see `i18n-report.json`).
+4. Whether Ukrainian entries that are not `reviewed` fall back to English with `lang="en"` (plan default) in production. Implemented: today every entry is `proposed`, so the production Ukrainian tree shows English text; the build marks the header, main, footer and noscript of every page `lang="en"` (`scripts/mark-fallback-lang.mjs`) while `<html>` stays `lang="uk"`. That marking refuses to run once any entry is `reviewed`: the first reviewed entry needs per-element wiring in the pages first (see `dashboard-v2-decisions.md`). The list of fallbacks is `dist-uk/i18n-report.json`.
 5. Terminology to confirm: percentile = "процентиль", vintage = "вінтаж", revision = "ревізія", domain = "домен", reference period = "опорний період", SA / NSA = "СК" / "без СК", scorecard = "таблиця показників", n/a = "н/д", estimate mark e = "о", np = "не опубл.".
 
 ## Strings
