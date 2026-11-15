@@ -29,7 +29,7 @@ test("sheet has domains, indicators, sources and entities; only the 47 entity ro
   const reviewed = rows.filter((r) => r.status === "reviewed");
   assert.equal(reviewed.length, 47);
   assert.ok(reviewed.every((r) => r.section === "entities" && r.uk !== "" && r.reviewer === "user" && r.date === "2026-11-15"));
-  assert.ok(rows.filter((r) => r.status !== "reviewed").every((r) => r.status === "proposed" && r.uk === ""));
+  assert.ok(rows.filter((r) => r.status !== "reviewed").every((r) => r.status === "proposed"));
 });
 
 test("importing the sheet gives exactly the committed names.uk.json", () => {
@@ -47,7 +47,7 @@ test("a reviewed flag without reviewer, date or Ukrainian text is rejected", () 
   assert.throws(() => importNames(parseSheet(edit("DEU", "reviewed", "", "2026-11-15")), empty), /no reviewer/);
   assert.throws(() => importNames(parseSheet(edit("DEU", "reviewed", "User", "")), empty), /needs a date/);
   assert.throws(() => importNames(parseSheet(edit("DEU", "reviewed", "User", "15.11.2026")), empty), /needs a date/);
-  assert.throws(() => importNames(parseSheet(edit("growth", "reviewed", "User", "2026-11-15")), empty), /no Ukrainian text/);
+  assert.throws(() => importNames(parseSheet(edit("growth", "reviewed", "User", "2026-11-15", "")), empty), /no Ukrainian text/);
   assert.throws(() => importNames(parseSheet(edit("DEU", "done", "", "")), empty), /unknown status/);
 });
 

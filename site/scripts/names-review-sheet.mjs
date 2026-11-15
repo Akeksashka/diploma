@@ -1,3 +1,4 @@
+// WARNING (2026-11-15): the committed sheet now carries hand-written Ukrainian for domains, indicators and sources, and 47 reviewed entity rows. Re-running this generator would overwrite them; do not, unless you merge them back.
 // Writes docs/ops/dashboard-v2-uk-names-review.md (entities part, V47). Usage: node scripts/names-review-sheet.mjs
 import {readFileSync, writeFileSync} from "node:fs";
 import {dirname, join} from "node:path";

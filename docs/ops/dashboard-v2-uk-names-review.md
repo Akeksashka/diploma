@@ -13,113 +13,113 @@ Node 20 ICU (the pinned build, OQ-21): [UNVERIFIED] here; only Node v26.13.1 was
 
 | # | Section | ID | Kind | English | Ukrainian (proposed) | Source | Status | Reviewer | Reviewed on | Listed in |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | domains | `growth` | domain | Growth |  | none | proposed |  |  | config/indicators.yaml |
-| 2 | domains | `prices` | domain | Prices and inflation |  | none | proposed |  |  | config/indicators.yaml |
-| 3 | domains | `labour` | domain | Labour market |  | none | proposed |  |  | config/indicators.yaml |
-| 4 | domains | `external` | domain | External |  | none | proposed |  |  | config/indicators.yaml |
-| 5 | domains | `fiscal` | domain | Fiscal |  | none | proposed |  |  | config/indicators.yaml |
-| 6 | domains | `fin` | domain | Financial |  | none | proposed |  |  | config/indicators.yaml |
-| 7 | domains | `social` | domain | Social |  | none | proposed |  |  | config/indicators.yaml |
-| 8 | domains | `structural` | domain | Structural |  | none | proposed |  |  | config/indicators.yaml |
-| 9 | domains | `environment` | domain | Environment |  | none | proposed |  |  | config/indicators.yaml |
-| 10 | domains | `agri` | domain | Agri-food |  | none | proposed |  |  | config/indicators.yaml |
-| 11 | domains | `global` | domain | Global series |  | none | proposed |  |  | config/indicators.yaml |
-| 12 | indicators | `M01` | indicator | Industrial production index (excl. construction) |  | none | proposed |  |  | config/indicators.yaml |
-| 13 | indicators | `M02` | indicator | Retail trade volume |  | none | proposed |  |  | config/indicators.yaml |
-| 14 | indicators | `M03` | indicator | Business-confidence survey (EC ESI, OECD BCI) |  | none | proposed |  |  | config/indicators.yaml |
-| 15 | indicators | `M04` | indicator | Consumer confidence |  | none | proposed |  |  | config/indicators.yaml |
-| 16 | indicators | `M05` | indicator | OECD Composite Leading Indicator |  | none | proposed |  |  | config/indicators.yaml |
-| 17 | indicators | `M06` | indicator | Headline CPI / HICP inflation |  | none | proposed |  |  | config/indicators.yaml |
-| 18 | indicators | `M07` | indicator | Core inflation (ex food, energy) |  | none | proposed |  |  | config/indicators.yaml |
-| 19 | indicators | `M08` | indicator | Industrial producer prices |  | none | proposed |  |  | config/indicators.yaml |
-| 20 | indicators | `M09` | indicator | Unemployment rate |  | none | proposed |  |  | config/indicators.yaml |
-| 21 | indicators | `M10` | indicator | Youth unemployment (<25) |  | none | proposed |  |  | config/indicators.yaml |
-| 22 | indicators | `M11` | indicator | Employment level/rate (monthly) |  | none | proposed |  |  | config/indicators.yaml |
-| 23 | indicators | `M12` | indicator | Merchandise exports and imports |  | none | proposed |  |  | config/indicators.yaml |
-| 24 | indicators | `M13` | indicator | Goods trade balance, 12-month sum as % of GDP |  | none | proposed |  |  | config/indicators.yaml |
-| 25 | indicators | `M14` | indicator | Official FX reserves |  | none | proposed |  |  | config/indicators.yaml |
-| 26 | indicators | `M15` | indicator | Real effective exchange rate |  | none | proposed |  |  | config/indicators.yaml |
-| 27 | indicators | `M16` | indicator | Exchange rate vs USD |  | none | proposed |  |  | config/indicators.yaml |
-| 28 | indicators | `M17` | indicator | Policy interest rate |  | none | proposed |  |  | config/indicators.yaml |
-| 29 | indicators | `M18` | indicator | 10-year government bond yield and spread |  | none | proposed |  |  | config/indicators.yaml |
-| 30 | indicators | `M19` | indicator | Short-term interbank rate |  | none | proposed |  |  | config/indicators.yaml |
-| 31 | indicators | `M21` | indicator | Private-sector bank credit growth |  | none | proposed |  |  | config/indicators.yaml |
-| 32 | indicators | `M22` | indicator | Broad money (M2/M3) |  | none | proposed |  |  | config/indicators.yaml |
-| 33 | indicators | `M24` | indicator | Commodity and energy prices (Brent, gas, food index) |  | none | proposed |  |  | config/indicators.yaml |
-| 34 | indicators | `M27` | indicator | Electricity generation/consumption proxy |  | none | proposed |  |  | config/indicators.yaml |
-| 35 | indicators | `G01` | indicator | Food CPI / HICP food and non-alcoholic beverages |  | none | proposed |  |  | config/indicators.yaml |
-| 36 | indicators | `G02` | indicator | Agricultural and fertilizer commodity prices |  | none | proposed |  |  | config/indicators.yaml |
-| 37 | indicators | `G03` | indicator | Stocks-to-use ratio (wheat, coarse grains, rice, oilseeds) |  | none | proposed |  |  | config/indicators.yaml |
-| 38 | indicators | `G04` | indicator | Agricultural trade balance, 12-month sum |  | none | proposed |  |  | config/indicators.yaml |
-| 39 | indicators | `G05` | indicator | Real trade-weighted agricultural exchange rate index |  | none | proposed |  |  | config/indicators.yaml |
-| 40 | indicators | `G06` | indicator | Weather and drought anomalies in cropland |  | none | proposed |  |  | config/indicators.yaml |
-| 41 | indicators | `Q01` | indicator | Real GDP (volume, SA) |  | none | proposed |  |  | config/indicators.yaml |
-| 42 | indicators | `Q02` | indicator | Real GDP per capita, PPP |  | none | proposed |  |  | config/indicators.yaml |
-| 43 | indicators | `Q03` | indicator | Employment, hours worked |  | none | proposed |  |  | config/indicators.yaml |
-| 44 | indicators | `Q04` | indicator | Expenditure components (contributions to growth) |  | none | proposed |  |  | config/indicators.yaml |
-| 45 | indicators | `Q05` | indicator | Current account balance, % of GDP |  | none | proposed |  |  | config/indicators.yaml |
-| 46 | indicators | `Q06` | indicator | Credit to private non-financial sector, % of GDP and credit-to-GDP gap |  | none | proposed |  |  | config/indicators.yaml |
-| 47 | indicators | `Q07` | indicator | Residential property prices (real) |  | none | proposed |  |  | config/indicators.yaml |
-| 48 | indicators | `Q08` | indicator | General government gross debt, % of GDP |  | none | proposed |  |  | config/indicators.yaml |
-| 49 | indicators | `Q09` | indicator | Net international investment position, % of GDP |  | none | proposed |  |  | config/indicators.yaml |
-| 50 | indicators | `Q10` | indicator | External debt; short-term external debt vs reserves |  | none | proposed |  |  | config/indicators.yaml |
-| 51 | indicators | `Q11` | indicator | Banking soundness (NPL ratio, Tier 1 capital) |  | none | proposed |  |  | config/indicators.yaml |
-| 52 | indicators | `Q12` | indicator | Government net lending, % of GDP |  | none | proposed |  |  | config/indicators.yaml |
-| 53 | indicators | `Q13` | indicator | Household debt, % of GDP |  | none | proposed |  |  | config/indicators.yaml |
-| 54 | indicators | `Q14` | indicator | Inflation expectations |  | none | proposed |  |  | config/indicators.yaml |
-| 55 | indicators | `Q15` | indicator | Labour productivity (GDP per hour) |  | none | proposed |  |  | config/indicators.yaml |
-| 56 | indicators | `Q16` | indicator | Unit labour costs |  | none | proposed |  |  | config/indicators.yaml |
-| 57 | indicators | `Q17` | indicator | Agriculture gross value added, volume |  | none | proposed |  |  | config/indicators.yaml |
-| 58 | indicators | `A01` | indicator | GDP per capita PPP and ratio to US |  | none | proposed |  |  | config/indicators.yaml |
-| 59 | indicators | `A02` | indicator | Output gap, IMF estimate (headline) |  | none | proposed |  |  | config/indicators.yaml |
-| 60 | indicators | `A02b` | indicator | Output gap, OECD estimate (comparison) |  | none | proposed |  |  | config/indicators.yaml |
-| 61 | indicators | `A02c` | indicator | Output gap, European Commission estimate (comparison) |  | none | proposed |  |  | config/indicators.yaml |
-| 62 | indicators | `A03` | indicator | WEO forecasts (growth, inflation, current account, fiscal balance) |  | none | proposed |  |  | config/indicators.yaml |
-| 63 | indicators | `A04` | indicator | General government balance and primary balance, % of GDP |  | none | proposed |  |  | config/indicators.yaml |
-| 64 | indicators | `A05` | indicator | Gross government debt, % of GDP |  | none | proposed |  |  | config/indicators.yaml |
-| 65 | indicators | `A07` | indicator | Gross fixed capital formation, % of GDP |  | none | proposed |  |  | config/indicators.yaml |
-| 66 | indicators | `A08` | indicator | Gross national saving, % of GDP |  | none | proposed |  |  | config/indicators.yaml |
-| 67 | indicators | `A09` | indicator | Total factor productivity growth (whole economy) |  | none | proposed |  |  | config/indicators.yaml |
-| 68 | indicators | `A10` | indicator | Population, working-age share, old-age dependency |  | none | proposed |  |  | config/indicators.yaml |
-| 69 | indicators | `A11` | indicator | Life expectancy at birth |  | none | proposed |  |  | config/indicators.yaml |
-| 70 | indicators | `A12` | indicator | Health expenditure, % of GDP |  | none | proposed |  |  | config/indicators.yaml |
-| 71 | indicators | `A13` | indicator | Educational attainment (tertiary share 25-34), PISA, schooling years |  | none | proposed |  |  | config/indicators.yaml |
-| 72 | indicators | `A14` | indicator | Income inequality (Gini, S80/S20, poverty rate) |  | none | proposed |  |  | config/indicators.yaml |
-| 73 | indicators | `A15` | indicator | Human Development Index |  | none | proposed |  |  | config/indicators.yaml |
-| 74 | indicators | `A16` | indicator | Worldwide Governance Indicators (six dimensions) |  | none | proposed |  |  | config/indicators.yaml |
-| 75 | indicators | `A18` | indicator | Export complexity, FDI inflows % of GDP |  | none | proposed |  |  | config/indicators.yaml |
-| 76 | indicators | `A19` | indicator | Energy import dependence; energy intensity; electricity mix |  | none | proposed |  |  | config/indicators.yaml |
-| 77 | indicators | `A20` | indicator | GHG emissions per capita and per GDP |  | none | proposed |  |  | config/indicators.yaml |
-| 78 | indicators | `A21` | indicator | Renewable share of electricity |  | none | proposed |  |  | config/indicators.yaml |
-| 79 | indicators | `A22` | indicator | Poverty headcount; labour force participation |  | none | proposed |  |  | config/indicators.yaml |
-| 80 | indicators | `A23` | indicator | R&D, % of GDP; patents |  | none | proposed |  |  | config/indicators.yaml |
-| 81 | indicators | `A24` | indicator | Cyclically adjusted primary balance |  | none | proposed |  |  | config/indicators.yaml |
-| 82 | indicators | `A25` | indicator | GDP deflator inflation (and real GDP share of world) |  | none | proposed |  |  | config/indicators.yaml |
-| 83 | indicators | `A26` | indicator | Household consumption per capita; food share of consumer spending |  | none | proposed |  |  | config/indicators.yaml |
-| 84 | indicators | `G07` | indicator | Agricultural total factor productivity index |  | none | proposed |  |  | config/indicators.yaml |
-| 85 | indicators | `G08` | indicator | Cereal yield; agricultural value added per worker |  | none | proposed |  |  | config/indicators.yaml |
-| 86 | indicators | `G09` | indicator | Agriculture value added % of GDP; employment share in agriculture |  | none | proposed |  |  | config/indicators.yaml |
-| 87 | indicators | `G10` | indicator | Cereal import dependency / self-sufficiency ratio |  | none | proposed |  |  | config/indicators.yaml |
-| 88 | indicators | `G11` | indicator | Food expenditure share of household spending |  | none | proposed |  |  | config/indicators.yaml |
-| 89 | indicators | `G12` | indicator | Prevalence of undernourishment and food insecurity (FAO, 3-year averages) |  | none | proposed |  |  | config/indicators.yaml |
-| 90 | indicators | `G14` | indicator | 10-year agricultural projections (ERS baseline) |  | none | proposed |  |  | config/indicators.yaml |
-| 91 | indicators | `G15` | indicator | Agricultural land, irrigated area, fertilizer use |  | none | proposed |  |  | config/indicators.yaml |
-| 92 | indicators | `X01` | indicator | Nominal GDP, local currency units (input) |  | none | proposed |  |  | config/indicators.yaml |
-| 93 | indicators | `X02` | indicator | Nominal GDP, USD (input) |  | none | proposed |  |  | config/indicators.yaml |
-| 94 | indicators | `X03` | indicator | Imports of goods and services, USD, monthly (input) |  | none | proposed |  |  | config/indicators.yaml |
-| 95 | sources | `eurostat` | source | Eurostat dissemination API |  | none | proposed |  |  | config/sources.yaml |
-| 96 | sources | `ecb` | source | ECB Data Portal (SDMX 2.1 REST) |  | none | proposed |  |  | config/sources.yaml |
-| 97 | sources | `worldbank` | source | World Bank Indicators API v2 |  | none | proposed |  |  | config/sources.yaml |
-| 98 | sources | `bis` | source | BIS bulk downloads (flat CSV zip) |  | none | proposed |  |  | config/sources.yaml |
-| 99 | sources | `oecd` | source | OECD Data API (SDMX REST, SDMX-CSV) |  | none | proposed |  |  | config/sources.yaml |
-| 100 | sources | `worldbank_pinksheet` | source | World Bank Commodity Price Data (Pink Sheet), monthly XLSX |  | none | proposed |  |  | config/sources.yaml |
-| 101 | sources | `fao` | source | FAO Food Price Index and Cereal Supply and Demand Brief (www.fao.org) |  | none | proposed |  |  | config/sources.yaml |
-| 102 | sources | `worldbank_pinksheet_manual` | source | World Bank Pink Sheet, manual download fallback (ADR-028) |  | none | proposed |  |  | config/sources.yaml |
-| 103 | sources | `fao_manual` | source | FAO Cereal Supply and Demand Brief, manual download fallback (ADR-028) |  | none | proposed |  |  | config/sources.yaml |
-| 104 | sources | `faostat` | source | FAOSTAT bulk files (Food Security Data, SOFI) |  | none | proposed |  |  | config/sources.yaml |
-| 105 | sources | `ec_surveys` | source | European Commission business and consumer surveys (ZIP) |  | none | proposed |  |  | config/sources.yaml |
-| 106 | sources | `dbnomics` | source | DBnomics REST API (AMECO output gap only) |  | none | proposed |  |  | config/sources.yaml |
-| 107 | sources | `imf_weo_manual` | source | IMF World Economic Outlook (manual download) |  | none | proposed |  |  | config/sources.yaml |
+| 1 | domains | `growth` | domain | Growth | Економічне зростання | hand | proposed |  |  | config/indicators.yaml |
+| 2 | domains | `prices` | domain | Prices and inflation | Ціни та інфляція | hand | proposed |  |  | config/indicators.yaml |
+| 3 | domains | `labour` | domain | Labour market | Ринок праці | hand | proposed |  |  | config/indicators.yaml |
+| 4 | domains | `external` | domain | External | Зовнішній сектор | hand | proposed |  |  | config/indicators.yaml |
+| 5 | domains | `fiscal` | domain | Fiscal | Державні фінанси | hand | proposed |  |  | config/indicators.yaml |
+| 6 | domains | `fin` | domain | Financial | Фінансовий сектор | hand | proposed |  |  | config/indicators.yaml |
+| 7 | domains | `social` | domain | Social | Соціальна сфера | hand | proposed |  |  | config/indicators.yaml |
+| 8 | domains | `structural` | domain | Structural | Структурні показники | hand | proposed |  |  | config/indicators.yaml |
+| 9 | domains | `environment` | domain | Environment | Довкілля | hand | proposed |  |  | config/indicators.yaml |
+| 10 | domains | `agri` | domain | Agri-food | Агропродовольчий сектор | hand | proposed |  |  | config/indicators.yaml |
+| 11 | domains | `global` | domain | Global series | Глобальні ряди | hand | proposed |  |  | config/indicators.yaml |
+| 12 | indicators | `M01` | indicator | Industrial production index (excl. construction) | Індекс промислового виробництва (без будівництва) | hand | proposed |  |  | config/indicators.yaml |
+| 13 | indicators | `M02` | indicator | Retail trade volume | Обсяг роздрібної торгівлі | hand | proposed |  |  | config/indicators.yaml |
+| 14 | indicators | `M03` | indicator | Business-confidence survey (EC ESI, OECD BCI) | Опитування ділової впевненості (ESI ЄК, BCI ОЕСР) | hand | proposed |  |  | config/indicators.yaml |
+| 15 | indicators | `M04` | indicator | Consumer confidence | Споживча впевненість | hand | proposed |  |  | config/indicators.yaml |
+| 16 | indicators | `M05` | indicator | OECD Composite Leading Indicator | Складовий випереджальний індикатор ОЕСР | hand | proposed |  |  | config/indicators.yaml |
+| 17 | indicators | `M06` | indicator | Headline CPI / HICP inflation | Інфляція за загальним ІСЦ / ГІСЦ | hand | proposed |  |  | config/indicators.yaml |
+| 18 | indicators | `M07` | indicator | Core inflation (ex food, energy) | Базова інфляція (без продовольства й енергії) | hand | proposed |  |  | config/indicators.yaml |
+| 19 | indicators | `M08` | indicator | Industrial producer prices | Ціни виробників промислової продукції | hand | proposed |  |  | config/indicators.yaml |
+| 20 | indicators | `M09` | indicator | Unemployment rate | Рівень безробіття | hand | proposed |  |  | config/indicators.yaml |
+| 21 | indicators | `M10` | indicator | Youth unemployment (<25) | Безробіття серед молоді (до 25 років) | hand | proposed |  |  | config/indicators.yaml |
+| 22 | indicators | `M11` | indicator | Employment level/rate (monthly) | Рівень зайнятості (щомісячно) | hand | proposed |  |  | config/indicators.yaml |
+| 23 | indicators | `M12` | indicator | Merchandise exports and imports | Експорт та імпорт товарів | hand | proposed |  |  | config/indicators.yaml |
+| 24 | indicators | `M13` | indicator | Goods trade balance, 12-month sum as % of GDP | Баланс торгівлі товарами, сума за 12 місяців, % ВВП | hand | proposed |  |  | config/indicators.yaml |
+| 25 | indicators | `M14` | indicator | Official FX reserves | Офіційні валютні резерви | hand | proposed |  |  | config/indicators.yaml |
+| 26 | indicators | `M15` | indicator | Real effective exchange rate | Реальний ефективний обмінний курс | hand | proposed |  |  | config/indicators.yaml |
+| 27 | indicators | `M16` | indicator | Exchange rate vs USD | Обмінний курс до долара США | hand | proposed |  |  | config/indicators.yaml |
+| 28 | indicators | `M17` | indicator | Policy interest rate | Облікова (політична) відсоткова ставка | hand | proposed |  |  | config/indicators.yaml |
+| 29 | indicators | `M18` | indicator | 10-year government bond yield and spread | Дохідність 10-річних державних облігацій і спред | hand | proposed |  |  | config/indicators.yaml |
+| 30 | indicators | `M19` | indicator | Short-term interbank rate | Короткострокова міжбанківська ставка | hand | proposed |  |  | config/indicators.yaml |
+| 31 | indicators | `M21` | indicator | Private-sector bank credit growth | Зростання банківського кредитування приватного сектору | hand | proposed |  |  | config/indicators.yaml |
+| 32 | indicators | `M22` | indicator | Broad money (M2/M3) | Широка грошова маса (M2/M3) | hand | proposed |  |  | config/indicators.yaml |
+| 33 | indicators | `M24` | indicator | Commodity and energy prices (Brent, gas, food index) | Ціни на сировину й енергоносії (Brent, газ, індекс цін на продовольство) | hand | proposed |  |  | config/indicators.yaml |
+| 34 | indicators | `M27` | indicator | Electricity generation/consumption proxy | Показник виробництва/споживання електроенергії | hand | proposed |  |  | config/indicators.yaml |
+| 35 | indicators | `G01` | indicator | Food CPI / HICP food and non-alcoholic beverages | ІСЦ / ГІСЦ на продукти харчування та безалкогольні напої | hand | proposed |  |  | config/indicators.yaml |
+| 36 | indicators | `G02` | indicator | Agricultural and fertilizer commodity prices | Ціни на сільськогосподарську продукцію та добрива | hand | proposed |  |  | config/indicators.yaml |
+| 37 | indicators | `G03` | indicator | Stocks-to-use ratio (wheat, coarse grains, rice, oilseeds) | Відношення запасів до споживання (пшениця, фуражні зернові, рис, олійні) | hand | proposed |  |  | config/indicators.yaml |
+| 38 | indicators | `G04` | indicator | Agricultural trade balance, 12-month sum | Баланс торгівлі сільськогосподарською продукцією, сума за 12 місяців | hand | proposed |  |  | config/indicators.yaml |
+| 39 | indicators | `G05` | indicator | Real trade-weighted agricultural exchange rate index | Індекс реального торговельно-зваженого обмінного курсу в аграрному секторі | hand | proposed |  |  | config/indicators.yaml |
+| 40 | indicators | `G06` | indicator | Weather and drought anomalies in cropland | Аномалії погоди та посухи на сільськогосподарських землях | hand | proposed |  |  | config/indicators.yaml |
+| 41 | indicators | `Q01` | indicator | Real GDP (volume, SA) | Реальний ВВП (обсяг, з сезонним згладжуванням) | hand | proposed |  |  | config/indicators.yaml |
+| 42 | indicators | `Q02` | indicator | Real GDP per capita, PPP | Реальний ВВП на одну особу за ПКС | hand | proposed |  |  | config/indicators.yaml |
+| 43 | indicators | `Q03` | indicator | Employment, hours worked | Зайнятість, відпрацьовані години | hand | proposed |  |  | config/indicators.yaml |
+| 44 | indicators | `Q04` | indicator | Expenditure components (contributions to growth) | Складові витрат (внесок у зростання) | hand | proposed |  |  | config/indicators.yaml |
+| 45 | indicators | `Q05` | indicator | Current account balance, % of GDP | Сальдо поточного рахунку, % ВВП | hand | proposed |  |  | config/indicators.yaml |
+| 46 | indicators | `Q06` | indicator | Credit to private non-financial sector, % of GDP and credit-to-GDP gap | Кредит приватному нефінансовому сектору, % ВВП, і розрив кредит/ВВП | hand | proposed |  |  | config/indicators.yaml |
+| 47 | indicators | `Q07` | indicator | Residential property prices (real) | Ціни на житлову нерухомість (реальні) | hand | proposed |  |  | config/indicators.yaml |
+| 48 | indicators | `Q08` | indicator | General government gross debt, % of GDP | Валовий борг сектору загального державного управління, % ВВП | hand | proposed |  |  | config/indicators.yaml |
+| 49 | indicators | `Q09` | indicator | Net international investment position, % of GDP | Чиста міжнародна інвестиційна позиція, % ВВП | hand | proposed |  |  | config/indicators.yaml |
+| 50 | indicators | `Q10` | indicator | External debt; short-term external debt vs reserves | Зовнішній борг; короткостроковий зовнішній борг порівняно з резервами | hand | proposed |  |  | config/indicators.yaml |
+| 51 | indicators | `Q11` | indicator | Banking soundness (NPL ratio, Tier 1 capital) | Стійкість банківського сектору (частка непрацюючих кредитів, капітал першого рівня) | hand | proposed |  |  | config/indicators.yaml |
+| 52 | indicators | `Q12` | indicator | Government net lending, % of GDP | Чисте кредитування/запозичення сектору загального державного управління, % ВВП | hand | proposed |  |  | config/indicators.yaml |
+| 53 | indicators | `Q13` | indicator | Household debt, % of GDP | Борг домогосподарств, % ВВП | hand | proposed |  |  | config/indicators.yaml |
+| 54 | indicators | `Q14` | indicator | Inflation expectations | Інфляційні очікування | hand | proposed |  |  | config/indicators.yaml |
+| 55 | indicators | `Q15` | indicator | Labour productivity (GDP per hour) | Продуктивність праці (ВВП на одну відпрацьовану годину) | hand | proposed |  |  | config/indicators.yaml |
+| 56 | indicators | `Q16` | indicator | Unit labour costs | Питомі витрати на оплату праці | hand | proposed |  |  | config/indicators.yaml |
+| 57 | indicators | `Q17` | indicator | Agriculture gross value added, volume | Валова додана вартість сільського господарства, обсяг | hand | proposed |  |  | config/indicators.yaml |
+| 58 | indicators | `A01` | indicator | GDP per capita PPP and ratio to US | ВВП на одну особу за ПКС і відношення до США | hand | proposed |  |  | config/indicators.yaml |
+| 59 | indicators | `A02` | indicator | Output gap, IMF estimate (headline) | Розрив випуску, оцінка МВФ (основна) | hand | proposed |  |  | config/indicators.yaml |
+| 60 | indicators | `A02b` | indicator | Output gap, OECD estimate (comparison) | Розрив випуску, оцінка ОЕСР (для порівняння) | hand | proposed |  |  | config/indicators.yaml |
+| 61 | indicators | `A02c` | indicator | Output gap, European Commission estimate (comparison) | Розрив випуску, оцінка Європейської комісії (для порівняння) | hand | proposed |  |  | config/indicators.yaml |
+| 62 | indicators | `A03` | indicator | WEO forecasts (growth, inflation, current account, fiscal balance) | Прогнози WEO (зростання, інфляція, поточний рахунок, фіскальний баланс) | hand | proposed |  |  | config/indicators.yaml |
+| 63 | indicators | `A04` | indicator | General government balance and primary balance, % of GDP | Сальдо та первинне сальдо сектору загального державного управління, % ВВП | hand | proposed |  |  | config/indicators.yaml |
+| 64 | indicators | `A05` | indicator | Gross government debt, % of GDP | Валовий державний борг, % ВВП | hand | proposed |  |  | config/indicators.yaml |
+| 65 | indicators | `A07` | indicator | Gross fixed capital formation, % of GDP | Валове накопичення основного капіталу, % ВВП | hand | proposed |  |  | config/indicators.yaml |
+| 66 | indicators | `A08` | indicator | Gross national saving, % of GDP | Валові національні заощадження, % ВВП | hand | proposed |  |  | config/indicators.yaml |
+| 67 | indicators | `A09` | indicator | Total factor productivity growth (whole economy) | Зростання сукупної факторної продуктивності (економіка в цілому) | hand | proposed |  |  | config/indicators.yaml |
+| 68 | indicators | `A10` | indicator | Population, working-age share, old-age dependency | Населення, частка осіб працездатного віку, навантаження літніми людьми | hand | proposed |  |  | config/indicators.yaml |
+| 69 | indicators | `A11` | indicator | Life expectancy at birth | Очікувана тривалість життя при народженні | hand | proposed |  |  | config/indicators.yaml |
+| 70 | indicators | `A12` | indicator | Health expenditure, % of GDP | Витрати на охорону здоров'я, % ВВП | hand | proposed |  |  | config/indicators.yaml |
+| 71 | indicators | `A13` | indicator | Educational attainment (tertiary share 25-34), PISA, schooling years | Рівень освіти (частка осіб із вищою освітою віком 25–34 роки), PISA, роки навчання | hand | proposed |  |  | config/indicators.yaml |
+| 72 | indicators | `A14` | indicator | Income inequality (Gini, S80/S20, poverty rate) | Нерівність доходів (Джині, S80/S20, рівень бідності) | hand | proposed |  |  | config/indicators.yaml |
+| 73 | indicators | `A15` | indicator | Human Development Index | Індекс людського розвитку | hand | proposed |  |  | config/indicators.yaml |
+| 74 | indicators | `A16` | indicator | Worldwide Governance Indicators (six dimensions) | Світові показники врядування (шість вимірів) | hand | proposed |  |  | config/indicators.yaml |
+| 75 | indicators | `A18` | indicator | Export complexity, FDI inflows % of GDP | Складність експорту, приплив ПІІ, % ВВП | hand | proposed |  |  | config/indicators.yaml |
+| 76 | indicators | `A19` | indicator | Energy import dependence; energy intensity; electricity mix | Залежність від імпорту енергії; енергоємність; структура електроенергії | hand | proposed |  |  | config/indicators.yaml |
+| 77 | indicators | `A20` | indicator | GHG emissions per capita and per GDP | Викиди парникових газів на одну особу та на одиницю ВВП | hand | proposed |  |  | config/indicators.yaml |
+| 78 | indicators | `A21` | indicator | Renewable share of electricity | Частка відновлюваних джерел в електроенергії | hand | proposed |  |  | config/indicators.yaml |
+| 79 | indicators | `A22` | indicator | Poverty headcount; labour force participation | Кількість бідного населення; участь у робочій силі | hand | proposed |  |  | config/indicators.yaml |
+| 80 | indicators | `A23` | indicator | R&D, % of GDP; patents | Витрати на НДДКР, % ВВП; патенти | hand | proposed |  |  | config/indicators.yaml |
+| 81 | indicators | `A24` | indicator | Cyclically adjusted primary balance | Циклічно скоригований первинний баланс | hand | proposed |  |  | config/indicators.yaml |
+| 82 | indicators | `A25` | indicator | GDP deflator inflation (and real GDP share of world) | Інфляція за дефлятором ВВП (і частка реального ВВП у світовому) | hand | proposed |  |  | config/indicators.yaml |
+| 83 | indicators | `A26` | indicator | Household consumption per capita; food share of consumer spending | Споживання домогосподарств на одну особу; частка продовольства у споживчих витратах | hand | proposed |  |  | config/indicators.yaml |
+| 84 | indicators | `G07` | indicator | Agricultural total factor productivity index | Індекс сукупної факторної продуктивності сільського господарства | hand | proposed |  |  | config/indicators.yaml |
+| 85 | indicators | `G08` | indicator | Cereal yield; agricultural value added per worker | Урожайність зернових; додана вартість сільського господарства на одного працівника | hand | proposed |  |  | config/indicators.yaml |
+| 86 | indicators | `G09` | indicator | Agriculture value added % of GDP; employment share in agriculture | Додана вартість сільського господарства, % ВВП; частка зайнятих у сільському господарстві | hand | proposed |  |  | config/indicators.yaml |
+| 87 | indicators | `G10` | indicator | Cereal import dependency / self-sufficiency ratio | Залежність від імпорту зернових / рівень самозабезпечення | hand | proposed |  |  | config/indicators.yaml |
+| 88 | indicators | `G11` | indicator | Food expenditure share of household spending | Частка витрат на продукти харчування у витратах домогосподарств | hand | proposed |  |  | config/indicators.yaml |
+| 89 | indicators | `G12` | indicator | Prevalence of undernourishment and food insecurity (FAO, 3-year averages) | Поширеність недоїдання та продовольчої незабезпеченості (ФАО, трирічні середні) | hand | proposed |  |  | config/indicators.yaml |
+| 90 | indicators | `G14` | indicator | 10-year agricultural projections (ERS baseline) | 10-річні сільськогосподарські прогнози (базовий сценарій ERS) | hand | proposed |  |  | config/indicators.yaml |
+| 91 | indicators | `G15` | indicator | Agricultural land, irrigated area, fertilizer use | Сільськогосподарські землі, площа зрошення, використання добрив | hand | proposed |  |  | config/indicators.yaml |
+| 92 | indicators | `X01` | indicator | Nominal GDP, local currency units (input) | Номінальний ВВП у національній валюті (вхідні дані) | hand | proposed |  |  | config/indicators.yaml |
+| 93 | indicators | `X02` | indicator | Nominal GDP, USD (input) | Номінальний ВВП у доларах США (вхідні дані) | hand | proposed |  |  | config/indicators.yaml |
+| 94 | indicators | `X03` | indicator | Imports of goods and services, USD, monthly (input) | Імпорт товарів і послуг у доларах США, щомісячно (вхідні дані) | hand | proposed |  |  | config/indicators.yaml |
+| 95 | sources | `eurostat` | source | Eurostat dissemination API | API розповсюдження даних Євростату | hand | proposed |  |  | config/sources.yaml |
+| 96 | sources | `ecb` | source | ECB Data Portal (SDMX 2.1 REST) | Портал даних ЄЦБ (SDMX 2.1 REST) | hand | proposed |  |  | config/sources.yaml |
+| 97 | sources | `worldbank` | source | World Bank Indicators API v2 | API показників Світового банку v2 | hand | proposed |  |  | config/sources.yaml |
+| 98 | sources | `bis` | source | BIS bulk downloads (flat CSV zip) | Масові завантаження БМР (плоскі CSV у ZIP) | hand | proposed |  |  | config/sources.yaml |
+| 99 | sources | `oecd` | source | OECD Data API (SDMX REST, SDMX-CSV) | API даних ОЕСР (SDMX REST, SDMX-CSV) | hand | proposed |  |  | config/sources.yaml |
+| 100 | sources | `worldbank_pinksheet` | source | World Bank Commodity Price Data (Pink Sheet), monthly XLSX | Дані Світового банку про ціни на сировину (Pink Sheet), щомісячний XLSX | hand | proposed |  |  | config/sources.yaml |
+| 101 | sources | `fao` | source | FAO Food Price Index and Cereal Supply and Demand Brief (www.fao.org) | Індекс продовольчих цін ФАО та Огляд попиту й пропозиції зернових (www.fao.org) | hand | proposed |  |  | config/sources.yaml |
+| 102 | sources | `worldbank_pinksheet_manual` | source | World Bank Pink Sheet, manual download fallback (ADR-028) | Pink Sheet Світового банку, резервне завантаження вручну (ADR-028) | hand | proposed |  |  | config/sources.yaml |
+| 103 | sources | `fao_manual` | source | FAO Cereal Supply and Demand Brief, manual download fallback (ADR-028) | Огляд попиту й пропозиції зернових ФАО, резервне завантаження вручну (ADR-028) | hand | proposed |  |  | config/sources.yaml |
+| 104 | sources | `faostat` | source | FAOSTAT bulk files (Food Security Data, SOFI) | Масові файли FAOSTAT (дані з продовольчої безпеки, SOFI) | hand | proposed |  |  | config/sources.yaml |
+| 105 | sources | `ec_surveys` | source | European Commission business and consumer surveys (ZIP) | Опитування бізнесу та споживачів Європейської комісії (ZIP) | hand | proposed |  |  | config/sources.yaml |
+| 106 | sources | `dbnomics` | source | DBnomics REST API (AMECO output gap only) | REST API DBnomics (лише розрив випуску AMECO) | hand | proposed |  |  | config/sources.yaml |
+| 107 | sources | `imf_weo_manual` | source | IMF World Economic Outlook (manual download) | Світовий економічний огляд МВФ (WEO, завантаження вручну) | hand | proposed |  |  | config/sources.yaml |
 | 108 | entities | `ARG` | country | Argentina | Аргентина | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
 | 109 | entities | `AUS` | country | Australia | Австралія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
 | 110 | entities | `AUT` | country | Austria | Австрія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
