@@ -1,41 +1,42 @@
 # Series map of group ec_bcs_monthly. Key = the MONTHLY header of the workbook: <EC country code>.<survey code>
 # (verified against the real file, probe 2026-11-10; EU = EU27 aggregate, EA = euro area).
-# DECIDED by the user (2026-11-10): M03 is named "EC ESI, OECD BCI" and maps the ESI (an index, avg 100),
-# not the industry balance (INDU). Seed set only (two countries
+# TEMPORARY (2026-11-15, user decision): M03 maps the industry balance (INDU) again so the dashboard export passes EXP-02/COMP-02:
+# the ESI series were never registered (the loaded file predates the map change, raw_load is append-only). Restore ESI (the
+# 2026-11-10 decision: M03 "EC ESI, OECD BCI" = ESI index, avg 100) when the ESI series are loaded, e.g. with the EC 2611 edition. Seed set only (two countries
 # plus the EU27 and euro-area aggregates); widen with the series-map seeding report.
 series:
   - dataset: main_indicators_sa_nace2
-    key: "DE.ESI"
+    key: "DE.INDU"
     entity: DEU
     indicator: M03
     role: headline
     valid_from: 1991-01-01
-    rationale: "EC business and consumer survey, Economic Sentiment Indicator (ESI), index (long-run average 100), seasonally adjusted, DEU (data-sources research, M03)"
-    expect: {frequency: M, unit: IDX, seasonal_adjustment: SA, price_basis: NA}
+    rationale: "EC business and consumer survey, industry confidence indicator, balance, seasonally adjusted, DEU (data-sources research, M03)"
+    expect: {frequency: M, unit: BALANCE, seasonal_adjustment: SA, price_basis: NA}
   - dataset: main_indicators_sa_nace2
-    key: "FR.ESI"
+    key: "FR.INDU"
     entity: FRA
     indicator: M03
     role: headline
     valid_from: 1991-01-01
-    rationale: "EC business and consumer survey, Economic Sentiment Indicator (ESI), index (long-run average 100), seasonally adjusted, FRA (data-sources research, M03)"
-    expect: {frequency: M, unit: IDX, seasonal_adjustment: SA, price_basis: NA}
+    rationale: "EC business and consumer survey, industry confidence indicator, balance, seasonally adjusted, FRA (data-sources research, M03)"
+    expect: {frequency: M, unit: BALANCE, seasonal_adjustment: SA, price_basis: NA}
   - dataset: main_indicators_sa_nace2
-    key: "EU.ESI"
+    key: "EU.INDU"
     entity: EU27
     indicator: M03
     role: headline
     valid_from: 1991-01-01
-    rationale: "EC business and consumer survey, Economic Sentiment Indicator (ESI), index (long-run average 100), seasonally adjusted, EU27 (data-sources research, M03)"
-    expect: {frequency: M, unit: IDX, seasonal_adjustment: SA, price_basis: NA}
+    rationale: "EC business and consumer survey, industry confidence indicator, balance, seasonally adjusted, EU27 (data-sources research, M03)"
+    expect: {frequency: M, unit: BALANCE, seasonal_adjustment: SA, price_basis: NA}
   - dataset: main_indicators_sa_nace2
-    key: "EA.ESI"
+    key: "EA.INDU"
     entity: EA
     indicator: M03
     role: headline
     valid_from: 1991-01-01
-    rationale: "EC business and consumer survey, Economic Sentiment Indicator (ESI), index (long-run average 100), seasonally adjusted, EA (data-sources research, M03)"
-    expect: {frequency: M, unit: IDX, seasonal_adjustment: SA, price_basis: NA}
+    rationale: "EC business and consumer survey, industry confidence indicator, balance, seasonally adjusted, EA (data-sources research, M03)"
+    expect: {frequency: M, unit: BALANCE, seasonal_adjustment: SA, price_basis: NA}
   - dataset: main_indicators_sa_nace2
     key: "DE.CONS"
     entity: DEU
