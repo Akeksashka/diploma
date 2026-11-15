@@ -73,7 +73,9 @@ test("names.uk.json has the four sections and no key unknown to the export meta 
   for (const section of Object.keys(names)) {
     // the fixture export is narrower than the 42-country panel: entity names beyond it are allowed (no country the panel lacks, see names-uk.test.mjs)
     if (section === "entities") continue;
-    for (const id of Object.keys(names[section])) assert.ok(known[section].includes(id), `names.${section}.${id} is not in the export meta`);
+    // domain and indicator names cover the whole catalogue, wider than the fixture meta: an id must be in the fixture meta or in config/indicators.yaml; a source name in config/sources.yaml
+    const cfg = readFileSync(join(root, "..", "config", section === "sources" ? "sources.yaml" : "indicators.yaml"), "utf8");
+    for (const id of Object.keys(names[section])) assert.ok(known[section].includes(id) || cfg.includes(id), `names.${section}.${id} is not in the export meta or the config`);
   }
 });
 
