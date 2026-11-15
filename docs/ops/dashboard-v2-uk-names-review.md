@@ -120,50 +120,50 @@ Node 20 ICU (the pinned build, OQ-21): [UNVERIFIED] here; only Node v26.13.1 was
 | 105 | sources | `ec_surveys` | source | European Commission business and consumer surveys (ZIP) |  | none | proposed |  |  | config/sources.yaml |
 | 106 | sources | `dbnomics` | source | DBnomics REST API (AMECO output gap only) |  | none | proposed |  |  | config/sources.yaml |
 | 107 | sources | `imf_weo_manual` | source | IMF World Economic Outlook (manual download) |  | none | proposed |  |  | config/sources.yaml |
-| 108 | entities | `ARG` | country | Argentina | Аргентина | intl | proposed |  |  | config/entities.yaml |
-| 109 | entities | `AUS` | country | Australia | Австралія | intl | proposed |  |  | config/entities.yaml |
-| 110 | entities | `AUT` | country | Austria | Австрія | intl | proposed |  |  | config/entities.yaml |
-| 111 | entities | `BEL` | country | Belgium | Бельгія | intl | proposed |  |  | config/entities.yaml |
-| 112 | entities | `BGR` | country | Bulgaria | Болгарія | intl | proposed |  |  | config/entities.yaml |
-| 113 | entities | `BRA` | country | Brazil | Бразилія | intl | proposed |  |  | config/entities.yaml |
-| 114 | entities | `CAN` | country | Canada | Канада | intl | proposed |  |  | config/entities.yaml |
-| 115 | entities | `CHN` | country | China | Китай | intl | proposed |  |  | config/entities.yaml |
-| 116 | entities | `CYP` | country | Cyprus | Кіпр | intl | proposed |  |  | config/entities.yaml |
-| 117 | entities | `CZE` | country | Czechia | Чехія | intl | proposed |  |  | config/entities.yaml |
-| 118 | entities | `DEU` | country | Germany | Німеччина | intl | proposed |  |  | config/entities.yaml |
-| 119 | entities | `DNK` | country | Denmark | Данія | intl | proposed |  |  | config/entities.yaml |
-| 120 | entities | `ESP` | country | Spain | Іспанія | intl | proposed |  |  | config/entities.yaml |
-| 121 | entities | `EST` | country | Estonia | Естонія | intl | proposed |  |  | config/entities.yaml |
-| 122 | entities | `FIN` | country | Finland | Фінляндія | intl | proposed |  |  | config/entities.yaml |
-| 123 | entities | `FRA` | country | France | Франція | intl | proposed |  |  | config/entities.yaml |
-| 124 | entities | `GBR` | country | United Kingdom | Велика Британія | intl | proposed |  |  | config/entities.yaml |
-| 125 | entities | `GRC` | country | Greece | Греція | intl | proposed |  |  | config/entities.yaml |
-| 126 | entities | `HRV` | country | Croatia | Хорватія | intl | proposed |  |  | config/entities.yaml |
-| 127 | entities | `HUN` | country | Hungary | Угорщина | intl | proposed |  |  | config/entities.yaml |
-| 128 | entities | `IDN` | country | Indonesia | Індонезія | intl | proposed |  |  | config/entities.yaml |
-| 129 | entities | `IND` | country | India | Індія | intl | proposed |  |  | config/entities.yaml |
-| 130 | entities | `IRL` | country | Ireland | Ірландія | intl | proposed |  |  | config/entities.yaml |
-| 131 | entities | `ITA` | country | Italy | Італія | intl | proposed |  |  | config/entities.yaml |
-| 132 | entities | `JPN` | country | Japan | Японія | intl | proposed |  |  | config/entities.yaml |
-| 133 | entities | `KOR` | country | South Korea | Південна Корея | intl | proposed |  |  | config/entities.yaml |
-| 134 | entities | `LTU` | country | Lithuania | Литва | intl | proposed |  |  | config/entities.yaml |
-| 135 | entities | `LUX` | country | Luxembourg | Люксембург | intl | proposed |  |  | config/entities.yaml |
-| 136 | entities | `LVA` | country | Latvia | Латвія | intl | proposed |  |  | config/entities.yaml |
-| 137 | entities | `MEX` | country | Mexico | Мексика | intl | proposed |  |  | config/entities.yaml |
-| 138 | entities | `MLT` | country | Malta | Мальта | intl | proposed |  |  | config/entities.yaml |
-| 139 | entities | `NLD` | country | Netherlands | Нідерланди | intl | proposed |  |  | config/entities.yaml |
-| 140 | entities | `POL` | country | Poland | Польща | intl | proposed |  |  | config/entities.yaml |
-| 141 | entities | `PRT` | country | Portugal | Португалія | intl | proposed |  |  | config/entities.yaml |
-| 142 | entities | `ROU` | country | Romania | Румунія | intl | proposed |  |  | config/entities.yaml |
-| 143 | entities | `SAU` | country | Saudi Arabia | Саудівська Аравія | intl | proposed |  |  | config/entities.yaml |
-| 144 | entities | `SVK` | country | Slovakia | Словаччина | intl | proposed |  |  | config/entities.yaml |
-| 145 | entities | `SVN` | country | Slovenia | Словенія | intl | proposed |  |  | config/entities.yaml |
-| 146 | entities | `SWE` | country | Sweden | Швеція | intl | proposed |  |  | config/entities.yaml |
-| 147 | entities | `TUR` | country | Turkiye | Туреччина | intl | proposed |  |  | config/entities.yaml |
-| 148 | entities | `USA` | country | United States | Сполучені Штати | intl | proposed |  |  | config/entities.yaml |
-| 149 | entities | `ZAF` | country | South Africa | Південно-Африканська Республіка | intl | proposed |  |  | config/entities.yaml |
-| 150 | entities | `EU27` | aggregate | European Union (27) | Європейський Союз (27) | hand | proposed |  |  | config/entities.yaml |
-| 151 | entities | `EA` | aggregate | Euro area | Єврозона | hand | proposed |  |  | config/entities.yaml |
-| 152 | entities | `WLD` | aggregate | World | Світ | hand | proposed |  |  | config/entities.yaml |
-| 153 | entities | `UKR` | country | Ukraine | Україна | intl | proposed |  |  | fixture only |
-| 154 | entities | `NOR` | country | Norway | Норвегія | intl | proposed |  |  | fixture only |
+| 108 | entities | `ARG` | country | Argentina | Аргентина | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 109 | entities | `AUS` | country | Australia | Австралія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 110 | entities | `AUT` | country | Austria | Австрія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 111 | entities | `BEL` | country | Belgium | Бельгія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 112 | entities | `BGR` | country | Bulgaria | Болгарія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 113 | entities | `BRA` | country | Brazil | Бразилія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 114 | entities | `CAN` | country | Canada | Канада | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 115 | entities | `CHN` | country | China | Китай | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 116 | entities | `CYP` | country | Cyprus | Кіпр | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 117 | entities | `CZE` | country | Czechia | Чехія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 118 | entities | `DEU` | country | Germany | Німеччина | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 119 | entities | `DNK` | country | Denmark | Данія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 120 | entities | `ESP` | country | Spain | Іспанія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 121 | entities | `EST` | country | Estonia | Естонія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 122 | entities | `FIN` | country | Finland | Фінляндія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 123 | entities | `FRA` | country | France | Франція | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 124 | entities | `GBR` | country | United Kingdom | Велика Британія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 125 | entities | `GRC` | country | Greece | Греція | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 126 | entities | `HRV` | country | Croatia | Хорватія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 127 | entities | `HUN` | country | Hungary | Угорщина | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 128 | entities | `IDN` | country | Indonesia | Індонезія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 129 | entities | `IND` | country | India | Індія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 130 | entities | `IRL` | country | Ireland | Ірландія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 131 | entities | `ITA` | country | Italy | Італія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 132 | entities | `JPN` | country | Japan | Японія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 133 | entities | `KOR` | country | South Korea | Південна Корея | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 134 | entities | `LTU` | country | Lithuania | Литва | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 135 | entities | `LUX` | country | Luxembourg | Люксембург | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 136 | entities | `LVA` | country | Latvia | Латвія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 137 | entities | `MEX` | country | Mexico | Мексика | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 138 | entities | `MLT` | country | Malta | Мальта | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 139 | entities | `NLD` | country | Netherlands | Нідерланди | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 140 | entities | `POL` | country | Poland | Польща | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 141 | entities | `PRT` | country | Portugal | Португалія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 142 | entities | `ROU` | country | Romania | Румунія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 143 | entities | `SAU` | country | Saudi Arabia | Саудівська Аравія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 144 | entities | `SVK` | country | Slovakia | Словаччина | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 145 | entities | `SVN` | country | Slovenia | Словенія | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 146 | entities | `SWE` | country | Sweden | Швеція | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 147 | entities | `TUR` | country | Turkiye | Туреччина | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 148 | entities | `USA` | country | United States | Сполучені Штати | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 149 | entities | `ZAF` | country | South Africa | Південно-Африканська Республіка | intl | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 150 | entities | `EU27` | aggregate | European Union (27) | Європейський Союз (27) | hand | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 151 | entities | `EA` | aggregate | Euro area | Єврозона | hand | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 152 | entities | `WLD` | aggregate | World | Світ | hand | reviewed | user | 2026-11-15 | config/entities.yaml |
+| 153 | entities | `UKR` | country | Ukraine | Україна | intl | reviewed | user | 2026-11-15 | fixture only |
+| 154 | entities | `NOR` | country | Norway | Норвегія | intl | reviewed | user | 2026-11-15 | fixture only |

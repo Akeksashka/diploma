@@ -1,6 +1,289 @@
 {
   "domains": {},
   "indicators": {},
-  "entities": {},
+  "entities": {
+    "ARG": {
+      "t": "Аргентина",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "AUS": {
+      "t": "Австралія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "AUT": {
+      "t": "Австрія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "BEL": {
+      "t": "Бельгія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "BGR": {
+      "t": "Болгарія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "BRA": {
+      "t": "Бразилія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "CAN": {
+      "t": "Канада",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "CHN": {
+      "t": "Китай",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "CYP": {
+      "t": "Кіпр",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "CZE": {
+      "t": "Чехія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "DEU": {
+      "t": "Німеччина",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "DNK": {
+      "t": "Данія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "ESP": {
+      "t": "Іспанія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "EST": {
+      "t": "Естонія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "FIN": {
+      "t": "Фінляндія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "FRA": {
+      "t": "Франція",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "GBR": {
+      "t": "Велика Британія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "GRC": {
+      "t": "Греція",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "HRV": {
+      "t": "Хорватія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "HUN": {
+      "t": "Угорщина",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "IDN": {
+      "t": "Індонезія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "IND": {
+      "t": "Індія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "IRL": {
+      "t": "Ірландія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "ITA": {
+      "t": "Італія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "JPN": {
+      "t": "Японія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "KOR": {
+      "t": "Південна Корея",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "LTU": {
+      "t": "Литва",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "LUX": {
+      "t": "Люксембург",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "LVA": {
+      "t": "Латвія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "MEX": {
+      "t": "Мексика",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "MLT": {
+      "t": "Мальта",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "NLD": {
+      "t": "Нідерланди",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "POL": {
+      "t": "Польща",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "PRT": {
+      "t": "Португалія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "ROU": {
+      "t": "Румунія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "SAU": {
+      "t": "Саудівська Аравія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "SVK": {
+      "t": "Словаччина",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "SVN": {
+      "t": "Словенія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "SWE": {
+      "t": "Швеція",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "TUR": {
+      "t": "Туреччина",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "USA": {
+      "t": "Сполучені Штати",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "ZAF": {
+      "t": "Південно-Африканська Республіка",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "EU27": {
+      "t": "Європейський Союз (27)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "EA": {
+      "t": "Єврозона",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "WLD": {
+      "t": "Світ",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "UKR": {
+      "t": "Україна",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "NOR": {
+      "t": "Норвегія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    }
+  },
   "sources": {}
 }
