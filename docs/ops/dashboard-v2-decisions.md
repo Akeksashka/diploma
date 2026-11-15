@@ -256,3 +256,5 @@ For the user: the test-fix commit `e6447d8` exempts link text inside `<a href=".
 
 ### V29 status after this pass (not a sign-off)
 Built since the last status: Home panels and KPI strip (V57-V60), dictionaries and switch (V44, V46), entity names (V47, partial), V65 sweep on the fixture. Still unmet: AC-V2-106 (lang fallback wiring), real-export numbers (V30, G-REAL, G-WEO), AC-V2-119 user inspection (G-CRIMEA), every Ukrainian string and name unreviewed (G-LANG-STR), Home constants other than A05 (G-HOME-CONST), the judgement-word test (list not supplied, test skipped). Gated and not started: V30-V36, V48, V61.
+
+Confirmed by the user 2026-11-15: the AC-DB-22 exemption for link text inside `<a href="./indicator/...">` (commit e6447d8) stays.
