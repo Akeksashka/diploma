@@ -1,0 +1,934 @@
+{
+  "domains": {
+    "growth": {
+      "t": "Економічне зростання",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "prices": {
+      "t": "Ціни та інфляція",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "labour": {
+      "t": "Ринок праці",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "external": {
+      "t": "Зовнішній сектор",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "fiscal": {
+      "t": "Державні фінанси",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "fin": {
+      "t": "Фінансовий сектор",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "social": {
+      "t": "Соціальна сфера",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "structural": {
+      "t": "Структурні показники",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "environment": {
+      "t": "Довкілля",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "agri": {
+      "t": "Агропродовольчий сектор",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "global": {
+      "t": "Глобальні ряди",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    }
+  },
+  "indicators": {
+    "M01": {
+      "t": "Індекс промислового виробництва (без будівництва)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M02": {
+      "t": "Обсяг роздрібної торгівлі",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M03": {
+      "t": "Опитування ділової впевненості (ESI ЄК, BCI ОЕСР)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M04": {
+      "t": "Споживча впевненість",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M05": {
+      "t": "Складовий випереджальний індикатор ОЕСР",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M06": {
+      "t": "Інфляція за загальним ІСЦ / ГІСЦ",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M07": {
+      "t": "Базова інфляція (без продовольства й енергії)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M08": {
+      "t": "Ціни виробників промислової продукції",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M09": {
+      "t": "Рівень безробіття",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M10": {
+      "t": "Безробіття серед молоді (до 25 років)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M11": {
+      "t": "Рівень зайнятості (щомісячно)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M12": {
+      "t": "Експорт та імпорт товарів",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M13": {
+      "t": "Баланс торгівлі товарами, сума за 12 місяців, % ВВП",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M14": {
+      "t": "Офіційні валютні резерви",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M15": {
+      "t": "Реальний ефективний обмінний курс",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M16": {
+      "t": "Обмінний курс до долара США",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M17": {
+      "t": "Облікова (політична) відсоткова ставка",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M18": {
+      "t": "Дохідність 10-річних державних облігацій і спред",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M19": {
+      "t": "Короткострокова міжбанківська ставка",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M21": {
+      "t": "Зростання банківського кредитування приватного сектору",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M22": {
+      "t": "Широка грошова маса (M2/M3)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M24": {
+      "t": "Ціни на сировину й енергоносії (Brent, газ, індекс цін на продовольство)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "M27": {
+      "t": "Показник виробництва/споживання електроенергії",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "G01": {
+      "t": "ІСЦ / ГІСЦ на продукти харчування та безалкогольні напої",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "G02": {
+      "t": "Ціни на сільськогосподарську продукцію та добрива",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "G03": {
+      "t": "Відношення запасів до споживання (пшениця, фуражні зернові, рис, олійні)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "G04": {
+      "t": "Баланс торгівлі сільськогосподарською продукцією, сума за 12 місяців",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "G05": {
+      "t": "Індекс реального торговельно-зваженого обмінного курсу в аграрному секторі",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "G06": {
+      "t": "Аномалії погоди та посухи на сільськогосподарських землях",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "Q01": {
+      "t": "Реальний ВВП (обсяг, з сезонним згладжуванням)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "Q02": {
+      "t": "Реальний ВВП на одну особу за ПКС",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "Q03": {
+      "t": "Зайнятість, відпрацьовані години",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "Q04": {
+      "t": "Складові витрат (внесок у зростання)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "Q05": {
+      "t": "Сальдо поточного рахунку, % ВВП",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "Q06": {
+      "t": "Кредит приватному нефінансовому сектору, % ВВП, і розрив кредит/ВВП",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "Q07": {
+      "t": "Ціни на житлову нерухомість (реальні)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "Q08": {
+      "t": "Валовий борг сектору загального державного управління, % ВВП",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "Q09": {
+      "t": "Чиста міжнародна інвестиційна позиція, % ВВП",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "Q10": {
+      "t": "Зовнішній борг; короткостроковий зовнішній борг порівняно з резервами",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "Q11": {
+      "t": "Стійкість банківського сектору (частка непрацюючих кредитів, капітал першого рівня)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "Q12": {
+      "t": "Чисте кредитування/запозичення сектору загального державного управління, % ВВП",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "Q13": {
+      "t": "Борг домогосподарств, % ВВП",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "Q14": {
+      "t": "Інфляційні очікування",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "Q15": {
+      "t": "Продуктивність праці (ВВП на одну відпрацьовану годину)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "Q16": {
+      "t": "Питомі витрати на оплату праці",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "Q17": {
+      "t": "Валова додана вартість сільського господарства, обсяг",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A01": {
+      "t": "ВВП на одну особу за ПКС і відношення до США",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A02": {
+      "t": "Розрив випуску, оцінка МВФ (основна)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A02b": {
+      "t": "Розрив випуску, оцінка ОЕСР (для порівняння)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A02c": {
+      "t": "Розрив випуску, оцінка Європейської комісії (для порівняння)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A03": {
+      "t": "Прогнози WEO (зростання, інфляція, поточний рахунок, фіскальний баланс)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A04": {
+      "t": "Сальдо та первинне сальдо сектору загального державного управління, % ВВП",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A05": {
+      "t": "Валовий державний борг, % ВВП",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A07": {
+      "t": "Валове накопичення основного капіталу, % ВВП",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A08": {
+      "t": "Валові національні заощадження, % ВВП",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A09": {
+      "t": "Зростання сукупної факторної продуктивності (економіка в цілому)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A10": {
+      "t": "Населення, частка осіб працездатного віку, навантаження літніми людьми",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A11": {
+      "t": "Очікувана тривалість життя при народженні",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A12": {
+      "t": "Витрати на охорону здоров'я, % ВВП",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A13": {
+      "t": "Рівень освіти (частка осіб із вищою освітою віком 25–34 роки), PISA, роки навчання",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A14": {
+      "t": "Нерівність доходів (Джині, S80/S20, рівень бідності)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A15": {
+      "t": "Індекс людського розвитку",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A16": {
+      "t": "Світові показники врядування (шість вимірів)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A18": {
+      "t": "Складність експорту, приплив ПІІ, % ВВП",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A19": {
+      "t": "Залежність від імпорту енергії; енергоємність; структура електроенергії",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A20": {
+      "t": "Викиди парникових газів на одну особу та на одиницю ВВП",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A21": {
+      "t": "Частка відновлюваних джерел в електроенергії",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A22": {
+      "t": "Кількість бідного населення; участь у робочій силі",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A23": {
+      "t": "Витрати на НДДКР, % ВВП; патенти",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A24": {
+      "t": "Циклічно скоригований первинний баланс",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A25": {
+      "t": "Інфляція за дефлятором ВВП (і частка реального ВВП у світовому)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "A26": {
+      "t": "Споживання домогосподарств на одну особу; частка продовольства у споживчих витратах",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "G07": {
+      "t": "Індекс сукупної факторної продуктивності сільського господарства",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "G08": {
+      "t": "Урожайність зернових; додана вартість сільського господарства на одного працівника",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "G09": {
+      "t": "Додана вартість сільського господарства, % ВВП; частка зайнятих у сільському господарстві",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "G10": {
+      "t": "Залежність від імпорту зернових / рівень самозабезпечення",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "G11": {
+      "t": "Частка витрат на продукти харчування у витратах домогосподарств",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "G12": {
+      "t": "Поширеність недоїдання та продовольчої незабезпеченості (ФАО, трирічні середні)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "G14": {
+      "t": "10-річні сільськогосподарські прогнози (базовий сценарій ERS)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "G15": {
+      "t": "Сільськогосподарські землі, площа зрошення, використання добрив",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "X01": {
+      "t": "Номінальний ВВП у національній валюті (вхідні дані)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "X02": {
+      "t": "Номінальний ВВП у доларах США (вхідні дані)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "X03": {
+      "t": "Імпорт товарів і послуг у доларах США, щомісячно (вхідні дані)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    }
+  },
+  "entities": {
+    "ARG": {
+      "t": "Аргентина",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "AUS": {
+      "t": "Австралія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "AUT": {
+      "t": "Австрія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "BEL": {
+      "t": "Бельгія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "BGR": {
+      "t": "Болгарія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "BRA": {
+      "t": "Бразилія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "CAN": {
+      "t": "Канада",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "CHN": {
+      "t": "Китай",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "CYP": {
+      "t": "Кіпр",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "CZE": {
+      "t": "Чехія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "DEU": {
+      "t": "Німеччина",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "DNK": {
+      "t": "Данія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "ESP": {
+      "t": "Іспанія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "EST": {
+      "t": "Естонія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "FIN": {
+      "t": "Фінляндія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "FRA": {
+      "t": "Франція",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "GBR": {
+      "t": "Велика Британія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "GRC": {
+      "t": "Греція",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "HRV": {
+      "t": "Хорватія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "HUN": {
+      "t": "Угорщина",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "IDN": {
+      "t": "Індонезія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "IND": {
+      "t": "Індія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "IRL": {
+      "t": "Ірландія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "ITA": {
+      "t": "Італія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "JPN": {
+      "t": "Японія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "KOR": {
+      "t": "Південна Корея",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "LTU": {
+      "t": "Литва",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "LUX": {
+      "t": "Люксембург",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "LVA": {
+      "t": "Латвія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "MEX": {
+      "t": "Мексика",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "MLT": {
+      "t": "Мальта",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "NLD": {
+      "t": "Нідерланди",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "POL": {
+      "t": "Польща",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "PRT": {
+      "t": "Португалія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "ROU": {
+      "t": "Румунія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "SAU": {
+      "t": "Саудівська Аравія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "SVK": {
+      "t": "Словаччина",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "SVN": {
+      "t": "Словенія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "SWE": {
+      "t": "Швеція",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "TUR": {
+      "t": "Туреччина",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "USA": {
+      "t": "Сполучені Штати",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "ZAF": {
+      "t": "Південно-Африканська Республіка",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "EU27": {
+      "t": "Європейський Союз (27)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "EA": {
+      "t": "Єврозона",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "WLD": {
+      "t": "Світ",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "UKR": {
+      "t": "Україна",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "NOR": {
+      "t": "Норвегія",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    }
+  },
+  "sources": {
+    "eurostat": {
+      "t": "API розповсюдження даних Євростату",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "ecb": {
+      "t": "Портал даних ЄЦБ (SDMX 2.1 REST)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "worldbank": {
+      "t": "API показників Світового банку v2",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "bis": {
+      "t": "Масові завантаження БМР (плоскі CSV у ZIP)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "oecd": {
+      "t": "API даних ОЕСР (SDMX REST, SDMX-CSV)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "worldbank_pinksheet": {
+      "t": "Дані Світового банку про ціни на сировину (Pink Sheet), щомісячний XLSX",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "fao": {
+      "t": "Індекс продовольчих цін ФАО та Огляд попиту й пропозиції зернових (www.fao.org)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "worldbank_pinksheet_manual": {
+      "t": "Pink Sheet Світового банку, резервне завантаження вручну (ADR-028)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "fao_manual": {
+      "t": "Огляд попиту й пропозиції зернових ФАО, резервне завантаження вручну (ADR-028)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "faostat": {
+      "t": "Масові файли FAOSTAT (дані з продовольчої безпеки, SOFI)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "ec_surveys": {
+      "t": "Опитування бізнесу та споживачів Європейської комісії (ZIP)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "dbnomics": {
+      "t": "REST API DBnomics (лише розрив випуску AMECO)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    },
+    "imf_weo_manual": {
+      "t": "Світовий економічний огляд МВФ (WEO, завантаження вручну)",
+      "status": "reviewed",
+      "reviewed_on": "2026-11-15",
+      "reviewer": "user"
+    }
+  }
+}

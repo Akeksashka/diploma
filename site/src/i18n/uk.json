@@ -1,0 +1,2567 @@
+{
+ "AGGREGATE_NOT_RANKED": {
+  "t": "агрегат (не ранжується)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "AHEAD_NAME": {
+  "t": "ранжовано за останнім значенням, яке випереджає спільний період",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "AHEAD_TAG": {
+  "t": "випереджає",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "ALERTS_HEADING": {
+  "t": "Поточні сповіщення (лише останній запуск)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "ALERT_LEVEL_PREFIX": {
+  "t": "рівень сповіщення: ",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "ALERT_NOT_DRAWN": {
+  "t": " (не показано: немає значення на цей період)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "ALL_LABEL": {
+  "t": "Усі країни",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "ALL_PERIODS": {
+  "t": "Усі опорні періоди",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "BIN_LABELS.0": {
+  "t": "найнижча п’ята частина вибірки",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "BIN_LABELS.1": {
+  "t": "друга п’ята частина вибірки",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "BIN_LABELS.2": {
+  "t": "середня п’ята частина вибірки",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "BIN_LABELS.3": {
+  "t": "четверта п’ята частина вибірки",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "BIN_LABELS.4": {
+  "t": "найвища п’ята частина вибірки",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "CAVEAT": {
+  "t": "Процентилі показують відносну позицію в охопленій вибірці, а не оцінку структурної якості.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "CHOOSE_INDICATOR_OPTION": {
+  "t": "оберіть показник",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "CLASS_LABEL.regular": {
+  "t": "звичайні",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "CLASS_LABEL.reestimation": {
+  "t": "переоцінка",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "COMPARE_COUNTRIES": {
+  "t": "Порівняння країн",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "COMPARE_COUNTRIES_LABEL": {
+  "t": "Порівняння країн: {indicatorName}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "COUNTRY_HEADER": {
+  "t": "Країна",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "COVERAGE_HEADER": {
+  "t": "Доступні показники (n/N)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DESCRIPTIVE_CELL": {
+  "t": "описовий, не ранжується",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DETAILS_SUMMARY": {
+  "t": "Значення та опорні періоди",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DIRECTION_LABELS.higher": {
+  "t": "більше — краще",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DIRECTION_LABELS.lower": {
+  "t": "менше — краще",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DIRECTION_LABELS.target": {
+  "t": "ближче до цільового значення — краще",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DIRECTION_LABELS.descriptive": {
+  "t": "описовий, не ранжується",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DOMAIN_FIGURE_LABEL": {
+  "t": "середній процентиль показників домену",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_LABELS.indicator": {
+  "t": "Показник",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_LABELS.country": {
+  "t": "Країна",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_LABELS.seriesId": {
+  "t": "Ідентифікатор ряду",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_LABELS.source": {
+  "t": "Джерело",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_LABELS.attribution": {
+  "t": "Атрибуція",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_LABELS.frequency": {
+  "t": "Періодичність",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_LABELS.unit": {
+  "t": "Одиниця",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_LABELS.seasonal": {
+  "t": "Сезонне коригування",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_LABELS.priceBasis": {
+  "t": "Цінова основа",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_LABELS.refPeriod": {
+  "t": "Опорний період",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_LABELS.knownAt": {
+  "t": "Відомо станом на",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_LABELS.sourceRelease": {
+  "t": "Публікація джерела",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_LABELS.age": {
+  "t": "Вік (днів)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_LABELS.staleLimit": {
+  "t": "Межа застарілості (днів)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_LABELS.transform": {
+  "t": "Перетворення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_LABELS.flags": {
+  "t": "Позначки",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_LABELS.reestimating": {
+  "t": "Переоцінка",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_SERIES_COLUMNS.country": {
+  "t": "Країна",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_SERIES_COLUMNS.source": {
+  "t": "Джерело",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_SERIES_COLUMNS.attribution": {
+  "t": "Атрибуція",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_SERIES_COLUMNS.frequency": {
+  "t": "Періодичність",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_SERIES_COLUMNS.unit": {
+  "t": "Одиниця",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_SERIES_COLUMNS.seasonal": {
+  "t": "Сезонне коригування",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_SERIES_COLUMNS.priceBasis": {
+  "t": "Цінова основа",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_SERIES_COLUMNS.lastPeriod": {
+  "t": "Останній період",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_SERIES_COLUMNS.knownAt": {
+  "t": "Відомо станом на (останній період)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_SERIES_COLUMNS.reestimating": {
+  "t": "Переоцінка",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_SERIES_HEADING": {
+  "t": "Про ці ряди",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ABOUT_SUMMARY": {
+  "t": "Про це значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ALL_DOMAINS_LINK": {
+  "t": "Усі домени",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_BAND_REVISIONS": {
+  "t": "Ревізії",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_BAND_TABLE": {
+  "t": "Таблиця",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_BAND_TITLES.overview": {
+  "t": "Огляд",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_BAND_TITLES.compare": {
+  "t": "Порівняння",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_BAND_TITLES.indicators": {
+  "t": "Показники",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_BAND_TITLES.overTime": {
+  "t": "У часі",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_BAR_LABEL": {
+  "t": "Довжина стовпця (ревізія, %) відносна до найбільшої показаної ревізії.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_BLOCKED_FIELD_LABELS.unit_code": {
+  "t": "код одиниці",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_BLOCKED_FIELD_LABELS.unit_mult": {
+  "t": "множник одиниці",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_BLOCKED_FIELD_LABELS.price_basis": {
+  "t": "цінова основа",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_BLOCKED_FIELD_LABELS.flow_basis": {
+  "t": "основа потоку",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_BLOCKED_FIELD_LABELS.base_period": {
+  "t": "базовий період",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_BLOCKED_FIELD_LABELS.frequency": {
+  "t": "періодичність",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_BLOCKED_MESSAGE": {
+  "t": "Не показано разом; збережені поля відрізняються: {fields}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_BROWSE_SUMMARY": {
+  "t": "Країни, показники та інші сторінки",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C1_FIGURE_LABEL": {
+  "t": "Лінійна діаграма: {name}, одна лінія на країну, вісь y: {unit}: {parts}; таблиця під діаграмою містить усі нанесені точки",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C1_MARKS": {
+  "t": "Штрихова сіра лінія: збережений агрегат; квадратний маркер: остання точка застарілого ряду; порожній маркер: оцінка або попереднє значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C2_FIGURE_LABEL": {
+  "t": "Стовпчикова діаграма: {name}, опорний період {period}, у {unit}; один стовпець на країну; таблиця нижче містить ті самі значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C2_MARKS": {
+  "t": "Порожній стовпець: інший опорний період, його вказано в підписі; штриховий контур: агрегат, лише для довідки",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C2_NO_RANK_REFERENCE": {
+  "t": "Для цього показника немає ранжованого опорного періоду.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C2_TABLE_CAPTION": {
+  "t": "{name}: збережене значення за країнами, опорний період {period}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C3_FIGURE_LABEL": {
+  "t": "Точкова діаграма: вісь x — {xName}, {xUnit}; вісь y — {yName}, {yUnit}; опорний період {period}; одна точка на країну; таблиця нижче містить ті самі значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C3_MARKS": {
+  "t": "Підписані точки — країни у фокусі; кожна країна з обома значеннями є точкою й наведена в таблиці.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C3_NO_COMMON": {
+  "t": "Немає опорного періоду зі збереженим значенням обох показників.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C3_TABLE_CAPTION": {
+  "t": "{xName} і {yName}: збережені значення за країнами, опорний період {period}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C4_BLANK": {
+  "t": "немає збереженого значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C4_FIGURE_LABEL": {
+  "t": "Теплова карта: {name}, у {unit}, країни за періодами, від {first} до {last}; таблиця нижче містить ті самі значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C4_LEGEND.min": {
+  "t": "найнижче",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C4_LEGEND.max": {
+  "t": "найвище",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C4_MARKS": {
+  "t": "Заштрихована клітинка: немає збереженого значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C4_OUTLINE_MARK": {
+  "t": "Штриховий контур: застарілий рядок, показаний, бо ввімкнено «Показувати застарілі рядки»",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C4_SCALE": {
+  "t": "від {min} до {max}, найнижча й найвища показані клітинки",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C4_TABLE_CAPTION": {
+  "t": "{name}: збережене значення за країнами та періодами, у {unit}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C6_AGGREGATES_NOTE": {
+  "t": "Агрегати та країни поза картою не показано; їх наведено серед прихованих рядків і в таблиці.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C6_CARD_TITLE": {
+  "t": "Карта значень",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C6_FIGURE_LABEL": {
+  "t": "Карта Європи: {name}, опорний період {period}, у {unit}; одна фігура на країну; таблиця нижче містить ті самі значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C6_GEO_PENDING": {
+  "t": "Завантаження контурів карти.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C6_GEO_UNREADABLE": {
+  "t": "Контури карти не вдалося прочитати, тому карту не показано; таблиця містить ті самі значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C6_LEGEND_UNIT": {
+  "t": "Одиниця: {unit}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C6_MARKS": {
+  "t": "Штриховка: немає збереженого значення; без заливки: збережене значення, яке тут не показано; коло: мала країна; штриховий контур: інший опорний період",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C6_NOT_MAPPED.aggregate": {
+  "t": "агрегат, не показаний на карті",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C6_NOT_MAPPED.outside": {
+  "t": "поза межами карти",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C6_NOT_MAPPED.nogeometry": {
+  "t": "для цієї країни немає контуру на карті",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C6_NOT_MAPPED_SENTENCE": {
+  "t": "{why}; {stored}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C6_SCALE": {
+  "t": "від {min} до {max}, найнижча й найвища показані країни; неперервна шкала, без класів",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C6_SKIP_TO_TABLE": {
+  "t": "Перейти до таблиці значень карти",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C6_SOURCE_NOTE": {
+  "t": "Контури карти: Natural Earth.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C6_STORED": {
+  "t": "{value} ({period})",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_C6_TABLE_CAPTION": {
+  "t": "{name}: збережене значення за країнами, опорний період {period}, як на карті",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CAPTION_LABELS.indicator": {
+  "t": "Показник",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CAPTION_LABELS.unit": {
+  "t": "Одиниця",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CAPTION_LABELS.frequency": {
+  "t": "Періодичність",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CAPTION_LABELS.seasonal": {
+  "t": "Сезонне коригування",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CAPTION_LABELS.period": {
+  "t": "Опорний період",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CAPTION_LABELS.scale": {
+  "t": "Колірна шкала",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CAPTION_LABELS.source": {
+  "t": "Джерело",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CAPTION_LABELS.vintage": {
+  "t": "Вінтаж",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CAPTION_LEGEND.EST": {
+  "t": "оцінка",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CAPTION_LEGEND.PROV": {
+  "t": "попереднє",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CAPTION_SEASONAL.SA": {
+  "t": "СК",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CAPTION_SEASONAL.NSA": {
+  "t": "без СК",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CAPTION_SEASONAL.NA": {
+  "t": "не застосовується",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CAPTION_VINTAGE": {
+  "t": "остання версія станом на {date}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CARD_REVISIONS": {
+  "t": "Ревізії та вінтажі",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CHART_MARKS": {
+  "t": "Порожній маркер — оцінене або попереднє значення. Кільце навколо точки — значення, ревізоване після того, як система вперше його зберегла. Тонка вертикальна лінія позначає останнє спостереження ряду. Ромб позначає сповіщення, трикутник — застереження лише за останнім запуском аналізу; список під діаграмою вказує рівень і z для кожного.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CHART_MODES.lines": {
+  "t": "Лінії",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CHART_MODES.bars": {
+  "t": "Стовпці",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CHART_SHOWS": {
+  "t": "Кожна лінія — збережені значення однієї країни в часі; підпис наприкінці лінії містить країну та її останнє збережене значення з одиницею. Розриви в лінії — періоди без збереженого значення.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CHART_TYPE_LEGEND": {
+  "t": "Тип діаграми",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CHOOSE_COUNTRIES_HINT": {
+  "t": "Оберіть до 5 країн для порівняння.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CHOOSE_COUNTRY_PLACEHOLDER": {
+  "t": "Оберіть країну, щоб побачити її ключові показники.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_CARD_TITLES.c1": {
+  "t": "Часові ряди за країнами",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_CARD_TITLES.c2": {
+  "t": "Ранжовані значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_CARD_TITLES.c3": {
+  "t": "Два показники",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_CARD_TITLES.c4": {
+  "t": "Країни за періодами",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_CARD_TITLES.c5": {
+  "t": "Теплова карта процентилів",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_CARD_TITLES.t2": {
+  "t": "Таблиця показників",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_CHOOSE_INDICATOR": {
+  "t": "Оберіть показник, щоб порівняти країни.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_CHOOSE_PAIR": {
+  "t": "Оберіть два показники для порівняння.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_CONTROLS_LABEL": {
+  "t": "Елементи керування: {title}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_CONTROL_LABELS.domain": {
+  "t": "Домен",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_CONTROL_LABELS.countries": {
+  "t": "Країни",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_CONTROL_LABELS.x": {
+  "t": "Показник X",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_CONTROL_LABELS.y": {
+  "t": "Показник Y",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_CONTROL_LABELS.p": {
+  "t": "Опорний період",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_CONTROL_LABELS.choose": {
+  "t": "Оберіть показник",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_CONTROL_LABELS.latest": {
+  "t": "Типовий період",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_CONTROL_LABELS.sort": {
+  "t": "Сортувати за",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_DEFAULT_COUNTRIES": {
+  "t": "Жодної країни не обрано: показано країни за замовчуванням.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_SECONDARY": {
+  "t": "Шар процентилів: {title}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_SERIES_PENDING": {
+  "t": "Завантаження файлу рядів цього показника.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_SORTS.value": {
+  "t": "Значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_SORTS.name": {
+  "t": "Країна (А–Я)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPARE_SORTS.percentile": {
+  "t": "Процентиль",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COMPAT_SKIPPED": {
+  "t": "Не порівнюється, немає збереженого значення: {fields}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CONSEQUENCE.lists": {
+  "t": "Списки на цій сторінці й далі показано.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CONSEQUENCE.scorecard": {
+  "t": "Таблиці та діаграми на цій сторінці не показано.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CONSEQUENCE.explorer": {
+  "t": "Діаграму й таблиці на цій сторінці не показано.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CONSEQUENCE.revisions": {
+  "t": "Списки ревізій на цій сторінці не показано.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CONTEXT_LINES": {
+  "t": "Контекстні лінії",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_CARD_TITLES.k1": {
+  "t": "Останні значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_CARD_TITLES.l1": {
+  "t": "Часові ряди",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_CARD_TITLES.p1": {
+  "t": "Позиція серед країн",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_CARD_TITLES.t1": {
+  "t": "Таблиця показників",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_CARD_TITLES.l2": {
+  "t": "Ряди",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_CHIP_HELP": {
+  "t": "Оберіть до 5 країн.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_COLUMNS.indicator": {
+  "t": "Показник",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_COLUMNS.value": {
+  "t": "Останнє значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_COLUMNS.period": {
+  "t": "Опорний період",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_COLUMNS.percentile": {
+  "t": "процентиль серед усіх ранжованих країн",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_COLUMNS.source": {
+  "t": "Джерело",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_COLUMNS.actions": {
+  "t": "Дії",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_COLUMNS.reason": {
+  "t": "Чому немає значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_FILTER_ALL": {
+  "t": "Усі показники",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_FILTER_LEGEND": {
+  "t": "Показати",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_FILTER_VALUE": {
+  "t": "Лише показники зі значенням",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_GROUPS_LABEL": {
+  "t": "Групи",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_KIND_LABEL": {
+  "t": "Тип",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_LIMIT": {
+  "t": "Можна обрати до {n} країн. Приберіть одну, щоб обрати іншу.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_NO_GROUPS": {
+  "t": "немає",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_SELECTED": {
+  "t": "Обрано: {n}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_SWITCHER_GO": {
+  "t": "Перейти",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_SWITCHER_LABEL": {
+  "t": "Змінити країну",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNTRY_TABLE_CAPTION": {
+  "t": "{domainName}: показники країни {countryName}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CRUMB_COUNTRIES": {
+  "t": "Країни",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CRUMB_HOME": {
+  "t": "Головна",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CRUMB_INDICATORS": {
+  "t": "Показники",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_CRUMB_LABEL": {
+  "t": "Навігаційний ланцюжок",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_DOMAINS_BAND": {
+  "t": "Усі домени",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_DOWNLOAD": {
+  "t": "Завантажити файл даних цього показника",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_EMPTY_CARD": {
+  "t": "Немає значень для цього вибору.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ERROR_INVALID": {
+  "t": "Дані розділу «{region}» не пройшли перевірку формату, тому їх не використано.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ERROR_TITLE": {
+  "t": "Не вдалося завантажити: {region}.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_ERROR_VERSION": {
+  "t": "Ця сторінка не може прочитати розділ «{region}»: версія даних не підтримується цим інтерфейсом.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_EXPLORER_FIGURE_LABEL": {
+  "t": "Лінійна діаграма: {title}, вісь y: {yLabel}. {parts}. Таблиця під діаграмою містить усі нанесені точки.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FACET_COLLAPSE": {
+  "t": "Згорнути",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FACET_EXPAND": {
+  "t": "Розгорнути",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FACET_STATEMENT": {
+  "t": "Обрано понад 5 країн, тому кожна країна має власну діаграму.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FACT_LABELS.value": {
+  "t": "Останнє значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FACT_LABELS.refPeriod": {
+  "t": "Опорний період",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FACT_LABELS.refOffset": {
+  "t": "Зсув опорного періоду (днів)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FACT_LABELS.release": {
+  "t": "Публікація джерела",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FACT_LABELS.age": {
+  "t": "Вік (днів)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FACT_LABELS.limit": {
+  "t": "Межа застарілості (днів)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FACT_LABELS.flags": {
+  "t": "Позначки",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FIGURE_COVERAGE": {
+  "t": "Доступно показників: {nAvailable} з {nDefined}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FIGURE_POSITION": {
+  "t": "позиція {position} з {nRanked}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FILTER_ALL.countries": {
+  "t": "Усі країни",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FILTER_ALL.domains": {
+  "t": "Усі домени",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FILTER_ALL.frequencies": {
+  "t": "Усі періодичності",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FILTER_CHIP_SUMMARY": {
+  "t": "{label}: {value}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FILTER_LABELS.filters": {
+  "t": "Фільтри",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FILTER_LABELS.group": {
+  "t": "Група",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FILTER_LABELS.country": {
+  "t": "Країна",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FILTER_LABELS.domain": {
+  "t": "Домен",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FILTER_LABELS.indicator": {
+  "t": "Показник",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FILTER_LABELS.period": {
+  "t": "Період",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FILTER_LABELS.frequency": {
+  "t": "Періодичність",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FILTER_LABELS.from": {
+  "t": "Від",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FILTER_LABELS.to": {
+  "t": "До",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FILTER_LABELS.all": {
+  "t": "Усі",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FILTER_LABELS.reset": {
+  "t": "Скинути фільтри",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FREE_Y_LABEL": {
+  "t": "Вільна вісь y (застосовується, коли обрано понад 5 країн)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FREQUENCY_NAMES.D": {
+  "t": "Щоденна",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FREQUENCY_NAMES.M": {
+  "t": "Щомісячна",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FREQUENCY_NAMES.Q": {
+  "t": "Щоквартальна",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_FREQUENCY_NAMES.A": {
+  "t": "Щорічна",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_GROUP_BROWSE": {
+  "t": "Огляд",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_GROUP_REFERENCE_ROWS": {
+  "t": "Довідкові рядки",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HEATMAP_CAPTION": {
+  "t": "{domainName}: {label} і процентиль кожного показника за країнами",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HEATMAP_CAPTION_INFO": {
+  "t": "{domainName}: останнє значення кожного показника за країнами ({INFORMATIONAL_NOTICE})",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HIDDEN_LIST_ITEM": {
+  "t": "{label}: {reasonLabel}; останнє значення {period}; {sentence}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HIDDEN_REASON_LABELS.no_data": {
+  "t": "Немає даних",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HIDDEN_REASON_LABELS.stale": {
+  "t": "Застаріле",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HIDDEN_REASON_LABELS.other_period": {
+  "t": "Інший період",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HIDDEN_REASON_LABELS.other": {
+  "t": "Інше",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HIDDEN_ROW_ITEM": {
+  "t": "{name}: останнє значення {period}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HISTORY_CONSEQUENCE": {
+  "t": "Діаграму історії для цього показника не показано.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HISTORY_FIGURE_LABEL": {
+  "t": "історія показника «{indicatorName}» для {countryName}, у {unit}; таблиця нижче містить останні значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HISTORY_HIDE": {
+  "t": "Сховати історію",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HISTORY_REGION": {
+  "t": "історія цього показника",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HISTORY_SHOW": {
+  "t": "Показати історію",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HISTORY_TABLE_TITLE": {
+  "t": "{indicatorName}: {countryName}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HOME_CONTROLS_LABEL": {
+  "t": "Елементи керування: панелі головної сторінки",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HOME_COUNTRY_LABEL": {
+  "t": "Відкрити країну",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HOME_FILTER_COUNT": {
+  "t": "показано: {n}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HOME_FILTER_NONE": {
+  "t": "Нічого не знайдено.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HOME_H1": {
+  "t": "Макроекономічна панель",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HOME_KPI_FOR": {
+  "t": "Останнє збережене значення: {name}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HOME_KPI_NOT_LOADED": {
+  "t": "Таблицю показників цього показника не вдалося прочитати.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HOME_KPI_NO_VALUE": {
+  "t": "У цьому експорті немає збереженого значення для цієї одиниці.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HOME_KPI_TITLE": {
+  "t": "Ключові показники",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HOME_MISSING_ITEM": {
+  "t": "{constant}: ідентифікатора {id} немає в збережених списках, тому його пропущено",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HOME_MISSING_SUMMARY": {
+  "t": "Деякі налаштування головної сторінки називають ідентифікатор, якого немає в цьому експорті",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HOME_MODE_LABEL": {
+  "t": "Режим",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HOME_PANELS_LABEL": {
+  "t": "Панелі порівняння",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HOME_PANEL_TITLES.c2": {
+  "t": "Ранжовані значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HOME_PANEL_TITLES.c1": {
+  "t": "Часові ряди за країнами",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HOME_PANEL_TITLES.c6": {
+  "t": "Карта значень",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HOME_PANEL_TITLES.c4": {
+  "t": "Країни за періодами",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HOME_SCORECARD_PENDING": {
+  "t": "Завантаження збережених значень.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INCLUDE_OTHER_PERIODS": {
+  "t": "Включити рядки з інших опорних періодів",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_COLUMNS.country": {
+  "t": "Країна",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_COLUMNS.value": {
+  "t": "Останнє значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_COLUMNS.period": {
+  "t": "Опорний період",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_COLUMNS.offset": {
+  "t": "Зсув (днів)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_COLUMNS.percentile": {
+  "t": "процентиль серед усіх ранжованих країн",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_COLUMNS_MORE.flags": {
+  "t": "Позначки",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_COLUMNS_MORE.source": {
+  "t": "Джерело",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_COLUMNS_MORE.actions": {
+  "t": "Дії",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_COLUMNS_MORE.reason": {
+  "t": "Чому немає значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_FACT_LABELS.id": {
+  "t": "Ідентифікатор",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_FACT_LABELS.domains": {
+  "t": "Домени",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_FACT_LABELS.unit": {
+  "t": "Одиниця",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_FACT_LABELS.frequency": {
+  "t": "Періодичність",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_FACT_LABELS.direction": {
+  "t": "Напрям",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_FACT_LABELS.notes": {
+  "t": "Примітки",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_FACT_LABELS.transform": {
+  "t": "Перетворення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_SORT_LABEL": {
+  "t": "Сортувати за",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_SORT_LABELS.name": {
+  "t": "Країна",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_SORT_LABELS.value": {
+  "t": "Значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_SORT_LABELS.percentile": {
+  "t": "Процентиль",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_SORT_LABELS.period": {
+  "t": "Опорний період",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_SWITCHER_GO": {
+  "t": "Перейти",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_INDICATOR_TABLE_CAPTION": {
+  "t": "{indicatorName}: останні значення за країнами",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_KPI_ERROR_CONSEQUENCE": {
+  "t": "Ключові показники не показано.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_L1_SUMMARY": {
+  "t": "{domainName}: часові ряди",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_LEGEND_BINS": {
+  "t": "Інтервали процентилів",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_LEGEND_STATES": {
+  "t": "Позначки клітинок",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_LEGEND_TITLE": {
+  "t": "Легенда",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_LOADING": {
+  "t": "Завантаження: {what}...",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_LOAD_HISTORY": {
+  "t": "Завантажити історію",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_MARKED_SEASONAL": {
+  "t": "Поєднує ряди з СК і без СК",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_MODE_LABELS.country": {
+  "t": "Країна",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_MODE_LABELS.compare": {
+  "t": "Порівняння",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_MODE_SWITCH_LABEL": {
+  "t": "Режим",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_NA_DEFINED_SENTENCE": {
+  "t": "Ряд для цієї країни визначено, але в цьому експорті немає його значення.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_NA_NO_PERCENTILE_SENTENCE": {
+  "t": "У цьому експорті є значення, але немає його процентиля.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_NA_NO_RANKED_SENTENCE": {
+  "t": "Жоден показник цього домену не має ранжованого значення для цієї країни.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_NEXT_GROUP": {
+  "t": "Оберіть іншу групу або інший показник.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_NEXT_SERIES": {
+  "t": "Оберіть щонайменше одну країну або інший показник чи діапазон.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_NOSCRIPT": {
+  "t": "Для показу таблиць і діаграм цій панелі потрібен JavaScript. Увімкніть JavaScript і перезавантажте сторінку.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_NOT_PUBLISHED_SENTENCE": {
+  "t": "Не опубліковано на цьому сайті.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_NOT_STATED": {
+  "t": "не зазначено",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_NO_ALIGNED": {
+  "t": "Немає узгоджених значень для цього вибору",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_NO_VALUE_FOR": {
+  "t": "немає значення для: {names}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_OFFSET_FLAG": {
+  "t": "зсув {days} дн.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_OPEN_AS_SERIES": {
+  "t": "Відкрити як часовий ряд",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_P1A_AGGREGATES_NOTE": {
+  "t": "Штрихові лінії позначають збережене значення агрегату, лише для довідки.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_P1A_FIGURE_LABEL": {
+  "t": "Точкова смуга: {indicatorName}, опорний період {period}, у {unit}; кожна країна — одна точка; таблиця нижче містить ті самі значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_P1A_MARKS": {
+  "t": "Кільце: країна у фокусі; порожня точка: оцінка або значення іншого опорного періоду",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_P1A_NO_REFERENCE": {
+  "t": "Таблиця показників не вказує опорний період для цього показника.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_P1A_REFERENCE": {
+  "t": "Опорний період: {period}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_P1A_TABLE_CAPTION": {
+  "t": "{indicatorName}: останнє збережене значення за країнами, опорний період {period}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PEER_DIRECTION": {
+  "t": "Напрям цього показника: {directionText}.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PEER_FOCUS_HINT": {
+  "t": "Оберіть назву країни, щоб виділити її на діаграмі й у таблиці; оберіть ще раз, щоб зняти виділення.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PEER_GUIDES": {
+  "t": "Сірі лінії позначають 0,25, 0,5 і 0,75 на шкалі.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PEER_MARKS": {
+  "t": "Заповнена точка: значення, спостережене для цієї країни. Порожня точка: оцінене або успадковане значення. Кільце позначає країну у фокусі.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PEER_NOT_DRAWN": {
+  "t": "Країна без збереженого процентиля (відстає, не узгоджена, застаріла або не ранжується) наведена лише в таблиці.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PEER_TABLE_CAPTION": {
+  "t": "{indicatorName}: останнє значення та збережений процентиль за країнами",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PERIOD_INVALID": {
+  "t": "Рік «Від» не може бути пізнішим за рік «До». Період не змінено.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PERIOD_PRESETS.all": {
+  "t": "Усі",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PERIOD_PRESETS.last10": {
+  "t": "Останні 10 років",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PERIOD_PRESETS.last5": {
+  "t": "Останні 5 років",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PERIOD_REGION": {
+  "t": "діапазон періоду",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PERIOD_UNAVAILABLE_CONSEQUENCE": {
+  "t": "Фільтр періоду недоступний; показано всі роки.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PERIOD_VALUE": {
+  "t": "від {from} до {to}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PICKER_LABELS.country": {
+  "t": "Країна",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PICKER_LABELS.group": {
+  "t": "Група",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PICKER_LABELS.countries": {
+  "t": "Країни",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PICKER_LABELS.aggregates": {
+  "t": "Агрегати",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PICKER_LABELS.placeholder": {
+  "t": "Оберіть країну",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PROFILE_DOT_LABEL": {
+  "t": "{name}: {percentileText}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PROFILE_FIGURE_LABEL": {
+  "t": "процентиль кожного показника для {countryName}, домен {domainName}; таблиця нижче містить ті самі значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_RANK_COLUMNS.bar": {
+  "t": "Стовпець",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_RANK_COLUMNS.dot": {
+  "t": "Позиція процентиля",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_RANK_SORT_LABELS.name": {
+  "t": "Країна (А–Я)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_RANK_SORT_LABELS.value": {
+  "t": "Значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_RANK_SORT_LABELS.percentile": {
+  "t": "Процентиль",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_REBASE_MARKS": {
+  "t": "Сірі лінії позначають значення індексу 100 і базовий період.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_REBASE_STATEMENT": {
+  "t": "Індекс, {period} = 100, перебазовано лише для показу; збережені значення не змінено.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_REESTIMATED_MARK": {
+  "t": "переоцінено",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_REGIONS.manifest": {
+  "t": "маніфест даних",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_REGIONS.meta": {
+  "t": "описи країн, показників і рядів",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_REGIONS.scorecard": {
+  "t": "таблиця показників цього домену",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_REGIONS.domains": {
+  "t": "список доменів",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_REGIONS.alerts": {
+  "t": "поточні сповіщення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_REGIONS.recent": {
+  "t": "список останніх ревізій",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_REGIONS.series": {
+  "t": "файл рядів цього показника",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_REGIONS.revisionFile": {
+  "t": "файл ревізій цього показника",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_REGIONS.loadingData": {
+  "t": "дані панелі",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_REGIONS.loadingSeries": {
+  "t": "ряди цього показника",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_REGIONS.loadingRevisions": {
+  "t": "історія ревізій цього показника",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_REVISIONS_LINK_LABEL": {
+  "t": "Ревізії: {indicatorName}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_SCROLL_HINT": {
+  "t": "Прокрутіть вбік, щоб побачити більше показників.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_SELECT_GROUP": {
+  "t": "Обрати групу",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_SERIES_LABEL_PART": {
+  "t": "{name}, від {from} до {to}, останнє збережене значення {latestText}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_SERIES_UNREADABLE": {
+  "t": "Файл рядів цього показника не вдалося прочитати.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_SHOW_MORE": {
+  "t": "Показати більше",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_SHOW_PERCENTILE": {
+  "t": "Показувати процентиль",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_SHOW_STALE": {
+  "t": "Показувати застарілі рядки",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_SPARKLINE_TOO_FEW": {
+  "t": "Замало значень у вибраному періоді.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_STALE_CODE": {
+  "t": "застаріле",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_STALE_PERIOD": {
+  "t": "застаріле, {period}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_STALE_TIP": {
+  "t": "застаріле, останній збережений період {period}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_STATE_COLUMN": {
+  "t": "Стан",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_STEP_CHOOSE_PERIOD": {
+  "t": "Оберіть один опорний період, щоб побачити його ступінчасту діаграму.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_STEP_FIGURE_LABEL": {
+  "t": "Ступінчаста діаграма: {title} для {country}, опорний період {period}, вісь y: {yLabel}. {parts}. Таблиця версій нижче містить ті самі точки.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_STEP_FIGURE_PART": {
+  "t": "{known}: {valueText}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_STEP_NOTE": {
+  "t": "Кожен крок — збережена версія, намальована від дня, коли вона стала відомою. Порожня точка — найраніша збережена версія. Хрестик позначає вилучення.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_STEP_REMOVED": {
+  "t": "вилучено",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_STEP_SKIP": {
+  "t": "Перейти до таблиці версій",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_SUBREGION_CONSEQUENCE": {
+  "t": "Решту сторінки й далі показано. Оберіть інший показник, щоб спробувати ще раз.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_TABLE_CAPTION": {
+  "t": "{title}: нанесені значення, останні періоди кожного ряду (кількість: {n})",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_TABLE_CAPTION_ALL": {
+  "t": "{title}: нанесені значення, кожен нанесений період кожного ряду",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_TABLE_HEADERS.value": {
+  "t": "Значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_TABLE_HEADERS.status": {
+  "t": "Статус",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_TITLE_UNIT": {
+  "t": " ({unit})",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_TRANSFORMED_HEADER": {
+  "t": "Перетворене значення ({transformLabel})",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_UNIT_MISSING_SENTENCE": {
+  "t": "У цьому експорті немає одиниці для цього значення.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_VALUE_ESTIMATE_MARK": {
+  "t": "о",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_VALUE_HEADER_UNIT": {
+  "t": "Значення ({unit})",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_VALUE_NEUTRAL_LEGEND": {
+  "t": "Немає процентиля",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_WITHOUT_VALUE_GROUP": {
+  "t": "Показники без значення в цьому експорті",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "EARLIEST_LABEL": {
+  "t": "найраніша збережена версія",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "EDITIONS_INTRO": {
+  "t": "Названий випуск (наприклад, публікація МВФ WEO) може перебазувати історію для тисяч ключів одночасно, тому його показано одним рядком і ніколи не ранжовано серед звичайних ревізій.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "EMPTY_GROUP": {
+  "t": "Жодна країна цієї групи не має значення цього показника в цьому домені.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "ESTIMATE_MARK": {
+  "t": "о",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "FILTER_NOTE": {
+  "t": "Фільтр групи лише відбирає та сортує список. Кожен показаний процентиль — це процентиль серед усіх ранжованих країн; усередині групи його не перераховують.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "FLAG_AHEAD": {
+  "t": "випереджає",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "FLAG_ESTIMATE": {
+  "t": "оцінка",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "FLAG_INHERITED": {
+  "t": "успадковано від єврозони",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "FLAG_LAGGING": {
+  "t": "відстає",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "FLAG_LOW_COVERAGE": {
+  "t": "низьке охоплення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "FLAG_UNALIGNED": {
+  "t": "не узгоджено",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "FLAG_UNALIGNED_FISCAL": {
+  "t": "не узгоджено (за фіскальним роком)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "FRESHNESS_LABEL": {
+  "t": "Дата відсікання даних",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "GROUP_LABELS.g7": {
+  "t": "G7",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "GROUP_LABELS.euro_area": {
+  "t": "Єврозона",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "GROUP_LABELS.non_euro_eu": {
+  "t": "Країни ЄС поза єврозоною",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "GROUP_LABELS.advanced": {
+  "t": "Розвинені економіки",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "GROUP_LABELS.emerging": {
+  "t": "Економіки, що розвиваються",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "G_STR1_NO_SERIES": {
+  "t": "Цей експорт не містить рядів для цієї країни та показника.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "HASH_FALLBACK_NOTE": {
+  "t": "Частину цього посилання не розпізнано й проігноровано.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "HASH_NO_ROWS_NOTE": {
+  "t": "Не обрано: цей експорт не має значень цього показника для: {names}.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "HEATMAP_INDICATOR_LINK": {
+  "t": "Сторінка показника",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "HEATMAP_INDICATOR_LINK_LABEL": {
+  "t": "Сторінка показника: {name}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "HOME_AGGREGATES_HEADING": {
+  "t": "Агрегати",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "HOME_COUNTRIES_HEADING": {
+  "t": "Оберіть країну",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "HOME_FILTER_LABEL.countries": {
+  "t": "Фільтр країн",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "HOME_FILTER_LABEL.indicators": {
+  "t": "Фільтр показників",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "HOME_INDICATORS_HEADING": {
+  "t": "Оберіть показник",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "HOME_LINKS.series": {
+  "t": "Часові ряди",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "HOME_LINKS.domains": {
+  "t": "Домени",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "HOME_LINKS.revisions": {
+  "t": "Ревізії",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "INDICATOR_SERIES_LINK": {
+  "t": "Часові ряди",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "INFORMATIONAL_NOTICE": {
+  "t": "інформаційний, не ранжується",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "KIND_LABELS.all": {
+  "t": "Усі ревізії",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "KIND_LABELS.regular": {
+  "t": "Лише звичайні ревізії",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "KIND_LABELS.reestimation": {
+  "t": "Лише ревізії-переоцінки",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NA": {
+  "t": "н/д",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NAMED_EDITION_MARK": {
+  "t": " (названий випуск)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NAV_LABEL": {
+  "t": "Головна навігація",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NON_EURO_MARK": {
+  "t": "поза єврозоною: див. примітку вище",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NOT_DOMAIN_PERCENTILE": {
+  "t": "Це не процентиль домену.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NOT_PUBLISHED": {
+  "t": "не опубліковано",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NOT_RANKED_INFO_ONLY": {
+  "t": "не ранжується (лише інформація)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NOT_RANKED_INHERITED": {
+  "t": "не ранжується (успадковано)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NOT_SHOWN_NO_BASE": {
+  "t": "немає придатного (додатного) значення в базовому періоді, тому перебазування неможливе",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NOT_SHOWN_NO_VALUES": {
+  "t": "немає значень для цього перетворення в обраному діапазоні",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NOT_SHOWN_TRANSFORM": {
+  "t": "це перетворення не пропонується для ряду без сезонного коригування",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NO_EDITIONS": {
+  "t": "Жоден названий випуск не змінював опубліковану історію за останні 12 місяців.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NO_INDICATORS": {
+  "t": "У цьому домені немає показників.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NO_ORDINARY": {
+  "t": "За останні 12 місяців звичайних ревізій немає.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NO_ORDINARY_CLASS": {
+  "t": "За останні 12 місяців ревізій цього класу немає.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NO_POSITION": {
+  "t": "немає позиції",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NO_POSITION_LOW_COVERAGE": {
+  "t": "немає позиції (низьке охоплення)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NO_RANKING_SPREAD": {
+  "t": "Для цього показника немає рангу, тому немає спільного опорного періоду чи розкиду.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NO_RANK_STALE": {
+  "t": "немає рангу (застаріле)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NO_SERIES": {
+  "t": "Немає рядів для показу за цим вибором.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "NO_SERIES_FILE": {
+  "t": "У цьому експорті немає файлу рядів для цього показника.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "ORIENTATION_NOTE": {
+  "t": "Вищий процентиль означає сприятливішу позицію за заявленим напрямом кожного показника.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "OTHER_INDICATORS_GROUP": {
+  "t": "Інші показники",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "PEER_NOTE_HEAD": {
+  "t": "Показники цього домену ранжовано щодо різних наборів країн",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "PEER_NOTE_TAIL": {
+  "t": ", тому середній процентиль змішує набори країн і лише приблизно порівнянний між країнами.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "PERCENTILE_COLUMN_LABEL": {
+  "t": "процентиль серед усіх ранжованих країн",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "POINT_READER_LEGEND": {
+  "t": "Прочитати значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "POSITION_HEADER": {
+  "t": "Позиція",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "READER_NONE": {
+  "t": "Оберіть країну",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "REBASED_UNIT": {
+  "t": "індекс, базовий період = 100",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "REBASED_Y_LABEL": {
+  "t": "Індекс (базовий період = 100)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "REBASE_NOTE": {
+  "t": "Перебазування — лише масштабування для показу (значення / значення в базовому періоді × 100). Воно потребує додатного значення в базовому періоді.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "REBASE_TOGGLE_LABEL": {
+  "t": "Перебазувати до 100 (лише для показу)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "REESTIMATION_NOTE": {
+  "t": "Ревізії-переоцінки надходять від джерел, які переоцінюють усю історію одразу; їх позначено, і їх можна сховати, щоб вони не затуляли звичайні ревізії.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "REVISED_DATA_HISTORY_MARK": {
+  "t": " (історія ревізованих даних)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "REVISED_DATA_NOTICE": {
+  "t": "Ревізовані дані: цей вигляд не є записом у реальному часі. Ранні періоди показують мало ревізій, бо версії існують лише від першого завантаження цією системою, а історію до нього показано такою, якою вона була на момент того завантаження.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "SELECTION_LABEL": {
+  "t": "Вибір",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "SERIES_LINK_LABEL": {
+  "t": "Часові ряди: {indicatorName}, {countryName}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "SKIP_LINK_TEXT": {
+  "t": "Перейти до основного вмісту",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "SKIP_TO_TABLE": {
+  "t": "Перейти до таблиці значень",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "SORT_LABELS.percentile": {
+  "t": "Процентиль (збережений), від найвищого",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "SORT_LABELS.value_desc": {
+  "t": "Останнє значення, від найвищого",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "SORT_LABELS.value_asc": {
+  "t": "Останнє значення, від найнижчого",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "SORT_LABELS.name": {
+  "t": "Назва країни",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "STALE_BANNER": {
+  "t": "Дані можуть бути застарілими: дата відсікання даних ({date}) була {days} дн. тому, що більше за {limit} дн.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "STALE_BANNER_UNREADABLE": {
+  "t": "Свіжість даних невідома: ця збірка не має читабельної дати відсікання даних. Вважайте дані застарілими.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "STALE_NAME": {
+  "t": "застаріле: немає рангу",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "STATE_CODES.stale": {
+  "t": "застаріле",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "STATE_CODES.lagging": {
+  "t": "відстає",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "STATE_CODES.unaligned": {
+  "t": "не узгоджено",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "STATE_CODES.na": {
+  "t": "н/д",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "STATE_CODES.not_published": {
+  "t": "не опубл.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "TIP_KNOWN_AT": {
+  "t": "Відомо станом на {date}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "TIP_STATUS.EST": {
+  "t": "оцінка",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "TIP_STATUS.PROV": {
+  "t": "попереднє",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "TRANSFORM_LABELS.value": {
+  "t": "Рівень",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "TRANSFORM_LABELS.value_default_tf": {
+  "t": "Типове для показника",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "TRANSFORM_LABELS.value_yoy": {
+  "t": "Рік до року",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "UNRANKED": {
+  "t": "не ранжується",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "UNRANKED_DOMAIN_CELL": {
+  "t": "домен не ранжується",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "UNRANKED_DOMAIN_STATEMENT": {
+  "t": "Цей домен інформаційний і не ранжується: процентиль, ранг чи позицію не показано.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "VIEW_AS_TABLE": {
+  "t": "Переглянути як таблицю",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "VINTAGE_CHOOSE": {
+  "t": "Оберіть показник, щоб завантажити його файл ревізій (один файл на показник).",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "VINTAGE_EMPTY": {
+  "t": "Для цього опорного періоду немає збережених версій цього ряду.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "VINTAGE_NONE": {
+  "t": "У цьому файлі немає ревізованого ключа основного ряду.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "VINTAGE_TEXT": {
+  "t": "Вінтажі записуються від першого завантаження цією системою й збираються раз на місяць. Ревізія, яка сталася й була виправлена між двома завантаженнями, не видна, а найраніша збережена версія не обов’язково є значенням, яке джерело опублікувало першим. Історія до першого завантаження — це ревізовані дані, а не реальний час.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "notRankedCell": {
+  "t": "не ранжується ({alignment})",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HIDDEN_ROWS#one": {
+  "t": "Приховано 1 рядок фільтром періоду",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HIDDEN_ROWS#few": {
+  "t": "Приховано {n} рядки фільтром періоду",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HIDDEN_ROWS#many": {
+  "t": "Приховано {n} рядків фільтром періоду",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HIDDEN_ROWS#other": {
+  "t": "Приховано {n} рядка фільтром періоду",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HIDDEN_SUMMARY#one": {
+  "t": "Приховано {n} рядок: {parts}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HIDDEN_SUMMARY#few": {
+  "t": "Приховано {n} рядки: {parts}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HIDDEN_SUMMARY#many": {
+  "t": "Приховано {n} рядків: {parts}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_HIDDEN_SUMMARY#other": {
+  "t": "Приховано {n} рядка: {parts}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "HIDDEN_PART.no_data": {
+  "t": "{n}: немає даних",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "HIDDEN_PART.stale": {
+  "t": "{n}: застарілі",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "HIDDEN_PART.other_period": {
+  "t": "{n}: інший період",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "HIDDEN_PART.other": {
+  "t": "{n}: інше",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNT_COUNTRIES#one": {
+  "t": "{n} країна",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNT_COUNTRIES#few": {
+  "t": "{n} країни",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNT_COUNTRIES#many": {
+  "t": "{n} країн",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_COUNT_COUNTRIES#other": {
+  "t": "{n} країни",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PEER_FIGURE_LABEL": {
+  "t": "Точкова діаграма: {column} для {indicatorName}, {count}. Таблиця нижче містить ті самі значення.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_VALUE_FIGURE_LABEL": {
+  "t": "Стовпчикова діаграма: {indicatorName}, {unitPhrase}, {count}; таблиця нижче містить ті самі значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_IN_UNIT": {
+  "t": "у {unit}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_VALUE_AXIS_TITLE": {
+  "t": "{indicatorName} ({unit})",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_Y_MODE.free": {
+  "t": "Кожна діаграма має власну шкалу осі y: форму ряду легко побачити, але рівні між діаграмами порівнювати не можна.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_Y_MODE.shared": {
+  "t": "Усі діаграми мають спільну шкалу осі y, тому рівні країн можна порівнювати.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "FRESHNESS_LINE": {
+  "t": "{label}: {date} (збірка {buildId}).",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "FRESHNESS_UNKNOWN": {
+  "t": "невідомо",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "directionWithTarget": {
+  "t": "{label} (ціль {target})",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PRINT_FILTERS": {
+  "t": "Фільтри: {parts}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "DRAFT_PRINT_FILTERS_NONE": {
+  "t": "немає",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ },
+ "SITE_TITLE": {
+  "t": "Macro Monitor",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-15"
+ }
+}

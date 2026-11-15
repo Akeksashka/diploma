@@ -23,7 +23,9 @@ test("bars start at 0 with a zero baseline and a neutral fill; no colour channel
   assert.ok(marks.some((mk) => mk.type === "ruleX" && mk.data[0] === 0));
   const bars = marks.filter((mk) => mk.type === "barX");
   assert.equal(bars.length, 3);
-  for (const b of bars) assert.ok(!("fill" in b.options) || typeof b.options.fill === "string", "fill is one neutral token, not a channel of the data");
+  // fill is a neutral token; the reference layer (AC-V2-37 aggregate / other-period marks) may choose between two neutral tokens by a row flag, never by the value or a bin
+  const neutral = (f) => (typeof f === "function" ? [f({other: true}), f({other: false})] : [f]);
+  for (const b of bars) assert.ok(!("fill" in b.options) || neutral(b.options.fill).every((t) => typeof t === "string"), "fill is a neutral token, not a channel of the data");
   assert.equal(plots[0].x.label, "% of GDP");
 });
 

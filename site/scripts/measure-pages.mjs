@@ -12,7 +12,7 @@ import {spawnSync} from "node:child_process";
 import {existsSync, readdirSync, readFileSync, statSync} from "node:fs";
 import {dirname, join, resolve} from "node:path";
 import {fileURLToPath} from "node:url";
-import {evaluateTargets, firstLoadSizes, formatReport, hardBreach, walk} from "./lib.mjs";
+import {evaluateTargets, firstLoadSizes, formatReport, hardBreach, homeParts, walk} from "./lib.mjs";
 import {launchBrowser, serve} from "../tests/smoke/support.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -54,7 +54,37 @@ if (!browser) {
 }
 const site = await serve(dist);
 
-async function measurePage(path, {interact = false} = {}) {
+// V27: interaction selectors per mode page (AC-V2-40). Each selector is clicked in turn (first match, at most `limit` clicks per selector);
+// the bytes of responses added by each click (URLs not seen before) are summed per click; the heaviest single click and the cumulative total
+// are reported. A page without any matching control reports no interaction (N/A), never zero.
+const INTERACTIONS = {
+  country: ['details.mm-l1 > summary', 'button[data-action="more"]', 'button[data-action="expand"]', "button[data-history]"],
+  compare: ['button[data-action="more"]', 'button[data-action="expand"]', "button[data-history]"]
+};
+
+// V60: the heaviest Home interaction: choose another Indicator in the Home control (the scorecard of its domain, and the series file of C1 and C4, are read on demand).
+// Up to `limit` Indicators with a domain other than the default are tried in turn; each adds only URLs not seen before.
+async function homeInteraction(page, settle, limit = 4) {
+  const options = await page.$$eval("#home-ctl-indicator option", (os) => os.map((o) => o.value).filter(Boolean));
+  const clicks = [];
+  for (const value of options.slice(0, limit)) {
+    const seen = new Set((await settle()).map((r) => r.url));
+    await page.selectOption("#home-ctl-indicator", value);
+    let last = -1;
+    for (let i = 0; i < 40; i++) {
+      await page.waitForTimeout(600);
+      const count = (await settle()).length;
+      if (count === last) break;
+      last = count;
+    }
+    clicks.push({value, ...firstLoadSizes((await settle()).filter((r) => !seen.has(r.url)))});
+  }
+  if (clicks.length === 0) return null;
+  const heaviest = clicks.reduce((a, b) => (b.gzip > a.gzip ? b : a));
+  return {clicks: clicks.length, gzip: heaviest.gzip, indicator: heaviest.value, total: clicks.reduce((n, c) => n + c.gzip, 0)};
+}
+
+async function measurePage(path, {interact = false, interactions = null, homeMode = false} = {}) {
   const context = await browser.newContext();
   const page = await context.newPage();
   const pending = [];
@@ -105,9 +135,41 @@ async function measurePage(path, {interact = false} = {}) {
       history = {key, state: await page.locator(`#history-${key}`).getAttribute("data-state"), ...firstLoadSizes(added.filter((r) => !firstUrls.has(r.url)))};
     }
   }
+  let interaction = null;
+  if (interactions) {
+    const clicks = [];
+    for (const sel of interactions) {
+      const loc = page.locator(sel);
+      const n = Math.min(await loc.count(), 3);
+      for (let k = 0; k < n; k++) {
+        const target = loc.nth(k);
+        if (!(await target.isVisible().catch(() => false))) continue;
+        // A <summary> of an already open <details> would close it (0 B, hides its buttons): click only closed ones.
+        if (sel.endsWith("> summary") && (await target.evaluate((el) => el.parentElement.open))) continue;
+        const seen = new Set((await settle()).map((r) => r.url));
+        const ok = await target.click({timeout: 5000}).then(() => true, () => false);
+        if (!ok) continue; // a failed click is not a measured click
+        // Wait until the response count stops changing for 600 ms (networkidle returns at once when already idle).
+        let last = -1;
+        for (let i = 0; i < 40; i++) {
+          await page.waitForTimeout(600);
+          const count = (await settle()).length;
+          if (count === last) break;
+          last = count;
+        }
+        const added = (await settle()).filter((r) => !seen.has(r.url));
+        clicks.push({selector: sel, index: k, ...firstLoadSizes(added)});
+      }
+    }
+    if (clicks.length) {
+      const heaviest = clicks.reduce((a, b) => (b.gzip > a.gzip ? b : a));
+      interaction = {clicks: clicks.length, gzip: heaviest.gzip, selector: heaviest.selector, index: heaviest.index, total: clicks.reduce((n, c) => n + c.gzip, 0)};
+    }
+  }
   const cls = await page.evaluate(() => window.__cls ?? null);
+  const home = homeMode ? {...homeParts(responses), interaction: await homeInteraction(page, settle)} : null;
   await context.close();
-  return {first, cls, history};
+  return {first, cls, history, interaction, home};
 }
 
 const countries = names("country");
@@ -132,7 +194,9 @@ const record = (name, r, label = name) => {
   pages[name].css = css;
   pages[name].cls = cls;
 };
-record("home", await measurePage("/"), "/");
+const homeRun = await measurePage("/", {homeMode: true});
+record("home", homeRun, "/");
+const home = homeRun.home ? {landing: homeRun.home.landing.gzip, landingFiles: homeRun.home.landing.files, deferred: homeRun.home.deferred.gzip, deferredFiles: homeRun.home.deferred.files, deferredReader: homeRun.home.deferred.reader, geometry: homeRun.home.geometry, interaction: homeRun.home.interaction} : null;
 let history = null;
 let countryPath = null;
 // Every country page (or --sample=N); the first one that offers a history button is also used for the history interaction.
@@ -144,13 +208,29 @@ for (const c of countries.slice(0, sample)) {
     countryPath = c;
   }
 }
+// V27: Country-mode interactions (every country page, or --sample=N) and PG-COMPARE (`/compare`, landing recorded, no new limit).
+const interactions = {country: null, compare: null};
+const interactionPage = {};
+for (const c of countries.slice(0, sample)) {
+  const r = await measurePage(`/country/${c.replace(/\.html$/, "")}`, {interactions: INTERACTIONS.country});
+  if (r.interaction && (!interactions.country || r.interaction.gzip > interactions.country.gzip)) {
+    interactions.country = r.interaction;
+    interactionPage.country = c;
+  }
+}
+if (existsSync(join(dist, "compare.html"))) {
+  const r = await measurePage("/compare", {interactions: INTERACTIONS.compare});
+  record("compare", r, "compare");
+  interactions.compare = r.interaction;
+  interactionPage.compare = "compare";
+}
 for (const c of indicators.slice(0, sample)) record("indicator", await measurePage(`/indicator/${c.replace(/\.html$/, "")}`), c);
 for (const p of ["explorer", "domains", "revisions"]) if (existsSync(join(dist, `${p}.html`))) record(p === "explorer" ? "series (explorer)" : p, await measurePage(`/${p}`), p);
 await browser.close();
 await site.close();
 
-const rows = evaluateTargets({pages, history});
-if (flag("--json")) console.log(JSON.stringify({buildId, buildSeconds, distBytes: dirSize(dist), pages, detail, worst, measuredCount, history, countryPath, rows}, null, 2));
+const rows = evaluateTargets({pages, history, interactions, home});
+if (flag("--json")) console.log(JSON.stringify({buildId, buildSeconds, distBytes: dirSize(dist), pages, detail, worst, measuredCount, history, countryPath, interactions, home, interactionPage, rows}, null, 2));
 else {
   console.log(formatReport(rows, {buildId, buildSeconds, distBytes: dirSize(dist)}));
   console.log(`pages measured: ${Object.entries(measuredCount).map(([k, v]) => `${k} ${v}`).join(", ")}${Number.isFinite(sample) ? ` (--sample=${sample})` : " (all)"}`);
@@ -158,6 +238,8 @@ else {
   console.log(`history interaction page: ${countryPath ?? "none"}`);
   if (history) console.log(`history interaction: ${history.key}, state ${history.state}, ${history.files} new file(s), ${history.gzip} B gz, ${history.raw} B raw`);
   else console.log("history interaction: not measured (no history button on any country page)");
+  for (const [k, v] of Object.entries(interactions)) console.log(v ? `interaction ${k}: ${v.clicks} click(s) measured on ${interactionPage[k]}, heaviest ${v.gzip} B gz (${v.selector} #${v.index}), all clicks ${v.total} B gz` : `interaction ${k}: not measured (no matching control${interactionPage[k] ? "" : " or no page"})`);
+  if (home) console.log(`home: landing ${home.landing} B gz in ${home.landingFiles} file(s); deferred ${home.deferred} B gz in ${home.deferredFiles} file(s) (reader and series ${home.deferredReader} B gz); map geometry ${home.geometry ?? "n/a"} B gz; heaviest interaction ${home.interaction ? `${home.interaction.gzip} B gz (indicator ${home.interaction.indicator}, ${home.interaction.clicks} tried, all ${home.interaction.total} B gz)` : "not measured"}`);
   console.log("Fixture-only numbers; a real 44-entity export is heavier (AC-RD-53 stays partly unmet until R24).");
 }
 process.exit(hardBreach(rows) ? 1 : 0);

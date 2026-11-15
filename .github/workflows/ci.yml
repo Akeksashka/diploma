@@ -104,6 +104,11 @@ jobs:
       - name: Build
         working-directory: site
         run: npm run build
+      - name: Build Ukrainian tree and merge (V42)
+        working-directory: site
+        run: |
+          npm run build:uk
+          node scripts/merge-trees.mjs dist dist-uk dist-site
       - name: Build-page and dist-scan tests (R21)
         working-directory: site
         env:

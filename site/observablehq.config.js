@@ -1,11 +1,12 @@
 import {headerHtml} from "./src/lib/shell.js";
+import {i18n} from "./src/lib/i18n.js";
 import {langSettings} from "./scripts/lib/lang-config.mjs";
 import {DRAFT_CRUMB_HOME, DRAFT_MODE_LABELS, HOME_LINKS} from "./src/lib/copy.js";
 
 // Macro Monitor dashboard site (ADR-010, ADR-023). Static build; no request may leave the origin.
-const title = "Macro Monitor";
+const title = i18n.t("SITE_TITLE");
 // V42 (ADR-037 A2.1): MM_LANG (en default, uk) drives base and output; English stays at "/" in dist, Ukrainian is built under "/uk/" into dist-uk.
-const {base, output} = langSettings(process.env.MM_LANG, process.env.MM_BASE_PREFIX);
+const {lang, base, output} = langSettings(process.env.MM_LANG, process.env.MM_BASE_PREFIX);
 // Header navigation (AC-RD-01, decisions G-STR4 as replaced by D-1, ADR-037 A2.6 item 2, spec section 2): exactly these six, in this order.
 // "Country" is the static country list page (A1.7); the language switch (A2.1) is not a page and stays outside this list.
 const pages = [{name: DRAFT_CRUMB_HOME, path: "/"}, {name: DRAFT_MODE_LABELS.country, path: "/country"}, {name: DRAFT_MODE_LABELS.compare, path: "/compare"}, {name: HOME_LINKS.series, path: "/explorer"}, {name: HOME_LINKS.domains, path: "/domains"}, {name: HOME_LINKS.revisions, path: "/revisions"}];
@@ -18,7 +19,8 @@ export default {
   pages,
   // T104: static header (skip link, title, `pages` nav). Framework's sidebar, pager and contents list stay off so the
   // header is the only navigation and no empty nav landmark is emitted.
-  header: ({path}) => headerHtml({title, pages, path}),
+  header: ({path}) => headerHtml({title, pages, path, lang}),
+  // V46 (OQ-20): no `head` alternate links. Framework 1.13.4 resolves every local href of `head` as a file to copy and the build stops ("Not found: /compare", verified); the header link carries lang and hreflang instead.
   toc: false,
   pager: false,
   search: false,

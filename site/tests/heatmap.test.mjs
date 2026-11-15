@@ -190,11 +190,14 @@ test("facts of a cell are the stored fields; the same facts are columns of the d
 
 // Fixture export (built site data or MM_FIXTURE_EXPORT): every number shown equals the stored one (AC-UX-10).
 const dir = process.env.MM_FIXTURE_EXPORT ?? (existsSync(new URL("../src/data/manifest.json", import.meta.url)) ? new URL("../src/data", import.meta.url).pathname : null);
-test("fixture domains (labour, prices, agri, global): shown numbers and bins equal the stored scorecard", { skip: dir === null && "no fixture export" }, () => {
+test("fixture domains (every stored domain): shown numbers and bins equal the stored scorecard", { skip: dir === null && "no fixture export" }, () => {
   const load = (p) => JSON.parse(readFileSync(`${dir}/${p}`, "utf8"));
   const m0 = {entities: listOf(load("meta/entities.json"), "entities"), indicators: listOf(load("meta/indicators.json"), "indicators"), domains: listOf(load("meta/domains.json"), "domains")};
   let checked = 0;
-  for (const d of ["labour", "prices", "agri", "global"]) {
+  // every domain of the export that has a stored scorecard file (the v2 fixture has labour, prices, agri, fiscal, growth, qa; no "global" domain)
+  const stored = m0.domains.map((x) => x.domain_id).filter((id) => existsSync(`${dir}/scorecard/${id}.json`));
+  for (const need of ["labour", "prices", "agri"]) assert.ok(stored.includes(need), `${need} scorecard in the export`);
+  for (const d of stored) {
     const raw = load(`scorecard/${d}.json`);
     const v = domainView(raw, m0);
     const m = heatmapModel(v);

@@ -178,3 +178,43 @@ test("measure-pages: formatReport prints status, value, limit and the hard flag"
   assert.match(text, /PASS home CLS: 0\.0123 \(limit 0\.1\)/);
   assert.match(text, /N\/A  one history interaction \(country page\): n\/a/);
 });
+
+test("measure-pages (V27): interaction rows per mode page are hard at 5 MB gz, N/A when the page has none", async () => {
+  const {evaluateTargets, hardBreach} = await import("../scripts/lib.mjs");
+  const pages = {country: {gzip: 1, css: 1, cls: 0}};
+  const ok = evaluateTargets({pages, history: null, interactions: {country: {gzip: 5_000_000}, compare: null}});
+  const by = Object.fromEntries(ok.map((r) => [r.id, r.status]));
+  assert.equal(by["interaction:country"], "PASS");
+  assert.equal(by["interaction:compare"], "N/A");
+  assert.equal(hardBreach(ok), false);
+  const over = evaluateTargets({pages, history: null, interactions: {country: {gzip: 5_000_001}}});
+  assert.equal(hardBreach(over), true);
+  assert.equal(evaluateTargets({pages, history: null}).some((r) => r.id.startsWith("interaction:")), false, "absent input adds no rows");
+});
+
+test("measure-pages (V60): Home landing and the deferred load are split by path, the geometry asset is counted alone, rows are hard where AC-V2-40 / AC-RD-53 say", async () => {
+  const {evaluateTargets, hardBreach, homeParts, gzipBytes} = await import("../scripts/lib.mjs");
+  const o = "http://127.0.0.1:1";
+  const geo = Buffer.from("g".repeat(4000));
+  const r = homeParts([
+    {url: `${o}/`, body: Buffer.from("<html></html>")},
+    {url: `${o}/_file/data/scorecard/fiscal.abc.json`, body: Buffer.from('{"a":1}')},
+    {url: `${o}/_file/data/series/A05.abc.parquet`, body: Buffer.from("s".repeat(900))},
+    {url: `${o}/_npm/parquet-wasm@0.6.1/x.js`, body: Buffer.from("w".repeat(900))},
+    {url: `${o}/_file/geo/europe-countries.abc.geojson`, body: geo},
+    {url: `${o}/_file/geo/entity_geo_join.abc.json`, body: Buffer.from("{}")}
+  ]);
+  assert.equal(r.landing.files, 2, "page and scorecard only");
+  assert.equal(r.deferred.files, 4, "series, reader, geometry, join");
+  assert.equal(r.geometry, gzipBytes(geo));
+  const pages = {home: {gzip: 1, css: 1, cls: 0}};
+  const rows = evaluateTargets({pages, history: null, interactions: {}, home: {landing: 600_001, deferred: 10, geometry: 100_001, interaction: null}});
+  const by = Object.fromEntries(rows.map((x) => [x.id, x]));
+  assert.equal(by["landing:home"].status, "FAIL");
+  assert.equal(by["landing:home"].hard, false);
+  assert.equal(by["landing-limit:home"].status, "PASS");
+  assert.equal(by["geometry:home"].status, "FAIL");
+  assert.equal(by["interaction:home-panels"].status, "N/A");
+  assert.equal(hardBreach(rows), false, "a target miss is reported, not a breach");
+  assert.equal(hardBreach(evaluateTargets({pages, history: null, home: {landing: 1_500_001, deferred: 0, geometry: 1, interaction: {gzip: 5_000_001}}})), true);
+});

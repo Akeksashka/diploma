@@ -45,14 +45,14 @@ test("the colour domain is the displayed lowest and highest stored value, stated
   assert.equal(m.extent.min, [...shown].sort((a, b) => a - b)[0]);
   assert.equal(m.extent.max, [...shown].sort((a, b) => b - a)[0]);
   assert.ok(m.scaleText.includes(DRAFT_C4_SCALE(String(m.extent.min), String(m.extent.max))));
-  assert.match(block(m), /Colour scale: .* the lowest and highest cell shown/);
+  assert.match(block(m), /Colour scale<\/dt><dd>[^<]* the lowest and highest cell shown/);
   assert.match(block(m), /mm-c4-legend/);
   assert.match(block(m), /data-end="min"/);
   assert.match(block(m), /data-end="max"/);
 });
 
 test("window caps per frequency: annual 35, quarterly 40, monthly 36, the latest columns kept (AC-V2-49)", () => {
-  assert.deepEqual({...WINDOW_CAPS}, {A: 35, Q: 40, M: 36, D: 36});
+  assert.deepEqual({...WINDOW_CAPS}, {A: 35, Q: 40, M: 36});
   const m = build("M09");
   assert.ok(m.columns.length <= 36);
   const all = [...new Set(seriesRows("M09").filter((r) => r.value !== null).map((r) => r.end))].sort((a, b) => a - b);
@@ -193,6 +193,6 @@ test("the numeric table lists every drawn cell and the hidden rows after them wi
 
 test("the module never uses the blank-cell fill for a stale row and the caption names the unit and frequency", () => {
   const m = build("A05");
-  assert.deepEqual(m.caption.fields.map((f) => f.key), ["indicator", "unit", "frequency", "seasonal", "period", "source", "vintage"]);
+  assert.deepEqual(m.caption.fields.map((f) => f.key), ["indicator", "unit", "frequency", "seasonal", "period", "scale", "source", "vintage"]);
   assert.equal(m.caption.fields.find((f) => f.key === "frequency").value, "Annual");
 });

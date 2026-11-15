@@ -75,14 +75,15 @@ const builtFile = (p) => {
   return null;
 };
 const isDistFile = (p) => existsSync(join(DIST, p.replace(/^\//, ""))) && statSync(join(DIST, p.replace(/^\//, ""))).isFile();
-const hrefs = (html) => [...html.matchAll(/<a [^>]*href="([^"#][^"]*)"/g)].map((m) => m[1]).filter((h) => !/^[a-z]+:/.test(h));
+// V46: the language switch (class mm-lang) points into the other tree; tests/lang-switch.test.mjs and lang.smoke.mjs check it.
+const hrefs = (html) => [...html.matchAll(/<a (?![^>]*class="mm-lang")[^>]*href="([^"#][^"]*)"/g)].map((m) => m[1]).filter((h) => !/^[a-z]+:/.test(h));
 const resolvePath = (from, href) => new URL(href.split("#")[0].split("?")[0], `http://x${from}`).pathname.replace(/\/$/, "") || "/";
 
 describe("R18 PG-HOME", () => {
   test("AC-RD-02, 62: every non-global entity and indicator is linked; built links resolve; no Guide/Status/heatmap/status block", async (t) => {
     await withPage(t, "/", "#band-overview", async ({page, log}) => {
       await page.evaluate(() => { document.getElementById("browse").open = true; });
-      const hs = await page.$$eval("a[href]", (as) => as.map((a) => a.getAttribute("href")));
+      const hs = await page.$$eval("a[href]:not(.mm-lang)", (as) => as.map((a) => a.getAttribute("href")));
       for (const e of entities.filter((x) => x.is_global !== true)) assert.ok(hs.includes(`./country/${e.entity_id}`), e.entity_id);
       for (const i of indicators) assert.ok(hs.includes(`./indicator/${i.indicator_id}`), i.indicator_id);
       for (const h of ["./explorer", "./domains", "./revisions"]) assert.ok(hs.includes(h), h);
@@ -90,7 +91,7 @@ describe("R18 PG-HOME", () => {
       assert.deepEqual(await page.locator(".mm-nav a").allInnerTexts(), ["Home", "Country", "Compare", "Time series", "Domains", "Revisions"]); // six pages (D-1)
       assert.equal(await page.locator('a[href*="/status"], a[href*="/guide"]').count(), 0);
       assert.equal(await page.locator("#observablehq-main h1").count(), 1);
-      assert.equal(await page.locator("table:not(.mm-card *), svg:not(.mm-card *):not(.mm-dlegend *), #domain-heatmap").count(), 0);
+      assert.equal(await page.locator("table:not(.mm-card *):not(#home-composition *), svg:not(.mm-card *):not(.mm-dlegend *):not(#home-composition *), #domain-heatmap").count(), 0); // V58: the Home panels hold the charts above the cards
       const text = await page.locator("main, #observablehq-main").first().innerText();
       for (const bad of ["Guide", "Data status", "Projections are not shown", "all lines share one unit", "Domain overviews", "Look at one series"]) assert.ok(!text.includes(bad), bad);
       assert.equal(await page.locator("#caveat").count(), 1);
@@ -103,7 +104,8 @@ describe("R18 PG-HOME", () => {
   test("L11 (AC-DB-12, 13): band layout, Browse collapsed with the links in the HTML, slots reserved and aria-busy, domain heading follows the Domain", async (t) => {
     await withPage(t, "/", "#band-overview", async ({page, log}) => {
       const heads = await page.$$eval(".mm-dband .mm-band > h2", (hs) => hs.map((h) => h.textContent));
-      const domain = domains.find((d) => d.ranked === true) ?? domains[0];
+      const homeInd = indicators.find((i) => i.indicator_id === "A05"); // V56: the Home default Indicator sets the Domain
+      const domain = domains.find((d) => d.domain_id === homeInd?.domain_ids?.[0]) ?? domains.find((d) => d.ranked === true) ?? domains[0];
       assert.deepEqual(heads, ["Overview", "Compare", domain.name, "Indicators", "Over time", "Browse"]);
       assert.equal(await page.locator("#observablehq-main h1").count(), 1);
       assert.equal(await page.locator("#browse").evaluate((d) => d.open), false, "Browse is collapsed");
@@ -354,4 +356,79 @@ describe("R17 PG-DOMAINS", () => {
       }
     }
   });
+});
+
+// V57 to V59 (AC-V2-120, 121, 122): the Home composition on the built fixture.
+describe("V57-V59 Home composition", () => {
+  test("order A C2, B C1, C C6, D C4 below the KPI strip and above the ADR-034 cards; controls exactly the listed ones; no console error", async (t) => {
+    await withPage(t, "/", "#home-panels [data-panel='D']", async ({page, log}) => {
+      assert.deepEqual(await page.$$eval("#home-panels [data-panel]", (els) => els.map((e) => `${e.dataset.panel}:${e.dataset.slot}`)), ["A:c2", "B:c1", "C:c6", "D:c4"]);
+      const tops = await page.evaluate(() => ["#home-kpi", "#home-panels", "#band-overview"].map((s) => document.querySelector(s).getBoundingClientRect().top));
+      assert.ok(tops[0] < tops[1] && tops[1] < tops[2], JSON.stringify(tops));
+      assert.equal(await page.locator("#home-panels [data-card='c5'], #home-panels [data-slot='c3'], #c5-secondary").count(), 0, "C5 and C3 are not Home panels");
+      const ids = await page.$$eval(".mm-home-header select, .mm-home-header input, .mm-home-header button", (els) => els.map((e) => e.id));
+      assert.deepEqual(ids, ["home-ctl-indicator", "home-ctl-group", "home-ctl-from", "home-ctl-to", "home-country", "home-country-go"]);
+      assert.equal(await page.locator("#home-composition input[type=checkbox]").count(), 0, "no percentile toggle, no oth, stl or ctx");
+      assert.equal(await page.locator("#home-composition .mm-home-header a[data-carry]").count(), 2, "mode links");
+      assert.equal(await page.locator("#home-ctl-indicator optgroup").count() > 0, true);
+      assert.equal(await page.locator("#home-ctl-indicator").inputValue(), "A05");
+      clean(log);
+    });
+  });
+
+  test("the series files of C1 and C4 are requested only after the load event", async (t) => {
+    if (!browser) return t.skip(reason);
+    const {page, context} = await openPage(browser, site.origin, {fixedTime: NOW});
+    try {
+      const order = [];
+      page.on("load", () => order.push("load"));
+      page.on("request", (r) => { if (/\/_file\/(data\/series|geo)\//.test(r.url())) order.push("deferred"); });
+      await page.goto(`${site.origin}/`);
+      await page.waitForSelector("#home-panels [data-panel='D']", {timeout: TIMEOUT});
+      await page.waitForLoadState("networkidle");
+      assert.ok(order.includes("deferred"), "the panels read their series file and the map shapes");
+      assert.ok(order.indexOf("load") >= 0 && order.indexOf("load") < order.indexOf("deferred"), `a series or map request started before load: ${order}`);
+    } finally {
+      await context.close();
+    }
+  });
+
+  test("a change of the Home Indicator redraws the panels with the new Indicator; a hash key of another page (pc, ctx) changes nothing on Home", async (t) => {
+    await withPage(t, "/", "#home-panels [data-panel='D']", async ({page, log}) => {
+      const other = indicators.find((i) => i.indicator_id !== "A05" && i.domain_ids?.length);
+      await page.selectOption("#home-ctl-indicator", other.indicator_id);
+      await page.waitForFunction((n) => document.querySelector("#home-panels [data-slot='c2-body']")?.textContent.includes(n), other.name, {timeout: TIMEOUT});
+      await page.evaluate(() => globalThis.__mmFilterStore.set({pc: true, ctx: true}));
+      await page.waitForTimeout(300);
+      assert.equal(await page.locator("#home-panels table th", {hasText: "percentile"}).count(), 0);
+      assert.equal(await page.locator("#home-composition input[type=checkbox]").count(), 0);
+    });
+  });
+
+  for (const width of [320, 800, 1280]) {
+    test(`responsive at ${width}px: no page-level horizontal scroll; panel order unchanged; 2 x 2 only when each chart keeps 320px`, async (t) => {
+      if (!browser) return t.skip(reason);
+      const {page, context} = await openPage(browser, site.origin, {fixedTime: NOW});
+      try {
+        await page.setViewportSize({width, height: 900});
+        await page.goto(`${site.origin}/`);
+        await page.waitForSelector("#home-panels [data-panel='D']", {timeout: TIMEOUT});
+        await page.waitForLoadState("networkidle");
+        assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), "no horizontal page scroll");
+        const boxes = await page.$$eval("#home-panels .mm-compare-section", (els) => els.map((e) => {
+          const r = e.getBoundingClientRect();
+          const fig = e.querySelector(".mm-figure svg");
+          return {left: r.left, top: r.top, w: r.width, fig: fig ? fig.getBoundingClientRect().width : null};
+        }));
+        assert.equal(boxes.length, 4);
+        const twoCols = boxes[1].left > boxes[0].left + 10;
+        assert.equal(twoCols, width >= 800, `columns at ${width}`);
+        if (twoCols) for (const b of boxes) assert.ok(b.w - 34 >= 320, `panel ${b.w}px leaves under 320px for the chart`);
+        const cols = await page.$eval(".mm-home-kpi-grid", (e) => getComputedStyle(e).gridTemplateColumns.split(" ").length);
+        assert.equal(cols, width >= 1024 ? 6 : width >= 640 ? 3 : 2);
+      } finally {
+        await context.close();
+      }
+    });
+  }
 });

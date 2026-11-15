@@ -130,7 +130,8 @@ export function barListChart(Plot, m) {
       Plot.barX(hollow, {y: "label", x: "value", fill: bg, stroke: fill, strokeWidth: 2, insetTop: 2, insetBottom: 2}),
       Plot.barX(refs, {y: "label", x: "value", fill: (r) => (r.other ? bg : fill), fillOpacity: (r) => (r.other ? 1 : 0.5), stroke: ink, strokeWidth: (r) => (r.other ? 2 : 1), strokeDasharray: "4 3", insetTop: 2, insetBottom: 2}), // another period: hollow like a country row, dashed as a reference row
       Plot.ruleX([0], {stroke: m.crossesZero ? ink : rule, strokeWidth: 1.5}),
-      Plot.text(m.bars, {y: "label", x: "value", text: (r) => valueText(r.value), dx: (r) => (r.value < 0 ? -4 : 4), textAnchor: (r) => (r.value < 0 ? "end" : "start"), fill: ink}),
+      // dx and textAnchor are constants in Plot 0.6 (a function gives translate(NaN, ...)): the label of a bar below zero is placed just right of the zero rule.
+      Plot.text(m.bars, {y: "label", x: (r) => (r.value < 0 ? 0 : r.value), text: (r) => valueText(r.value), dx: 4, textAnchor: "start", fill: ink}),
       ...(m.percentile ? [Plot.text(m.bars, {y: "label", frameAnchor: "right", dx: 12, textAnchor: "start", text: (r) => (r.percentileText === null ? DRAFT_NOT_STATED : `${r.percentileText} (${binLabel(r.bin) || DRAFT_NOT_STATED})`), fill: ink})] : []),
       Plot.tip(m.bars, Plot.pointer({y: "label", x: "value", title: (r) => tipOf(m, r)}))
     ]
