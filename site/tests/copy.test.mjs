@@ -353,7 +353,7 @@ test("DRAFT strings: exact text, and every DRAFT_ export is pinned here", () => 
 
 test("V5 (AC-V2-70): caption labels, the not-stated marker and the vintage line are DRAFT constants with their exact text", () => {
   assert.equal(copy.DRAFT_NOT_STATED, "not stated");
-  assert.deepEqual({...copy.DRAFT_CAPTION_LABELS}, {indicator: "Indicator", unit: "Unit", frequency: "Frequency", seasonal: "Seasonal adjustment", period: "Reference period", source: "Source", vintage: "Vintage"});
+  assert.deepEqual({...copy.DRAFT_CAPTION_LABELS}, {indicator: "Indicator", unit: "Unit", frequency: "Frequency", seasonal: "Seasonal adjustment", period: "Reference period", scale: "Colour scale", source: "Source", vintage: "Vintage"});
   assert.deepEqual({...copy.DRAFT_CAPTION_SEASONAL}, {SA: "SA", NSA: "NSA", NA: "not applicable"});
   assert.equal(copy.DRAFT_CAPTION_VINTAGE("2026-11-03"), "latest vintage as of 2026-11-03");
   assert.deepEqual({...copy.DRAFT_CAPTION_LEGEND}, {EST: "estimate", PROV: "provisional"});
@@ -683,7 +683,7 @@ test("V17-V23 (Compare mode): the strings are DRAFT constants with their exact t
   assert.equal(copy.DRAFT_C3_MARKS, "Labelled dots are the countries in focus; every country with both values is a dot and is listed in the table.");
   assert.equal(copy.DRAFT_NO_VALUE_FOR(["A", "B"]), "no value for A, B");
   assert.equal(copy.DRAFT_C4_FIGURE_LABEL("Debt", "% of GDP", "2000", "2025"), "Heatmap of Debt, in % of GDP, countries by period, 2000 to 2025; the table below lists the same values");
-  assert.equal(copy.DRAFT_C4_SCALE("1", "9"), "Colour scale: 1 to 9, the lowest and highest cell shown");
+  assert.equal(copy.DRAFT_C4_SCALE("1", "9"), "1 to 9, the lowest and highest cell shown");
   assert.equal(copy.DRAFT_C4_BLANK, "no stored value");
   assert.equal(copy.DRAFT_C4_MARKS, "Hatched cell: no stored value");
   assert.equal(copy.DRAFT_C4_OUTLINE_MARK, "Dashed outline: a stale row, shown because Show stale rows is on");
@@ -698,7 +698,7 @@ test("V17-V23 (Compare mode): the strings are DRAFT constants with their exact t
 test("V53-V55 (C6 map): the strings are DRAFT constants with their exact text; each is a short single sentence or label, none is a bare n/a", () => {
   assert.equal(copy.DRAFT_C6_CARD_TITLE, "Map of values");
   assert.equal(copy.DRAFT_C6_FIGURE_LABEL("Debt", "2025", "% of GDP"), "Map of Europe: Debt, reference period 2025, in % of GDP; one shape per country; the table below lists the same values");
-  assert.equal(copy.DRAFT_C6_SCALE("1", "9"), "Colour scale: 1 to 9, the lowest and highest country shown; continuous, no classes");
+  assert.equal(copy.DRAFT_C6_SCALE("1", "9"), "1 to 9, the lowest and highest country shown; continuous, no classes");
   assert.equal(copy.DRAFT_C6_LEGEND_UNIT("% of GDP"), "Unit: % of GDP");
   assert.equal(copy.DRAFT_C6_MARKS, "Hatched: no stored value; plain: a stored value not drawn here; circle: a small country; dashed outline: another reference period");
   assert.equal(copy.DRAFT_C6_AGGREGATES_NOTE, "Aggregates and countries outside the map are not drawn; they are listed under the hidden rows and in the table.");
