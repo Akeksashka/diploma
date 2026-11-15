@@ -23,6 +23,6 @@
   "features": 64,
   "asset_bytes": 257819,
   "asset_gzip_bytes": 75223,
-  "crimea_checked_by_user": null,
-  "crimea_checked_date": null
+  "crimea_checked_by_user": "user",
+  "crimea_checked_date": "2026-11-15"
 }
