@@ -36,7 +36,8 @@ const pagePath = (file) => {
 };
 const builtPages = () => walk(dist).filter((f) => f.endsWith(".html")).map(pagePath).sort();
 const pageFile = (p) => join(dist, p === "/" ? "index.html" : `${p.slice(1)}.html`);
-const hrefs = (html) => [...html.matchAll(/<a\s[^>]*?href="([^"]*)"/g)].map((m) => m[1].replaceAll("&amp;", "&"));
+// V46: the language switch (class mm-lang) points into the other language tree, which this single-tree test cannot see; tests/lang-switch.test.mjs checks its target against the other tree.
+const hrefs = (html) => [...html.matchAll(/<a\s(?![^>]*class="mm-lang")[^>]*?href="([^"]*)"/g)].map((m) => m[1].replaceAll("&amp;", "&"));
 const isFile = (f) => existsSync(f) && statSync(f).isFile();
 const external = (h) => /^[a-z][a-z0-9+.-]*:/i.test(h) || h.startsWith("//");
 

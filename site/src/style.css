@@ -232,6 +232,7 @@ html, :root:has(#observablehq-header) { scroll-padding: 4rem 0 0 0; } /* room fo
 .mm-site-title { font-weight: 700; font-size: var(--mm-fs-h3); color: var(--mm-text); text-decoration: none; }
 .mm-nav ul { display: flex; flex-wrap: wrap; gap: var(--mm-space-1) var(--mm-space-4); margin: 0; padding: 0; list-style: none; }
 .mm-nav a { display: inline-block; min-height: 24px; padding: var(--mm-space-1) 0; }
+.mm-lang { display: inline-block; min-height: 24px; padding: var(--mm-space-1) 0; margin-left: auto; }
 .mm-nav a[aria-current="page"] { font-weight: 700; text-decoration: underline; color: var(--mm-text); }
 /* interactive controls: at least 24 x 24 CSS px (WCAG 2.5.8; asserted in T107) */
 button, select, input:not([type="checkbox"]):not([type="radio"]) { min-height: 24px; min-width: 24px; }
@@ -375,7 +376,7 @@ th[aria-sort="descending"] .mm-sort::after { border-top-color: currentColor; bor
   html, body { background: var(--mm-bg); color: var(--mm-text); }
   body, #observablehq-center { margin: 0; padding: 0; }
   #observablehq-main { max-width: none; margin-top: var(--mm-space-3); font-size: 10.5pt; }
-  .mm-skip, .mm-nav, .mm-scroll-hint, .mm-skip-values, .mm-facts, .mm-group-buttons, .mm-selection, .mm-controls,
+  .mm-skip, .mm-nav, .mm-lang, .mm-scroll-hint, .mm-skip-values, .mm-facts, .mm-group-buttons, .mm-selection, .mm-controls,
   label:has(> select), fieldset.mm-radios, button.mm-group-btn, button.mm-history-btn, button.mm-country-go, fieldset.mm-point-reader { display: none; }
   .mm-print-url { display: block; margin-top: var(--mm-space-2); overflow-wrap: anywhere; font-size: 9pt; }
   #observablehq-footer { display: block !important; font-size: 9pt; } /* Framework's default.css hides the footer in print with !important */
