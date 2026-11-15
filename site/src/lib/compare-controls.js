@@ -43,10 +43,10 @@ const indicatorOptions = (indicators, domains, domainId, empty) => {
 };
 
 // One descriptor per control: {key, id, kind: "select"|"checkbox"|"chip", label, value, options|groups}. `periods` are the stored common periods of C3 ([{value, label}]).
-export function compareControlModel(chart, {state = {}, indicators = [], domains = [], groups = [], bounds = null, periods = [], fixedIndicator = false} = {}) {
+export function compareControlModel(chart, {state = {}, indicators = [], domains = [], groups = [], bounds = null, periods = [], fixedIndicator = false, keys = null} = {}) {
   const idOf = (k) => `${chart}-ctl-${k}`;
   const ids = chart === "c3" ? [state.x, state.y].filter(Boolean) : [state.i].filter(Boolean);
-  return compareControlKeys(chart, {fixedIndicator}).map((key) => {
+  return (keys ?? compareControlKeys(chart, {fixedIndicator})).map((key) => {
     const base = {key, id: idOf(key)};
     if (key in FLAGS) return {...base, kind: "checkbox", label: FLAGS[key], value: state[key] === true};
     if (key === "group") return {...base, kind: "select", label: L.group, value: state.g ?? "", options: groupOptions(groups)};
@@ -85,8 +85,9 @@ export function compareControlPatch(key, raw, {state = {}, bounds = null, other 
 
 // Builds the control strip of one chart card. `store` is the page's filter store; `data` = {indicators, domains, groups, entities, manifest, bounds, periods?: () => [...]}.
 // The strip re-reads the store on every change so the selects show the state; it never navigates.
-export function compareControls(html, chart, {store, data, fixedIndicator = false}) {
-  const model = () => compareControlModel(chart, {state: store.get(), indicators: data.indicators, domains: data.domains, groups: data.groups, bounds: data.bounds ?? null, periods: data.periods?.() ?? [], fixedIndicator});
+// V58 (Home): `keys` replaces the applicability list, `label` the group's accessible name and `effective(state)` the state the selects show (Home shows its default Indicator).
+export function compareControls(html, chart, {store, data, fixedIndicator = false, keys = null, label = null, effective = (s) => s}) {
+  const model = () => compareControlModel(chart, {keys, state: effective(store.get()), indicators: data.indicators, domains: data.domains, groups: data.groups, bounds: data.bounds ?? null, periods: data.periods?.() ?? [], fixedIndicator});
   const opt = (o) => html`<option value="${o.value}">${o.label}</option>`;
   const optionNodes = (d) => (d.groups ? [opt(d.empty), ...d.groups.map((g) => (g.label ? html`<optgroup label="${g.label}">${g.options.map(opt)}</optgroup>` : g.options.map(opt)))] : d.options.map(opt));
   const field = (d) => {
@@ -99,7 +100,7 @@ export function compareControls(html, chart, {store, data, fixedIndicator = fals
   };
   const m0 = model();
   const msg = html`<p class="mm-chip-msg" role="status" data-slot="${chart}-msg"></p>`;
-  const form = html`<form class="mm-compare-controls" role="group" aria-label="${DRAFT_COMPARE_CONTROLS_LABEL(DRAFT_COMPARE_CARD_TITLES[chart])}" data-chart-controls="${chart}">${m0.map(field)}${msg}</form>`;
+  const form = html`<form class="mm-compare-controls" role="group" aria-label="${label ?? DRAFT_COMPARE_CONTROLS_LABEL(DRAFT_COMPARE_CARD_TITLES[chart])}" data-chart-controls="${chart}">${m0.map(field)}${msg}</form>`;
   if (typeof form?.addEventListener !== "function") return form;
   form.addEventListener("submit", (e) => e.preventDefault());
   const chipSlot = form.querySelector('[data-compare-control="countries"]');

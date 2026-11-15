@@ -813,6 +813,9 @@ ${SHELL_CELLS("./lib/", true)}
 
 <p class="mm-caveat" id="caveat">${escHtml(CAVEAT)}</p>
 
+<div id="home-slot" class="mm-home-slot"></div>
+
+<div class="mm-home-legacy" id="home-legacy">
 <div class="mm-filterbar-slot" id="filterbar-slot"></div>
 
 ${FILTER_BAR_CELLS}
@@ -821,9 +824,9 @@ ${FILTER_BAR_CELLS}
 
 \`\`\`js
 // L11: band skeleton with empty card slots (slot API in lib/home-dashboard.js). Only the default domain's scorecard loads now; a Domain
-// change loads that domain's scorecard once (cached, a failed load is not cached).
-const dash = md ? mountHomeDashboard(html, {store, data: md, declaredDomain: md.domainsDoc?.default_domain ?? null,
-  loadScorecard: createScorecardLoader(${SCORECARD_LOADERS(domains)})}) : null;
+// change loads that domain's scorecard once (cached, a failed load is not cached). V58: the Home panels share this loader (one request per domain).
+const loadScorecard = createScorecardLoader(${SCORECARD_LOADERS(domains)});
+const dash = md ? mountHomeDashboard(html, {store, data: md, declaredDomain: md.domainsDoc?.default_domain ?? null, loadScorecard}) : null;
 if (dash) document.getElementById("dashboard-slot").replaceChildren(dash.root);
 if (!md) document.getElementById("dashboard-slot").replaceChildren(mountHomeFailure(html, {failures: [...boot.failures, ...meta.failures]}));
 globalThis.__mmDashboard = dash;
@@ -858,6 +861,29 @@ import {mountSeriesCard} from "./lib/series-card.js";
 const seriesFiles = {${seriesAttachments(manifest)}};
 if (dash) mountSeriesCard(html, Plot, dash, {data: md, files: seriesFiles});
 \`\`\`
+
+\`\`\`js
+import {homePage, homeLandingDomains} from "./lib/home-page.js";
+import {resolveHome} from "./lib/home-config.js";
+import {historySource} from "./lib/history.js";
+\`\`\`
+
+\`\`\`js
+// V57 to V59: KPI strip and the four panels (A C2, B C1, C C6, D C4) above the retained cards. Only the scorecards of the strip and of the default Indicator are read now;
+// the series files (C1, C4) and the map shapes (C6) are read by the panels after the page has loaded. A failed scorecard moves its cards to the disclosure.
+const geoFiles = {asset: FileAttachment("geo/europe-countries.geojson"), join: FileAttachment("geo/entity_geo_join.json")};
+if (md) {
+  const resolved = resolveHome({indicators: md.indicators, entities: md.entities});
+  const landing = homeLandingDomains(resolved, md.indicators);
+  const results = await Promise.allSettled(landing.map((d) => loadScorecard(d)));
+  const scorecards = {};
+  const failedDomains = new Set();
+  landing.forEach((d, k) => (results[k].status === "fulfilled" ? (scorecards[d] = results[k].value) : failedDomains.add(d)));
+  const inputs = {entities: md.entities.filter((e) => e.is_global !== true), groups: md.groups, domains: md.domains, indicators: md.indicators, series: md.series, scorecards, knownCutoff: md.manifest.known_cutoff ?? null, bounds: periodBounds(md.manifest), manifest: md.manifest};
+  document.getElementById("home-slot").replaceChildren(homePage(html, Plot, inputs, historySource(md.manifest, seriesFiles), {store, resolved, loadScorecard, failedDomains, geo: geoFiles, links: {country: (id) => \`./country/\${id}\`, revisions: "./revisions"}}));
+}
+\`\`\`
+</div>
 
 ${browseBandHtml({entities, indicators, domains})}
 
@@ -1023,11 +1049,25 @@ ${compareCells({rel: "./", fixedId: null, domainIds, manifest})}`;
 export const PAGE_TARGET_BYTES = 600_000; // internal target per page type, gzipped
 export const PAGE_LIMIT_BYTES = 1_500_000; // ADR-023 decision 6, hard limit
 export const HISTORY_TARGET_BYTES = 5_000_000; // one history or series interaction, gzipped
+export const GEOMETRY_BUDGET_BYTES = 100_000; // OQ-19 / AC-V2-112: the map geometry asset, gzipped (proposed, V60 records)
 export const CSS_TARGET_BYTES = 20_000;
 export const CLS_TARGET = 0.1;
 
 const READER_PATH_RE = /^\/_npm\/(apache-arrow|parquet-wasm|flatbuffers|tslib)@|^\/_file\/data\/series\//;
 export const isReaderPath = (pathname) => READER_PATH_RE.test(pathname);
+
+// V60: the parts of a Home first load. Deferred = what the page reads after the `load` event (series files and the Parquet reader for C1 and C4, the map shapes and
+// the join table for C6); landing = everything else. responses: [{url, body}]. geometry = the map geometry asset alone (the 100 KB budget).
+const GEO_PATH_RE = /^\/_file\/geo\//;
+const GEOMETRY_ASSET_RE = /^\/_file\/geo\/europe-countries\./;
+export const isDeferredHomePath = (pathname) => isReaderPath(pathname) || GEO_PATH_RE.test(pathname);
+export function homeParts(responses) {
+  const landing = [];
+  const deferred = [];
+  for (const r of responses) (isDeferredHomePath(new URL(r.url).pathname) ? deferred : landing).push(r);
+  const geo = responses.filter((r) => GEOMETRY_ASSET_RE.test(new URL(r.url).pathname));
+  return {landing: firstLoadSizes(landing), deferred: firstLoadSizes(deferred), geometry: geo.length ? firstLoadSizes(geo).gzip : null};
+}
 
 // responses: [{url, body: Buffer, status?}]. Counts each URL once. Kind comes from the path: html, css, js (incl. wasm), data
 // (/_file/data/), other. gzip is computed locally (level 9, as measure-landing does), not read from the wire.
@@ -1077,6 +1117,15 @@ export function evaluateTargets(measured) {
   row("history", "one history interaction (country page)", measured.history ? measured.history.gzip : null, HISTORY_TARGET_BYTES, "B gz");
   // V27 / AC-V2-40: the heaviest first interaction per mode page (Country, Compare), gzipped; null when the page offers none (N/A, never a PASS).
   for (const [name, i] of Object.entries(measured.interactions ?? {})) row(`interaction:${name}`, `heaviest interaction (${name} page)`, i ? i.gzip : null, HISTORY_TARGET_BYTES, "B gz", true);
+  // V60 (AC-V2-124, 40, 112; AC-RD-53): Home landing, the deferred load and the heaviest Home interaction, reported separately; a null value is N/A, never a PASS.
+  if (measured.home) {
+    const h = measured.home;
+    row("landing:home", "home landing before the deferred load (target)", h.landing ?? null, PAGE_TARGET_BYTES, "B gz");
+    row("landing-limit:home", "home landing before the deferred load (hard limit)", h.landing ?? null, PAGE_LIMIT_BYTES, "B gz", true);
+    row("deferred:home", "home deferred load (series files, reader, map)", h.deferred ?? null, HISTORY_TARGET_BYTES, "B gz", true);
+    row("geometry:home", "map geometry asset (budget)", h.geometry ?? null, GEOMETRY_BUDGET_BYTES, "B gz");
+    row("interaction:home-panels", "heaviest Home interaction", h.interaction ? h.interaction.gzip : null, HISTORY_TARGET_BYTES, "B gz", true);
+  }
   return rows;
 }
 

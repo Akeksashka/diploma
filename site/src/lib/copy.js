@@ -501,3 +501,17 @@ export const DRAFT_C6_NOT_MAPPED_SENTENCE = (why, stored) => `${why}; ${stored}`
 export const DRAFT_C6_GEO_PENDING = "Loading the map shapes.";
 export const DRAFT_C6_GEO_UNREADABLE = "The map shapes could not be read, so the map is not drawn; the table lists the same values";
 export const DRAFT_C6_STORED = (value, period) => `${value} (${period})`; // the stored value and its period, in the state text of a country that is not drawn
+
+// DRAFT (not confirmed): Dashboard v2 Home composition (plan V56 to V59, G-HOME-CONST). Labels and short messages only; the user confirms the wording.
+export const DRAFT_HOME_PANEL_TITLES = Object.freeze({c2: DRAFT_COMPARE_CARD_TITLES.c2, c1: DRAFT_COMPARE_CARD_TITLES.c1, c6: DRAFT_C6_CARD_TITLE, c4: DRAFT_COMPARE_CARD_TITLES.c4}); // panels A, B, C, D
+export const DRAFT_HOME_PANELS_LABEL = "Comparison panels";
+export const DRAFT_HOME_CONTROLS_LABEL = "Controls: Home panels";
+export const DRAFT_HOME_KPI_TITLE = "Key indicators";
+export const DRAFT_HOME_KPI_FOR = (name) => `Latest stored value for ${name}`;
+export const DRAFT_HOME_KPI_NO_VALUE = "No stored value for this entity in this export.";
+export const DRAFT_HOME_KPI_NOT_LOADED = "The scorecard of this indicator could not be read.";
+export const DRAFT_HOME_MISSING_SUMMARY = "Some Home settings name an id this export does not carry";
+export const DRAFT_HOME_MISSING_ITEM = (constant, id) => `${constant}: ${id} is not in the stored lists, so it is left out`;
+export const DRAFT_HOME_SCORECARD_PENDING = "Loading the stored values.";
+export const DRAFT_HOME_COUNTRY_LABEL = "Open a country";
+export const DRAFT_HOME_MODE_LABEL = "Mode";

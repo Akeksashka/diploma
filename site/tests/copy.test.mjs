@@ -159,6 +159,8 @@ export const LAYOUT_L3 = {
 const DRAFT = [
   // Dashboard v2 Compare mode (plan V17 to V23; pinned in the V17-V23 test below)
   "DRAFT_COMPARE_CARD_TITLES", "DRAFT_COMPARE_CONTROL_LABELS", "DRAFT_COMPARE_CONTROLS_LABEL", "DRAFT_COMPARE_CHOOSE_INDICATOR", "DRAFT_COMPARE_CHOOSE_PAIR", "DRAFT_COMPARE_SORTS", "DRAFT_COMPARE_DEFAULT_COUNTRIES", "DRAFT_C2_NO_RANK_REFERENCE", "DRAFT_COMPARE_SERIES_PENDING", "DRAFT_COMPARE_SECONDARY", "DRAFT_C1_MARKS", "DRAFT_C1_FIGURE_LABEL", "DRAFT_C2_FIGURE_LABEL", "DRAFT_C2_MARKS", "DRAFT_C2_TABLE_CAPTION", "DRAFT_C3_FIGURE_LABEL", "DRAFT_C3_TABLE_CAPTION", "DRAFT_C3_NO_COMMON", "DRAFT_C3_MARKS", "DRAFT_NO_VALUE_FOR", "DRAFT_C4_FIGURE_LABEL", "DRAFT_C4_SCALE", "DRAFT_C4_BLANK", "DRAFT_C4_MARKS", "DRAFT_C4_TABLE_CAPTION", "DRAFT_C4_OUTLINE_MARK", "DRAFT_C4_LEGEND",
+  // Dashboard v2 Home composition (plan V57 to V59; pinned in the V57-V59 test below)
+  "DRAFT_HOME_PANEL_TITLES", "DRAFT_HOME_PANELS_LABEL", "DRAFT_HOME_CONTROLS_LABEL", "DRAFT_HOME_KPI_TITLE", "DRAFT_HOME_KPI_FOR", "DRAFT_HOME_KPI_NO_VALUE", "DRAFT_HOME_KPI_NOT_LOADED", "DRAFT_HOME_MISSING_SUMMARY", "DRAFT_HOME_MISSING_ITEM", "DRAFT_HOME_SCORECARD_PENDING", "DRAFT_HOME_COUNTRY_LABEL", "DRAFT_HOME_MODE_LABEL",
   // Dashboard v2 C6 choropleth map (plan V53 to V55; pinned in the V53-V55 test below)
   "DRAFT_C6_CARD_TITLE", "DRAFT_C6_FIGURE_LABEL", "DRAFT_C6_SCALE", "DRAFT_C6_LEGEND_UNIT", "DRAFT_C6_MARKS", "DRAFT_C6_AGGREGATES_NOTE", "DRAFT_C6_SOURCE_NOTE", "DRAFT_C6_TABLE_CAPTION", "DRAFT_C6_SKIP_TO_TABLE", "DRAFT_C6_NOT_MAPPED", "DRAFT_C6_NOT_MAPPED_SENTENCE", "DRAFT_C6_GEO_PENDING", "DRAFT_C6_GEO_UNREADABLE", "DRAFT_C6_STORED",
   // Dashboard v2 V5 caption block (pinned in the V5 test below) and V4/V6 strings (pinned in the V6 test below)
@@ -712,4 +714,20 @@ test("V53-V55 (C6 map): the strings are DRAFT constants with their exact text; e
   const all = [copy.DRAFT_C6_CARD_TITLE, copy.DRAFT_C6_MARKS, copy.DRAFT_C6_AGGREGATES_NOTE, copy.DRAFT_C6_SOURCE_NOTE, copy.DRAFT_C6_SKIP_TO_TABLE, copy.DRAFT_C6_GEO_PENDING, copy.DRAFT_C6_GEO_UNREADABLE, ...Object.values(copy.DRAFT_C6_NOT_MAPPED)];
   assert.deepEqual(all.filter((t) => typeof t !== "string" || /\bn\/a\b/i.test(t) || t.length > 160), []);
   assert.ok(!/\bregress|correlat|projection\//i.test(all.join(" ")), "no regression or correlation wording (AC-V2-44)");
+});
+
+test("V57-V59 (Home composition): the strings are DRAFT constants with their exact text; each is a short single sentence or label, none is a bare n/a", () => {
+  assert.deepEqual({...copy.DRAFT_HOME_PANEL_TITLES}, {c2: "Ranked values", c1: "Time series by country", c6: "Map of values", c4: "Countries by period"});
+  assert.equal(copy.DRAFT_HOME_PANELS_LABEL, "Comparison panels");
+  assert.equal(copy.DRAFT_HOME_CONTROLS_LABEL, "Controls: Home panels");
+  assert.equal(copy.DRAFT_HOME_KPI_TITLE, "Key indicators");
+  assert.equal(copy.DRAFT_HOME_KPI_FOR("Euro area"), "Latest stored value for Euro area");
+  assert.equal(copy.DRAFT_HOME_KPI_NO_VALUE, "No stored value for this entity in this export.");
+  assert.equal(copy.DRAFT_HOME_KPI_NOT_LOADED, "The scorecard of this indicator could not be read.");
+  assert.equal(copy.DRAFT_HOME_MISSING_SUMMARY, "Some Home settings name an id this export does not carry");
+  assert.equal(copy.DRAFT_HOME_MISSING_ITEM("HOME_KPI_IDS", "M18"), "HOME_KPI_IDS: M18 is not in the stored lists, so it is left out");
+  assert.equal(copy.DRAFT_HOME_SCORECARD_PENDING, "Loading the stored values.");
+  assert.equal(copy.DRAFT_HOME_COUNTRY_LABEL, "Open a country");
+  assert.equal(copy.DRAFT_HOME_MODE_LABEL, "Mode");
+  for (const k of Object.keys(copy).filter((n) => n.startsWith("DRAFT_HOME_") && /KPI|MISSING|PENDING|COUNTRY_LABEL|MODE_LABEL|PANELS|CONTROLS/.test(n))) assert.ok(!isConfirmed(k), `${k} is not marked confirmed`);
 });
