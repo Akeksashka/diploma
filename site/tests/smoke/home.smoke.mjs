@@ -75,14 +75,15 @@ const builtFile = (p) => {
   return null;
 };
 const isDistFile = (p) => existsSync(join(DIST, p.replace(/^\//, ""))) && statSync(join(DIST, p.replace(/^\//, ""))).isFile();
-const hrefs = (html) => [...html.matchAll(/<a [^>]*href="([^"#][^"]*)"/g)].map((m) => m[1]).filter((h) => !/^[a-z]+:/.test(h));
+// V46: the language switch (class mm-lang) points into the other tree; tests/lang-switch.test.mjs and lang.smoke.mjs check it.
+const hrefs = (html) => [...html.matchAll(/<a (?![^>]*class="mm-lang")[^>]*href="([^"#][^"]*)"/g)].map((m) => m[1]).filter((h) => !/^[a-z]+:/.test(h));
 const resolvePath = (from, href) => new URL(href.split("#")[0].split("?")[0], `http://x${from}`).pathname.replace(/\/$/, "") || "/";
 
 describe("R18 PG-HOME", () => {
   test("AC-RD-02, 62: every non-global entity and indicator is linked; built links resolve; no Guide/Status/heatmap/status block", async (t) => {
     await withPage(t, "/", "#band-overview", async ({page, log}) => {
       await page.evaluate(() => { document.getElementById("browse").open = true; });
-      const hs = await page.$$eval("a[href]", (as) => as.map((a) => a.getAttribute("href")));
+      const hs = await page.$$eval("a[href]:not(.mm-lang)", (as) => as.map((a) => a.getAttribute("href")));
       for (const e of entities.filter((x) => x.is_global !== true)) assert.ok(hs.includes(`./country/${e.entity_id}`), e.entity_id);
       for (const i of indicators) assert.ok(hs.includes(`./indicator/${i.indicator_id}`), i.indicator_id);
       for (const h of ["./explorer", "./domains", "./revisions"]) assert.ok(hs.includes(h), h);
