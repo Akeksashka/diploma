@@ -49,3 +49,8 @@ Findings while measuring: C2 drew its value labels with a per-row `dx` and `text
 - Second language tree weight and build time (V65); `build:all` was not re-timed in this run.
 - Real export (V30, gated on G-REAL, G-WEO). Note: decisions file records real-export first loads over the 1.5 MB hard limit for CZE (country) and M07 (indicator) on `/private/tmp/mm-export`; the fixture does not show that.
 - The CLS estimate for `--fbar-mode` (decisions file, mode-switch reserve): fixture CLS stays at or below 0.0198 on every page type.
+
+## V65 sweep over both trees (2026-11-15, merged branch, fixture only)
+- Build: `EXPORT_DIR=site/tests/fixtures/v2_export npm run build:all`, 17 s wall for both trees plus merge. `dist` 4,996 KB, `dist-uk` 5,052 KB, merged `dist-site` 10,048 KB (`du -sk`). English `<html lang="en">`, Ukrainian `<html lang="uk">` (checked on `dist-site/index.html` and `dist-site/uk/index.html`). `dist-uk/i18n-report.json` is written.
+- `measure-pages.mjs` run on the merged `dist-site` (English paths at `/`): home first load 541,388 B gz, country 411,109, compare 405,223, indicator 492,608, domains 80,587, revisions 302,491; all under the 600,000 target. Home landing 454,253 B gz in 129 files, deferred load 87,135 B gz in 3 files; map geometry 75,223 B gz (budget 100 KB); heaviest Home interaction 7,274 B gz; heaviest Country interaction 19,688 B gz; Compare interaction N/A (no control matched). The Ukrainian tree was not measured separately (its pages are the same code with English text), so no per-tree weight number is claimed.
+- Not run: browser smoke for both trees (the i18n session reported `browser.smoke.mjs` failures that are also on clean HEAD; not compared to a baseline); Node 20.18.1 (not installed); real export (G-REAL).
