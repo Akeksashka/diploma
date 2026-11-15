@@ -265,3 +265,6 @@ Confirmed by the user 2026-11-15: the AC-DB-22 exemption for link text inside `<
 
 ### G-CRIMEA recorded (2026-11-15)
 The user stated in chat that the geometry asset was checked (date "today"). `site/src/geo/geo-source.json`: `crimea_checked_by_user: "user"`, `crimea_checked_date: "2026-11-15"`. The AC-V2-119 test still runs on the actual asset and passes (geo-crimea, geo-join).
+
+### V30 and the weight question (2026-11-15)
+The user asked which of CR-4, CR-16, CR-20 is better. Recommendation: none of them now. Reason from the V30 numbers: the page-own weight of Country and Indicator pages is 0.4 to 0.5 MB gz (under the 600 KB target); the excess over 1.5 MB is the Parquet reader (about 1.85 MB gz) started after `load`. CR-4 (per-entity profile files) would not shrink the reader; CR-20 is for an interaction over 5 MB (the measured worst is 1.77 MB); CR-16 only helps a K1 sparkline. Options for the user: (a) accept F10 accounting: the reader counts against the 5 MB interaction rule, not the first-load hard limit (needs the amendment text of AC-RD-53 extended from the explorer to Country and Indicator, and `evaluateTargets` to split `own`/`reader` for those pages); (b) load the reader only on a user action (a site change, no CR). My pick is (a), with (b) if the 1.5 MB first-load rule must hold literally. Not applied: no accounting change was made.
