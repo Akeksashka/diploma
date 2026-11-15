@@ -89,7 +89,6 @@ const ALLOW = [
   {file: "lib/bar-chart.js", rule: "multiply, divide, modulo, power", contains: "i % step === 0", clause: "L20: every step-th period label is a tick; a position test, not a statistic"},
   // Display-only rebase to 100 (pure scaling, checked against Python).
   {file: "lib/rebase.js", rule: "multiply, divide, modulo, power", contains: "(r.value / base) * 100", clause: "export spec section 'Selectors served without further computation' (display-only rebase) and AC-DASH-6; ADR-025 decision 6 rebase rule. Not a statistic"},
-  {file: "lib/explorer.js", rule: "Math function", contains: "Math.min(...sets", clause: "same rebase selector: earliest stored date when no common period exists (a date, not a statistic of values)"},
   // Age of the stored known_cutoff for the stale banner.
   {file: "lib/stale.js", rule: "subtraction", contains: "(+now - t) / DAY_MS", clause: "ADR-010 decision 8 / AC-DASH-7: banner when known_cutoff is older than 45 days"},
   {file: "lib/stale.js", rule: "multiply, divide, modulo, power", contains: "(+now - t) / DAY_MS", clause: "ADR-010 decision 8 / AC-DASH-7"},
@@ -389,7 +388,9 @@ const LABEL_RE = /\b(?:grand\s+total|totals?|sums?|averages?|avg|overall|aggrega
 // The one `total` the spec names: the `total` field of the countHiddenRowsByReason result (ADR-036 Amendment 1; a tally of ONE hidden array, shown only as the
 // "{N} rows hidden" count). Only the exact reads of that result and its initialiser are exempt; any other word "total" still fails.
 const HIDDEN_TOTAL_FIELD = /(?:\bcounts\??|\.counts|countHiddenRowsByReason\([^)]*\))\??\.total\b|\{total: 0\b/g;
-const labelFindings = (name, text) => stripComments(text).split("\n").flatMap((l, k) => (LABEL_RE.test(l.replace(HIDDEN_TOTAL_FIELD, "")) ? [`${name}:${k + 1}: total/average label: ${l.trim().slice(0, 80)}`] : []));
+// indicator titles are registry names (e.g. "Total factor productivity", "12-month sum"), not an aggregate label: the links to ./indicator/<id> pages are not scanned
+const INDICATOR_LINK = /<a href="\.\/indicator\/[^"]*">[^<]*<\/a>/g;
+const labelFindings = (name, text) => stripComments(text).replace(INDICATOR_LINK, "").split("\n").flatMap((l, k) => (LABEL_RE.test(l.replace(HIDDEN_TOTAL_FIELD, "")) ? [`${name}:${k + 1}: total/average label: ${l.trim().slice(0, 80)}`] : []));
 
 // Rule 2: a helper DEFINED with a total / sum / average / count name (function, const, let, var), and the entity-count reads.
 const HELPER_DEF = /\b(?:function|const|let|var)\s+((?:total|sum|avg|average|mean|tally|count|n)(?:[A-Z_]\w*)?|\w*(?:Total|Sum|Average|Mean|Count|Tally)s?)\s*(?=[=(;])/g;
