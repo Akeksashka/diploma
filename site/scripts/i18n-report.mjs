@@ -9,14 +9,14 @@ const here = dirname(fileURLToPath(import.meta.url));
 const readJson = (p) => JSON.parse(readFileSync(p, "utf8"));
 const isReviewed = (e) => e?.status === "reviewed" && typeof e.t === "string" && e.t !== "";
 
-// Stable ids of the export that need a Ukrainian name, per names section (sources by exact stored source_name).
+// Stable ids of the export that need a Ukrainian name, per names section (sources by source_id, the key of names.uk.json).
 export function exportNameKeys(metaDir) {
   const list = (file, key, id) => readJson(join(metaDir, file))[key].map((r) => r[id]);
   return {
     domains: list("domains.json", "domains", "domain_id"),
     indicators: list("indicators.json", "indicators", "indicator_id"),
     entities: list("entities.json", "entities", "entity_id"),
-    sources: [...new Set(readJson(join(metaDir, "series.json")).series.map((s) => s.source_name).filter(Boolean))]
+    sources: [...new Set(readJson(join(metaDir, "series.json")).series.map((s) => s.source_id).filter(Boolean))]
   };
 }
 

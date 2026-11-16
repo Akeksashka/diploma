@@ -14,6 +14,8 @@ import {aboutSeriesTable} from "./series-meta.js";
 import {emptyBlock, errorBlock} from "./state-blocks.js";
 import {pointValueText, readerText, seriesTipLines, tipText, valueWithUnit} from "./tip.js";
 import {token} from "./tokens.js";
+import {i18n} from "./i18n.js";
+const X = (key, params) => i18n.t(key, params);
 
 // Five hues (tokens, both themes, 3:1 on the page and surface colours), each paired with a dash pattern and a marker shape so
 // that colour is never the only cue. Diamond and triangle are kept for the alert marks. Assigned by selection order.
@@ -81,12 +83,12 @@ export function explorerControls(html, ctx, indicatorId, rows, initial = {indica
     noRows: sel.missing.map((id) => nameOf(ctx, id)),
     order: ents.map((c) => c.id),
     start: sel.entities,
-    entities: checkBoxes(html, {id: "explorer-entities", label: "Countries", options: ents, value: sel.entities, groups: groupChoices(ctx, ents), hint: DRAFT_CHOOSE_COUNTRIES_HINT}),
-    transform: selectBox(html, {id: "explorer-transform", label: "Transform", options: tfs.length ? tfs : [{id: "value", label: "Level"}]}),
-    from: selectBox(html, {id: "explorer-from", label: "From year", options: [{id: "", label: "first"}, ...years]}),
-    to: selectBox(html, {id: "explorer-to", label: "To year", options: [{id: "", label: "last"}, ...years]}),
+    entities: checkBoxes(html, {id: "explorer-entities", label: X("DRAFT_PICKER_LABELS.countries"), options: ents, value: sel.entities, groups: groupChoices(ctx, ents), hint: DRAFT_CHOOSE_COUNTRIES_HINT}),
+    transform: selectBox(html, {id: "explorer-transform", label: X("DRAFT_ABOUT_LABELS.transform"), options: tfs.length ? tfs : [{id: "value", label: X("TRANSFORM_LABELS.value")}]}),
+    from: selectBox(html, {id: "explorer-from", label: X("X_EXP_FROM_YEAR"), options: [{id: "", label: X("X_EXP_FIRST")}, ...years]}),
+    to: selectBox(html, {id: "explorer-to", label: X("X_EXP_TO_YEAR"), options: [{id: "", label: X("X_EXP_LAST")}, ...years]}),
     rebase: toggle,
-    base: offered ? selectBox(html, {id: "explorer-base", label: "Base period", options: [{id: "auto", label: "first common period"}, ...periodsOf(rows)]}) : null,
+    base: offered ? selectBox(html, {id: "explorer-base", label: X("X_EXP_BASE_PERIOD"), options: [{id: "auto", label: X("X_EXP_AUTO_BASE")}, ...periodsOf(rows)]}) : null,
     free
   };
 }

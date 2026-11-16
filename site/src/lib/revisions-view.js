@@ -7,6 +7,8 @@ import {token} from "./tokens.js";
 import {glyph, glyphSprite} from "./glyphs.js";
 import {errorBlock} from "./state-blocks.js";
 import {periodChoices, seriesChoices} from "./revisions.js";
+import {i18n} from "./i18n.js";
+const X = (key, params) => i18n.t(key, params);
 
 const escText = (v) => String(v).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"})[c]);
 
@@ -52,20 +54,20 @@ export const noticeBlock = (html) => html`<div class="mm-revisions"><p class="mm
 export function ordinaryBlock(html, rv) {
   const top = barScale(rv.rows);
   const table = rv.rows.length
-    ? html`${glyphSprite(html)}<p class="mm-note" id="bar-label">${DRAFT_BAR_LABEL}</p><table id="recent-revisions"><thead><tr><th>Indicator</th><th>Country</th><th>Reference period</th><th class="mm-num">Previous value</th><th class="mm-num">New value</th><th class="mm-num">Revision (abs)</th><th class="mm-num">Revision (%)</th><th>Kind</th><th>Class</th><th>Known at (vintage)</th></tr></thead><tbody>${rv.rows.map(
+    ? html`${glyphSprite(html)}<p class="mm-note" id="bar-label">${DRAFT_BAR_LABEL}</p><table id="recent-revisions"><thead><tr><th>${X("DRAFT_FILTER_LABELS.indicator")}</th><th>${X("COUNTRY_HEADER")}</th><th>${X("DRAFT_FACT_LABELS.refPeriod")}</th><th class="mm-num">${X("X_REV_PREVIOUS")}</th><th class="mm-num">${X("X_REV_NEW")}</th><th class="mm-num">${X("X_REV_ABS")}</th><th class="mm-num">${X("X_REV_PCT")}</th><th>${X("X_REV_KIND")}</th><th>${X("X_REV_CLASS")}</th><th>${X("X_REV_KNOWN_AT")}</th></tr></thead><tbody>${rv.rows.map(
         (r) => html`<tr data-indicator="${r.indicatorId}" data-entity="${r.entity}" data-class="${r.cls}"><td>${r.hasIndicatorPage ? html`<a href="indicator/${r.indicatorId}" data-link="indicator">${r.indicator}</a>` : r.indicator}</td><td>${r.hasCountryPage ? html`<a href="country/${r.entity}" data-link="country">${r.name}</a>` : r.name}</td><td>${r.period}</td><td class="mm-num">${r.previous}</td><td class="mm-num">${r.value}</td><td class="mm-num">${signedCell(html, r.abs, r.absNum)}</td><td class="mm-num mm-bar-cell">${barCell(html, r.pct, r.pctNum, top)}</td><td>${r.loadKind}</td><td>${classCell(html, r.cls, r.clsLabel)}</td><td>${r.knownAt}</td></tr>`
       )}</tbody></table>`
     : html`<p id="no-ordinary">${rv.nTotal === 0 ? NO_ORDINARY : NO_ORDINARY_CLASS}</p>`;
-  return html`<section class="mm-revisions" id="ordinary-list"><h2>Recent revisions</h2>
-<p>Revisions of the last 12 months, in the order of the export. Showing ${rv.nShown} of ${rv.nTotal}.${rv.omitted ? ` ${rv.omitted} rows are not shown because they are not a headline series of a published indicator.` : ""}</p>
+  return html`<section class="mm-revisions" id="ordinary-list"><h2>${X("X_REV_RECENT")}</h2>
+<p>${X("X_REV_RECENT_INTRO", {shown: rv.nShown, of: rv.nTotal})}${rv.omitted ? ` ${X("X_REV_OMITTED", {omitted: rv.omitted})}` : ""}</p>
 <p class="mm-note" id="reestimation-note">${REESTIMATION_NOTE}</p>
 ${table}</section>`;
 }
 
 // One line per named edition, below the ordinary list. The line is the stored summary; no recount.
 export function editionsBlock(html, rv, urls = {}) {
-  if (rv.editions.length === 0) return html`<section class="mm-revisions" id="edition-lines"><h2>Named editions</h2><p id="no-editions">${NO_EDITIONS}</p></section>`;
-  return html`<section class="mm-revisions" id="edition-lines"><h2>Named editions</h2>
+  if (rv.editions.length === 0) return html`<section class="mm-revisions" id="edition-lines"><h2>${X("X_REV_EDITIONS")}</h2><p id="no-editions">${NO_EDITIONS}</p></section>`;
+  return html`<section class="mm-revisions" id="edition-lines"><h2>${X("X_REV_EDITIONS")}</h2>
 <p>${EDITIONS_INTRO}</p>
 <ul>${rv.editions.map(
     (e) => html`<li data-source="${e.sourceId}" data-edition="${e.label}"><span class="mm-edition-line">${e.line}</span> (first stored ${e.firstKnownAt}).${e.indicatorIds.length ? html` Details, revision files: ${e.indicatorIds.map((id, i) => html`${i ? ", " : ""}${urls[id] ? html`<a href="${urls[id]}" download>${id}</a>` : id}`)}.` : ""}</li>`
@@ -75,17 +77,17 @@ export function editionsBlock(html, rv, urls = {}) {
 export function historyControls(html, ctx, indicatorId, rows) {
   const series = seriesChoices(ctx, indicatorId, rows);
   return {
-    series: selectBox(html, {id: "vintage-series", label: "Series (country)", options: series.length ? series : [{id: "", label: "none"}]}),
-    period: selectBox(html, {id: "vintage-period", label: "Reference period", options: periodChoices(rows)})
+    series: selectBox(html, {id: "vintage-series", label: X("X_REV_SERIES_COUNTRY"), options: series.length ? series : [{id: "", label: X("DRAFT_PRINT_FILTERS_NONE")}]}),
+    period: selectBox(html, {id: "vintage-period", label: X("DRAFT_FACT_LABELS.refPeriod"), options: periodChoices(rows)})
   };
 }
 
 export function captionLine(html, c) {
-  return html`<table id="vintage-caption"><thead><tr><th>Country</th><th>Series id</th><th>Source</th><th>Frequency</th><th>Seasonal adjustment</th><th>Unit</th></tr></thead><tbody><tr><td>${c.country}</td><td>${c.seriesId}</td><td>${c.source}</td><td>${c.frequency}</td><td>${c.sa}</td><td>${c.unit}</td></tr></tbody></table>`;
+  return html`<table id="vintage-caption"><thead><tr><th>${X("COUNTRY_HEADER")}</th><th>${X("DRAFT_ABOUT_LABELS.seriesId")}</th><th>${X("DRAFT_ABOUT_LABELS.source")}</th><th>${X("DRAFT_ABOUT_LABELS.frequency")}</th><th>${X("DRAFT_ABOUT_LABELS.seasonal")}</th><th>${X("DRAFT_ABOUT_LABELS.unit")}</th></tr></thead><tbody><tr><td>${c.country}</td><td>${c.seriesId}</td><td>${c.source}</td><td>${c.frequency}</td><td>${c.sa}</td><td>${c.unit}</td></tr></tbody></table>`;
 }
 
 export function historyTable(html, hv) {
-  return html`<table id="vintage-history"><thead><tr><th>Reference period</th><th>Version</th><th>Known at (vintage)</th><th>Vintage label</th><th>Source timestamp</th><th class="mm-num">Value</th><th>Status</th><th>Load kind</th><th class="mm-num">Revision (abs)</th><th class="mm-num">Revision (%)</th><th>Class</th></tr></thead><tbody>${hv.keys.flatMap((k) =>
+  return html`<table id="vintage-history"><thead><tr><th>${X("DRAFT_FACT_LABELS.refPeriod")}</th><th>${X("X_REV_VERSION")}</th><th>${X("X_REV_KNOWN_AT")}</th><th>${X("X_REV_VINTAGE_LABEL")}</th><th>${X("X_REV_SOURCE_TS")}</th><th class="mm-num">${X("DRAFT_TABLE_HEADERS.value")}</th><th>${X("DRAFT_TABLE_HEADERS.status")}</th><th>${X("X_REV_LOAD_KIND")}</th><th class="mm-num">${X("X_REV_ABS")}</th><th class="mm-num">${X("X_REV_PCT")}</th><th>${X("X_REV_CLASS")}</th></tr></thead><tbody>${hv.keys.flatMap((k) =>
     k.versions.map(
       (v, i) =>
         html`<tr data-period="${k.period}" data-base="${v.base ? "true" : "false"}" data-class="${v.base ? "base" : v.cls}"><td>${i === 0 ? k.period : ""}</td><td>${v.label}${v.edition ? NAMED_EDITION_MARK : ""}</td><td>${v.knownAt}</td><td>${v.vintageLabel}</td><td>${v.releaseAt}</td><td class="mm-num">${v.value}</td><td>${v.status}</td><td>${v.loadKind}${v.revisedData ? REVISED_DATA_HISTORY_MARK : ""}</td><td class="mm-num">${v.abs}</td><td class="mm-num">${v.pct}</td><td>${v.base ? "n/a" : classCell(html, v.cls, v.clsLabel)}</td></tr>`
@@ -114,7 +116,7 @@ export function stepChart(Plot, points, yLabel) {
     marginRight: 40,
     marginTop: 28,
     marginBottom: 56,
-    x: {type: "utc", label: "Known at (vintage)", labelAnchor: "center", labelOffset: 44},
+    x: {type: "utc", label: X("X_REV_KNOWN_AT"), labelAnchor: "center", labelOffset: 44},
     y: {grid: true, label: yLabel, tickFormat: (d) => String(Number(d.toPrecision(6)))},
     marks: [
       Plot.line(valued, {x: "date", y: "value", curve: "step-after", stroke: line, strokeWidth: 2}),
@@ -149,8 +151,8 @@ export function historyBlock(html, hv, {error = null, chosen = false, Plot = nul
         ? html`<p id="vintage-none">${VINTAGE_NONE}</p>`
         : hv.nKeys === 0
           ? html`<p id="vintage-empty">${VINTAGE_EMPTY}</p>`
-        : html`<p>${hv.indicatorName}: ${hv.nKeys} ${hv.nKeys === 1 ? "reference period" : "reference periods"}, ${hv.nVersions} ${hv.nVersions === 1 ? "stored version" : "stored versions"} shown. A version labelled "${EARLIEST_LABEL}" is the starting value of that period's history, not a revision.</p>${captionLine(html, hv.caption)}${stepBlock(html, Plot, hv)}${historyTable(html, hv)}`;
-  return html`<section class="mm-revisions" id="vintage-view"><h2>Vintage history of one series</h2>
+        : html`<p>${X("X_REV_SUMMARY", {indicator: hv.indicatorName, periods: i18n.tp("X_REV_PERIODS", hv.nKeys), versions: i18n.tp("X_REV_VERSIONS", hv.nVersions), earliest: EARLIEST_LABEL})}</p>${captionLine(html, hv.caption)}${stepBlock(html, Plot, hv)}${historyTable(html, hv)}`;
+  return html`<section class="mm-revisions" id="vintage-view"><h2>${X("X_REV_VINTAGE_ONE")}</h2>
 <p class="mm-note" id="vintage-text">${VINTAGE_TEXT}</p>
 ${body}</section>`;
 }

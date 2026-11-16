@@ -12,6 +12,8 @@ import {checkCompatible} from "./compat.js";
 import {valueText} from "./explorer.js";
 import {scaleKind} from "./time-heatmap.js";
 import {valueWithUnit} from "./tip.js";
+import {i18n} from "./i18n.js";
+const X = (key, params) => i18n.t(key, params);
 
 // The position of a small-country marker: the first stored vertex of the shape (a stored coordinate, picked by index; the centroid of a shape is a computation and is not made here).
 const anchorOf = (g) => (g?.type === "MultiPolygon" ? g.coordinates[0][0][0] : g?.type === "Polygon" ? g.coordinates[0][0] : null);
@@ -27,7 +29,7 @@ export function choroplethModel({join = null, asset = null, geoFailed = false, .
   const unit = base.unit;
   const stored = (r) => (r.hasValue ? DRAFT_C6_STORED(valueWithUnit(valueText(r.value), unit), r.periodText ?? DRAFT_NOT_STATED) : (r.state?.sentence || DRAFT_NOT_STATED));
   const note = (r, why) => ({...r, mapNote: DRAFT_C6_NOT_MAPPED_SENTENCE(DRAFT_C6_NOT_MAPPED[why], stored(r))});
-  const tipOf = (r) => [r.name, r.hasValue ? valueWithUnit(valueText(r.value), unit) : DRAFT_NOT_STATED, r.periodText ?? DRAFT_NOT_STATED, ...(r.estimate ? ["estimate"] : [])].join("\n");
+  const tipOf = (r) => [r.name, r.hasValue ? valueWithUnit(valueText(r.value), unit) : DRAFT_NOT_STATED, r.periodText ?? DRAFT_NOT_STATED, ...(r.estimate ? [X("TIP_STATUS.EST")] : [])].join("\n");
 
   const mapped = [];
   const hatched = [];

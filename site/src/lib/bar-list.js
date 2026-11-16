@@ -25,6 +25,8 @@ import {sortRows} from "./sort.js";
 import {token} from "./tokens.js";
 import {valueWithUnit} from "./tip.js";
 import {indicatorUnit, seriesUnit} from "./units.js";
+import {i18n} from "./i18n.js";
+const X = (key, params) => i18n.t(key, params);
 
 export const BAR_LIST_SORTS = Object.freeze({value: {field: "value", dir: "desc"}, name: {field: "name", dir: "asc"}, percentile: {field: "percentile", dir: "desc"}});
 export const DEFAULT_BAR_LIST_SORT = "value";
@@ -106,7 +108,7 @@ function referenceText(referencePeriod, frequency) {
   return referencePeriod === null ? null : (periodLabel(referencePeriod, frequency) ?? referencePeriod);
 }
 
-const tipOf = (m, r) => [r.name, r.hasValue ? valueWithUnit(valueText(r.value), m.unit) : DRAFT_NOT_STATED, r.periodText ?? DRAFT_NOT_STATED, ...(r.estimate ? ["estimate"] : [])].join("\n");
+const tipOf = (m, r) => [r.name, r.hasValue ? valueWithUnit(valueText(r.value), m.unit) : DRAFT_NOT_STATED, r.periodText ?? DRAFT_NOT_STATED, ...(r.estimate ? [X("TIP_STATUS.EST")] : [])].join("\n");
 
 export function barListChart(Plot, m) {
   const ink = token("--mm-text");

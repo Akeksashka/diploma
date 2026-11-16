@@ -4,6 +4,8 @@
 // Sorting by the stored `rank_position` is ordering, not ranking. Fixed wording comes from copy.js; pure functions.
 
 import {AGGREGATE_NOT_RANKED, ALERT_LEVEL_PREFIX, CAVEAT, DIRECTION_LABELS, directionWithTarget, DESCRIPTIVE_CELL, FLAG_AHEAD, FLAG_ESTIMATE, FLAG_INHERITED, FLAG_LAGGING, FLAG_UNALIGNED, FLAG_UNALIGNED_FISCAL, INFORMATIONAL_NOTICE, NA, NOT_PUBLISHED, NOT_RANKED_INFO_ONLY, NOT_RANKED_INHERITED, NO_POSITION, NO_POSITION_LOW_COVERAGE, NO_RANK_STALE, PEER_NOTE_HEAD, PEER_NOTE_TAIL, PERCENTILE_COLUMN_LABEL, UNRANKED, UNRANKED_DOMAIN_CELL, notRankedCell} from "./copy.js";
+import {i18n} from "./i18n.js";
+const X = (key, params) => i18n.t(key, params);
 
 export {CAVEAT, PERCENTILE_COLUMN_LABEL};
 
@@ -50,7 +52,7 @@ export function formatValue(v) {
 export function peerSetNote(sc) {
   if (sc.heterogeneous_peer_set !== true) return null;
   const {min, max} = sc.peer_set_size_by_indicator ?? {};
-  const range = isNum(min) && isNum(max) ? ` (${min === max ? `${min}` : `${min} to ${max}`} countries per indicator)` : "";
+  const range = isNum(min) && isNum(max) ? (min === max ? X("X_PEER_RANGE_SAME", {n: min}) : X("X_PEER_RANGE", {min, max})) : "";
   return `${PEER_NOTE_HEAD}${range}${PEER_NOTE_TAIL}`;
 }
 

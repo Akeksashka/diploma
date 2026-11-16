@@ -4,6 +4,8 @@
 // ranked countries"), whatever the filter. The optional `peer_group_percentile` is not built.
 import {AGGREGATE_NOT_RANKED, ALL_LABEL, CAVEAT, FILTER_NOTE, GROUP_LABELS, NON_EURO_MARK, PERCENTILE_COLUMN_LABEL, SORT_LABELS} from "./copy.js";
 import {directionOf, indicatorCell, validateScorecard} from "./scorecard.js";
+import {i18n} from "./i18n.js";
+const X = (key, params) => i18n.t(key, params);
 
 export {ALL_LABEL, CAVEAT, FILTER_NOTE, GROUP_LABELS, NON_EURO_MARK, PERCENTILE_COLUMN_LABEL};
 
@@ -152,12 +154,12 @@ export function panelState(pv, {indicator, group, sort, focus = null} = {}) {
 // Text for the stored spread; null when the indicator has no ranking (descriptive or unranked).
 export function spreadText(ind) {
   if (ind.spreadDays === null && ind.rankReferencePeriod === null) return null;
-  const lim = ind.maxSpreadDays === null ? "" : ` (limit ${ind.maxSpreadDays} days)`;
-  const spread = ind.spreadDays === null ? "n/a" : `${ind.spreadDays} days`;
-  const common = ind.rankReferencePeriod === null ? "" : `; common reference period of the ranking ${ind.rankReferencePeriod}`;
-  const n = ind.nRanked === null ? "" : `; countries ranked ${ind.nRanked}`;
-  const un = ind.nUnaligned ? `; shown but not ranked because unaligned ${ind.nUnaligned}` : "";
-  return `Reference-period spread of the ranked set: ${spread}${lim}${common}${n}${un}.`;
+  const lim = ind.maxSpreadDays === null ? "" : X("X_SPREAD_LIMIT", {days: ind.maxSpreadDays});
+  const spread = ind.spreadDays === null ? X("X_SPREAD_NA") : i18n.tp("X_SPREAD_DAYS", ind.spreadDays);
+  const common = ind.rankReferencePeriod === null ? "" : X("X_SPREAD_COMMON", {period: ind.rankReferencePeriod});
+  const n = ind.nRanked === null ? "" : X("X_SPREAD_RANKED", {n: ind.nRanked});
+  const un = ind.nUnaligned ? X("X_SPREAD_UNALIGNED", {n: ind.nUnaligned}) : "";
+  return `${X("X_SPREAD_HEAD", {spread})}${lim}${common}${n}${un}.`;
 }
 
 // URL-hash focus (T118): `#c=<entity_id>`. Returns the id only when it is one of `ids`; anything else (empty, malformed,
