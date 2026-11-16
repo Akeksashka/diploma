@@ -5,6 +5,8 @@ import {createHash} from "node:crypto";
 import {dirname, isAbsolute, join, resolve, sep} from "node:path";
 import {fileURLToPath} from "node:url";
 import {firstDomainId, indicatorsWithoutDomain, storedPercentileDifferences, storedTransformId} from "../src/lib/indicator-model.js";
+import {resolveLang} from "./lib/lang-config.mjs";
+import {localizeMetaDir} from "./lib/localize-meta.mjs";
 import {indicatorPageSource, countryPageSource, domainPageSource, explorerPageSource,revisionsPageSource, homePageSource, domainsPageSource, countryListPageSource, comparePageSource} from "./lib.mjs";
 
 // Copies manifest.json plus every manifest.files[].path from the export into dst (after clearing dst); nothing else
@@ -53,6 +55,11 @@ if (major !== "1") {
 try {
   const n = copyExport(src, dst);
   console.log(`prepare-data: ${src} -> ${dst} (${n} files)`);
+  if (resolveLang(process.env.MM_LANG) === "uk") {
+    // Ukrainian tree: reviewed Ukrainian names replace the English display names in the copied meta (domains, entities, indicators, sources).
+    const names = JSON.parse(readFileSync(join(here, "..", "src", "i18n", "names.uk.json"), "utf8"));
+    console.log(`prepare-data: Ukrainian names applied ${JSON.stringify(localizeMetaDir(join(dst, "meta"), names, {en: JSON.parse(readFileSync(join(here, "..", "src", "i18n", "en.json"), "utf8")), uk: JSON.parse(readFileSync(join(here, "..", "src", "i18n", "uk.json"), "utf8"))}))}`);
+  }
 } catch (e) {
   console.error(`prepare-data: ${e.message}`);
   process.exit(1);

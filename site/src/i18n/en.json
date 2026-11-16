@@ -1519,5 +1519,179 @@
  },
  "SITE_TITLE": {
   "t": "Macro Monitor"
+ },
+ "X_SOURCES_HEADING": {
+  "t": "Sources"
+ },
+ "X_NO_ATTRIBUTION": {
+  "t": "No source attribution available."
+ },
+ "X_REV_PREVIOUS": {
+  "t": "Previous value"
+ },
+ "X_REV_NEW": {
+  "t": "New value"
+ },
+ "X_REV_ABS": {
+  "t": "Revision (abs)"
+ },
+ "X_REV_PCT": {
+  "t": "Revision (%)"
+ },
+ "X_REV_KIND": {
+  "t": "Kind"
+ },
+ "X_REV_CLASS": {
+  "t": "Class"
+ },
+ "X_REV_KNOWN_AT": {
+  "t": "Known at (vintage)"
+ },
+ "X_REV_VERSION": {
+  "t": "Version"
+ },
+ "X_REV_VINTAGE_LABEL": {
+  "t": "Vintage label"
+ },
+ "X_REV_SOURCE_TS": {
+  "t": "Source timestamp"
+ },
+ "X_REV_LOAD_KIND": {
+  "t": "Load kind"
+ },
+ "X_REV_RECENT": {
+  "t": "Recent revisions"
+ },
+ "X_REV_RECENT_INTRO": {
+  "t": "Revisions of the last 12 months, in the order of the export. Showing {shown} of {of}."
+ },
+ "X_REV_OMITTED": {
+  "t": "{omitted} rows are not shown because they are not a headline series of a published indicator."
+ },
+ "X_REV_EDITIONS": {
+  "t": "Named editions"
+ },
+ "X_REV_SERIES_COUNTRY": {
+  "t": "Series (country)"
+ },
+ "X_REV_SUMMARY": {
+  "t": "{indicator}: {periods}, {versions} shown. A version labelled \"{earliest}\" is the starting value of that period's history, not a revision."
+ },
+ "X_REV_PERIODS#one": {
+  "t": "{n} reference period"
+ },
+ "X_REV_PERIODS#other": {
+  "t": "{n} reference periods"
+ },
+ "X_REV_VERSIONS#one": {
+  "t": "{n} stored version"
+ },
+ "X_REV_VERSIONS#other": {
+  "t": "{n} stored versions"
+ },
+ "X_REV_VINTAGE_ONE": {
+  "t": "Vintage history of one series"
+ },
+ "X_REV_VINTAGE_HISTORY": {
+  "t": "Vintage history"
+ },
+ "X_REV_CLASS_SELECT": {
+  "t": "Revision class"
+ },
+ "X_PAGE_VINTAGE_VIEW": {
+  "t": "Vintage and revision view"
+ },
+ "X_SC_COMMON_PERIOD": {
+  "t": "Common reference period of the ranking"
+ },
+ "X_SC_SPREAD_DAYS": {
+  "t": "Reference-period spread (days)"
+ },
+ "X_SC_COUNTRIES_RANKED": {
+  "t": "Countries ranked"
+ },
+ "X_SC_NOT_ALIGNED": {
+  "t": "Not aligned"
+ },
+ "X_SC_FIGURE_SENTENCE": {
+  "t": "The country figure is the {label}."
+ },
+ "X_SPREAD_HEAD": {
+  "t": "Reference-period spread of the ranked set: {spread}"
+ },
+ "X_SPREAD_LIMIT": {
+  "t": " (limit {days} days)"
+ },
+ "X_SPREAD_NA": {
+  "t": "n/a"
+ },
+ "X_SPREAD_DAYS#one": {
+  "t": "{n} day"
+ },
+ "X_SPREAD_DAYS#other": {
+  "t": "{n} days"
+ },
+ "X_SPREAD_COMMON": {
+  "t": "; common reference period of the ranking {period}"
+ },
+ "X_SPREAD_RANKED": {
+  "t": "; countries ranked {n}"
+ },
+ "X_SPREAD_UNALIGNED": {
+  "t": "; shown but not ranked because unaligned {n}"
+ },
+ "X_PEER_RANGE_SAME": {
+  "t": " ({n} countries per indicator)"
+ },
+ "X_PEER_RANGE": {
+  "t": " ({min} to {max} countries per indicator)"
+ },
+ "X_EXP_FROM_YEAR": {
+  "t": "From year"
+ },
+ "X_EXP_TO_YEAR": {
+  "t": "To year"
+ },
+ "X_EXP_FIRST": {
+  "t": "first"
+ },
+ "X_EXP_LAST": {
+  "t": "last"
+ },
+ "X_EXP_BASE_PERIOD": {
+  "t": "Base period"
+ },
+ "X_EXP_AUTO_BASE": {
+  "t": "first common period"
+ },
+ "X_UNIT_YOY": {
+  "t": "% change on the same period a year earlier"
+ },
+ "X_UNIT_DEFAULT_TF": {
+  "t": "indicator default transform {label}"
+ },
+ "X_UNIT_MULT": {
+  "t": "values in {unit} x 10^{mult}"
+ },
+ "X_UNIT_REBASE": {
+  "t": "index, {base} = 100"
+ },
+ "X_PAGE_DOMAIN": {
+  "t": "Domain scorecard"
+ },
+ "X_PAGE_EXPLORER": {
+  "t": "Explorer"
+ },
+ "X_PAGE_EXPLORER_H1": {
+  "t": "Time-series explorer"
+ },
+ "X_PAGE_HOME": {
+  "t": "Country scorecards"
+ },
+ "X_FOOTER": {
+  "t": "Macro Monitor. Data from public sources, attributed per page. Not investment advice."
+ },
+ "X_PRINT_URL": {
+  "t": "Page URL:"
  }
 }

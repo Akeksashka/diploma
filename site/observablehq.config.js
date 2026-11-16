@@ -32,5 +32,5 @@ export default {
   globalStylesheets: [],
   // T130: the second paragraph is print-only (style.css). The script fills in the page URL and, because page.pdf() and browsers differ
   // in whether closed <details> print open, opens every <details> before printing and restores them afterwards.
-  footer: `Macro Monitor. Data from public sources, attributed per page. Not investment advice.<p class="mm-print-url">Page URL: <span id="mm-print-url"></span></p><script>(function(){var s=function(){var e=document.getElementById("mm-print-url");if(e)e.textContent=location.href},c=[];s();addEventListener("beforeprint",function(){s();c=[].slice.call(document.querySelectorAll("details:not([open])"));c.forEach(function(d){d.open=true})});addEventListener("afterprint",function(){c.forEach(function(d){d.open=false});c=[]})})()</script>`
+  footer: `${i18n.t("X_FOOTER")}<p class="mm-print-url">${i18n.t("X_PRINT_URL")} <span id="mm-print-url"></span></p><script>(function(){var s=function(){var e=document.getElementById("mm-print-url");if(e)e.textContent=location.href},c=[];s();addEventListener("beforeprint",function(){s();c=[].slice.call(document.querySelectorAll("details:not([open])"));c.forEach(function(d){d.open=true})});addEventListener("afterprint",function(){c.forEach(function(d){d.open=false});c=[]})})()</script>`
 };

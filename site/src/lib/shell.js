@@ -6,6 +6,8 @@ import {DRAFT_CONSEQUENCE, FRESHNESS_LINE, NAV_LABEL, SKIP_LINK_TEXT} from "./co
 import {failureBlocks, noscriptHtml} from "./state-blocks.js";
 import {installCarry} from "./carry.js";
 import {langSwitchHtml} from "./lang-switch.js";
+import {i18n} from "./i18n.js";
+const X = (key, params) => i18n.t(key, params);
 
 const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"})[c]);
 // V8: the mode pages carry only the keys that stay meaningful for them (carry.js CARRY_KEYS); every other header link carries the whole hash as before.
@@ -40,5 +42,5 @@ export function pageHead(html, boot, page, now = Date.now()) {
 
 export function attributionBlock(html, seriesMeta, indicatorIds = null) {
   const list = sourceAttributions(seriesMeta, indicatorIds);
-  return html`<section class="mm-attribution" id="source-attribution"><h2>Sources</h2>${list.length === 0 ? html`<p>No source attribution available.</p>` : html`<ul>${list.map((s) => html`<li>${s.url ? html`<a href="${s.url}" rel="noopener">${s.name}</a>` : s.name}${s.attribution ? html`: ${s.attribution}` : ""}</li>`)}</ul>`}</section>`;
+  return html`<section class="mm-attribution" id="source-attribution"><h2>${X("X_SOURCES_HEADING")}</h2>${list.length === 0 ? html`<p>${X("X_NO_ATTRIBUTION")}</p>` : html`<ul>${list.map((s) => html`<li>${s.url ? html`<a href="${s.url}" rel="noopener">${s.name}</a>` : s.name}${s.attribution ? html`: ${s.attribution}` : ""}</li>`)}</ul>`}</section>`;
 }

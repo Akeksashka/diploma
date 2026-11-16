@@ -2563,5 +2563,325 @@
   "t": "Macro Monitor",
   "status": "reviewed",
   "reviewed_on": "2026-11-15"
+ },
+ "X_SOURCES_HEADING": {
+  "t": "Джерела",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_NO_ATTRIBUTION": {
+  "t": "Немає відомостей про джерела.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_PREVIOUS": {
+  "t": "Попереднє значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_NEW": {
+  "t": "Нове значення",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_ABS": {
+  "t": "Ревізія (абс.)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_PCT": {
+  "t": "Ревізія (%)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_KIND": {
+  "t": "Вид",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_CLASS": {
+  "t": "Клас",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_KNOWN_AT": {
+  "t": "Відомо з (вінтаж)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_VERSION": {
+  "t": "Версія",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_VINTAGE_LABEL": {
+  "t": "Позначка вінтажу",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_SOURCE_TS": {
+  "t": "Час публікації в джерелі",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_LOAD_KIND": {
+  "t": "Тип завантаження",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_RECENT": {
+  "t": "Останні ревізії",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_RECENT_INTRO": {
+  "t": "Ревізії за останні 12 місяців у порядку експорту. Показано {shown} із {of}.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_OMITTED": {
+  "t": "{omitted} рядків не показано, оскільки вони не є основним рядом опублікованого індикатора.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_EDITIONS": {
+  "t": "Іменовані видання",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_SERIES_COUNTRY": {
+  "t": "Ряд (країна)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_SUMMARY": {
+  "t": "{indicator}: {periods}, {versions}. Версія з позначкою «{earliest}» — це початкове значення історії періоду, а не ревізія.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_PERIODS#one": {
+  "t": "{n} довідковий період",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_PERIODS#other": {
+  "t": "{n} довідкового періоду",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_VERSIONS#one": {
+  "t": "{n} збережена версія",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_VERSIONS#other": {
+  "t": "{n} збереженої версії",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_VINTAGE_ONE": {
+  "t": "Історія вінтажів одного ряду",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_VINTAGE_HISTORY": {
+  "t": "Історія вінтажів",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_CLASS_SELECT": {
+  "t": "Клас ревізій",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_PAGE_VINTAGE_VIEW": {
+  "t": "Вінтажі та ревізії",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_SC_COMMON_PERIOD": {
+  "t": "Спільний довідковий період рейтингу",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_SC_SPREAD_DAYS": {
+  "t": "Розкид довідкових періодів (днів)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_SC_COUNTRIES_RANKED": {
+  "t": "Країн у рейтингу",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_SC_NOT_ALIGNED": {
+  "t": "Не узгоджено",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_SC_FIGURE_SENTENCE": {
+  "t": "Показник країни — це {label}.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_SPREAD_HEAD": {
+  "t": "Розкид довідкових періодів ранжованого набору: {spread}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_SPREAD_LIMIT": {
+  "t": " (ліміт {days} днів)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_SPREAD_NA": {
+  "t": "н/д",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_SPREAD_DAYS#one": {
+  "t": "{n} день",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_SPREAD_DAYS#other": {
+  "t": "{n} дня",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_SPREAD_COMMON": {
+  "t": "; спільний довідковий період рейтингу {period}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_SPREAD_RANKED": {
+  "t": "; країн у рейтингу {n}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_SPREAD_UNALIGNED": {
+  "t": "; показано, але не ранжовано через неузгодженість: {n}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_PEER_RANGE_SAME": {
+  "t": " ({n} країн на індикатор)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_PEER_RANGE": {
+  "t": " (від {min} до {max} країн на індикатор)",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_EXP_FROM_YEAR": {
+  "t": "З року",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_EXP_TO_YEAR": {
+  "t": "До року",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_EXP_FIRST": {
+  "t": "перший",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_EXP_LAST": {
+  "t": "останній",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_EXP_BASE_PERIOD": {
+  "t": "Базовий період",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_EXP_AUTO_BASE": {
+  "t": "перший спільний період",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_UNIT_YOY": {
+  "t": "% зміни до того самого періоду роком раніше",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_UNIT_DEFAULT_TF": {
+  "t": "типове перетворення індикатора: {label}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_UNIT_MULT": {
+  "t": "значення в {unit} x 10^{mult}",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_UNIT_REBASE": {
+  "t": "індекс, {base} = 100",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_PAGE_DOMAIN": {
+  "t": "Картка домену",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_PAGE_EXPLORER": {
+  "t": "Оглядач",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_PAGE_EXPLORER_H1": {
+  "t": "Оглядач часових рядів",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_PAGE_HOME": {
+  "t": "Картки країн",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_FOOTER": {
+  "t": "Macro Monitor. Дані з публічних джерел, із зазначенням джерела на кожній сторінці. Не є інвестиційною порадою.",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_PRINT_URL": {
+  "t": "Адреса сторінки:",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_PERIODS#few": {
+  "t": "{n} довідкові періоди",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_PERIODS#many": {
+  "t": "{n} довідкових періодів",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_VERSIONS#few": {
+  "t": "{n} збережені версії",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_REV_VERSIONS#many": {
+  "t": "{n} збережених версій",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_SPREAD_DAYS#few": {
+  "t": "{n} дні",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
+ },
+ "X_SPREAD_DAYS#many": {
+  "t": "{n} днів",
+  "status": "reviewed",
+  "reviewed_on": "2026-11-16"
  }
 }

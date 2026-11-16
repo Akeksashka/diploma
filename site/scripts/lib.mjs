@@ -5,6 +5,7 @@ import {join, posix, relative, sep} from "node:path";
 import {gzipSync} from "node:zlib";
 import {countryHeader} from "../src/lib/country-model.js";
 import {firstDomainId, indicatorHeader} from "../src/lib/indicator-model.js";
+import {i18n} from "../src/lib/i18n.js";
 import {CAVEAT, DRAFT_BAND_TITLES, DRAFT_BROWSE_SUMMARY, DRAFT_GROUP_BROWSE} from "../src/lib/copy.js";
 import {revisionsBandOpen} from "../src/lib/revisions-view.js";
 import {DOMAINS_TITLE, domainsListHtml} from "../src/lib/domains-list.js";
@@ -175,10 +176,10 @@ const pageH1 = (prefix, name) => `<h1>${escHtml(name ? `${prefix}: ${name}` : pr
 export function domainPageSource(domainId, name = null) {
   if (!DOMAIN_ID_RE.test(domainId)) throw new Error(`unsafe domain_id: ${JSON.stringify(domainId)}`);
   return `---
-title: Domain scorecard
+title: ${i18n.t("X_PAGE_DOMAIN")}
 ---
 
-${pageH1("Domain scorecard", name)}
+${pageH1(i18n.t("X_PAGE_DOMAIN"), name)}
 
 <div class="mm-filterbar-slot" id="filterbar-slot"></div>
 
@@ -251,10 +252,10 @@ export function explorerPageSource(manifest) {
     .map((s) => `  ${JSON.stringify(s.id)}: FileAttachment(${JSON.stringify(`data/${s.path}`)})`)
     .join(",\n");
   return `---
-title: Explorer
+title: ${i18n.t("X_PAGE_EXPLORER")}
 ---
 
-# Time-series explorer
+# ${i18n.t("X_PAGE_EXPLORER_H1")}
 
 \`\`\`js
 import * as Plot from "@observablehq/plot";
@@ -329,7 +330,7 @@ if (initial) {
   initial.note = initial.note || start.fell || store.get().note;
 }
 const sel = {entities: initial ? [...initial.entities] : [], touched: false, last: null};
-const indicatorBox = ctx ? selectBox(html, {id: "explorer-indicator", label: "Indicator", groups: pickerGroups(ctx, store.get()), value: initial.indicator ?? undefined}) : null;
+const indicatorBox = ctx ? selectBox(html, {id: "explorer-indicator", label: ${JSON.stringify(i18n.t("DRAFT_FILTER_LABELS.indicator"))}, groups: pickerGroups(ctx, store.get()), value: initial.indicator ?? undefined}) : null;
 const pIndicator = ctx ? Generators.input(indicatorBox.querySelector("select")) : null;
 // The bar's Domain and Frequency narrow this picker (a chosen indicator stays when still offered, else the first offered); removed when this cell re-runs.
 if (ctx) {
@@ -493,10 +494,10 @@ export function revisionsPageSource(manifest) {
     .map((s) => `  ${JSON.stringify(s.id)}: FileAttachment(${JSON.stringify(`data/${s.path}`)})`)
     .join(",\n");
   return `---
-title: Revisions
+title: ${i18n.t("HOME_LINKS.revisions")}
 ---
 
-# Vintage and revision view
+# ${i18n.t("X_PAGE_VINTAGE_VIEW")}
 
 ${revisionsBandOpen()}
 
@@ -534,9 +535,9 @@ setBusy(busy, false);
 const ctx = boot.derived?.ctx ?? null;
 // url() only resolves the address of each file (for the detail links); it does not fetch the file.
 const revisionUrls = ctx ? Object.fromEntries(await Promise.all(Object.entries(revisionFiles).map(async ([id, f]) => [id, await f.url()]))) : {};
-const kindBox = ctx ? selectBox(html, {id: "revision-kind", label: "Revision class", options: KIND_OPTIONS}) : null;
+const kindBox = ctx ? selectBox(html, {id: "revision-kind", label: ${JSON.stringify(i18n.t("X_REV_CLASS_SELECT"))}, options: KIND_OPTIONS}) : null;
 const pKind = ctx ? Generators.input(kindBox.querySelector("select")) : null;
-const histIndicatorBox = ctx ? selectBox(html, {id: "vintage-indicator", label: "Indicator", options: indicatorChoices(ctx)}) : null;
+const histIndicatorBox = ctx ? selectBox(html, {id: "vintage-indicator", label: ${JSON.stringify(i18n.t("DRAFT_FILTER_LABELS.indicator"))}, options: indicatorChoices(ctx)}) : null;
 const pHistIndicator = ctx ? Generators.input(histIndicatorBox.querySelector("select")) : null;
 \`\`\`
 
@@ -573,7 +574,7 @@ const pPeriod = hbox ? Generators.input(hbox.period.querySelector("select")) : n
 
 \`\`\`js
 if (hbox) {
-  display(html\`<div class="mm-revisions"><h2>Vintage history</h2><div>\${histIndicatorBox}\${hbox.series}\${hbox.period}</div></div>\`);
+  display(html\`<div class="mm-revisions"><h2>${i18n.t("X_REV_VINTAGE_HISTORY")}</h2><div>\${histIndicatorBox}\${hbox.series}\${hbox.period}</div></div>\`);
   display(histBusy);
 }
 \`\`\`
@@ -611,7 +612,7 @@ export function countryPageSource(entity, groups, domainIds, manifest = null) {
   const scorecards = domainIds.filter((d) => d !== "global").map((d) => `${JSON.stringify(d)}: await FileAttachment("../data/scorecard/${d}.json").json()`).join(", ");
   const attachments = manifest ? seriesPaths(manifest).map((s) => `${JSON.stringify(s.id)}: FileAttachment(${JSON.stringify(`../data/${s.path}`)})`).join(", ") : "";
   return `---
-title: Country
+title: ${i18n.t("DRAFT_MODE_LABELS.country")}
 ---
 
 <div role="group" aria-label="${escHtml(h.labels.crumb)}" class="mm-crumb"><ol><li><a href="../">${escHtml(h.labels.home)}</a></li><li><a href="../#countries">${escHtml(h.labels.countries)}</a></li><li aria-current="page">${escHtml(h.name)}</li></ol></div>
@@ -716,7 +717,7 @@ export function indicatorPageSource(indicator, domains, transformId = null, mani
   ].filter(([, v]) => v !== null);
   const notes = h.notes.length ? `<ul class="mm-indicator-notes" aria-label="${escHtml(f.notes)}">${h.notes.map((n) => `<li>${escHtml(n)}</li>`).join("")}</ul>` : "";
   return `---
-title: Indicator
+title: ${i18n.t("DRAFT_FILTER_LABELS.indicator")}
 ---
 
 <div role="group" aria-label="${escHtml(h.labels.crumb)}" class="mm-crumb"><ol><li><a href="../">${escHtml(h.labels.home)}</a></li><li><a href="../#indicators">${escHtml(h.labels.indicators)}</a></li><li aria-current="page">${escHtml(h.name)}</li></ol></div>
@@ -733,7 +734,7 @@ ${compareCells({rel: "../", fixedId: indicator.indicator_id, domainIds: domains.
 
 // R18: the home page (PG-HOME). The country and indicator lists are static HTML built from meta/*.json, so they are in the built page
 // without JavaScript; the only script cells are the shell (freshness line, stale banner) and the filter enhancement. No heatmap, figure or status block.
-const HOME_TITLE = "Country scorecards";
+const HOME_TITLE = i18n.t("X_PAGE_HOME");
 const SHELL_CELLS = (importPath, withFilters) => `<div class="mm-home-shell">
 
 \`\`\`js
