@@ -725,7 +725,7 @@ def cmd_export(args: argparse.Namespace, settings: Settings, root: Path) -> int:
     out = out if out.is_absolute() else root / out
     generated = datetime.now(UTC)
     with connect(_dsn(settings)) as conn:
-        check_schema_version(conn)
+        check_schema_version(conn, relation="ops.v_schema_version")
         conn.rollback()
         row = conn.execute(
             "SELECT git_sha FROM analytics.v_run_published WHERE ingest_run_id = %s "

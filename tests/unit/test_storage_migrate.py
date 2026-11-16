@@ -64,3 +64,18 @@ def test_pooled_dsn_detection() -> None:
     assert is_pooled_dsn("postgresql://u@ep-a-b-123-pooler.eu.neon.tech/db")
     assert not is_pooled_dsn("postgresql://u@ep-a-b-123.eu.neon.tech/db")
     assert not is_pooled_dsn("host=localhost dbname=x")
+
+
+def test_relation_default_is_the_table() -> None:
+    assert migrate.SCHEMA_MIGRATION_RELATION == "ops.schema_migration"
+
+
+def test_schema_version_view_migration_is_owner_rights_and_reader_only() -> None:
+    files = {m.name: m for m in migrate.discover()}
+    text = files["ops_schema_version_view"].sql
+    sql = "\n".join(line for line in text.splitlines() if not line.startswith("--"))
+    assert "CREATE VIEW ops.v_schema_version" in sql
+    assert "security_invoker" not in sql
+    assert "applied_at" not in sql.split("CREATE VIEW", 1)[1].split(";", 1)[0]
+    assert sql.count("GRANT") == 1
+    assert "'mm_reader' || sfx" in sql

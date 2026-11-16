@@ -263,3 +263,34 @@ def test_cli_wiring(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
         cli.main(["check-site", "--site-dir", str(tmp_path / "nope"), "--root", str(tmp_path)])
         == 20
     )
+
+
+def test_cmd_export_checks_schema_version_through_the_view(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """ADR-038: export runs DB-03 against ops.v_schema_version (mm_reader cannot read the table)."""
+    seen: dict[str, Any] = {}
+
+    class Stop(Exception):
+        pass
+
+    class FakeConn:
+        def __enter__(self) -> FakeConn:
+            return self
+
+        def __exit__(self, *exc: object) -> None:
+            return None
+
+    def fake_check(conn: object, *args: object, **kwargs: object) -> int:
+        seen["args"] = args
+        seen["kwargs"] = kwargs
+        raise Stop
+
+    monkeypatch.setenv("DATABASE_URL", "postgresql://u@h/d")
+    monkeypatch.setattr(cli, "connect", lambda dsn: FakeConn())
+    monkeypatch.setattr(cli, "check_schema_version", fake_check)
+    with pytest.raises(Stop):
+        cli.main(
+            ["export", "--ingest-run-id", "3", "--out", str(tmp_path), "--root", str(tmp_path)]
+        )
+    assert seen == {"args": (), "kwargs": {"relation": "ops.v_schema_version"}}
