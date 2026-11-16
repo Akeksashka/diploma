@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<title>Country | Macro Monitor</title>
+
+<link rel="preload" as="style" href="./_import/style.10f16815.css">
+<link rel="stylesheet" type="text/css" href="./_import/style.10f16815.css">
+<link rel="modulepreload" href="./_observablehq/client.3ea4afc8.js">
+<link rel="modulepreload" href="./_observablehq/runtime.13bc3751.js">
+<link rel="modulepreload" href="./_observablehq/stdlib.f22cc9cb.js">
+<link rel="modulepreload" href="./_import/lib/manifest.e8924a5e.js">
+<link rel="modulepreload" href="./_import/lib/meta.05050e69.js">
+<link rel="modulepreload" href="./_import/lib/shell.c1229d1a.js">
+<link rel="modulepreload" href="./_import/lib/picker.08aaf4ef.js">
+<link rel="modulepreload" href="./_import/lib/filter-store.e93a377d.js">
+<link rel="modulepreload" href="./_import/lib/copy.11b4a285.js">
+<link rel="modulepreload" href="./_import/lib/state-blocks.81d10981.js">
+<link rel="modulepreload" href="./_npm/htl@1.0.0/11521f02.js">
+<link rel="modulepreload" href="./_import/lib/stale.ac9ba480.js">
+<link rel="modulepreload" href="./_import/lib/attribution.a296f2f6.js">
+<link rel="modulepreload" href="./_import/lib/carry.5a787523.js">
+<link rel="modulepreload" href="./_import/lib/lang-switch.e5b7f9b7.js">
+<link rel="modulepreload" href="./_import/lib/i18n.4f9e47d5.js">
+<link rel="modulepreload" href="./_import/lib/filter-bar-options.cd9f6ad6.js">
+<link rel="modulepreload" href="./_import/lib/filter-model.08517389.js">
+<link rel="modulepreload" href="./_import/lib/sort.6c0c3800.js">
+<link rel="modulepreload" href="./_import/lib/hash.54a4e297.js">
+<link rel="modulepreload" href="./_import/i18n/dictionaries.3d035f38.js">
+<link rel="modulepreload" href="./_import/lib/code-text.538effeb.js">
+<script type="module">
+
+import {define} from "./_observablehq/client.3ea4afc8.js";
+import {registerFile} from "./_observablehq/stdlib.f22cc9cb.js";
+
+registerFile("./data/manifest.json", {"name":"./data/manifest.json","mimeType":"application/json","path":"./_file/data/manifest.25811262.json","lastModified":1794812123571,"size":7928});
+registerFile("./data/meta/entities.json", {"name":"./data/meta/entities.json","mimeType":"application/json","path":"./_file/data/meta/entities.d8749e4e.json","lastModified":1794812123571,"size":10096});
+registerFile("./data/meta/groups.json", {"name":"./data/meta/groups.json","mimeType":"application/json","path":"./_file/data/meta/groups.277c1c43.json","lastModified":1794812123571,"size":9335});
+
+define({id: "2ab235e2", outputs: ["parseManifest","listOf","pageHead","countryPicker","createFilterStore","R","busyBlock","loadAll","setBusy"], body: async () => {
+const [{parseManifest}, {listOf}, {pageHead}, {countryPicker}, {createFilterStore}, {DRAFT_REGIONS: R}, {busyBlock, loadAll, setBusy}] = await Promise.all([import("./_import/lib/manifest.e8924a5e.js"), import("./_import/lib/meta.05050e69.js"), import("./_import/lib/shell.c1229d1a.js"), import("./_import/lib/picker.08aaf4ef.js"), import("./_import/lib/filter-store.e93a377d.js"), import("./_import/lib/copy.11b4a285.js"), import("./_import/lib/state-blocks.81d10981.js")]);
+
+return {parseManifest,listOf,pageHead,countryPicker,createFilterStore,R,busyBlock,loadAll,setBusy};
+}});
+
+define({id: "7fef4410", inputs: ["busyBlock","html","R","display"], outputs: ["busy"], body: (busyBlock,html,R,display) => {
+const busy = busyBlock(html, R.loadingData);
+display(busy);
+return {busy};
+}});
+
+define({id: "10e6584c", inputs: ["loadAll","R","FileAttachment","parseManifest","listOf","setBusy","busy","display","pageHead","html"], outputs: ["boot"], body: async (loadAll,R,FileAttachment,parseManifest,listOf,setBusy,busy,display,pageHead,html) => {
+// A failed file never throws into the page: loadAll returns one failed region per file (T105). The picker reads meta/entities.json and meta/groups.json only (AC-V2-62); the list below is static.
+const boot = await loadAll([
+  {key: "manifest", region: R.manifest, load: () => FileAttachment("./data/manifest.json").json(), parse: parseManifest},
+  {key: "meta", region: R.meta, load: async () => ({entities: await FileAttachment("./data/meta/entities.json").json(), groups: await FileAttachment("./data/meta/groups.json").json()}),
+    parse: (m) => ({entities: listOf(m.entities, "entities"), groups: listOf(m.groups, "groups")})}
+]);
+setBusy(busy, false);
+display(pageHead(html, boot, "lists"));
+return {boot};
+}});
+
+define({id: "31ec5dd1", inputs: ["boot","createFilterStore","globalThis","countryPicker","html"], body: (boot,createFilterStore,globalThis,countryPicker,html) => {
+if (boot.ok) {
+  const {entities, groups} = boot.data.meta;
+  const store = createFilterStore({win: window, maxEntities: 5, known: {entities: new Set(entities.map((e) => e.entity_id)), groups: new Set(groups.map((g) => g.group_id))}});
+  globalThis.__mmFilterStore = store;
+  document.getElementById("picker-slot").replaceChildren(countryPicker(html, {entities, groups, store, hrefFor: (id) => `./country/${id}`}));
+}
+}});
+
+</script>
+</head>
+<body>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<a class="mm-skip" href="#observablehq-main">Skip to main content</a>
+<div class="mm-header"><a class="mm-site-title" href="./">Macro Monitor</a>
+<nav class="mm-nav" aria-label="Main navigation"><ul><li><a href="./" data-carry="">Home</a></li><li><a href="./country" data-carry="country" aria-current="page">Country</a></li><li><a href="./compare" data-carry="compare">Compare</a></li><li><a href="./explorer" data-carry="">Time series</a></li><li><a href="./domains" data-carry="">Domains</a></li><li><a href="./revisions" data-carry="">Revisions</a></li></ul></nav>
+<a class="mm-lang" rel="alternate external" href="./uk/country" lang="uk" hreflang="uk" data-carry="">Українська</a></div>
+<noscript><p class="mm-noscript" role="note">This dashboard needs JavaScript to show its tables and charts. Enable JavaScript and reload the page.</p></noscript>
+</header>
+<main id="observablehq-main" class="observablehq">
+<h1>Country</h1>
+<div class="mm-filterbar-slot" id="filterbar-slot" data-mode="country"><div class="mm-mode-switch" role="group" aria-label="Mode"><ul><li><a href="./country" data-carry="country" aria-current="page">Country</a></li><li><a href="./compare" data-carry="compare">Compare</a></li></ul></div></div>
+<div class="observablehq observablehq--block"><!--:2ab235e2:--></div>
+<div class="observablehq observablehq--block"><!--:7fef4410:--></div>
+<div class="observablehq observablehq--block"><!--:10e6584c:--></div>
+<div class="mm-picker-slot" id="picker-slot"></div>
+<div class="observablehq observablehq--block"><!--:31ec5dd1:--></div>
+<section id="countries" class="mm-home-list" aria-labelledby="countries-heading"><h2 id="countries-heading"><a class="observablehq-header-anchor" href="#countries-heading">Choose a country</a></h2><ul id="country-list"><li><a href="./country/ARG" data-carry="country" data-carry-set="c=ARG">Argentina</a></li><li><a href="./country/AUS" data-carry="country" data-carry-set="c=AUS">Australia</a></li><li><a href="./country/AUT" data-carry="country" data-carry-set="c=AUT">Austria</a></li><li><a href="./country/BEL" data-carry="country" data-carry-set="c=BEL">Belgium</a></li><li><a href="./country/BRA" data-carry="country" data-carry-set="c=BRA">Brazil</a></li><li><a href="./country/BGR" data-carry="country" data-carry-set="c=BGR">Bulgaria</a></li><li><a href="./country/CAN" data-carry="country" data-carry-set="c=CAN">Canada</a></li><li><a href="./country/CHN" data-carry="country" data-carry-set="c=CHN">China</a></li><li><a href="./country/HRV" data-carry="country" data-carry-set="c=HRV">Croatia</a></li><li><a href="./country/CYP" data-carry="country" data-carry-set="c=CYP">Cyprus</a></li><li><a href="./country/CZE" data-carry="country" data-carry-set="c=CZE">Czechia</a></li><li><a href="./country/DNK" data-carry="country" data-carry-set="c=DNK">Denmark</a></li><li><a href="./country/EST" data-carry="country" data-carry-set="c=EST">Estonia</a></li><li><a href="./country/FIN" data-carry="country" data-carry-set="c=FIN">Finland</a></li><li><a href="./country/FRA" data-carry="country" data-carry-set="c=FRA">France</a></li><li><a href="./country/DEU" data-carry="country" data-carry-set="c=DEU">Germany</a></li><li><a href="./country/GRC" data-carry="country" data-carry-set="c=GRC">Greece</a></li><li><a href="./country/HUN" data-carry="country" data-carry-set="c=HUN">Hungary</a></li><li><a href="./country/IND" data-carry="country" data-carry-set="c=IND">India</a></li><li><a href="./country/IDN" data-carry="country" data-carry-set="c=IDN">Indonesia</a></li><li><a href="./country/IRL" data-carry="country" data-carry-set="c=IRL">Ireland</a></li><li><a href="./country/ITA" data-carry="country" data-carry-set="c=ITA">Italy</a></li><li><a href="./country/JPN" data-carry="country" data-carry-set="c=JPN">Japan</a></li><li><a href="./country/LVA" data-carry="country" data-carry-set="c=LVA">Latvia</a></li><li><a href="./country/LTU" data-carry="country" data-carry-set="c=LTU">Lithuania</a></li><li><a href="./country/LUX" data-carry="country" data-carry-set="c=LUX">Luxembourg</a></li><li><a href="./country/MLT" data-carry="country" data-carry-set="c=MLT">Malta</a></li><li><a href="./country/MEX" data-carry="country" data-carry-set="c=MEX">Mexico</a></li><li><a href="./country/NLD" data-carry="country" data-carry-set="c=NLD">Netherlands</a></li><li><a href="./country/POL" data-carry="country" data-carry-set="c=POL">Poland</a></li><li><a href="./country/PRT" data-carry="country" data-carry-set="c=PRT">Portugal</a></li><li><a href="./country/ROU" data-carry="country" data-carry-set="c=ROU">Romania</a></li><li><a href="./country/SAU" data-carry="country" data-carry-set="c=SAU">Saudi Arabia</a></li><li><a href="./country/SVK" data-carry="country" data-carry-set="c=SVK">Slovakia</a></li><li><a href="./country/SVN" data-carry="country" data-carry-set="c=SVN">Slovenia</a></li><li><a href="./country/ZAF" data-carry="country" data-carry-set="c=ZAF">South Africa</a></li><li><a href="./country/KOR" data-carry="country" data-carry-set="c=KOR">South Korea</a></li><li><a href="./country/ESP" data-carry="country" data-carry-set="c=ESP">Spain</a></li><li><a href="./country/SWE" data-carry="country" data-carry-set="c=SWE">Sweden</a></li><li><a href="./country/TUR" data-carry="country" data-carry-set="c=TUR">Turkiye</a></li><li><a href="./country/GBR" data-carry="country" data-carry-set="c=GBR">United Kingdom</a></li><li><a href="./country/USA" data-carry="country" data-carry-set="c=USA">United States</a></li></ul><h3 id="aggregates"><a class="observablehq-header-anchor" href="#aggregates">Aggregates</a></h3><ul id="aggregate-list"><li><a href="./country/EA" data-carry="country" data-carry-set="c=EA">Euro area</a></li><li><a href="./country/EU27" data-carry="country" data-carry-set="c=EU27">European Union (27)</a></li></ul></section>
+</main>
+<footer id="observablehq-footer">
+<div>Macro Monitor. Data from public sources, attributed per page. Not investment advice.<p class="mm-print-url">Page URL: <span id="mm-print-url"></span></p><script>(function(){var s=function(){var e=document.getElementById("mm-print-url");if(e)e.textContent=location.href},c=[];s();addEventListener("beforeprint",function(){s();c=[].slice.call(document.querySelectorAll("details:not([open])"));c.forEach(function(d){d.open=true})});addEventListener("afterprint",function(){c.forEach(function(d){d.open=false});c=[]})})()</script></div>
+</footer>
+</div>
+</body>
+</html>

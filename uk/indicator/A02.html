@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<title>Показник | Macro Monitor</title>
+
+<link rel="preload" as="style" href="../_import/style.10f16815.css">
+<link rel="stylesheet" type="text/css" href="../_import/style.10f16815.css">
+<link rel="modulepreload" href="../_observablehq/client.3ea4afc8.js">
+<link rel="modulepreload" href="../_observablehq/runtime.13bc3751.js">
+<link rel="modulepreload" href="../_observablehq/stdlib.f22cc9cb.js">
+<link rel="modulepreload" href="../_node/@observablehq/plot@0.6.18/index.702142e3.js">
+<link rel="modulepreload" href="../_import/lib/manifest.e8924a5e.js">
+<link rel="modulepreload" href="../_import/lib/meta.05050e69.js">
+<link rel="modulepreload" href="../_import/lib/shell.c1229d1a.js">
+<link rel="modulepreload" href="../_import/lib/compare-page.ced7ce5b.js">
+<link rel="modulepreload" href="../_import/lib/filter-store.e93a377d.js">
+<link rel="modulepreload" href="../_import/lib/filter-model.08517389.js">
+<link rel="modulepreload" href="../_import/lib/history.0b12c899.js">
+<link rel="modulepreload" href="../_import/lib/copy.11b4a285.js">
+<link rel="modulepreload" href="../_import/lib/state-blocks.81d10981.js">
+<link rel="modulepreload" href="../_npm/htl@1.0.0/11521f02.js">
+<link rel="modulepreload" href="../_import/lib/stale.ac9ba480.js">
+<link rel="modulepreload" href="../_import/lib/attribution.a296f2f6.js">
+<link rel="modulepreload" href="../_import/lib/carry.5a787523.js">
+<link rel="modulepreload" href="../_import/lib/lang-switch.e5b7f9b7.js">
+<link rel="modulepreload" href="../_import/lib/i18n.4f9e47d5.js">
+<link rel="modulepreload" href="../_import/lib/bar-list.91fbd676.js">
+<link rel="modulepreload" href="../_import/lib/choropleth.2438794c.js">
+<link rel="modulepreload" href="../_import/lib/choropleth-model.fcbeeec4.js">
+<link rel="modulepreload" href="../_import/lib/compare-controls.352a78ad.js">
+<link rel="modulepreload" href="../_import/lib/explorer.8bfe86f4.js">
+<link rel="modulepreload" href="../_import/lib/glyphs.a14b04e8.js">
+<link rel="modulepreload" href="../_import/lib/heatmap.8d634dcc.js">
+<link rel="modulepreload" href="../_import/lib/indicator-model.8c928951.js">
+<link rel="modulepreload" href="../_import/lib/indicator-view.d0c3dcee.js">
+<link rel="modulepreload" href="../_import/lib/multi-line.b1a02a4f.js">
+<link rel="modulepreload" href="../_import/lib/scatter.8146edb1.js">
+<link rel="modulepreload" href="../_import/lib/scorecard-view.fad76ad7.js">
+<link rel="modulepreload" href="../_import/lib/scorecard.7832fb4d.js">
+<link rel="modulepreload" href="../_import/lib/time-heatmap.5346feb2.js">
+<link rel="modulepreload" href="../_import/lib/hash.54a4e297.js">
+<link rel="modulepreload" href="../_import/lib/figure.39e330d9.js">
+<link rel="modulepreload" href="../_import/lib/tokens.0779967f.js">
+<link rel="modulepreload" href="../_import/lib/tip.5281e05d.js">
+<link rel="modulepreload" href="../_import/lib/units.648eaacc.js">
+<link rel="modulepreload" href="../_import/lib/code-text.538effeb.js">
+<link rel="modulepreload" href="../_import/i18n/dictionaries.3d035f38.js">
+<link rel="modulepreload" href="../_import/lib/bins.04d14116.js">
+<link rel="modulepreload" href="../_import/lib/blocked.83709a6b.js">
+<link rel="modulepreload" href="../_import/lib/caption.efba8170.js">
+<link rel="modulepreload" href="../_import/lib/caption-view.5fa7e18b.js">
+<link rel="modulepreload" href="../_import/lib/compare-data.27349a39.js">
+<link rel="modulepreload" href="../_import/lib/compat.b6f64b1c.js">
+<link rel="modulepreload" href="../_import/lib/hidden-rows.3a139033.js">
+<link rel="modulepreload" href="../_import/lib/missing.1677e491.js">
+<link rel="modulepreload" href="../_import/lib/period.354df927.js">
+<link rel="modulepreload" href="../_import/lib/sort.6c0c3800.js">
+<link rel="modulepreload" href="../_import/lib/hatch.2769258a.js">
+<link rel="modulepreload" href="../_import/lib/filter-bar-options.cd9f6ad6.js">
+<link rel="modulepreload" href="../_import/lib/filter-country.5212c4ca.js">
+<link rel="modulepreload" href="../_import/lib/filter-period.86b66c90.js">
+<link rel="modulepreload" href="../_import/lib/peers.0cc41d91.js">
+<link rel="modulepreload" href="../_import/lib/series-meta.97ae51dc.js">
+<link rel="modulepreload" href="../_import/lib/rebase.0faf65ae.js">
+<link rel="modulepreload" href="../_import/lib/states.465c23b4.js">
+<link rel="modulepreload" href="../_import/lib/about-value.4bc9532a.js">
+<link rel="modulepreload" href="../_import/lib/country-view.26e4c2a7.js">
+<link rel="modulepreload" href="../_import/lib/peers-view.3517c99f.js">
+<link rel="modulepreload" href="../_import/lib/rank-model.390651f3.js">
+<link rel="modulepreload" href="../_import/lib/rank-view.8f08f319.js">
+<link rel="modulepreload" href="../_import/lib/home-constants.7dc2f0cb.js">
+<link rel="modulepreload" href="../_import/lib/series-chart.91e18740.js">
+<link rel="modulepreload" href="../_import/lib/heatmap-view.6b30d663.js">
+<link rel="modulepreload" href="../_import/lib/legend.00e625a4.js">
+<link rel="modulepreload" href="../_import/lib/filter-chip.68decacc.js">
+<link rel="modulepreload" href="../_import/lib/point-reader.c43738a4.js">
+<link rel="modulepreload" href="../_import/lib/facts-card.2ce9c843.js">
+<link rel="modulepreload" href="../_import/lib/home-config.1b294592.js">
+<link rel="modulepreload" href="../_npm/apache-arrow@21.2.0/63b06f0b.js">
+<link rel="modulepreload" href="../_npm/parquet-wasm@0.9.0/bd2cf640.js">
+<link rel="modulepreload" href="../_node/d3@7.9.2/index.c8f1bfbe.js">
+<link rel="modulepreload" href="../_npm/tslib@2.9.1/2dc082bf.js">
+<link rel="modulepreload" href="../_npm/flatbuffers@25.9.23/c8db6147.js">
+<link rel="modulepreload" href="../_node/d3-array@3.2.5/index.8fbc5974.js">
+<link rel="modulepreload" href="../_node/d3-axis@3.0.1/index.230361f7.js">
+<link rel="modulepreload" href="../_node/d3-brush@3.0.1/index.47c91d7a.js">
+<link rel="modulepreload" href="../_node/d3-chord@3.0.2/index.eb4e9764.js">
+<link rel="modulepreload" href="../_node/d3-color@3.1.1/index.1a4cec25.js">
+<link rel="modulepreload" href="../_node/d3-contour@4.0.3/index.90e1cbdf.js">
+<link rel="modulepreload" href="../_node/d3-delaunay@6.0.6/index.3a8a98a0.js">
+<link rel="modulepreload" href="../_node/d3-dispatch@3.0.2/index.de780204.js">
+<link rel="modulepreload" href="../_node/d3-drag@3.0.1/index.0bd3a3e6.js">
+<link rel="modulepreload" href="../_node/d3-dsv@3.0.2/index.8ca694c6.js">
+<link rel="modulepreload" href="../_node/d3-ease@3.0.2/index.fa63cb8e.js">
+<link rel="modulepreload" href="../_node/d3-fetch@3.0.2/index.71021dcc.js">
+<link rel="modulepreload" href="../_node/d3-force@3.0.1/index.edc635f2.js">
+<link rel="modulepreload" href="../_node/d3-format@3.1.3/index.ded23b25.js">
+<link rel="modulepreload" href="../_node/d3-geo@3.1.2/index.dcf4bb71.js">
+<link rel="modulepreload" href="../_node/d3-hierarchy@3.1.3/index.58ac6bd0.js">
+<link rel="modulepreload" href="../_node/d3-interpolate@3.0.2/index.afa1c510.js">
+<link rel="modulepreload" href="../_node/d3-path@3.1.1/index.5336189a.js">
+<link rel="modulepreload" href="../_node/d3-polygon@3.0.2/index.e95ac2a7.js">
+<link rel="modulepreload" href="../_node/d3-quadtree@3.0.2/index.0a2abf0d.js">
+<link rel="modulepreload" href="../_node/d3-random@3.0.2/index.f3ff3057.js">
+<link rel="modulepreload" href="../_node/d3-scale@4.0.3/index.94768510.js">
+<link rel="modulepreload" href="../_node/d3-scale-chromatic@3.1.1/index.a4700d2a.js">
+<link rel="modulepreload" href="../_node/d3-selection@3.0.1/index.33231c3e.js">
+<link rel="modulepreload" href="../_node/d3-shape@3.2.1/index.9d41cee7.js">
+<link rel="modulepreload" href="../_node/d3-time@3.1.1/index.03ee5af2.js">
+<link rel="modulepreload" href="../_node/d3-time-format@4.1.1/index.88bcefb7.js">
+<link rel="modulepreload" href="../_node/d3-timer@3.0.2/index.94cd3d41.js">
+<link rel="modulepreload" href="../_node/d3-transition@3.0.2/index.96e34de7.js">
+<link rel="modulepreload" href="../_node/d3-zoom@3.0.1/index.65de6a8b.js">
+<script type="module">
+
+import {define} from "../_observablehq/client.3ea4afc8.js";
+import {registerFile} from "../_observablehq/stdlib.f22cc9cb.js";
+
+registerFile("../data/manifest.json", {"name":"../data/manifest.json","mimeType":"application/json","path":"../_file/data/manifest.25811262.json","lastModified":1794812144498,"size":7928});
+registerFile("../data/meta/domains.json", {"name":"../data/meta/domains.json","mimeType":"application/json","path":"../_file/data/meta/domains.b92fa668.json","lastModified":1794812144511,"size":4005});
+registerFile("../data/meta/entities.json", {"name":"../data/meta/entities.json","mimeType":"application/json","path":"../_file/data/meta/entities.0a5f04aa.json","lastModified":1794812144512,"size":8962});
+registerFile("../data/meta/groups.json", {"name":"../data/meta/groups.json","mimeType":"application/json","path":"../_file/data/meta/groups.24a6fb70.json","lastModified":1794812144515,"size":7615});
+registerFile("../data/meta/indicators.json", {"name":"../data/meta/indicators.json","mimeType":"application/json","path":"../_file/data/meta/indicators.7b366bd0.json","lastModified":1794812144513,"size":45539});
+registerFile("../data/meta/series.json", {"name":"../data/meta/series.json","mimeType":"application/json","path":"../_file/data/meta/series.7b9af9be.json","lastModified":1794812144514,"size":300830});
+registerFile("../data/scorecard/agri.json", {"name":"../data/scorecard/agri.json","mimeType":"application/json","path":"../_file/data/scorecard/agri.3e7baae4.json","lastModified":1794812144524,"size":456876});
+registerFile("../data/scorecard/environment.json", {"name":"../data/scorecard/environment.json","mimeType":"application/json","path":"../_file/data/scorecard/environment.f25cb4d2.json","lastModified":1794812144527,"size":149788});
+registerFile("../data/scorecard/external.json", {"name":"../data/scorecard/external.json","mimeType":"application/json","path":"../_file/data/scorecard/external.8e112ce4.json","lastModified":1794812144532,"size":285873});
+registerFile("../data/scorecard/fin.json", {"name":"../data/scorecard/fin.json","mimeType":"application/json","path":"../_file/data/scorecard/fin.05330eef.json","lastModified":1794812144536,"size":286307});
+registerFile("../data/scorecard/fiscal.json", {"name":"../data/scorecard/fiscal.json","mimeType":"application/json","path":"../_file/data/scorecard/fiscal.f6caf515.json","lastModified":1794812144539,"size":189995});
+registerFile("../data/scorecard/global.json", {"name":"../data/scorecard/global.json","mimeType":"application/json","path":"../_file/data/scorecard/global.75b21346.json","lastModified":1794812144539,"size":3643});
+registerFile("../data/scorecard/growth.json", {"name":"../data/scorecard/growth.json","mimeType":"application/json","path":"../_file/data/scorecard/growth.b4fc85d3.json","lastModified":1794812144543,"size":319902});
+registerFile("../data/scorecard/labour.json", {"name":"../data/scorecard/labour.json","mimeType":"application/json","path":"../_file/data/scorecard/labour.c4af484b.json","lastModified":1794812144545,"size":149851});
+registerFile("../data/scorecard/prices.json", {"name":"../data/scorecard/prices.json","mimeType":"application/json","path":"../_file/data/scorecard/prices.8c1cf4a8.json","lastModified":1794812144547,"size":187654});
+registerFile("../data/scorecard/social.json", {"name":"../data/scorecard/social.json","mimeType":"application/json","path":"../_file/data/scorecard/social.b523f180.json","lastModified":1794812144550,"size":255090});
+registerFile("../data/scorecard/structural.json", {"name":"../data/scorecard/structural.json","mimeType":"application/json","path":"../_file/data/scorecard/structural.c28c963c.json","lastModified":1794812144553,"size":253311});
+registerFile("../data/series/A01.parquet", {"name":"../data/series/A01.parquet","path":"../_file/data/series/A01.4b237f0f.parquet","lastModified":1794812144501,"size":142152});
+registerFile("../data/series/A02.parquet", {"name":"../data/series/A02.parquet","path":"../_file/data/series/A02.ffca579c.parquet","lastModified":1794812144501,"size":81553});
+registerFile("../data/series/A04.parquet", {"name":"../data/series/A04.parquet","path":"../_file/data/series/A04.f66333e4.parquet","lastModified":1794812144501,"size":135409});
+registerFile("../data/series/A05.parquet", {"name":"../data/series/A05.parquet","path":"../_file/data/series/A05.b1e6dd4e.parquet","lastModified":1794812144501,"size":135072});
+registerFile("../data/series/A14.parquet", {"name":"../data/series/A14.parquet","path":"../_file/data/series/A14.b75f96cc.parquet","lastModified":1794812144501,"size":119988});
+registerFile("../data/series/A22.parquet", {"name":"../data/series/A22.parquet","path":"../_file/data/series/A22.6f32c29e.parquet","lastModified":1794812144502,"size":140762});
+registerFile("../data/series/G01.parquet", {"name":"../data/series/G01.parquet","path":"../_file/data/series/G01.719bcb53.parquet","lastModified":1794812144502,"size":357839});
+registerFile("../data/series/G02.parquet", {"name":"../data/series/G02.parquet","path":"../_file/data/series/G02.831045eb.parquet","lastModified":1794812144502,"size":15333});
+registerFile("../data/series/G03.parquet", {"name":"../data/series/G03.parquet","path":"../_file/data/series/G03.ab4120e1.parquet","lastModified":1794812144502,"size":3799});
+registerFile("../data/series/M02.parquet", {"name":"../data/series/M02.parquet","path":"../_file/data/series/M02.4ff0377f.parquet","lastModified":1794812144502,"size":291256});
+registerFile("../data/series/M06.parquet", {"name":"../data/series/M06.parquet","path":"../_file/data/series/M06.ceb43ccd.parquet","lastModified":1794812144502,"size":357221});
+registerFile("../data/series/M07.parquet", {"name":"../data/series/M07.parquet","path":"../_file/data/series/M07.5f30cf53.parquet","lastModified":1794812144503,"size":334425});
+registerFile("../data/series/M09.parquet", {"name":"../data/series/M09.parquet","path":"../_file/data/series/M09.69b3c4e7.parquet","lastModified":1794812144503,"size":227993});
+registerFile("../data/series/M17.parquet", {"name":"../data/series/M17.parquet","path":"../_file/data/series/M17.30cb3414.parquet","lastModified":1794812144503,"size":13033});
+registerFile("../data/series/M18.parquet", {"name":"../data/series/M18.parquet","path":"../_file/data/series/M18.3c2fbc00.parquet","lastModified":1794812144503,"size":206572});
+registerFile("../data/series/Q06.parquet", {"name":"../data/series/Q06.parquet","path":"../_file/data/series/Q06.6c6df3c2.parquet","lastModified":1794812144503,"size":15110});
+registerFile("../data/series/Q08.parquet", {"name":"../data/series/Q08.parquet","path":"../_file/data/series/Q08.026f9a7c.parquet","lastModified":1794812144503,"size":127355});
+registerFile("../geo/entity_geo_join.json", {"name":"../geo/entity_geo_join.json","mimeType":"application/json","path":"../_file/geo/entity_geo_join.e69daca1.json","lastModified":1794812093002,"size":4706});
+registerFile("../geo/europe-countries.geojson", {"name":"../geo/europe-countries.geojson","mimeType":"application/geo+json","path":"../_file/geo/europe-countries.427bbd85.geojson","lastModified":1794812093002,"size":257819});
+
+define({id: "fb8dc96d", outputs: ["Plot","parseManifest","listOf","pageHead","attributionBlock","comparePage","createFilterStore","periodBounds","historySource","R","busyBlock","loadAll","setBusy"], body: async () => {
+const [Plot, {parseManifest}, {listOf}, {pageHead, attributionBlock}, {comparePage}, {createFilterStore}, {periodBounds}, {historySource}, {DRAFT_REGIONS: R}, {busyBlock, loadAll, setBusy}] = await Promise.all([import("../_node/@observablehq/plot@0.6.18/index.702142e3.js"), import("../_import/lib/manifest.e8924a5e.js"), import("../_import/lib/meta.05050e69.js"), import("../_import/lib/shell.c1229d1a.js"), import("../_import/lib/compare-page.ced7ce5b.js"), import("../_import/lib/filter-store.e93a377d.js"), import("../_import/lib/filter-model.08517389.js"), import("../_import/lib/history.0b12c899.js"), import("../_import/lib/copy.11b4a285.js"), import("../_import/lib/state-blocks.81d10981.js")]);
+
+return {Plot,parseManifest,listOf,pageHead,attributionBlock,comparePage,createFilterStore,periodBounds,historySource,R,busyBlock,loadAll,setBusy};
+}});
+
+define({id: "7fef4410", inputs: ["busyBlock","html","R","display"], outputs: ["busy"], body: (busyBlock,html,R,display) => {
+const busy = busyBlock(html, R.loadingData);
+display(busy);
+return {busy};
+}});
+
+define({id: "b51eaa50", inputs: ["loadAll","R","FileAttachment","parseManifest","listOf","setBusy","busy"], outputs: ["boot"], body: async (loadAll,R,FileAttachment,parseManifest,listOf,setBusy,busy) => {
+// A failed file never throws into the page: loadAll returns one failed region per file (T105).
+const boot = await loadAll([
+  {key: "manifest", region: R.manifest, load: () => FileAttachment("../data/manifest.json").json(), parse: parseManifest},
+  {key: "meta", region: R.meta, load: async () => ({series: await FileAttachment("../data/meta/series.json").json(), entities: await FileAttachment("../data/meta/entities.json").json(), indicators: await FileAttachment("../data/meta/indicators.json").json(), domains: await FileAttachment("../data/meta/domains.json").json(), groups: await FileAttachment("../data/meta/groups.json").json()}),
+    parse: (m) => ({seriesMeta: listOf(m.series, "series"), entities: listOf(m.entities, "entities"), indicators: listOf(m.indicators, "indicators"), domains: listOf(m.domains, "domains"), groups: listOf(m.groups, "groups")})},
+  {key: "scorecards", region: R.scorecard, load: async () => ({"agri": await FileAttachment("../data/scorecard/agri.json").json(), "environment": await FileAttachment("../data/scorecard/environment.json").json(), "external": await FileAttachment("../data/scorecard/external.json").json(), "fin": await FileAttachment("../data/scorecard/fin.json").json(), "fiscal": await FileAttachment("../data/scorecard/fiscal.json").json(), "global": await FileAttachment("../data/scorecard/global.json").json(), "growth": await FileAttachment("../data/scorecard/growth.json").json(), "labour": await FileAttachment("../data/scorecard/labour.json").json(), "prices": await FileAttachment("../data/scorecard/prices.json").json(), "social": await FileAttachment("../data/scorecard/social.json").json(), "structural": await FileAttachment("../data/scorecard/structural.json").json()})}
+]);
+setBusy(busy, false);
+return {boot};
+}});
+
+define({id: "1724309e", inputs: ["FileAttachment"], outputs: ["seriesFiles","seriesFile","geoFiles"], body: (FileAttachment) => {
+// FileAttachment must be called in the page (not in an imported module); each one is lazy.
+const seriesFiles = {"A01": FileAttachment("../data/series/A01.parquet"), "A02": FileAttachment("../data/series/A02.parquet"), "A04": FileAttachment("../data/series/A04.parquet"), "A05": FileAttachment("../data/series/A05.parquet"), "A14": FileAttachment("../data/series/A14.parquet"), "A22": FileAttachment("../data/series/A22.parquet"), "G01": FileAttachment("../data/series/G01.parquet"), "G02": FileAttachment("../data/series/G02.parquet"), "G03": FileAttachment("../data/series/G03.parquet"), "M02": FileAttachment("../data/series/M02.parquet"), "M06": FileAttachment("../data/series/M06.parquet"), "M07": FileAttachment("../data/series/M07.parquet"), "M09": FileAttachment("../data/series/M09.parquet"), "M17": FileAttachment("../data/series/M17.parquet"), "M18": FileAttachment("../data/series/M18.parquet"), "Q06": FileAttachment("../data/series/Q06.parquet"), "Q08": FileAttachment("../data/series/Q08.parquet")};
+// Lazy: only the address of the download link is resolved (nothing is fetched).
+const seriesFile = FileAttachment("../data/series/A02.parquet");
+// V54: the map geometry and its join table are static site files, read lazily by C6 only (nothing is fetched here), so only a page that renders C6 carries them.
+const geoFiles = {asset: FileAttachment("../geo/europe-countries.geojson"), join: FileAttachment("../geo/entity_geo_join.json")};
+return {seriesFiles,seriesFile,geoFiles};
+}});
+
+define({id: "361bda78", inputs: ["display","pageHead","html","boot","seriesFile","createFilterStore","periodBounds","globalThis","comparePage","Plot","historySource","seriesFiles","geoFiles","attributionBlock"], body: async (display,pageHead,html,boot,seriesFile,createFilterStore,periodBounds,globalThis,comparePage,Plot,historySource,seriesFiles,geoFiles,attributionBlock) => {
+display(pageHead(html, boot, "scorecard"));
+if (boot.ok) {
+  const md = boot.data.meta;
+  let downloadHref = null;
+  try {
+    downloadHref = (await seriesFile?.url()) ?? null;
+  } catch (e) {
+    downloadHref = null;
+  }
+  const store = createFilterStore({win: window, maxEntities: 5, known: {bounds: periodBounds(boot.data.manifest) ?? undefined,
+    indicators: new Set(md.indicators.map((i) => i.indicator_id)), entities: new Set(md.entities.map((e) => e.entity_id)),
+    groups: new Set(md.groups.map((g) => g.group_id)), domains: new Set(md.domains.map((d) => d.domain_id))}});
+  globalThis.__mmFilterStore = store;
+  store.attach();
+  const inputs = {entities: md.entities.filter((e) => e.is_global !== true), groups: md.groups, domains: md.domains, indicators: md.indicators, series: md.seriesMeta, scorecards: boot.data.scorecards, knownCutoff: boot.data.manifest.known_cutoff ?? null, bounds: periodBounds(boot.data.manifest), manifest: boot.data.manifest};
+  display(comparePage(html, Plot, inputs, historySource(boot.data.manifest, seriesFiles), {store, fixedIndicator: "A02", links: {country: (id) => `../country/${id}`, revisions: "../revisions"}, downloadHref, geo: geoFiles}));
+  display(attributionBlock(html, md.seriesMeta, ["A02"]));
+}
+}});
+
+</script>
+</head>
+<body>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<a class="mm-skip" href="#observablehq-main">Перейти до основного вмісту</a>
+<div class="mm-header"><a class="mm-site-title" href="../">Macro Monitor</a>
+<nav class="mm-nav" aria-label="Головна навігація"><ul><li><a href="../" data-carry="">Головна</a></li><li><a href="../country" data-carry="country">Країна</a></li><li><a href="../compare" data-carry="compare">Порівняння</a></li><li><a href="../explorer" data-carry="">Часові ряди</a></li><li><a href="../domains" data-carry="">Домени</a></li><li><a href="../revisions" data-carry="">Ревізії</a></li></ul></nav>
+<a class="mm-lang" rel="alternate external" href="../../indicator/A02" lang="en" hreflang="en" data-carry="">English</a></div>
+<noscript><p class="mm-noscript" role="note">Для показу таблиць і діаграм цій панелі потрібен JavaScript. Увімкніть JavaScript і перезавантажте сторінку.</p></noscript>
+</header>
+<main id="observablehq-main" class="observablehq">
+<div role="group" aria-label="Навігаційний ланцюжок" class="mm-crumb"><ol><li><a href="../">Головна</a></li><li><a href="../#indicators">Показники</a></li><li aria-current="page">Розрив випуску, оцінка МВФ (основна)</li></ol></div>
+<div class="mm-card mm-card--header mm-card--span-12" id="indicator-header">
+<h1 data-indicator="A02">Розрив випуску, оцінка МВФ (основна)</h1>
+<dl class="mm-indicator-facts"><div><dt>Ідентифікатор</dt><dd>A02</dd></div><div><dt>Домени</dt><dd><a href="../domain/growth">Економічне зростання</a></dd></div><div><dt>Одиниця</dt><dd>% потенційного ВВП</dd></div><div><dt>Періодичність</dt><dd>A</dd></div><div><dt>Напрям</dt><dd>ближче до цільового значення — краще (ціль 0 % потенційного ВВП)</dd></div><div><dt>Перетворення</dt><dd>рівень</dd></div></dl>
+</div>
+<div class="mm-filterbar-slot" id="filterbar-slot" data-mode="compare"><div class="mm-mode-switch" role="group" aria-label="Режим"><ul><li><a href="../country" data-carry="country">Країна</a></li><li><a href="../compare" data-carry="compare" data-carry-set="i=A02" aria-current="page">Порівняння</a></li></ul></div></div>
+<div class="observablehq observablehq--block"><!--:fb8dc96d:--></div>
+<div class="observablehq observablehq--block"><!--:7fef4410:--></div>
+<div class="observablehq observablehq--block"><!--:b51eaa50:--></div>
+<div class="observablehq observablehq--block"><!--:1724309e:--></div>
+<div class="observablehq observablehq--block"><!--:361bda78:--></div>
+</main>
+<footer id="observablehq-footer">
+<div>Macro Monitor. Дані з публічних джерел, із зазначенням джерела на кожній сторінці. Не є інвестиційною порадою.<p class="mm-print-url">Адреса сторінки: <span id="mm-print-url"></span></p><script>(function(){var s=function(){var e=document.getElementById("mm-print-url");if(e)e.textContent=location.href},c=[];s();addEventListener("beforeprint",function(){s();c=[].slice.call(document.querySelectorAll("details:not([open])"));c.forEach(function(d){d.open=true})});addEventListener("afterprint",function(){c.forEach(function(d){d.open=false});c=[]})})()</script></div>
+</footer>
+</div>
+</body>
+</html>

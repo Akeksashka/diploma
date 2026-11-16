@@ -1,0 +1,528 @@
+{
+ "entities": [
+  {
+   "entity_id": "ARG",
+   "group_ids": [
+    "emerging"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "ARG",
+   "kind": "country",
+   "name": "Аргентина"
+  },
+  {
+   "entity_id": "AUS",
+   "group_ids": [
+    "advanced"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "AUS",
+   "kind": "country",
+   "name": "Австралія"
+  },
+  {
+   "entity_id": "AUT",
+   "group_ids": [
+    "advanced",
+    "euro_area"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "AUT",
+   "kind": "country",
+   "name": "Австрія"
+  },
+  {
+   "entity_id": "BEL",
+   "group_ids": [
+    "advanced",
+    "euro_area"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "BEL",
+   "kind": "country",
+   "name": "Бельгія"
+  },
+  {
+   "entity_id": "BGR",
+   "group_ids": [
+    "emerging",
+    "euro_area"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "BGR",
+   "kind": "country",
+   "name": "Болгарія"
+  },
+  {
+   "entity_id": "BRA",
+   "group_ids": [
+    "emerging"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "BRA",
+   "kind": "country",
+   "name": "Бразилія"
+  },
+  {
+   "entity_id": "CAN",
+   "group_ids": [
+    "advanced",
+    "g7"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "CAN",
+   "kind": "country",
+   "name": "Канада"
+  },
+  {
+   "entity_id": "CHN",
+   "group_ids": [
+    "emerging"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "CHN",
+   "kind": "country",
+   "name": "Китай"
+  },
+  {
+   "entity_id": "CYP",
+   "group_ids": [
+    "advanced",
+    "euro_area"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "CYP",
+   "kind": "country",
+   "name": "Кіпр"
+  },
+  {
+   "entity_id": "CZE",
+   "group_ids": [
+    "advanced",
+    "non_euro_eu"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "CZE",
+   "kind": "country",
+   "name": "Чехія"
+  },
+  {
+   "entity_id": "DEU",
+   "group_ids": [
+    "advanced",
+    "euro_area",
+    "g7"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "DEU",
+   "kind": "country",
+   "name": "Німеччина"
+  },
+  {
+   "entity_id": "DNK",
+   "group_ids": [
+    "advanced",
+    "non_euro_eu"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "DNK",
+   "kind": "country",
+   "name": "Данія"
+  },
+  {
+   "entity_id": "EA",
+   "group_ids": [],
+   "is_global": false,
+   "is_ranked": false,
+   "iso3": null,
+   "kind": "aggregate",
+   "name": "Єврозона"
+  },
+  {
+   "entity_id": "ESP",
+   "group_ids": [
+    "advanced",
+    "euro_area"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "ESP",
+   "kind": "country",
+   "name": "Іспанія"
+  },
+  {
+   "entity_id": "EST",
+   "group_ids": [
+    "advanced",
+    "euro_area"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "EST",
+   "kind": "country",
+   "name": "Естонія"
+  },
+  {
+   "entity_id": "EU27",
+   "group_ids": [],
+   "is_global": false,
+   "is_ranked": false,
+   "iso3": null,
+   "kind": "aggregate",
+   "name": "Європейський Союз (27)"
+  },
+  {
+   "entity_id": "FIN",
+   "group_ids": [
+    "advanced",
+    "euro_area"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "FIN",
+   "kind": "country",
+   "name": "Фінляндія"
+  },
+  {
+   "entity_id": "FRA",
+   "group_ids": [
+    "advanced",
+    "euro_area",
+    "g7"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "FRA",
+   "kind": "country",
+   "name": "Франція"
+  },
+  {
+   "entity_id": "GBR",
+   "group_ids": [
+    "advanced",
+    "g7"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "GBR",
+   "kind": "country",
+   "name": "Велика Британія"
+  },
+  {
+   "entity_id": "GRC",
+   "group_ids": [
+    "advanced",
+    "euro_area"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "GRC",
+   "kind": "country",
+   "name": "Греція"
+  },
+  {
+   "entity_id": "HRV",
+   "group_ids": [
+    "advanced",
+    "euro_area"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "HRV",
+   "kind": "country",
+   "name": "Хорватія"
+  },
+  {
+   "entity_id": "HUN",
+   "group_ids": [
+    "emerging",
+    "non_euro_eu"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "HUN",
+   "kind": "country",
+   "name": "Угорщина"
+  },
+  {
+   "entity_id": "IDN",
+   "group_ids": [
+    "emerging"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "IDN",
+   "kind": "country",
+   "name": "Індонезія"
+  },
+  {
+   "entity_id": "IND",
+   "group_ids": [
+    "emerging"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "IND",
+   "kind": "country",
+   "name": "Індія"
+  },
+  {
+   "entity_id": "IRL",
+   "group_ids": [
+    "advanced",
+    "euro_area"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "IRL",
+   "kind": "country",
+   "name": "Ірландія"
+  },
+  {
+   "entity_id": "ITA",
+   "group_ids": [
+    "advanced",
+    "euro_area",
+    "g7"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "ITA",
+   "kind": "country",
+   "name": "Італія"
+  },
+  {
+   "entity_id": "JPN",
+   "group_ids": [
+    "advanced",
+    "g7"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "JPN",
+   "kind": "country",
+   "name": "Японія"
+  },
+  {
+   "entity_id": "KOR",
+   "group_ids": [
+    "advanced"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "KOR",
+   "kind": "country",
+   "name": "Південна Корея"
+  },
+  {
+   "entity_id": "LTU",
+   "group_ids": [
+    "advanced",
+    "euro_area"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "LTU",
+   "kind": "country",
+   "name": "Литва"
+  },
+  {
+   "entity_id": "LUX",
+   "group_ids": [
+    "advanced",
+    "euro_area"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "LUX",
+   "kind": "country",
+   "name": "Люксембург"
+  },
+  {
+   "entity_id": "LVA",
+   "group_ids": [
+    "advanced",
+    "euro_area"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "LVA",
+   "kind": "country",
+   "name": "Латвія"
+  },
+  {
+   "entity_id": "MEX",
+   "group_ids": [
+    "emerging"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "MEX",
+   "kind": "country",
+   "name": "Мексика"
+  },
+  {
+   "entity_id": "MLT",
+   "group_ids": [
+    "advanced",
+    "euro_area"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "MLT",
+   "kind": "country",
+   "name": "Мальта"
+  },
+  {
+   "entity_id": "NLD",
+   "group_ids": [
+    "advanced",
+    "euro_area"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "NLD",
+   "kind": "country",
+   "name": "Нідерланди"
+  },
+  {
+   "entity_id": "POL",
+   "group_ids": [
+    "emerging",
+    "non_euro_eu"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "POL",
+   "kind": "country",
+   "name": "Польща"
+  },
+  {
+   "entity_id": "PRT",
+   "group_ids": [
+    "advanced",
+    "euro_area"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "PRT",
+   "kind": "country",
+   "name": "Португалія"
+  },
+  {
+   "entity_id": "ROU",
+   "group_ids": [
+    "emerging",
+    "non_euro_eu"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "ROU",
+   "kind": "country",
+   "name": "Румунія"
+  },
+  {
+   "entity_id": "SAU",
+   "group_ids": [
+    "emerging"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "SAU",
+   "kind": "country",
+   "name": "Саудівська Аравія"
+  },
+  {
+   "entity_id": "SVK",
+   "group_ids": [
+    "advanced",
+    "euro_area"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "SVK",
+   "kind": "country",
+   "name": "Словаччина"
+  },
+  {
+   "entity_id": "SVN",
+   "group_ids": [
+    "advanced",
+    "euro_area"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "SVN",
+   "kind": "country",
+   "name": "Словенія"
+  },
+  {
+   "entity_id": "SWE",
+   "group_ids": [
+    "advanced",
+    "non_euro_eu"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "SWE",
+   "kind": "country",
+   "name": "Швеція"
+  },
+  {
+   "entity_id": "TUR",
+   "group_ids": [
+    "emerging"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "TUR",
+   "kind": "country",
+   "name": "Туреччина"
+  },
+  {
+   "entity_id": "USA",
+   "group_ids": [
+    "advanced",
+    "g7"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "USA",
+   "kind": "country",
+   "name": "Сполучені Штати"
+  },
+  {
+   "entity_id": "WLD",
+   "group_ids": [],
+   "is_global": true,
+   "is_ranked": false,
+   "iso3": null,
+   "kind": "aggregate",
+   "name": "Світ"
+  },
+  {
+   "entity_id": "ZAF",
+   "group_ids": [
+    "emerging"
+   ],
+   "is_global": false,
+   "is_ranked": true,
+   "iso3": "ZAF",
+   "kind": "country",
+   "name": "Південно-Африканська Республіка"
+  }
+ ],
+ "schema_version": "1.0"
+}

@@ -1,0 +1,192 @@
+{
+ "domains": [
+  {
+   "domain_id": "agri",
+   "indicator_ids": [
+    "G01",
+    "G04",
+    "G05",
+    "G06",
+    "G07",
+    "G08",
+    "G09",
+    "G10",
+    "G11",
+    "G12",
+    "G14",
+    "G15",
+    "Q17"
+   ],
+   "min_coverage_for_rank": 0.5,
+   "name": "Агропродовольчий сектор",
+   "notices": [
+    "informational, unranked"
+   ],
+   "percentile_rank_label": "середній процентиль показників домену",
+   "ranked": false
+  },
+  {
+   "domain_id": "environment",
+   "indicator_ids": [
+    "A19",
+    "A20",
+    "A21",
+    "M27"
+   ],
+   "min_coverage_for_rank": 0.5,
+   "name": "Довкілля",
+   "notices": [],
+   "percentile_rank_label": "середній процентиль показників домену",
+   "ranked": true
+  },
+  {
+   "domain_id": "external",
+   "indicator_ids": [
+    "M12",
+    "M13",
+    "M14",
+    "M15",
+    "M16",
+    "Q05",
+    "Q09",
+    "Q10"
+   ],
+   "min_coverage_for_rank": 0.5,
+   "name": "Зовнішній сектор",
+   "notices": [],
+   "percentile_rank_label": "середній процентиль показників домену",
+   "ranked": true
+  },
+  {
+   "domain_id": "fin",
+   "indicator_ids": [
+    "M17",
+    "M18",
+    "M19",
+    "M21",
+    "Q06",
+    "Q07",
+    "Q11",
+    "Q13"
+   ],
+   "min_coverage_for_rank": 0.5,
+   "name": "Фінансовий сектор",
+   "notices": [],
+   "percentile_rank_label": "середній процентиль показників домену",
+   "ranked": true
+  },
+  {
+   "domain_id": "fiscal",
+   "indicator_ids": [
+    "A04",
+    "A05",
+    "A24",
+    "Q08",
+    "Q12"
+   ],
+   "min_coverage_for_rank": 0.5,
+   "name": "Державні фінанси",
+   "notices": [],
+   "percentile_rank_label": "середній процентиль показників домену",
+   "ranked": true
+  },
+  {
+   "domain_id": "global",
+   "indicator_ids": [
+    "G02",
+    "G03",
+    "M24"
+   ],
+   "min_coverage_for_rank": 0.5,
+   "name": "Глобальні ряди",
+   "notices": [
+    "informational, unranked"
+   ],
+   "percentile_rank_label": "середній процентиль показників домену",
+   "ranked": false
+  },
+  {
+   "domain_id": "growth",
+   "indicator_ids": [
+    "A02",
+    "M01",
+    "M02",
+    "M03",
+    "M04",
+    "M05",
+    "Q01",
+    "Q02",
+    "Q04"
+   ],
+   "min_coverage_for_rank": 0.5,
+   "name": "Економічне зростання",
+   "notices": [],
+   "percentile_rank_label": "середній процентиль показників домену",
+   "ranked": true
+  },
+  {
+   "domain_id": "labour",
+   "indicator_ids": [
+    "M09",
+    "M10",
+    "M11",
+    "Q03"
+   ],
+   "min_coverage_for_rank": 0.5,
+   "name": "Ринок праці",
+   "notices": [],
+   "percentile_rank_label": "середній процентиль показників домену",
+   "ranked": true
+  },
+  {
+   "domain_id": "prices",
+   "indicator_ids": [
+    "A25",
+    "G01",
+    "M06",
+    "M07",
+    "M08"
+   ],
+   "min_coverage_for_rank": 0.5,
+   "name": "Ціни та інфляція",
+   "notices": [],
+   "percentile_rank_label": "середній процентиль показників домену",
+   "ranked": true
+  },
+  {
+   "domain_id": "social",
+   "indicator_ids": [
+    "A10",
+    "A11",
+    "A12",
+    "A13",
+    "A14",
+    "A22",
+    "A26"
+   ],
+   "min_coverage_for_rank": 0.5,
+   "name": "Соціальна сфера",
+   "notices": [],
+   "percentile_rank_label": "середній процентиль показників домену",
+   "ranked": true
+  },
+  {
+   "domain_id": "structural",
+   "indicator_ids": [
+    "A01",
+    "A07",
+    "A09",
+    "A16",
+    "A18",
+    "A23",
+    "Q15"
+   ],
+   "min_coverage_for_rank": 0.5,
+   "name": "Структурні показники",
+   "notices": [],
+   "percentile_rank_label": "середній процентиль показників домену",
+   "ranked": true
+  }
+ ],
+ "schema_version": "1.0"
+}

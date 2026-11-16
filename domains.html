@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<title>Domains | Macro Monitor</title>
+
+<link rel="preload" as="style" href="./_import/style.10f16815.css">
+<link rel="stylesheet" type="text/css" href="./_import/style.10f16815.css">
+<link rel="modulepreload" href="./_observablehq/client.3ea4afc8.js">
+<link rel="modulepreload" href="./_observablehq/runtime.13bc3751.js">
+<link rel="modulepreload" href="./_observablehq/stdlib.f22cc9cb.js">
+<link rel="modulepreload" href="./_import/lib/manifest.e8924a5e.js">
+<link rel="modulepreload" href="./_import/lib/shell.c1229d1a.js">
+<link rel="modulepreload" href="./_import/lib/copy.11b4a285.js">
+<link rel="modulepreload" href="./_import/lib/state-blocks.81d10981.js">
+<link rel="modulepreload" href="./_npm/htl@1.0.0/11521f02.js">
+<link rel="modulepreload" href="./_import/lib/stale.ac9ba480.js">
+<link rel="modulepreload" href="./_import/lib/attribution.a296f2f6.js">
+<link rel="modulepreload" href="./_import/lib/carry.5a787523.js">
+<link rel="modulepreload" href="./_import/lib/lang-switch.e5b7f9b7.js">
+<link rel="modulepreload" href="./_import/lib/i18n.4f9e47d5.js">
+<link rel="modulepreload" href="./_import/i18n/dictionaries.3d035f38.js">
+<script type="module">
+
+import {define} from "./_observablehq/client.3ea4afc8.js";
+import {registerFile} from "./_observablehq/stdlib.f22cc9cb.js";
+
+registerFile("./data/manifest.json", {"name":"./data/manifest.json","mimeType":"application/json","path":"./_file/data/manifest.25811262.json","lastModified":1794812123571,"size":7928});
+
+define({id: "2495dbc1", outputs: ["parseManifest","pageHead","R","busyBlock","loadAll","setBusy"], body: async () => {
+const [{parseManifest}, {pageHead}, {DRAFT_REGIONS: R}, {busyBlock, loadAll, setBusy}] = await Promise.all([import("./_import/lib/manifest.e8924a5e.js"), import("./_import/lib/shell.c1229d1a.js"), import("./_import/lib/copy.11b4a285.js"), import("./_import/lib/state-blocks.81d10981.js")]);
+
+return {parseManifest,pageHead,R,busyBlock,loadAll,setBusy};
+}});
+
+define({id: "7fef4410", inputs: ["busyBlock","html","R","display"], outputs: ["busy"], body: (busyBlock,html,R,display) => {
+const busy = busyBlock(html, R.loadingData);
+display(busy);
+return {busy};
+}});
+
+define({id: "c98d671b", inputs: ["loadAll","R","FileAttachment","parseManifest","setBusy","busy","display","pageHead","html"], outputs: ["boot"], body: async (loadAll,R,FileAttachment,parseManifest,setBusy,busy,display,pageHead,html) => {
+// A failed file never throws into the page: loadAll returns one failed region per file (T105). The lists below are static.
+const boot = await loadAll([
+  {key: "manifest", region: R.manifest, load: () => FileAttachment("./data/manifest.json").json(), parse: parseManifest}
+]);
+setBusy(busy, false);
+display(pageHead(html, boot, "lists"));
+return {boot};
+}});
+
+</script>
+</head>
+<body>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<a class="mm-skip" href="#observablehq-main">Skip to main content</a>
+<div class="mm-header"><a class="mm-site-title" href="./">Macro Monitor</a>
+<nav class="mm-nav" aria-label="Main navigation"><ul><li><a href="./" data-carry="">Home</a></li><li><a href="./country" data-carry="country">Country</a></li><li><a href="./compare" data-carry="compare">Compare</a></li><li><a href="./explorer" data-carry="">Time series</a></li><li><a href="./domains" data-carry="" aria-current="page">Domains</a></li><li><a href="./revisions" data-carry="">Revisions</a></li></ul></nav>
+<a class="mm-lang" rel="alternate external" href="./uk/domains" lang="uk" hreflang="uk" data-carry="">Українська</a></div>
+<noscript><p class="mm-noscript" role="note">This dashboard needs JavaScript to show its tables and charts. Enable JavaScript and reload the page.</p></noscript>
+</header>
+<main id="observablehq-main" class="observablehq">
+<h1>Domains</h1>
+<div class="mm-home-shell">
+<div class="observablehq observablehq--block"><!--:2495dbc1:--></div>
+<div class="observablehq observablehq--block"><!--:7fef4410:--></div>
+<div class="observablehq observablehq--block"><!--:c98d671b:--></div>
+</div>
+<section class="mm-dband" id="band-domains" aria-labelledby="band-domains-heading"><div class="mm-band"><h2 id="band-domains-heading"><a class="observablehq-header-anchor" href="#band-domains-heading">All domains</a></h2></div><ul id="domain-list" class="mm-grid mm-card-list"><li class="mm-card mm-card--span-4" data-domain="agri"><h3><a href="./domain/agri">Agri-food</a></h3><span class="mm-card-sub"><em>(informational, unranked)</em></span></li><li class="mm-card mm-card--span-4" data-domain="environment"><h3><a href="./domain/environment">Environment</a></h3></li><li class="mm-card mm-card--span-4" data-domain="external"><h3><a href="./domain/external">External</a></h3></li><li class="mm-card mm-card--span-4" data-domain="fin"><h3><a href="./domain/fin">Financial</a></h3></li><li class="mm-card mm-card--span-4" data-domain="fiscal"><h3><a href="./domain/fiscal">Fiscal</a></h3></li><li class="mm-card mm-card--span-4" data-domain="global"><h3><a href="./domain/global">Global series</a></h3><span class="mm-card-sub"><em>(informational, unranked)</em></span></li><li class="mm-card mm-card--span-4" data-domain="growth"><h3><a href="./domain/growth">Growth</a></h3></li><li class="mm-card mm-card--span-4" data-domain="labour"><h3><a href="./domain/labour">Labour market</a></h3></li><li class="mm-card mm-card--span-4" data-domain="prices"><h3><a href="./domain/prices">Prices and inflation</a></h3></li><li class="mm-card mm-card--span-4" data-domain="social"><h3><a href="./domain/social">Social</a></h3></li><li class="mm-card mm-card--span-4" data-domain="structural"><h3><a href="./domain/structural">Structural</a></h3></li></ul></section>
+</main>
+<footer id="observablehq-footer">
+<div>Macro Monitor. Data from public sources, attributed per page. Not investment advice.<p class="mm-print-url">Page URL: <span id="mm-print-url"></span></p><script>(function(){var s=function(){var e=document.getElementById("mm-print-url");if(e)e.textContent=location.href},c=[];s();addEventListener("beforeprint",function(){s();c=[].slice.call(document.querySelectorAll("details:not([open])"));c.forEach(function(d){d.open=true})});addEventListener("afterprint",function(){c.forEach(function(d){d.open=false});c=[]})})()</script></div>
+</footer>
+</div>
+</body>
+</html>

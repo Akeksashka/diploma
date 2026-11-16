@@ -1,0 +1,269 @@
+{
+ "feature_id_field": "ADM0_A3 (Natural Earth; equals ISO 3166-1 alpha-3 for every joined row; ISO_A3 holds the placeholder -99 for France and Norway in this source, so it is not used)",
+ "rows": [
+  {
+   "entity_id": "ARG",
+   "feature_id": null,
+   "marker": false,
+   "outside_extent": true
+  },
+  {
+   "entity_id": "AUS",
+   "feature_id": null,
+   "marker": false,
+   "outside_extent": true
+  },
+  {
+   "entity_id": "AUT",
+   "feature_id": "AUT",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "BEL",
+   "feature_id": "BEL",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "BGR",
+   "feature_id": "BGR",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "BRA",
+   "feature_id": null,
+   "marker": false,
+   "outside_extent": true
+  },
+  {
+   "entity_id": "CAN",
+   "feature_id": null,
+   "marker": false,
+   "outside_extent": true
+  },
+  {
+   "entity_id": "CHN",
+   "feature_id": null,
+   "marker": false,
+   "outside_extent": true
+  },
+  {
+   "entity_id": "CYP",
+   "feature_id": "CYP",
+   "marker": true,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "CZE",
+   "feature_id": "CZE",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "DEU",
+   "feature_id": "DEU",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "DNK",
+   "feature_id": "DNK",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "ESP",
+   "feature_id": "ESP",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "EST",
+   "feature_id": "EST",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "FIN",
+   "feature_id": "FIN",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "FRA",
+   "feature_id": "FRA",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "GBR",
+   "feature_id": "GBR",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "GRC",
+   "feature_id": "GRC",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "HRV",
+   "feature_id": "HRV",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "HUN",
+   "feature_id": "HUN",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "IDN",
+   "feature_id": null,
+   "marker": false,
+   "outside_extent": true
+  },
+  {
+   "entity_id": "IND",
+   "feature_id": null,
+   "marker": false,
+   "outside_extent": true
+  },
+  {
+   "entity_id": "IRL",
+   "feature_id": "IRL",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "ITA",
+   "feature_id": "ITA",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "JPN",
+   "feature_id": null,
+   "marker": false,
+   "outside_extent": true
+  },
+  {
+   "entity_id": "KOR",
+   "feature_id": null,
+   "marker": false,
+   "outside_extent": true
+  },
+  {
+   "entity_id": "LTU",
+   "feature_id": "LTU",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "LUX",
+   "feature_id": "LUX",
+   "marker": true,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "LVA",
+   "feature_id": "LVA",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "MEX",
+   "feature_id": null,
+   "marker": false,
+   "outside_extent": true
+  },
+  {
+   "entity_id": "MLT",
+   "feature_id": "MLT",
+   "marker": true,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "NLD",
+   "feature_id": "NLD",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "NOR",
+   "feature_id": "NOR",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "POL",
+   "feature_id": "POL",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "PRT",
+   "feature_id": "PRT",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "ROU",
+   "feature_id": "ROU",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "SAU",
+   "feature_id": null,
+   "marker": false,
+   "outside_extent": true
+  },
+  {
+   "entity_id": "SVK",
+   "feature_id": "SVK",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "SVN",
+   "feature_id": "SVN",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "SWE",
+   "feature_id": "SWE",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "TUR",
+   "feature_id": "TUR",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "UKR",
+   "feature_id": "UKR",
+   "marker": false,
+   "outside_extent": false
+  },
+  {
+   "entity_id": "USA",
+   "feature_id": null,
+   "marker": false,
+   "outside_extent": true
+  },
+  {
+   "entity_id": "ZAF",
+   "feature_id": null,
+   "marker": false,
+   "outside_extent": true
+  }
+ ]
+}

@@ -1,0 +1,1995 @@
+{
+  "indicators": [
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B3",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "structural"
+      ],
+      "frequency_set": [
+        "A"
+      ],
+      "good_dir": 1,
+      "indicator_id": "A01",
+      "max_ref_spread_days": 366,
+      "name": "GDP per capita PPP and ratio to US",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "INTL_USD_PPP"
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "growth"
+      ],
+      "frequency_set": [
+        "A"
+      ],
+      "good_dir": 0,
+      "indicator_id": "A02",
+      "max_ref_spread_days": 366,
+      "name": "Output gap, IMF estimate (headline)",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "target_distance",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": {
+        "source_note": "Output gap of zero means actual output equals potential output (definition).",
+        "value": 0.0
+      },
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "PCT_POT_GDP"
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "fiscal"
+      ],
+      "frequency_set": [
+        "A"
+      ],
+      "good_dir": 1,
+      "indicator_id": "A04",
+      "max_ref_spread_days": 366,
+      "name": "General government balance and primary balance, % of GDP",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "PCT_GDP"
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "fiscal"
+      ],
+      "frequency_set": [
+        "A"
+      ],
+      "good_dir": -1,
+      "indicator_id": "A05",
+      "max_ref_spread_days": 366,
+      "name": "Gross government debt, % of GDP",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "PCT_GDP"
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "structural"
+      ],
+      "frequency_set": [],
+      "good_dir": 1,
+      "indicator_id": "A07",
+      "max_ref_spread_days": 366,
+      "name": "Gross fixed capital formation, % of GDP",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "structural"
+      ],
+      "frequency_set": [],
+      "good_dir": 1,
+      "indicator_id": "A09",
+      "max_ref_spread_days": 366,
+      "name": "Total factor productivity growth (whole economy)",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "social"
+      ],
+      "frequency_set": [],
+      "good_dir": 1,
+      "indicator_id": "A10",
+      "max_ref_spread_days": 366,
+      "name": "Population, working-age share, old-age dependency",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "social"
+      ],
+      "frequency_set": [],
+      "good_dir": 1,
+      "indicator_id": "A11",
+      "max_ref_spread_days": 366,
+      "name": "Life expectancy at birth",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "social"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "A12",
+      "max_ref_spread_days": 366,
+      "name": "Health expenditure, % of GDP",
+      "notes": [],
+      "priority": "opt",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "social"
+      ],
+      "frequency_set": [],
+      "good_dir": 1,
+      "indicator_id": "A13",
+      "max_ref_spread_days": 366,
+      "name": "Educational attainment (tertiary share 25-34), PISA, schooling years",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 1460,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "social"
+      ],
+      "frequency_set": [
+        "A"
+      ],
+      "good_dir": -1,
+      "indicator_id": "A14",
+      "max_ref_spread_days": 366,
+      "name": "Income inequality (Gini, S80/S20, poverty rate)",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 1460,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "IDX"
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "structural"
+      ],
+      "frequency_set": [],
+      "good_dir": 1,
+      "indicator_id": "A16",
+      "max_ref_spread_days": 366,
+      "name": "Worldwide Governance Indicators (six dimensions)",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "structural"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "A18",
+      "max_ref_spread_days": 366,
+      "name": "Export complexity, FDI inflows % of GDP",
+      "notes": [],
+      "priority": "opt",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "environment"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "A19",
+      "max_ref_spread_days": 366,
+      "name": "Energy import dependence; energy intensity; electricity mix",
+      "notes": [],
+      "priority": "opt",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "environment"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "A20",
+      "max_ref_spread_days": 366,
+      "name": "GHG emissions per capita and per GDP",
+      "notes": [],
+      "priority": "opt",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "environment"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "A21",
+      "max_ref_spread_days": 366,
+      "name": "Renewable share of electricity",
+      "notes": [],
+      "priority": "opt",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "social"
+      ],
+      "frequency_set": [
+        "A"
+      ],
+      "good_dir": 0,
+      "indicator_id": "A22",
+      "max_ref_spread_days": 366,
+      "name": "Poverty headcount; labour force participation",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 1460,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "PCT"
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "structural"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "A23",
+      "max_ref_spread_days": 366,
+      "name": "R&D, % of GDP; patents",
+      "notes": [],
+      "priority": "opt",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "fiscal"
+      ],
+      "frequency_set": [],
+      "good_dir": 1,
+      "indicator_id": "A24",
+      "max_ref_spread_days": 366,
+      "name": "Cyclically adjusted primary balance",
+      "notes": [],
+      "priority": "opt",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "robust_z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "prices"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "A25",
+      "max_ref_spread_days": 366,
+      "name": "GDP deflator inflation (and real GDP share of world)",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "social"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "A26",
+      "max_ref_spread_days": 366,
+      "name": "Household consumption per capita; food share of consumer spending",
+      "notes": [],
+      "priority": "opt",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 1460,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "robust_z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "agri",
+        "prices"
+      ],
+      "frequency_set": [
+        "M"
+      ],
+      "good_dir": 0,
+      "indicator_id": "G01",
+      "max_ref_spread_days": 92,
+      "name": "Food CPI / HICP food and non-alcoholic beverages",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "I25"
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "robust_z",
+      "currency_basis": "B2",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "global"
+      ],
+      "frequency_set": [
+        "M"
+      ],
+      "good_dir": 0,
+      "indicator_id": "G02",
+      "max_ref_spread_days": 92,
+      "name": "Agricultural and fertilizer commodity prices",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "global",
+      "staleness_limit_days": 45,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "IDX"
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "global"
+      ],
+      "frequency_set": [
+        "A"
+      ],
+      "good_dir": 0,
+      "indicator_id": "G03",
+      "max_ref_spread_days": 92,
+      "name": "Stocks-to-use ratio (wheat, coarse grains, rice, oilseeds)",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "global",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "PCT"
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "SUM12_PCT_GDP",
+      "display_dir": null,
+      "domain_ids": [
+        "agri"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "G04",
+      "max_ref_spread_days": 92,
+      "name": "Agricultural trade balance, 12-month sum",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "robust_z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "agri"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "G05",
+      "max_ref_spread_days": 92,
+      "name": "Real trade-weighted agricultural exchange rate index",
+      "notes": [],
+      "priority": "opt",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 270,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "agri"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "G06",
+      "max_ref_spread_days": 92,
+      "name": "Weather and drought anomalies in cropland",
+      "notes": [],
+      "priority": "opt",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "agri"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "G07",
+      "max_ref_spread_days": 366,
+      "name": "Agricultural total factor productivity index",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "agri"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "G08",
+      "max_ref_spread_days": 366,
+      "name": "Cereal yield; agricultural value added per worker",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "agri"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "G09",
+      "max_ref_spread_days": 366,
+      "name": "Agriculture value added % of GDP; employment share in agriculture",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "agri"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "G10",
+      "max_ref_spread_days": 366,
+      "name": "Cereal import dependency / self-sufficiency ratio",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "agri"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "G11",
+      "max_ref_spread_days": 366,
+      "name": "Food expenditure share of household spending",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 1460,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "agri"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "G12",
+      "max_ref_spread_days": 366,
+      "name": "Prevalence of undernourishment and food insecurity (FAO, 3-year averages)",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 1460,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "agri"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "G14",
+      "max_ref_spread_days": 366,
+      "name": "10-year agricultural projections (ERS baseline)",
+      "notes": [],
+      "priority": "opt",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "none",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "agri"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "G15",
+      "max_ref_spread_days": 366,
+      "name": "Agricultural land, irrigated area, fertilizer use",
+      "notes": [],
+      "priority": "opt",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 730,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "growth"
+      ],
+      "frequency_set": [],
+      "good_dir": 1,
+      "indicator_id": "M01",
+      "max_ref_spread_days": 92,
+      "name": "Industrial production index (excl. construction)",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "growth"
+      ],
+      "frequency_set": [
+        "M"
+      ],
+      "good_dir": 1,
+      "indicator_id": "M02",
+      "max_ref_spread_days": 92,
+      "name": "Retail trade volume",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "I21"
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": 1,
+      "domain_ids": [
+        "growth"
+      ],
+      "frequency_set": [
+        "M"
+      ],
+      "good_dir": 0,
+      "indicator_id": "M03",
+      "max_ref_spread_days": 92,
+      "name": "Business-confidence survey (EC ESI, OECD BCI)",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 75,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "BALANCE"
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": 1,
+      "domain_ids": [
+        "growth"
+      ],
+      "frequency_set": [
+        "M"
+      ],
+      "good_dir": 0,
+      "indicator_id": "M04",
+      "max_ref_spread_days": 92,
+      "name": "Consumer confidence",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 75,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "BALANCE"
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": 1,
+      "domain_ids": [
+        "growth"
+      ],
+      "frequency_set": [
+        "M"
+      ],
+      "good_dir": 0,
+      "indicator_id": "M05",
+      "max_ref_spread_days": 92,
+      "name": "OECD Composite Leading Indicator",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "IDX"
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "robust_z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "prices"
+      ],
+      "frequency_set": [
+        "M"
+      ],
+      "good_dir": 0,
+      "indicator_id": "M06",
+      "max_ref_spread_days": 92,
+      "name": "Headline CPI / HICP inflation",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "I25, IDX"
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "robust_z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "prices"
+      ],
+      "frequency_set": [
+        "M"
+      ],
+      "good_dir": 0,
+      "indicator_id": "M07",
+      "max_ref_spread_days": 92,
+      "name": "Core inflation (ex food, energy)",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "I25"
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "robust_z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "prices"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "M08",
+      "max_ref_spread_days": 92,
+      "name": "Industrial producer prices",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "labour"
+      ],
+      "frequency_set": [
+        "M"
+      ],
+      "good_dir": -1,
+      "indicator_id": "M09",
+      "max_ref_spread_days": 92,
+      "name": "Unemployment rate",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "PC_ACT"
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "labour"
+      ],
+      "frequency_set": [],
+      "good_dir": -1,
+      "indicator_id": "M10",
+      "max_ref_spread_days": 92,
+      "name": "Youth unemployment (<25)",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "labour"
+      ],
+      "frequency_set": [],
+      "good_dir": 1,
+      "indicator_id": "M11",
+      "max_ref_spread_days": 92,
+      "name": "Employment level/rate (monthly)",
+      "notes": [],
+      "priority": "opt",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "external"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "M12",
+      "max_ref_spread_days": 92,
+      "name": "Merchandise exports and imports",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "SUM12_PCT_GDP",
+      "display_dir": null,
+      "domain_ids": [
+        "external"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "M13",
+      "max_ref_spread_days": 92,
+      "name": "Goods trade balance, 12-month sum as % of GDP",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B2",
+      "default_transform": "RESERVE_COVER",
+      "display_dir": null,
+      "domain_ids": [
+        "external"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "M14",
+      "max_ref_spread_days": 92,
+      "name": "Official FX reserves",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "robust_z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "external"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "M15",
+      "max_ref_spread_days": 92,
+      "name": "Real effective exchange rate",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "robust_z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "external"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "M16",
+      "max_ref_spread_days": 92,
+      "name": "Exchange rate vs USD",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 45,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "fin"
+      ],
+      "frequency_set": [
+        "M"
+      ],
+      "good_dir": 0,
+      "indicator_id": "M17",
+      "max_ref_spread_days": 92,
+      "name": "Policy interest rate",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 45,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "PCT"
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "robust_z",
+      "currency_basis": "B1",
+      "default_transform": "SPREAD_VS_REF",
+      "display_dir": null,
+      "domain_ids": [
+        "fin"
+      ],
+      "frequency_set": [
+        "M"
+      ],
+      "good_dir": 0,
+      "indicator_id": "M18",
+      "max_ref_spread_days": 92,
+      "name": "10-year government bond yield and spread",
+      "notes": [
+        "Non-euro countries: local-currency yield spread (includes inflation/FX expectations), not sovereign credit risk"
+      ],
+      "priority": "core",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 45,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "PCT"
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "fin"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "M19",
+      "max_ref_spread_days": 92,
+      "name": "Short-term interbank rate",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 45,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "robust_z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "fin"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "M21",
+      "max_ref_spread_days": 92,
+      "name": "Private-sector bank credit growth",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "robust_z",
+      "currency_basis": "B2",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "global"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "M24",
+      "max_ref_spread_days": 92,
+      "name": "Commodity and energy prices (Brent, gas, food index)",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "descriptive_only",
+      "scope": "global",
+      "staleness_limit_days": 45,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "environment"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "M27",
+      "max_ref_spread_days": 92,
+      "name": "Electricity generation/consumption proxy",
+      "notes": [],
+      "priority": "opt",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 120,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "growth"
+      ],
+      "frequency_set": [],
+      "good_dir": 1,
+      "indicator_id": "Q01",
+      "max_ref_spread_days": 190,
+      "name": "Real GDP (volume, SA)",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 270,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B3",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "growth"
+      ],
+      "frequency_set": [],
+      "good_dir": 1,
+      "indicator_id": "Q02",
+      "max_ref_spread_days": 190,
+      "name": "Real GDP per capita, PPP",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 270,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "labour"
+      ],
+      "frequency_set": [],
+      "good_dir": 1,
+      "indicator_id": "Q03",
+      "max_ref_spread_days": 190,
+      "name": "Employment, hours worked",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 270,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 0,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "growth"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "Q04",
+      "max_ref_spread_days": 190,
+      "name": "Expenditure components (contributions to growth)",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 270,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "external"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "Q05",
+      "max_ref_spread_days": 190,
+      "name": "Current account balance, % of GDP",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 270,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "fin"
+      ],
+      "frequency_set": [
+        "Q"
+      ],
+      "good_dir": 0,
+      "indicator_id": "Q06",
+      "max_ref_spread_days": 190,
+      "name": "Credit to private non-financial sector, % of GDP and credit-to-GDP gap",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 270,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "PCT_GDP"
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "fin"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "Q07",
+      "max_ref_spread_days": 190,
+      "name": "Residential property prices (real)",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 270,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "fiscal"
+      ],
+      "frequency_set": [
+        "Q"
+      ],
+      "good_dir": -1,
+      "indicator_id": "Q08",
+      "max_ref_spread_days": 190,
+      "name": "General government gross debt, % of GDP",
+      "notes": [],
+      "priority": "core",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 270,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": "PC_GDP"
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "external"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "Q09",
+      "max_ref_spread_days": 190,
+      "name": "Net international investment position, % of GDP",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 270,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "z",
+      "currency_basis": "B2",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "external"
+      ],
+      "frequency_set": [],
+      "good_dir": -1,
+      "indicator_id": "Q10",
+      "max_ref_spread_days": 190,
+      "name": "External debt; short-term external debt vs reserves",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 270,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "fin"
+      ],
+      "frequency_set": [],
+      "good_dir": -1,
+      "indicator_id": "Q11",
+      "max_ref_spread_days": 190,
+      "name": "Banking soundness (NPL ratio, Tier 1 capital)",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 270,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "fiscal"
+      ],
+      "frequency_set": [],
+      "good_dir": 1,
+      "indicator_id": "Q12",
+      "max_ref_spread_days": 190,
+      "name": "Government net lending, % of GDP",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 270,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": 1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "LEVEL",
+      "display_dir": null,
+      "domain_ids": [
+        "fin"
+      ],
+      "frequency_set": [],
+      "good_dir": -1,
+      "indicator_id": "Q13",
+      "max_ref_spread_days": 190,
+      "name": "Household debt, % of GDP",
+      "notes": [],
+      "priority": "opt",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 270,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "structural"
+      ],
+      "frequency_set": [],
+      "good_dir": 1,
+      "indicator_id": "Q15",
+      "max_ref_spread_days": 190,
+      "name": "Labour productivity (GDP per hour)",
+      "notes": [],
+      "priority": "ext",
+      "rank_mode": "monotone_good",
+      "scope": "country",
+      "staleness_limit_days": 270,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    },
+    {
+      "adverse_dir": -1,
+      "alert_method": "z",
+      "currency_basis": "B1",
+      "default_transform": "YOY",
+      "display_dir": null,
+      "domain_ids": [
+        "agri"
+      ],
+      "frequency_set": [],
+      "good_dir": 0,
+      "indicator_id": "Q17",
+      "max_ref_spread_days": 190,
+      "name": "Agriculture gross value added, volume",
+      "notes": [],
+      "priority": "opt",
+      "rank_mode": "descriptive_only",
+      "scope": "country",
+      "staleness_limit_days": 270,
+      "target": null,
+      "transform_options": [
+        "level",
+        "default",
+        "yoy"
+      ],
+      "unit_label": null
+    }
+  ],
+  "schema_version": "1.0"
+}

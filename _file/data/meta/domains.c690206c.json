@@ -1,0 +1,192 @@
+{
+  "domains": [
+    {
+      "domain_id": "agri",
+      "indicator_ids": [
+        "G01",
+        "G04",
+        "G05",
+        "G06",
+        "G07",
+        "G08",
+        "G09",
+        "G10",
+        "G11",
+        "G12",
+        "G14",
+        "G15",
+        "Q17"
+      ],
+      "min_coverage_for_rank": 0.5,
+      "name": "Agri-food",
+      "notices": [
+        "informational, unranked"
+      ],
+      "percentile_rank_label": "mean percentile of the domain's indicators",
+      "ranked": false
+    },
+    {
+      "domain_id": "environment",
+      "indicator_ids": [
+        "A19",
+        "A20",
+        "A21",
+        "M27"
+      ],
+      "min_coverage_for_rank": 0.5,
+      "name": "Environment",
+      "notices": [],
+      "percentile_rank_label": "mean percentile of the domain's indicators",
+      "ranked": true
+    },
+    {
+      "domain_id": "external",
+      "indicator_ids": [
+        "M12",
+        "M13",
+        "M14",
+        "M15",
+        "M16",
+        "Q05",
+        "Q09",
+        "Q10"
+      ],
+      "min_coverage_for_rank": 0.5,
+      "name": "External",
+      "notices": [],
+      "percentile_rank_label": "mean percentile of the domain's indicators",
+      "ranked": true
+    },
+    {
+      "domain_id": "fin",
+      "indicator_ids": [
+        "M17",
+        "M18",
+        "M19",
+        "M21",
+        "Q06",
+        "Q07",
+        "Q11",
+        "Q13"
+      ],
+      "min_coverage_for_rank": 0.5,
+      "name": "Financial",
+      "notices": [],
+      "percentile_rank_label": "mean percentile of the domain's indicators",
+      "ranked": true
+    },
+    {
+      "domain_id": "fiscal",
+      "indicator_ids": [
+        "A04",
+        "A05",
+        "A24",
+        "Q08",
+        "Q12"
+      ],
+      "min_coverage_for_rank": 0.5,
+      "name": "Fiscal",
+      "notices": [],
+      "percentile_rank_label": "mean percentile of the domain's indicators",
+      "ranked": true
+    },
+    {
+      "domain_id": "global",
+      "indicator_ids": [
+        "G02",
+        "G03",
+        "M24"
+      ],
+      "min_coverage_for_rank": 0.5,
+      "name": "Global series",
+      "notices": [
+        "informational, unranked"
+      ],
+      "percentile_rank_label": "mean percentile of the domain's indicators",
+      "ranked": false
+    },
+    {
+      "domain_id": "growth",
+      "indicator_ids": [
+        "A02",
+        "M01",
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "Q01",
+        "Q02",
+        "Q04"
+      ],
+      "min_coverage_for_rank": 0.5,
+      "name": "Growth",
+      "notices": [],
+      "percentile_rank_label": "mean percentile of the domain's indicators",
+      "ranked": true
+    },
+    {
+      "domain_id": "labour",
+      "indicator_ids": [
+        "M09",
+        "M10",
+        "M11",
+        "Q03"
+      ],
+      "min_coverage_for_rank": 0.5,
+      "name": "Labour market",
+      "notices": [],
+      "percentile_rank_label": "mean percentile of the domain's indicators",
+      "ranked": true
+    },
+    {
+      "domain_id": "prices",
+      "indicator_ids": [
+        "A25",
+        "G01",
+        "M06",
+        "M07",
+        "M08"
+      ],
+      "min_coverage_for_rank": 0.5,
+      "name": "Prices and inflation",
+      "notices": [],
+      "percentile_rank_label": "mean percentile of the domain's indicators",
+      "ranked": true
+    },
+    {
+      "domain_id": "social",
+      "indicator_ids": [
+        "A10",
+        "A11",
+        "A12",
+        "A13",
+        "A14",
+        "A22",
+        "A26"
+      ],
+      "min_coverage_for_rank": 0.5,
+      "name": "Social",
+      "notices": [],
+      "percentile_rank_label": "mean percentile of the domain's indicators",
+      "ranked": true
+    },
+    {
+      "domain_id": "structural",
+      "indicator_ids": [
+        "A01",
+        "A07",
+        "A09",
+        "A16",
+        "A18",
+        "A23",
+        "Q15"
+      ],
+      "min_coverage_for_rank": 0.5,
+      "name": "Structural",
+      "notices": [],
+      "percentile_rank_label": "mean percentile of the domain's indicators",
+      "ranked": true
+    }
+  ],
+  "schema_version": "1.0"
+}

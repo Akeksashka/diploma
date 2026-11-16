@@ -1,0 +1,282 @@
+{
+  "analysis_run_id": 18,
+  "build_id": "2026-11-16T06:55Z-r144",
+  "code_version": "0.1.0",
+  "files": [
+    {
+      "bytes": 6130,
+      "format": "json",
+      "path": "alerts.json",
+      "rows": 20,
+      "sha256": "1ee2f67c5ba1404977bd5f3f9527fc733ce47fd574a799f771d3c750736589c9"
+    },
+    {
+      "bytes": 4073,
+      "format": "json",
+      "path": "meta/domains.json",
+      "rows": 11,
+      "sha256": "c690206c8b3a382f3ae7b09af2c2553621acd06d21f52b0a0b56dc7930c29222"
+    },
+    {
+      "bytes": 10096,
+      "format": "json",
+      "path": "meta/entities.json",
+      "rows": 45,
+      "sha256": "d8749e4ea1a50d752cd3ba1a1f9a33fb2c7794b0440c3041924f5a18bee646f1"
+    },
+    {
+      "bytes": 9335,
+      "format": "json",
+      "path": "meta/groups.json",
+      "rows": 5,
+      "sha256": "277c1c43b3fd47d8b87ffe49720a4018eb2e2c406ab28a9576f23769e009ab37"
+    },
+    {
+      "bytes": 47840,
+      "format": "json",
+      "path": "meta/indicators.json",
+      "rows": 72,
+      "sha256": "354390c033264af230663ba115098168c42fccf24e08483079e8704c06eb7d47"
+    },
+    {
+      "bytes": 301817,
+      "format": "json",
+      "path": "meta/series.json",
+      "rows": 445,
+      "sha256": "57535e7f8597c75c8fbac8c67206faf41ca7318300eb13ec3ec52b6be89993bd"
+    },
+    {
+      "bytes": 7534,
+      "format": "parquet",
+      "path": "revisions/M02.parquet",
+      "rows": 30,
+      "sha256": "19dcd98d7b110ae1d7edae260892b527383b64a0e4d5803e0dfdd0b0ca9f167d"
+    },
+    {
+      "bytes": 4973,
+      "format": "parquet",
+      "path": "revisions/M09.parquet",
+      "rows": 42,
+      "sha256": "e2a990ab033fcf2c6c8d62d19072cd2017d2ce41065fd3b7e7b2f6312461f91c"
+    },
+    {
+      "bytes": 13286,
+      "format": "json",
+      "path": "revisions_recent.json",
+      "rows": null,
+      "sha256": "8d33c5f86dd0f76b429027ecf4aefea0adf72a16c2832dd45b175424f650c5fb"
+    },
+    {
+      "bytes": 536306,
+      "format": "json",
+      "path": "scorecard/agri.json",
+      "rows": 44,
+      "sha256": "2e2e544f93f3d598d0b33b7303d95123a9506c9ce84fa4c5be31a64ec748dab0"
+    },
+    {
+      "bytes": 174372,
+      "format": "json",
+      "path": "scorecard/environment.json",
+      "rows": 44,
+      "sha256": "4de1631018e514a09726f1f2c4a88aeeda90508c4887836b83771609202d6fdf"
+    },
+    {
+      "bytes": 334833,
+      "format": "json",
+      "path": "scorecard/external.json",
+      "rows": 44,
+      "sha256": "da32a56c8f7383a3d6840e858f1ef3c8772f69765bbfe6bc6c2373c6db7596a6"
+    },
+    {
+      "bytes": 335267,
+      "format": "json",
+      "path": "scorecard/fin.json",
+      "rows": 44,
+      "sha256": "7a48ebd6bd43300696de88ec0e82f544149284565750416b8c051ee288446b2a"
+    },
+    {
+      "bytes": 220681,
+      "format": "json",
+      "path": "scorecard/fiscal.json",
+      "rows": 44,
+      "sha256": "5896f245cbf4e3142987e38283bee1277f4d2e5dc7adc652f012c2b99d2f508e"
+    },
+    {
+      "bytes": 4116,
+      "format": "json",
+      "path": "scorecard/global.json",
+      "rows": 1,
+      "sha256": "f81bb41ebf954cf6a01c1ed5b4639497b8608e252b97fdde99c2dfc276ed3c09"
+    },
+    {
+      "bytes": 374972,
+      "format": "json",
+      "path": "scorecard/growth.json",
+      "rows": 44,
+      "sha256": "66dc2d7a54fb512e9d8df658bcfeeee88dcbc86c20be91deab8134ba8180586c"
+    },
+    {
+      "bytes": 174455,
+      "format": "json",
+      "path": "scorecard/labour.json",
+      "rows": 44,
+      "sha256": "f0ef184b74070090c21889bd8a3f276e33a4cca683369127117a94ec4f6e3a4b"
+    },
+    {
+      "bytes": 218332,
+      "format": "json",
+      "path": "scorecard/prices.json",
+      "rows": 44,
+      "sha256": "2be39e32064d34503ef5d70c8ee06efd58a6ec0879227bbea150a1d7fc2431d2"
+    },
+    {
+      "bytes": 297976,
+      "format": "json",
+      "path": "scorecard/social.json",
+      "rows": 44,
+      "sha256": "8a10f6d74ddda0fd4b8a0a6c888dec704578071c45cd46dd6fb0139cd6a97f72"
+    },
+    {
+      "bytes": 296177,
+      "format": "json",
+      "path": "scorecard/structural.json",
+      "rows": 44,
+      "sha256": "c866ec2c64ae09602762dec6769d5847aa33eb4251a4d91300e78e48750b9cbc"
+    },
+    {
+      "bytes": 142152,
+      "format": "parquet",
+      "path": "series/A01.parquet",
+      "rows": 1470,
+      "sha256": "4b237f0f9997e00680ae315ecca4cde356ab181667bcf711e2834467e2b337ab"
+    },
+    {
+      "bytes": 81553,
+      "format": "parquet",
+      "path": "series/A02.parquet",
+      "rows": 850,
+      "sha256": "ffca579c21edd38cfd4b3c21845320ebb30d48efbad236bec07d046e97a8b9c9"
+    },
+    {
+      "bytes": 135409,
+      "format": "parquet",
+      "path": "series/A04.parquet",
+      "rows": 1338,
+      "sha256": "f66333e49e8d2b99ca7d6bc727ba321c7528ed497294c291f6cd2f6fb82da102"
+    },
+    {
+      "bytes": 135072,
+      "format": "parquet",
+      "path": "series/A05.parquet",
+      "rows": 1308,
+      "sha256": "b1e6dd4edf7ef3b584360cda2efd08ffc8b75cf9f3c365196b7f69559f91efca"
+    },
+    {
+      "bytes": 119988,
+      "format": "parquet",
+      "path": "series/A14.parquet",
+      "rows": 1470,
+      "sha256": "b75f96cc8c88e64195af853cce6c9a8cfb5f10602d32a1244dee6897a0ffdc6b"
+    },
+    {
+      "bytes": 140762,
+      "format": "parquet",
+      "path": "series/A22.parquet",
+      "rows": 1470,
+      "sha256": "6f32c29efd9126d91e7920e0407d6dd8d3d61dcdaa1d95b0f8a517619f476078"
+    },
+    {
+      "bytes": 357839,
+      "format": "parquet",
+      "path": "series/G01.parquet",
+      "rows": 10287,
+      "sha256": "719bcb53f76c2c755adc1694c68b4f5e1c803e66ccd59db0b3b683d89e42c885"
+    },
+    {
+      "bytes": 15333,
+      "format": "parquet",
+      "path": "series/G02.parquet",
+      "rows": 430,
+      "sha256": "831045eb42f0c6080109878a9a0609247d7f6d335c1ddb9f08d155d094784459"
+    },
+    {
+      "bytes": 3799,
+      "format": "parquet",
+      "path": "series/G03.parquet",
+      "rows": 9,
+      "sha256": "ab4120e12f31c1a33436f1e38bd7a076d41c7a2a531dc103206df834eef62c1c"
+    },
+    {
+      "bytes": 291256,
+      "format": "parquet",
+      "path": "series/M02.parquet",
+      "rows": 8592,
+      "sha256": "4ff0377fdbf0c5c2e03af6badf43ea2343fef57795f84fbea5b438120be17c78"
+    },
+    {
+      "bytes": 357221,
+      "format": "parquet",
+      "path": "series/M06.parquet",
+      "rows": 10308,
+      "sha256": "ceb43ccdb8d3c62f89b7b0ef0e0d2c9d602ef783385eaa5ea9adc5174c4ad797"
+    },
+    {
+      "bytes": 334425,
+      "format": "parquet",
+      "path": "series/M07.parquet",
+      "rows": 9495,
+      "sha256": "5f30cf530a0ec8c0589cffbea4fe04a6ab0470bd59bca8a7138dfa5a0577260e"
+    },
+    {
+      "bytes": 227993,
+      "format": "parquet",
+      "path": "series/M09.parquet",
+      "rows": 10626,
+      "sha256": "69b3c4e756db22d7fde42645054e6026d9705ac5508a90b782efe74f2788c545"
+    },
+    {
+      "bytes": 13033,
+      "format": "parquet",
+      "path": "series/M17.parquet",
+      "rows": 744,
+      "sha256": "30cb34147b68cf6b780cbe52077bf9aa419338e44d2440724809c7b96f58dbfc"
+    },
+    {
+      "bytes": 206572,
+      "format": "parquet",
+      "path": "series/M18.parquet",
+      "rows": 7899,
+      "sha256": "3c2fbc00f9104688aed9f12462ba335f6db907ca50c83b2d15e27abb5a370a4e"
+    },
+    {
+      "bytes": 15110,
+      "format": "parquet",
+      "path": "series/Q06.parquet",
+      "rows": 282,
+      "sha256": "6c6df3c2ae3de75479be06a97a18894e99516917182207167e765b24b515c06f"
+    },
+    {
+      "bytes": 127355,
+      "format": "parquet",
+      "path": "series/Q08.parquet",
+      "rows": 2964,
+      "sha256": "026f9a7c9309194162a638211768a4a0fb8a83e16d1fc3c1c6ba569c371a457b"
+    },
+    {
+      "bytes": 1637,
+      "format": "json",
+      "path": "status.json",
+      "rows": null,
+      "sha256": "ebf78a8177c6f9edae3c84f3a068b6a094f0dca8f73a4e9d4a12b736e537f408"
+    }
+  ],
+  "generated_at": "2026-11-16T06:55:04Z",
+  "history_start": "1991-01-01",
+  "ingest_run_id": 144,
+  "known_cutoff": "2026-11-15T19:37:09.336046Z",
+  "schema_version": "1.0",
+  "totals": {
+    "bytes": 6079080,
+    "files": 38
+  }
+}

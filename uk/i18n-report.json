@@ -1,0 +1,20 @@
+{
+ "language": "uk",
+ "summary": {
+  "ui_total": 609,
+  "ui_fallbacks": 0,
+  "names_missing": {
+   "domains": 0,
+   "indicators": 0,
+   "entities": 0,
+   "sources": 0
+  }
+ },
+ "fallbacks": [],
+ "missing_names": {
+  "domains": [],
+  "indicators": [],
+  "entities": [],
+  "sources": []
+ }
+}

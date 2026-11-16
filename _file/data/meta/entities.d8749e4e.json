@@ -1,0 +1,528 @@
+{
+  "entities": [
+    {
+      "entity_id": "ARG",
+      "group_ids": [
+        "emerging"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "ARG",
+      "kind": "country",
+      "name": "Argentina"
+    },
+    {
+      "entity_id": "AUS",
+      "group_ids": [
+        "advanced"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "AUS",
+      "kind": "country",
+      "name": "Australia"
+    },
+    {
+      "entity_id": "AUT",
+      "group_ids": [
+        "advanced",
+        "euro_area"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "AUT",
+      "kind": "country",
+      "name": "Austria"
+    },
+    {
+      "entity_id": "BEL",
+      "group_ids": [
+        "advanced",
+        "euro_area"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "BEL",
+      "kind": "country",
+      "name": "Belgium"
+    },
+    {
+      "entity_id": "BGR",
+      "group_ids": [
+        "emerging",
+        "euro_area"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "BGR",
+      "kind": "country",
+      "name": "Bulgaria"
+    },
+    {
+      "entity_id": "BRA",
+      "group_ids": [
+        "emerging"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "BRA",
+      "kind": "country",
+      "name": "Brazil"
+    },
+    {
+      "entity_id": "CAN",
+      "group_ids": [
+        "advanced",
+        "g7"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "CAN",
+      "kind": "country",
+      "name": "Canada"
+    },
+    {
+      "entity_id": "CHN",
+      "group_ids": [
+        "emerging"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "CHN",
+      "kind": "country",
+      "name": "China"
+    },
+    {
+      "entity_id": "CYP",
+      "group_ids": [
+        "advanced",
+        "euro_area"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "CYP",
+      "kind": "country",
+      "name": "Cyprus"
+    },
+    {
+      "entity_id": "CZE",
+      "group_ids": [
+        "advanced",
+        "non_euro_eu"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "CZE",
+      "kind": "country",
+      "name": "Czechia"
+    },
+    {
+      "entity_id": "DEU",
+      "group_ids": [
+        "advanced",
+        "euro_area",
+        "g7"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "DEU",
+      "kind": "country",
+      "name": "Germany"
+    },
+    {
+      "entity_id": "DNK",
+      "group_ids": [
+        "advanced",
+        "non_euro_eu"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "DNK",
+      "kind": "country",
+      "name": "Denmark"
+    },
+    {
+      "entity_id": "EA",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": false,
+      "iso3": null,
+      "kind": "aggregate",
+      "name": "Euro area"
+    },
+    {
+      "entity_id": "ESP",
+      "group_ids": [
+        "advanced",
+        "euro_area"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "ESP",
+      "kind": "country",
+      "name": "Spain"
+    },
+    {
+      "entity_id": "EST",
+      "group_ids": [
+        "advanced",
+        "euro_area"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "EST",
+      "kind": "country",
+      "name": "Estonia"
+    },
+    {
+      "entity_id": "EU27",
+      "group_ids": [],
+      "is_global": false,
+      "is_ranked": false,
+      "iso3": null,
+      "kind": "aggregate",
+      "name": "European Union (27)"
+    },
+    {
+      "entity_id": "FIN",
+      "group_ids": [
+        "advanced",
+        "euro_area"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "FIN",
+      "kind": "country",
+      "name": "Finland"
+    },
+    {
+      "entity_id": "FRA",
+      "group_ids": [
+        "advanced",
+        "euro_area",
+        "g7"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "FRA",
+      "kind": "country",
+      "name": "France"
+    },
+    {
+      "entity_id": "GBR",
+      "group_ids": [
+        "advanced",
+        "g7"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "GBR",
+      "kind": "country",
+      "name": "United Kingdom"
+    },
+    {
+      "entity_id": "GRC",
+      "group_ids": [
+        "advanced",
+        "euro_area"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "GRC",
+      "kind": "country",
+      "name": "Greece"
+    },
+    {
+      "entity_id": "HRV",
+      "group_ids": [
+        "advanced",
+        "euro_area"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "HRV",
+      "kind": "country",
+      "name": "Croatia"
+    },
+    {
+      "entity_id": "HUN",
+      "group_ids": [
+        "emerging",
+        "non_euro_eu"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "HUN",
+      "kind": "country",
+      "name": "Hungary"
+    },
+    {
+      "entity_id": "IDN",
+      "group_ids": [
+        "emerging"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "IDN",
+      "kind": "country",
+      "name": "Indonesia"
+    },
+    {
+      "entity_id": "IND",
+      "group_ids": [
+        "emerging"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "IND",
+      "kind": "country",
+      "name": "India"
+    },
+    {
+      "entity_id": "IRL",
+      "group_ids": [
+        "advanced",
+        "euro_area"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "IRL",
+      "kind": "country",
+      "name": "Ireland"
+    },
+    {
+      "entity_id": "ITA",
+      "group_ids": [
+        "advanced",
+        "euro_area",
+        "g7"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "ITA",
+      "kind": "country",
+      "name": "Italy"
+    },
+    {
+      "entity_id": "JPN",
+      "group_ids": [
+        "advanced",
+        "g7"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "JPN",
+      "kind": "country",
+      "name": "Japan"
+    },
+    {
+      "entity_id": "KOR",
+      "group_ids": [
+        "advanced"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "KOR",
+      "kind": "country",
+      "name": "South Korea"
+    },
+    {
+      "entity_id": "LTU",
+      "group_ids": [
+        "advanced",
+        "euro_area"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "LTU",
+      "kind": "country",
+      "name": "Lithuania"
+    },
+    {
+      "entity_id": "LUX",
+      "group_ids": [
+        "advanced",
+        "euro_area"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "LUX",
+      "kind": "country",
+      "name": "Luxembourg"
+    },
+    {
+      "entity_id": "LVA",
+      "group_ids": [
+        "advanced",
+        "euro_area"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "LVA",
+      "kind": "country",
+      "name": "Latvia"
+    },
+    {
+      "entity_id": "MEX",
+      "group_ids": [
+        "emerging"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "MEX",
+      "kind": "country",
+      "name": "Mexico"
+    },
+    {
+      "entity_id": "MLT",
+      "group_ids": [
+        "advanced",
+        "euro_area"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "MLT",
+      "kind": "country",
+      "name": "Malta"
+    },
+    {
+      "entity_id": "NLD",
+      "group_ids": [
+        "advanced",
+        "euro_area"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "NLD",
+      "kind": "country",
+      "name": "Netherlands"
+    },
+    {
+      "entity_id": "POL",
+      "group_ids": [
+        "emerging",
+        "non_euro_eu"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "POL",
+      "kind": "country",
+      "name": "Poland"
+    },
+    {
+      "entity_id": "PRT",
+      "group_ids": [
+        "advanced",
+        "euro_area"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "PRT",
+      "kind": "country",
+      "name": "Portugal"
+    },
+    {
+      "entity_id": "ROU",
+      "group_ids": [
+        "emerging",
+        "non_euro_eu"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "ROU",
+      "kind": "country",
+      "name": "Romania"
+    },
+    {
+      "entity_id": "SAU",
+      "group_ids": [
+        "emerging"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "SAU",
+      "kind": "country",
+      "name": "Saudi Arabia"
+    },
+    {
+      "entity_id": "SVK",
+      "group_ids": [
+        "advanced",
+        "euro_area"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "SVK",
+      "kind": "country",
+      "name": "Slovakia"
+    },
+    {
+      "entity_id": "SVN",
+      "group_ids": [
+        "advanced",
+        "euro_area"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "SVN",
+      "kind": "country",
+      "name": "Slovenia"
+    },
+    {
+      "entity_id": "SWE",
+      "group_ids": [
+        "advanced",
+        "non_euro_eu"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "SWE",
+      "kind": "country",
+      "name": "Sweden"
+    },
+    {
+      "entity_id": "TUR",
+      "group_ids": [
+        "emerging"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "TUR",
+      "kind": "country",
+      "name": "Turkiye"
+    },
+    {
+      "entity_id": "USA",
+      "group_ids": [
+        "advanced",
+        "g7"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "USA",
+      "kind": "country",
+      "name": "United States"
+    },
+    {
+      "entity_id": "WLD",
+      "group_ids": [],
+      "is_global": true,
+      "is_ranked": false,
+      "iso3": null,
+      "kind": "aggregate",
+      "name": "World"
+    },
+    {
+      "entity_id": "ZAF",
+      "group_ids": [
+        "emerging"
+      ],
+      "is_global": false,
+      "is_ranked": true,
+      "iso3": "ZAF",
+      "kind": "country",
+      "name": "South Africa"
+    }
+  ],
+  "schema_version": "1.0"
+}

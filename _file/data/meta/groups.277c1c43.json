@@ -1,0 +1,415 @@
+{
+  "groups": [
+    {
+      "group_id": "advanced",
+      "members": [
+        {
+          "entity_id": "AUS",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "AUT",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "BEL",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "CAN",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "CYP",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "CZE",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "DEU",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "DNK",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "ESP",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "EST",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "FIN",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "FRA",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "GBR",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "GRC",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "HRV",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "IRL",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "ITA",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "JPN",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "KOR",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "LTU",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "LUX",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "LVA",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "MLT",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "NLD",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "PRT",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "SVK",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "SVN",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "SWE",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "USA",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        }
+      ],
+      "name": "advanced"
+    },
+    {
+      "group_id": "emerging",
+      "members": [
+        {
+          "entity_id": "ARG",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "BGR",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "BRA",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "CHN",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "HUN",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "IDN",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "IND",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "MEX",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "POL",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "ROU",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "SAU",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "TUR",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "ZAF",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        }
+      ],
+      "name": "emerging"
+    },
+    {
+      "group_id": "euro_area",
+      "members": [
+        {
+          "entity_id": "AUT",
+          "valid_from": "1999-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "BEL",
+          "valid_from": "1999-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "BGR",
+          "valid_from": "2026-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "CYP",
+          "valid_from": "2008-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "DEU",
+          "valid_from": "1999-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "ESP",
+          "valid_from": "1999-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "EST",
+          "valid_from": "2011-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "FIN",
+          "valid_from": "1999-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "FRA",
+          "valid_from": "1999-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "GRC",
+          "valid_from": "2001-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "HRV",
+          "valid_from": "2023-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "IRL",
+          "valid_from": "1999-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "ITA",
+          "valid_from": "1999-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "LTU",
+          "valid_from": "2015-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "LUX",
+          "valid_from": "1999-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "LVA",
+          "valid_from": "2014-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "MLT",
+          "valid_from": "2008-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "NLD",
+          "valid_from": "1999-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "PRT",
+          "valid_from": "1999-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "SVK",
+          "valid_from": "2009-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "SVN",
+          "valid_from": "2007-01-01",
+          "valid_to": null
+        }
+      ],
+      "name": "euro_area"
+    },
+    {
+      "group_id": "g7",
+      "members": [
+        {
+          "entity_id": "CAN",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "DEU",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "FRA",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "GBR",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "ITA",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "JPN",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "USA",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        }
+      ],
+      "name": "g7"
+    },
+    {
+      "group_id": "non_euro_eu",
+      "members": [
+        {
+          "entity_id": "CZE",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "DNK",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "HUN",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "POL",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "ROU",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        },
+        {
+          "entity_id": "SWE",
+          "valid_from": "1991-01-01",
+          "valid_to": null
+        }
+      ],
+      "name": "non_euro_eu"
+    }
+  ],
+  "schema_version": "1.0"
+}

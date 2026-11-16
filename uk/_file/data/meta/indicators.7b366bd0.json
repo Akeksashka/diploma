@@ -1,0 +1,1995 @@
+{
+ "indicators": [
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B3",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "structural"
+   ],
+   "frequency_set": [
+    "A"
+   ],
+   "good_dir": 1,
+   "indicator_id": "A01",
+   "max_ref_spread_days": 366,
+   "name": "ВВП на одну особу за ПКС і відношення до США",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "INTL_USD_PPP"
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "growth"
+   ],
+   "frequency_set": [
+    "A"
+   ],
+   "good_dir": 0,
+   "indicator_id": "A02",
+   "max_ref_spread_days": 366,
+   "name": "Розрив випуску, оцінка МВФ (основна)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "target_distance",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": {
+    "source_note": "Output gap of zero means actual output equals potential output (definition).",
+    "value": 0
+   },
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "PCT_POT_GDP"
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "fiscal"
+   ],
+   "frequency_set": [
+    "A"
+   ],
+   "good_dir": 1,
+   "indicator_id": "A04",
+   "max_ref_spread_days": 366,
+   "name": "Сальдо та первинне сальдо сектору загального державного управління, % ВВП",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "PCT_GDP"
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "fiscal"
+   ],
+   "frequency_set": [
+    "A"
+   ],
+   "good_dir": -1,
+   "indicator_id": "A05",
+   "max_ref_spread_days": 366,
+   "name": "Валовий державний борг, % ВВП",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "PCT_GDP"
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "structural"
+   ],
+   "frequency_set": [],
+   "good_dir": 1,
+   "indicator_id": "A07",
+   "max_ref_spread_days": 366,
+   "name": "Валове накопичення основного капіталу, % ВВП",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "structural"
+   ],
+   "frequency_set": [],
+   "good_dir": 1,
+   "indicator_id": "A09",
+   "max_ref_spread_days": 366,
+   "name": "Зростання сукупної факторної продуктивності (економіка в цілому)",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "social"
+   ],
+   "frequency_set": [],
+   "good_dir": 1,
+   "indicator_id": "A10",
+   "max_ref_spread_days": 366,
+   "name": "Населення, частка осіб працездатного віку, навантаження літніми людьми",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "social"
+   ],
+   "frequency_set": [],
+   "good_dir": 1,
+   "indicator_id": "A11",
+   "max_ref_spread_days": 366,
+   "name": "Очікувана тривалість життя при народженні",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "social"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "A12",
+   "max_ref_spread_days": 366,
+   "name": "Витрати на охорону здоров'я, % ВВП",
+   "notes": [],
+   "priority": "opt",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "social"
+   ],
+   "frequency_set": [],
+   "good_dir": 1,
+   "indicator_id": "A13",
+   "max_ref_spread_days": 366,
+   "name": "Рівень освіти (частка осіб із вищою освітою віком 25–34 роки), PISA, роки навчання",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 1460,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "social"
+   ],
+   "frequency_set": [
+    "A"
+   ],
+   "good_dir": -1,
+   "indicator_id": "A14",
+   "max_ref_spread_days": 366,
+   "name": "Нерівність доходів (Джині, S80/S20, рівень бідності)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 1460,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "IDX"
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "structural"
+   ],
+   "frequency_set": [],
+   "good_dir": 1,
+   "indicator_id": "A16",
+   "max_ref_spread_days": 366,
+   "name": "Світові показники врядування (шість вимірів)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "structural"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "A18",
+   "max_ref_spread_days": 366,
+   "name": "Складність експорту, приплив ПІІ, % ВВП",
+   "notes": [],
+   "priority": "opt",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "environment"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "A19",
+   "max_ref_spread_days": 366,
+   "name": "Залежність від імпорту енергії; енергоємність; структура електроенергії",
+   "notes": [],
+   "priority": "opt",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "environment"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "A20",
+   "max_ref_spread_days": 366,
+   "name": "Викиди парникових газів на одну особу та на одиницю ВВП",
+   "notes": [],
+   "priority": "opt",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "environment"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "A21",
+   "max_ref_spread_days": 366,
+   "name": "Частка відновлюваних джерел в електроенергії",
+   "notes": [],
+   "priority": "opt",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "social"
+   ],
+   "frequency_set": [
+    "A"
+   ],
+   "good_dir": 0,
+   "indicator_id": "A22",
+   "max_ref_spread_days": 366,
+   "name": "Кількість бідного населення; участь у робочій силі",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 1460,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "PCT"
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "structural"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "A23",
+   "max_ref_spread_days": 366,
+   "name": "Витрати на НДДКР, % ВВП; патенти",
+   "notes": [],
+   "priority": "opt",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "fiscal"
+   ],
+   "frequency_set": [],
+   "good_dir": 1,
+   "indicator_id": "A24",
+   "max_ref_spread_days": 366,
+   "name": "Циклічно скоригований первинний баланс",
+   "notes": [],
+   "priority": "opt",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "robust_z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "prices"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "A25",
+   "max_ref_spread_days": 366,
+   "name": "Інфляція за дефлятором ВВП (і частка реального ВВП у світовому)",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "social"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "A26",
+   "max_ref_spread_days": 366,
+   "name": "Споживання домогосподарств на одну особу; частка продовольства у споживчих витратах",
+   "notes": [],
+   "priority": "opt",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 1460,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "robust_z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "agri",
+    "prices"
+   ],
+   "frequency_set": [
+    "M"
+   ],
+   "good_dir": 0,
+   "indicator_id": "G01",
+   "max_ref_spread_days": 92,
+   "name": "ІСЦ / ГІСЦ на продукти харчування та безалкогольні напої",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "I25"
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "robust_z",
+   "currency_basis": "B2",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "global"
+   ],
+   "frequency_set": [
+    "M"
+   ],
+   "good_dir": 0,
+   "indicator_id": "G02",
+   "max_ref_spread_days": 92,
+   "name": "Ціни на сільськогосподарську продукцію та добрива",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "global",
+   "staleness_limit_days": 45,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "IDX"
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "global"
+   ],
+   "frequency_set": [
+    "A"
+   ],
+   "good_dir": 0,
+   "indicator_id": "G03",
+   "max_ref_spread_days": 92,
+   "name": "Відношення запасів до споживання (пшениця, фуражні зернові, рис, олійні)",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "global",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "PCT"
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "SUM12_PCT_GDP",
+   "display_dir": null,
+   "domain_ids": [
+    "agri"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "G04",
+   "max_ref_spread_days": 92,
+   "name": "Баланс торгівлі сільськогосподарською продукцією, сума за 12 місяців",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "robust_z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "agri"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "G05",
+   "max_ref_spread_days": 92,
+   "name": "Індекс реального торговельно-зваженого обмінного курсу в аграрному секторі",
+   "notes": [],
+   "priority": "opt",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 270,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "agri"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "G06",
+   "max_ref_spread_days": 92,
+   "name": "Аномалії погоди та посухи на сільськогосподарських землях",
+   "notes": [],
+   "priority": "opt",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "agri"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "G07",
+   "max_ref_spread_days": 366,
+   "name": "Індекс сукупної факторної продуктивності сільського господарства",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "agri"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "G08",
+   "max_ref_spread_days": 366,
+   "name": "Урожайність зернових; додана вартість сільського господарства на одного працівника",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "agri"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "G09",
+   "max_ref_spread_days": 366,
+   "name": "Додана вартість сільського господарства, % ВВП; частка зайнятих у сільському господарстві",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "agri"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "G10",
+   "max_ref_spread_days": 366,
+   "name": "Залежність від імпорту зернових / рівень самозабезпечення",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "agri"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "G11",
+   "max_ref_spread_days": 366,
+   "name": "Частка витрат на продукти харчування у витратах домогосподарств",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 1460,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "agri"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "G12",
+   "max_ref_spread_days": 366,
+   "name": "Поширеність недоїдання та продовольчої незабезпеченості (ФАО, трирічні середні)",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 1460,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "agri"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "G14",
+   "max_ref_spread_days": 366,
+   "name": "10-річні сільськогосподарські прогнози (базовий сценарій ERS)",
+   "notes": [],
+   "priority": "opt",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "none",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "agri"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "G15",
+   "max_ref_spread_days": 366,
+   "name": "Сільськогосподарські землі, площа зрошення, використання добрив",
+   "notes": [],
+   "priority": "opt",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 730,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "growth"
+   ],
+   "frequency_set": [],
+   "good_dir": 1,
+   "indicator_id": "M01",
+   "max_ref_spread_days": 92,
+   "name": "Індекс промислового виробництва (без будівництва)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "growth"
+   ],
+   "frequency_set": [
+    "M"
+   ],
+   "good_dir": 1,
+   "indicator_id": "M02",
+   "max_ref_spread_days": 92,
+   "name": "Обсяг роздрібної торгівлі",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "I21"
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": 1,
+   "domain_ids": [
+    "growth"
+   ],
+   "frequency_set": [
+    "M"
+   ],
+   "good_dir": 0,
+   "indicator_id": "M03",
+   "max_ref_spread_days": 92,
+   "name": "Опитування ділової впевненості (ESI ЄК, BCI ОЕСР)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 75,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "BALANCE"
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": 1,
+   "domain_ids": [
+    "growth"
+   ],
+   "frequency_set": [
+    "M"
+   ],
+   "good_dir": 0,
+   "indicator_id": "M04",
+   "max_ref_spread_days": 92,
+   "name": "Споживча впевненість",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 75,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "BALANCE"
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": 1,
+   "domain_ids": [
+    "growth"
+   ],
+   "frequency_set": [
+    "M"
+   ],
+   "good_dir": 0,
+   "indicator_id": "M05",
+   "max_ref_spread_days": 92,
+   "name": "Складовий випереджальний індикатор ОЕСР",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "IDX"
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "robust_z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "prices"
+   ],
+   "frequency_set": [
+    "M"
+   ],
+   "good_dir": 0,
+   "indicator_id": "M06",
+   "max_ref_spread_days": 92,
+   "name": "Інфляція за загальним ІСЦ / ГІСЦ",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "I25, IDX"
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "robust_z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "prices"
+   ],
+   "frequency_set": [
+    "M"
+   ],
+   "good_dir": 0,
+   "indicator_id": "M07",
+   "max_ref_spread_days": 92,
+   "name": "Базова інфляція (без продовольства й енергії)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "I25"
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "robust_z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "prices"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "M08",
+   "max_ref_spread_days": 92,
+   "name": "Ціни виробників промислової продукції",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "labour"
+   ],
+   "frequency_set": [
+    "M"
+   ],
+   "good_dir": -1,
+   "indicator_id": "M09",
+   "max_ref_spread_days": 92,
+   "name": "Рівень безробіття",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "PC_ACT"
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "labour"
+   ],
+   "frequency_set": [],
+   "good_dir": -1,
+   "indicator_id": "M10",
+   "max_ref_spread_days": 92,
+   "name": "Безробіття серед молоді (до 25 років)",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "labour"
+   ],
+   "frequency_set": [],
+   "good_dir": 1,
+   "indicator_id": "M11",
+   "max_ref_spread_days": 92,
+   "name": "Рівень зайнятості (щомісячно)",
+   "notes": [],
+   "priority": "opt",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "external"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "M12",
+   "max_ref_spread_days": 92,
+   "name": "Експорт та імпорт товарів",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "SUM12_PCT_GDP",
+   "display_dir": null,
+   "domain_ids": [
+    "external"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "M13",
+   "max_ref_spread_days": 92,
+   "name": "Баланс торгівлі товарами, сума за 12 місяців, % ВВП",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B2",
+   "default_transform": "RESERVE_COVER",
+   "display_dir": null,
+   "domain_ids": [
+    "external"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "M14",
+   "max_ref_spread_days": 92,
+   "name": "Офіційні валютні резерви",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "robust_z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "external"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "M15",
+   "max_ref_spread_days": 92,
+   "name": "Реальний ефективний обмінний курс",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "robust_z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "external"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "M16",
+   "max_ref_spread_days": 92,
+   "name": "Обмінний курс до долара США",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 45,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "fin"
+   ],
+   "frequency_set": [
+    "M"
+   ],
+   "good_dir": 0,
+   "indicator_id": "M17",
+   "max_ref_spread_days": 92,
+   "name": "Облікова (політична) відсоткова ставка",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 45,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "PCT"
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "robust_z",
+   "currency_basis": "B1",
+   "default_transform": "SPREAD_VS_REF",
+   "display_dir": null,
+   "domain_ids": [
+    "fin"
+   ],
+   "frequency_set": [
+    "M"
+   ],
+   "good_dir": 0,
+   "indicator_id": "M18",
+   "max_ref_spread_days": 92,
+   "name": "Дохідність 10-річних державних облігацій і спред",
+   "notes": [
+    "Non-euro countries: local-currency yield spread (includes inflation/FX expectations), not sovereign credit risk"
+   ],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 45,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "PCT"
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "fin"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "M19",
+   "max_ref_spread_days": 92,
+   "name": "Короткострокова міжбанківська ставка",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 45,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "robust_z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "fin"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "M21",
+   "max_ref_spread_days": 92,
+   "name": "Зростання банківського кредитування приватного сектору",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "robust_z",
+   "currency_basis": "B2",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "global"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "M24",
+   "max_ref_spread_days": 92,
+   "name": "Ціни на сировину й енергоносії (Brent, газ, індекс цін на продовольство)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "global",
+   "staleness_limit_days": 45,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "environment"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "M27",
+   "max_ref_spread_days": 92,
+   "name": "Показник виробництва/споживання електроенергії",
+   "notes": [],
+   "priority": "opt",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 120,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "growth"
+   ],
+   "frequency_set": [],
+   "good_dir": 1,
+   "indicator_id": "Q01",
+   "max_ref_spread_days": 190,
+   "name": "Реальний ВВП (обсяг, з сезонним згладжуванням)",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 270,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B3",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "growth"
+   ],
+   "frequency_set": [],
+   "good_dir": 1,
+   "indicator_id": "Q02",
+   "max_ref_spread_days": 190,
+   "name": "Реальний ВВП на одну особу за ПКС",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 270,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "labour"
+   ],
+   "frequency_set": [],
+   "good_dir": 1,
+   "indicator_id": "Q03",
+   "max_ref_spread_days": 190,
+   "name": "Зайнятість, відпрацьовані години",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 270,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 0,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "growth"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "Q04",
+   "max_ref_spread_days": 190,
+   "name": "Складові витрат (внесок у зростання)",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 270,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "external"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "Q05",
+   "max_ref_spread_days": 190,
+   "name": "Сальдо поточного рахунку, % ВВП",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 270,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "fin"
+   ],
+   "frequency_set": [
+    "Q"
+   ],
+   "good_dir": 0,
+   "indicator_id": "Q06",
+   "max_ref_spread_days": 190,
+   "name": "Кредит приватному нефінансовому сектору, % ВВП, і розрив кредит/ВВП",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 270,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "PCT_GDP"
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "fin"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "Q07",
+   "max_ref_spread_days": 190,
+   "name": "Ціни на житлову нерухомість (реальні)",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 270,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "fiscal"
+   ],
+   "frequency_set": [
+    "Q"
+   ],
+   "good_dir": -1,
+   "indicator_id": "Q08",
+   "max_ref_spread_days": 190,
+   "name": "Валовий борг сектору загального державного управління, % ВВП",
+   "notes": [],
+   "priority": "core",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 270,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": "PC_GDP"
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "external"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "Q09",
+   "max_ref_spread_days": 190,
+   "name": "Чиста міжнародна інвестиційна позиція, % ВВП",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 270,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "z",
+   "currency_basis": "B2",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "external"
+   ],
+   "frequency_set": [],
+   "good_dir": -1,
+   "indicator_id": "Q10",
+   "max_ref_spread_days": 190,
+   "name": "Зовнішній борг; короткостроковий зовнішній борг порівняно з резервами",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 270,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "fin"
+   ],
+   "frequency_set": [],
+   "good_dir": -1,
+   "indicator_id": "Q11",
+   "max_ref_spread_days": 190,
+   "name": "Стійкість банківського сектору (частка непрацюючих кредитів, капітал першого рівня)",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 270,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "fiscal"
+   ],
+   "frequency_set": [],
+   "good_dir": 1,
+   "indicator_id": "Q12",
+   "max_ref_spread_days": 190,
+   "name": "Чисте кредитування/запозичення сектору загального державного управління, % ВВП",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 270,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": 1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "LEVEL",
+   "display_dir": null,
+   "domain_ids": [
+    "fin"
+   ],
+   "frequency_set": [],
+   "good_dir": -1,
+   "indicator_id": "Q13",
+   "max_ref_spread_days": 190,
+   "name": "Борг домогосподарств, % ВВП",
+   "notes": [],
+   "priority": "opt",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 270,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "structural"
+   ],
+   "frequency_set": [],
+   "good_dir": 1,
+   "indicator_id": "Q15",
+   "max_ref_spread_days": 190,
+   "name": "Продуктивність праці (ВВП на одну відпрацьовану годину)",
+   "notes": [],
+   "priority": "ext",
+   "rank_mode": "monotone_good",
+   "scope": "country",
+   "staleness_limit_days": 270,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  },
+  {
+   "adverse_dir": -1,
+   "alert_method": "z",
+   "currency_basis": "B1",
+   "default_transform": "YOY",
+   "display_dir": null,
+   "domain_ids": [
+    "agri"
+   ],
+   "frequency_set": [],
+   "good_dir": 0,
+   "indicator_id": "Q17",
+   "max_ref_spread_days": 190,
+   "name": "Валова додана вартість сільського господарства, обсяг",
+   "notes": [],
+   "priority": "opt",
+   "rank_mode": "descriptive_only",
+   "scope": "country",
+   "staleness_limit_days": 270,
+   "target": null,
+   "transform_options": [
+    "level",
+    "default",
+    "yoy"
+   ],
+   "unit_label": null
+  }
+ ],
+ "schema_version": "1.0"
+}
