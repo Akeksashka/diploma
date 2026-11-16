@@ -18,6 +18,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import psycopg
+from psycopg import sql
 
 from macro_monitor.storage.db import (
     EXIT_MIGRATION_MISMATCH,
@@ -28,6 +29,7 @@ from macro_monitor.storage.db import (
 MIGRATIONS_DIR = Path(__file__).parent / "migrations"
 LOCK_NAME = "mm-migrate"
 RUNNING_WINDOW_HOURS = 6
+SCHEMA_MIGRATION_RELATION = "ops.schema_migration"
 
 _FILE_RE = re.compile(r"^(\d{4})_([a-z0-9_]+)\.sql$")
 
@@ -85,12 +87,21 @@ def expected_version(migrations: list[Migration] | None = None) -> int:
     return files[-1].version if files else -1
 
 
-def applied(conn: psycopg.Connection) -> dict[int, tuple[str, str]]:
-    """Applied migrations as ``{version: (name, checksum)}``; empty before 0000 ran."""
-    exists = conn.execute("SELECT to_regclass('ops.schema_migration')").fetchone()
+def applied(
+    conn: psycopg.Connection, *, relation: str = SCHEMA_MIGRATION_RELATION
+) -> dict[int, tuple[str, str]]:
+    """Applied migrations as ``{version: (name, checksum)}``; empty before 0000 ran.
+
+    ``relation`` is a fixed internal constant (the table, or ``ops.v_schema_version`` for the
+    ``mm_reader`` export, ADR-038), never user input.
+    """
+    exists = conn.execute("SELECT to_regclass(%s)", [relation]).fetchone()
     if exists is None or exists[0] is None:
         return {}
-    rows = conn.execute("SELECT version, name, checksum FROM ops.schema_migration").fetchall()
+    query = sql.SQL("SELECT version, name, checksum FROM {}").format(
+        sql.SQL(".").join(sql.Identifier(part) for part in relation.split("."))
+    )
+    rows = conn.execute(query).fetchall()
     return {int(v): (str(n), str(c)) for v, n, c in rows}
 
 
@@ -107,13 +118,18 @@ def _verify_applied(done: dict[int, tuple[str, str]], files: list[Migration]) ->
             )
 
 
-def check_schema_version(conn: psycopg.Connection, migrations_dir: Path | None = None) -> int:
+def check_schema_version(
+    conn: psycopg.Connection,
+    migrations_dir: Path | None = None,
+    *,
+    relation: str = SCHEMA_MIGRATION_RELATION,
+) -> int:
     """DB-03: the applied version (and every applied checksum) equals the code expectation.
 
     Returns the applied version; raises ``MigrationMismatch`` (exit code 40) otherwise.
     """
     files = discover(migrations_dir)
-    done = applied(conn)
+    done = applied(conn, relation=relation)
     _verify_applied(done, files)
     current = max(done) if done else -1
     expected = expected_version(files)

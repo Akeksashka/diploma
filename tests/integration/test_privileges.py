@@ -302,6 +302,9 @@ def test_explicit_negatives_and_executable_behaviour(test_database: TestDatabase
             assert not can("mm_ingest", "curated.observation", priv)
         assert can("mm_ingest", "ops.export_status", "INSERT")
         assert can("mm_ingest", "ops.schema_migration", "SELECT")  # T10 carry-over
+        # ADR-038: mm_reader reads the owner-rights view, never the table
+        assert can("mm_reader", "ops.v_schema_version", "SELECT")
+        assert not can("mm_reader", "ops.schema_migration", "SELECT")
         assert not can("mm_r", "curated.observation", "SELECT")
         # nobody but the owner may create objects in the application schemas
         for sch in ("ref", "ingest", "staging", "curated", "ops"):

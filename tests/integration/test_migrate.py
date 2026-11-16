@@ -162,3 +162,32 @@ def test_second_runner_waits_on_the_migrate_lock(
 def test_pooled_dsn_is_refused(test_database: TestDatabase) -> None:
     with test_database.connect() as conn, pytest.raises(DatabaseError):
         migrate.migrate(conn, dsn="postgresql://u@ep-x-1-pooler.neon.tech/db")
+
+
+def test_db03_through_the_reader_view(test_database: TestDatabase, tmp_path: Path) -> None:
+    """ADR-038: mm_reader runs the full DB-03 (version and checksums) via ops.v_schema_version."""
+    view = "ops.v_schema_version"
+    directory = _real_dir(tmp_path)
+    _write(directory, "0001_view.sql", "CREATE VIEW ops.v_schema_version AS "
+           "SELECT version, name, checksum FROM ops.schema_migration;\n"
+           "DO $mm$ BEGIN EXECUTE format('GRANT USAGE ON SCHEMA ops TO %1$I; "
+           "GRANT SELECT ON ops.v_schema_version TO %1$I', "
+           "'mm_reader' || CASE WHEN current_database() ~ '^mm_test_[0-9a-f]+$' "
+           "THEN '_' || substr(current_database(), 9) ELSE '' END); END $mm$;\n")  # fmt: skip
+    with test_database.connect() as conn:
+        migrate.migrate(conn, directory)
+    with test_database.connect("mm_reader") as rd:
+        with pytest.raises(psycopg.errors.InsufficientPrivilege):
+            migrate.check_schema_version(rd, directory)
+        rd.rollback()
+        assert migrate.check_schema_version(rd, directory, relation=view) == 1
+        # pending file: version mismatch
+        _write(directory, "0002_extra.sql", "SELECT 1;\n")
+        with pytest.raises(migrate.MigrationMismatch, match="expects 2") as info:
+            migrate.check_schema_version(rd, directory, relation=view)
+        assert info.value.exit_code == 40
+        (directory / "0002_extra.sql").unlink()
+        # changed checksum of an applied file
+        _write(directory, "0001_view.sql", "SELECT 2;\n")
+        with pytest.raises(migrate.MigrationMismatch, match="checksum"):
+            migrate.check_schema_version(rd, directory, relation=view)

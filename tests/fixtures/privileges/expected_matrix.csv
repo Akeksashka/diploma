@@ -70,6 +70,7 @@ ops.v_freshness_latest,view,OWNER,?,?,-,S
 ops.v_validation_counts,view,OWNER,?,?,-,S
 ops.v_manual_sources,view,OWNER,?,?,-,S
 ops.v_backlog,view,OWNER,?,?,-,S
+ops.v_schema_version,view,OWNER,?,?,-,S
 ref.series_series_id_seq,sequence,OWNER,U,-,-,-
 ingest.run_run_id_seq,sequence,OWNER,U,-,-,-
 ingest.raw_object_raw_id_seq,sequence,OWNER,U,-,-,-
