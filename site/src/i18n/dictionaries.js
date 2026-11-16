@@ -1695,6 +1695,138 @@ export const dictionaries = {
   },
   "X_PRINT_URL": {
    "t": "Page URL:"
+  },
+  "CODE.unit.PCT": {
+   "t": "%"
+  },
+  "CODE.unit.PCT_GDP": {
+   "t": "% of GDP"
+  },
+  "CODE.unit.PC_GDP": {
+   "t": "% of GDP"
+  },
+  "CODE.unit.PCT_POT_GDP": {
+   "t": "% of potential GDP"
+  },
+  "CODE.unit.PC_ACT": {
+   "t": "% of the active population"
+  },
+  "CODE.unit.IDX": {
+   "t": "index"
+  },
+  "CODE.unit.I21": {
+   "t": "index, 2021 = 100"
+  },
+  "CODE.unit.I25": {
+   "t": "index, 2025 = 100"
+  },
+  "CODE.unit.BALANCE": {
+   "t": "balance, points"
+  },
+  "CODE.unit.INTL_USD_PPP": {
+   "t": "international dollars, PPP"
+  },
+  "CODE.unit.USD": {
+   "t": "US dollars"
+  },
+  "CODE.unit.EUR": {
+   "t": "euro"
+  },
+  "CODE.unit.LCU": {
+   "t": "local currency units"
+  },
+  "CODE.unit.MONTHS": {
+   "t": "months"
+  },
+  "CODE.seasonal.SA": {
+   "t": "seasonally adjusted"
+  },
+  "CODE.seasonal.SCA": {
+   "t": "seasonally and calendar adjusted"
+  },
+  "CODE.seasonal.NSA": {
+   "t": "not seasonally adjusted"
+  },
+  "CODE.seasonal.NA": {
+   "t": "not applicable"
+  },
+  "CODE.status.OBS": {
+   "t": "observed"
+  },
+  "CODE.status.EST": {
+   "t": "estimate"
+  },
+  "CODE.status.PROV": {
+   "t": "provisional"
+  },
+  "CODE.status.PROJ": {
+   "t": "projection"
+  },
+  "CODE.status.DEL": {
+   "t": "deleted"
+  },
+  "CODE.status.MISS": {
+   "t": "missing at the source"
+  },
+  "CODE.load.initial": {
+   "t": "initial"
+  },
+  "CODE.load.new_period": {
+   "t": "new period"
+  },
+  "CODE.load.revision": {
+   "t": "revision"
+  },
+  "CODE.load.tombstone": {
+   "t": "tombstone"
+  },
+  "CODE.load.import": {
+   "t": "import"
+  },
+  "CODE.transform.LEVEL": {
+   "t": "level"
+  },
+  "CODE.transform.YOY": {
+   "t": "change on a year earlier, %"
+  },
+  "CODE.transform.YOY_PCT_POINT_CHANGE": {
+   "t": "change on a year earlier, percentage points"
+  },
+  "CODE.transform.DIFF12": {
+   "t": "12-month difference"
+  },
+  "CODE.transform.M3M3_ANN": {
+   "t": "3-month on 3-month, annualised"
+  },
+  "CODE.transform.QOQ_ANN": {
+   "t": "quarter on quarter, annualised"
+  },
+  "CODE.transform.REAL_RATE": {
+   "t": "real rate"
+  },
+  "CODE.transform.SPREAD_VS_REF": {
+   "t": "spread to the reference"
+  },
+  "CODE.transform.SUM12_PCT_GDP": {
+   "t": "12-month sum, % of GDP"
+  },
+  "CODE.transform.RESERVE_COVER": {
+   "t": "reserve cover"
+  },
+  "CODE.transform.GLOBAL_LCU_YOY": {
+   "t": "global change in local currency on a year earlier"
+  },
+  "CODE.freq.D": {
+   "t": "Daily"
+  },
+  "CODE.freq.M": {
+   "t": "Monthly"
+  },
+  "CODE.freq.Q": {
+   "t": "Quarterly"
+  },
+  "CODE.freq.A": {
+   "t": "Annual"
   }
  },
  "uk": {
@@ -4580,6 +4712,226 @@ export const dictionaries = {
   },
   "X_SPREAD_DAYS#many": {
    "t": "{n} днів",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.unit.PCT": {
+   "t": "%",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.unit.PCT_GDP": {
+   "t": "% ВВП",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.unit.PC_GDP": {
+   "t": "% ВВП",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.unit.PCT_POT_GDP": {
+   "t": "% потенційного ВВП",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.unit.PC_ACT": {
+   "t": "% економічно активного населення",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.unit.IDX": {
+   "t": "індекс",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.unit.I21": {
+   "t": "індекс, 2021 = 100",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.unit.I25": {
+   "t": "індекс, 2025 = 100",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.unit.BALANCE": {
+   "t": "баланс, в. п.",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.unit.INTL_USD_PPP": {
+   "t": "міжнародні долари за ПКС",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.unit.USD": {
+   "t": "дол. США",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.unit.EUR": {
+   "t": "євро",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.unit.LCU": {
+   "t": "одиниць національної валюти",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.unit.MONTHS": {
+   "t": "місяців",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.seasonal.SA": {
+   "t": "сезонно скориговано",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.seasonal.SCA": {
+   "t": "сезонно й календарно скориговано",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.seasonal.NSA": {
+   "t": "без сезонного коригування",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.seasonal.NA": {
+   "t": "не застосовується",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.status.OBS": {
+   "t": "спостереження",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.status.EST": {
+   "t": "оцінка",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.status.PROV": {
+   "t": "попередні дані",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.status.PROJ": {
+   "t": "прогноз",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.status.DEL": {
+   "t": "видалено",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.status.MISS": {
+   "t": "відсутнє в джерелі",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.load.initial": {
+   "t": "початкове завантаження",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.load.new_period": {
+   "t": "новий період",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.load.revision": {
+   "t": "ревізія",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.load.tombstone": {
+   "t": "видалення",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.load.import": {
+   "t": "імпорт",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.transform.LEVEL": {
+   "t": "рівень",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.transform.YOY": {
+   "t": "зміна до року тому, %",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.transform.YOY_PCT_POINT_CHANGE": {
+   "t": "зміна до року тому, в. п.",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.transform.DIFF12": {
+   "t": "різниця за 12 місяців",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.transform.M3M3_ANN": {
+   "t": "3 міс. до 3 міс., у річному обчисленні",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.transform.QOQ_ANN": {
+   "t": "квартал до кварталу, у річному обчисленні",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.transform.REAL_RATE": {
+   "t": "реальна ставка",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.transform.SPREAD_VS_REF": {
+   "t": "спред до еталона",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.transform.SUM12_PCT_GDP": {
+   "t": "сума за 12 місяців, % ВВП",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.transform.RESERVE_COVER": {
+   "t": "покриття резервами",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.transform.GLOBAL_LCU_YOY": {
+   "t": "світова зміна в національній валюті до року тому",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.freq.D": {
+   "t": "Щоденна",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.freq.M": {
+   "t": "Щомісячна",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.freq.Q": {
+   "t": "Щоквартальна",
+   "status": "reviewed",
+   "reviewed_on": "2026-11-16"
+  },
+  "CODE.freq.A": {
+   "t": "Щорічна",
    "status": "reviewed",
    "reviewed_on": "2026-11-16"
   }

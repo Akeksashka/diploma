@@ -15,6 +15,7 @@ import {emptyBlock, errorBlock} from "./state-blocks.js";
 import {pointValueText, readerText, seriesTipLines, tipText, valueWithUnit} from "./tip.js";
 import {token} from "./tokens.js";
 import {i18n} from "./i18n.js";
+import {codeText, unitLabelText, xTickFormat} from "./code-text.js";
 const X = (key, params) => i18n.t(key, params);
 
 // Five hues (tokens, both themes, 3:1 on the page and surface colours), each paired with a dash pattern and a marker shape so
@@ -181,7 +182,7 @@ export function chart(Plot, model, {html = null, free = false, highlight = null,
   const bg = token("--mm-bg");
   const muted = token("--mm-text-muted");
   const rule = token("--mm-border");
-  const x = {type: "utc", label: null, ...xAxis(model.plotted)};
+  const x = {type: "utc", label: null, ...xTickFormat(), ...xAxis(model.plotted)};
   const palette = {bg, ink, muted};
   const seriesByEntity = new Map(model.series.map((s) => [s.entity, s]));
   const seriesOf = (p) => seriesByEntity.get(p.entity);

@@ -5,6 +5,7 @@
 import {ALL_PERIODS, CHOOSE_INDICATOR_OPTION, CLASS_LABEL, EARLIEST_LABEL, KIND_LABELS, REESTIMATION_NOTE, REVISED_DATA_NOTICE, VINTAGE_TEXT} from "./copy.js";
 import {listOf} from "./meta.js";
 import {INTERACTION_LIMIT_BYTES, isoDate, isoMinute, nameOf as entityNameOf, num, toMs} from "./explorer.js";
+import {codeText, unitLabelText, xTickFormat} from "./code-text.js";
 
 export {EARLIEST_LABEL, VINTAGE_TEXT}; // FIXED vintage text (spec section 7) and its label: copy.js
 
@@ -250,9 +251,9 @@ export function historyView(ctx, indicatorId, rows, state = {}) {
       country: entityNameOf(ctx, meta.entity_id),
       seriesId,
       source: meta.source_name ?? "n/a",
-      frequency: meta.frequency ?? "n/a",
-      sa: meta.seasonal_adjustment ?? "n/a",
-      unit: meta.unit_code ? `${meta.unit_code}${meta.unit_mult ? ` x 10^${meta.unit_mult}` : ""}` : "n/a"
+      frequency: codeText("freq", meta.frequency) ?? "n/a",
+      sa: codeText("seasonal", meta.seasonal_adjustment) ?? "n/a",
+      unit: meta.unit_code ? `${codeText("unit", meta.unit_code)}${meta.unit_mult ? ` x 10^${meta.unit_mult}` : ""}` : "n/a"
     },
     keys,
     nKeys: keys.length,

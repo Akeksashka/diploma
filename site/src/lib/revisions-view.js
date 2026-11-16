@@ -8,6 +8,7 @@ import {glyph, glyphSprite} from "./glyphs.js";
 import {errorBlock} from "./state-blocks.js";
 import {periodChoices, seriesChoices} from "./revisions.js";
 import {i18n} from "./i18n.js";
+import {codeText, unitLabelText, xTickFormat} from "./code-text.js";
 const X = (key, params) => i18n.t(key, params);
 
 const escText = (v) => String(v).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"})[c]);
@@ -55,7 +56,7 @@ export function ordinaryBlock(html, rv) {
   const top = barScale(rv.rows);
   const table = rv.rows.length
     ? html`${glyphSprite(html)}<p class="mm-note" id="bar-label">${DRAFT_BAR_LABEL}</p><table id="recent-revisions"><thead><tr><th>${X("DRAFT_FILTER_LABELS.indicator")}</th><th>${X("COUNTRY_HEADER")}</th><th>${X("DRAFT_FACT_LABELS.refPeriod")}</th><th class="mm-num">${X("X_REV_PREVIOUS")}</th><th class="mm-num">${X("X_REV_NEW")}</th><th class="mm-num">${X("X_REV_ABS")}</th><th class="mm-num">${X("X_REV_PCT")}</th><th>${X("X_REV_KIND")}</th><th>${X("X_REV_CLASS")}</th><th>${X("X_REV_KNOWN_AT")}</th></tr></thead><tbody>${rv.rows.map(
-        (r) => html`<tr data-indicator="${r.indicatorId}" data-entity="${r.entity}" data-class="${r.cls}"><td>${r.hasIndicatorPage ? html`<a href="indicator/${r.indicatorId}" data-link="indicator">${r.indicator}</a>` : r.indicator}</td><td>${r.hasCountryPage ? html`<a href="country/${r.entity}" data-link="country">${r.name}</a>` : r.name}</td><td>${r.period}</td><td class="mm-num">${r.previous}</td><td class="mm-num">${r.value}</td><td class="mm-num">${signedCell(html, r.abs, r.absNum)}</td><td class="mm-num mm-bar-cell">${barCell(html, r.pct, r.pctNum, top)}</td><td>${r.loadKind}</td><td>${classCell(html, r.cls, r.clsLabel)}</td><td>${r.knownAt}</td></tr>`
+        (r) => html`<tr data-indicator="${r.indicatorId}" data-entity="${r.entity}" data-class="${r.cls}"><td>${r.hasIndicatorPage ? html`<a href="indicator/${r.indicatorId}" data-link="indicator">${r.indicator}</a>` : r.indicator}</td><td>${r.hasCountryPage ? html`<a href="country/${r.entity}" data-link="country">${r.name}</a>` : r.name}</td><td>${r.period}</td><td class="mm-num">${r.previous}</td><td class="mm-num">${r.value}</td><td class="mm-num">${signedCell(html, r.abs, r.absNum)}</td><td class="mm-num mm-bar-cell">${barCell(html, r.pct, r.pctNum, top)}</td><td>${codeText("load", r.loadKind)}</td><td>${classCell(html, r.cls, r.clsLabel)}</td><td>${r.knownAt}</td></tr>`
       )}</tbody></table>`
     : html`<p id="no-ordinary">${rv.nTotal === 0 ? NO_ORDINARY : NO_ORDINARY_CLASS}</p>`;
   return html`<section class="mm-revisions" id="ordinary-list"><h2>${X("X_REV_RECENT")}</h2>
@@ -90,7 +91,7 @@ export function historyTable(html, hv) {
   return html`<table id="vintage-history"><thead><tr><th>${X("DRAFT_FACT_LABELS.refPeriod")}</th><th>${X("X_REV_VERSION")}</th><th>${X("X_REV_KNOWN_AT")}</th><th>${X("X_REV_VINTAGE_LABEL")}</th><th>${X("X_REV_SOURCE_TS")}</th><th class="mm-num">${X("DRAFT_TABLE_HEADERS.value")}</th><th>${X("DRAFT_TABLE_HEADERS.status")}</th><th>${X("X_REV_LOAD_KIND")}</th><th class="mm-num">${X("X_REV_ABS")}</th><th class="mm-num">${X("X_REV_PCT")}</th><th>${X("X_REV_CLASS")}</th></tr></thead><tbody>${hv.keys.flatMap((k) =>
     k.versions.map(
       (v, i) =>
-        html`<tr data-period="${k.period}" data-base="${v.base ? "true" : "false"}" data-class="${v.base ? "base" : v.cls}"><td>${i === 0 ? k.period : ""}</td><td>${v.label}${v.edition ? NAMED_EDITION_MARK : ""}</td><td>${v.knownAt}</td><td>${v.vintageLabel}</td><td>${v.releaseAt}</td><td class="mm-num">${v.value}</td><td>${v.status}</td><td>${v.loadKind}${v.revisedData ? REVISED_DATA_HISTORY_MARK : ""}</td><td class="mm-num">${v.abs}</td><td class="mm-num">${v.pct}</td><td>${v.base ? "n/a" : classCell(html, v.cls, v.clsLabel)}</td></tr>`
+        html`<tr data-period="${k.period}" data-base="${v.base ? "true" : "false"}" data-class="${v.base ? "base" : v.cls}"><td>${i === 0 ? k.period : ""}</td><td>${v.label}${v.edition ? NAMED_EDITION_MARK : ""}</td><td>${v.knownAt}</td><td>${v.vintageLabel}</td><td>${v.releaseAt}</td><td class="mm-num">${v.value}</td><td>${codeText("status", v.status)}</td><td>${codeText("load", v.loadKind)}${v.revisedData ? REVISED_DATA_HISTORY_MARK : ""}</td><td class="mm-num">${v.abs}</td><td class="mm-num">${v.pct}</td><td>${v.base ? "n/a" : classCell(html, v.cls, v.clsLabel)}</td></tr>`
     )
   )}</tbody></table>`;
 }
@@ -116,7 +117,7 @@ export function stepChart(Plot, points, yLabel) {
     marginRight: 40,
     marginTop: 28,
     marginBottom: 56,
-    x: {type: "utc", label: X("X_REV_KNOWN_AT"), labelAnchor: "center", labelOffset: 44},
+    x: {type: "utc", ...xTickFormat(), label: X("X_REV_KNOWN_AT"), labelAnchor: "center", labelOffset: 44},
     y: {grid: true, label: yLabel, tickFormat: (d) => String(Number(d.toPrecision(6)))},
     marks: [
       Plot.line(valued, {x: "date", y: "value", curve: "step-after", stroke: line, strokeWidth: 2}),

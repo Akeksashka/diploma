@@ -5,6 +5,7 @@
 import {AGGREGATE_NOT_RANKED, ALL_LABEL, CAVEAT, FILTER_NOTE, GROUP_LABELS, NON_EURO_MARK, PERCENTILE_COLUMN_LABEL, SORT_LABELS} from "./copy.js";
 import {directionOf, indicatorCell, validateScorecard} from "./scorecard.js";
 import {i18n} from "./i18n.js";
+import {codeText, unitLabelText, xTickFormat} from "./code-text.js";
 const X = (key, params) => i18n.t(key, params);
 
 export {ALL_LABEL, CAVEAT, FILTER_NOTE, GROUP_LABELS, NON_EURO_MARK, PERCENTILE_COLUMN_LABEL};
@@ -92,7 +93,7 @@ export function peerView(scIn, {entities = [], indicators = [], groups = [], kno
     return {
       indicatorId: id,
       name: meta?.name ?? id,
-      unit: meta?.unit_label ?? null,
+      unit: unitLabelText(meta?.unit_label) ?? null,
       direction: directionOf(meta)?.text ?? null,
       rankMode: meta?.rank_mode ?? (rows.some((r) => r.status === "descriptive") ? "descriptive_only" : null),
       notes: [...(meta?.notes ?? [])],

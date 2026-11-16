@@ -4,6 +4,7 @@
 import {safeUrl} from "./attribution.js";
 import {multText, seriesUnit} from "./units.js";
 import {DRAFT_ABOUT_LABELS as L, DRAFT_ABOUT_SUMMARY, DRAFT_OFFSET_FLAG, DRAFT_REESTIMATED_MARK, FLAG_AHEAD, FLAG_ESTIMATE, FLAG_LAGGING, FLAG_UNALIGNED} from "./copy.js";
+import {codeText, unitLabelText, xTickFormat} from "./code-text.js";
 
 const present = (v) => v !== null && v !== undefined && v !== "";
 const ALIGNMENT_TAGS = Object.freeze({ahead: FLAG_AHEAD, lagging: FLAG_LAGGING, unaligned: FLAG_UNALIGNED});
@@ -35,14 +36,14 @@ export function aboutFields(row, entityName) {
   // Series-level (spec 5.2): unit_code, plus the "values in <unit_code> x 10^<unit_mult>" text when unit_mult is not 0.
   const unitCode = seriesUnit(s);
   add("unit", unitCode === null ? null : [unitCode, multText(s)].filter(Boolean).join("; "));
-  add("seasonal", s.seasonal_adjustment);
+  add("seasonal", codeText("seasonal", s.seasonal_adjustment));
   add("priceBasis", s.price_basis);
   add("refPeriod", row.periodText ?? row.refPeriodEnd);
   add("knownAt", c.known_at);
   add("sourceRelease", c.source_release_at);
   add("age", c.age_days);
   add("staleLimit", c.stale_limit_days);
-  add("transform", c.transform_id);
+  add("transform", codeText("transform", c.transform_id));
   add("flags", aboutFlags(row));
   if (s.reestimating === true) add("reestimating", DRAFT_REESTIMATED_MARK);
   return f;

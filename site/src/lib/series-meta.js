@@ -5,6 +5,7 @@ import {DRAFT_ABOUT_SERIES_COLUMNS as C, DRAFT_ABOUT_SERIES_HEADING, DRAFT_REEST
 import {transformLabel} from "./indicator-model.js";
 import {periodLabel} from "./period.js";
 import {indicatorUnit, rebaseUnit, seriesUnit} from "./units.js";
+import {codeText, unitLabelText, xTickFormat} from "./code-text.js";
 
 export const NA = "n/a";
 const present = (v) => v !== null && v !== undefined && v !== "";
@@ -45,7 +46,7 @@ export function aboutSeriesRows(model) {
       attribution: orNA(meta.licence_attribution),
       frequency: orNA(frequency),
       unit: orNA(cap?.unit),
-      seasonal: orNA(meta.seasonal_adjustment),
+      seasonal: orNA(codeText("seasonal", meta.seasonal_adjustment)),
       priceBasis: orNA(meta.price_basis),
       lastPeriod: last ? (periodLabel(cap?.refDate, frequency) ?? cap?.refDate ?? NA) : NA,
       knownAt: last ? orNA(cap?.vintage === "n/a" ? null : cap?.vintage) : NA,
