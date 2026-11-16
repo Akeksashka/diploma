@@ -1,6 +1,7 @@
 // L7 (layout amendment 2.1, 2.4): pure builders for the filter bar. Options come from meta/* only; nothing is computed from data.
 import {DRAFT_FILTER_ALL, DRAFT_FILTER_LABELS, DRAFT_FREQUENCY_NAMES, DRAFT_PERIOD_VALUE} from "./copy.js";
 import {frequencyOptions, indicatorList} from "./filter-model.js";
+import {codeText, unitLabelText, xTickFormat} from "./code-text.js";
 
 // Applicability by page type (amendment 2.4): a control that does nothing on a page is not rendered.
 export const CONTROLS_BY_PAGE = Object.freeze({
@@ -29,7 +30,7 @@ export const frequencySelectOptions = (indicators = []) => [
 ];
 
 // "Name (unit)": the unit sits beside the name; no unit, name only.
-export const indicatorLabel = (i) => (i.unit_label ? `${i.name ?? i.indicator_id} (${i.unit_label})` : (i.name ?? i.indicator_id));
+export const indicatorLabel = (i) => (i.unit_label ? `${i.name ?? i.indicator_id} (${unitLabelText(i.unit_label)})` : (i.name ?? i.indicator_id));
 
 // Indicator select: narrowed by Domain and Frequency, grouped by domain (meta/domains.json order). An indicator sits under the selected
 // Domain when one is set, otherwise under the first of its domain_ids (AC-RD-24 rule); one with no known domain goes in a final flat group.

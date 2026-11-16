@@ -16,6 +16,7 @@ import {sortRows} from "./sort.js";
 import {seriesTipLines, tipText} from "./tip.js";
 import {token} from "./tokens.js";
 import {indicatorUnit, rebaseUnit, seriesUnit} from "./units.js";
+import {codeText, unitLabelText, xTickFormat} from "./code-text.js";
 
 export const isEstimateStatus = (s) => s === "EST" || s === "PROV";
 const iso = (ms) => new Date(ms).toISOString().slice(0, 10);
@@ -122,7 +123,7 @@ export function facetChart(Plot, m, {domain = null, mini = true} = {}) {
     marginLeft: 56,
     marginRight: 16,
     marginBottom: 30,
-    x: {type: "utc", label: null, ...(domain ? {domain} : {}), ticks: 5},
+    x: {type: "utc", label: null, ...xTickFormat(), ...(domain ? {domain} : {}), ticks: 5},
     y: {grid: true, label: m.unit || DRAFT_UNIT_MISSING_SENTENCE},
     marks: [
       ...(m.crossesZero ? [Plot.ruleY([0], {stroke: rule, strokeWidth: 1.5})] : []),

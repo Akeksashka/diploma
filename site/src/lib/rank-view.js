@@ -20,6 +20,7 @@ import {STATES} from "./states.js";
 import {readerText, tipText, valueTipLines} from "./tip.js";
 import {factsCard} from "./facts-card.js";
 import {indicatorHeader} from "./indicator-model.js";
+import {codeText, unitLabelText, xTickFormat} from "./code-text.js";
 
 const ALIGNMENT_TAGS = Object.freeze({ahead: FLAG_AHEAD, lagging: FLAG_LAGGING, unaligned: FLAG_UNALIGNED});
 const BAR_WIDTH = 150;
@@ -178,7 +179,7 @@ export function mountRankCard(html, Plot, dash, {data, series, doc = globalThis.
     last = ctx;
     const indicator = data.indicators.find((i) => i.indicator_id === ctx.indicatorId) ?? null;
     title.textContent = indicator?.name ?? ctx.indicatorId ?? "";
-    sub.textContent = indicator?.unit_label ?? "";
+    sub.textContent = unitLabelText(indicator?.unit_label) ?? "";
     sub.hidden = !indicator?.unit_label;
     const header = indicator ? indicatorHeader(indicator, data.domains) : null;
     const failed = ctx.error ?? (series === null ? new Error("series") : null);

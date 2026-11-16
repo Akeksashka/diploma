@@ -11,6 +11,7 @@ import {errorBlock, busyBlock, setBusy} from "./state-blocks.js";
 import {token} from "./tokens.js";
 import {valueWithUnit} from "./tip.js";
 import {seriesUnit} from "./units.js";
+import {codeText, unitLabelText, xTickFormat} from "./code-text.js";
 
 // entries: manifest series files; files: {indicator_id: FileAttachment} registered in the page (each one lazy). null disables the feature.
 export function historySource(manifest, files) {
@@ -56,7 +57,7 @@ export function historyChart(Plot, m) {
     marginLeft: 64,
     marginRight: 24,
     marginBottom: 36,
-    x: {type: "utc", label: null},
+    x: {type: "utc", label: null, ...xTickFormat()},
     y: {grid: true, label: m.unit || DRAFT_UNIT_MISSING_SENTENCE},
     marks: [
       Plot.line(m.points, {x: "date", y: "value", stroke: ink, strokeWidth: 2}),

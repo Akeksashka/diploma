@@ -26,6 +26,7 @@ import {seriesTipLines, tipText} from "./tip.js";
 import {token} from "./tokens.js";
 import {indicatorUnit, rebaseUnit, seriesUnit} from "./units.js";
 import {seriesDefinedSet} from "./missing.js";
+import {codeText, unitLabelText, xTickFormat} from "./code-text.js";
 
 export const MAX_COLOURED = 5; // ADR-025 decision 6
 const SERIES_TOKENS = Object.freeze(["--mm-series-1", "--mm-series-2", "--mm-series-3", "--mm-series-4", "--mm-series-5"]);
@@ -167,7 +168,7 @@ export function multiLineChart(Plot, m) {
     marginLeft: 56,
     marginRight: 150,
     marginBottom: 30,
-    x: {type: "utc", label: null, ticks: 6, ...(xDomainOf(m.from, m.to) ? {domain: xDomainOf(m.from, m.to)} : {})},
+    x: {type: "utc", label: null, ...xTickFormat(), ticks: 6, ...(xDomainOf(m.from, m.to) ? {domain: xDomainOf(m.from, m.to)} : {})},
     y: {grid: true, label: m.unit || DRAFT_UNIT_MISSING_SENTENCE},
     color: {domain: colourDomain, range: colourRange},
     marks: [

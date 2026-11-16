@@ -4,6 +4,7 @@ import {DRAFT_CAPTION_LABELS, DRAFT_CAPTION_LEGEND, DRAFT_CAPTION_SEASONAL, DRAF
 import {periodLabel} from "./period.js";
 import {utcDate} from "./stale.js";
 import {unitText} from "./units.js";
+import {codeText, unitLabelText, xTickFormat} from "./code-text.js";
 
 const present = (v) => v !== null && v !== undefined && !(typeof v === "string" && v.trim() === "");
 // Distinct present values in A to Z order; `absent` is true when some entry had none.
@@ -11,7 +12,7 @@ const distinct = (values) => ({values: [...new Set(values.filter(present))].sort
 const joined = ({values, absent}) => (values.length === 0 ? DRAFT_NOT_STATED : absent ? [...values, DRAFT_NOT_STATED].join(", ") : values.join(", "));
 
 // Stored seasonal_adjustment: SA, NSA, or a stored not-applicable code; any other stored string is shown as stored.
-const seasonalText = (code) => (code === "SA" || code === "NSA" ? DRAFT_CAPTION_SEASONAL[code] : /^n\/?a$/i.test(String(code).trim()) ? DRAFT_CAPTION_SEASONAL.NA : String(code));
+const seasonalText = (code) => (code === "SA" || code === "NSA" ? DRAFT_CAPTION_SEASONAL[code] : /^n\/?a$/i.test(String(code).trim()) ? DRAFT_CAPTION_SEASONAL.NA : String(codeText("seasonal", code)));
 
 // Title of a chart: the indicator name and the stored unit_label verbatim (AC-V2-72); no unit when none is stored.
 export function captionTitle(indicator) {

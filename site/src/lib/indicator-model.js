@@ -9,6 +9,7 @@ import {periodLabel} from "./period.js";
 import {directionOf, formatPercentile, formatValue} from "./scorecard.js";
 import {sortRows} from "./sort.js";
 import {indicatorUnit} from "./units.js";
+import {codeText, unitLabelText, xTickFormat} from "./code-text.js";
 
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 const LEVEL = "LEVEL";
@@ -32,7 +33,7 @@ export function transformLabel(indicator, transformId) {
   if (id === null) return null;
   const opt = (indicator?.transform_options ?? []).find((o) => o === id || o?.id === id || o?.transform_id === id);
   const label = typeof opt === "object" && opt !== null ? opt.label ?? opt.name : null;
-  return typeof label === "string" && label.trim() !== "" ? label : id;
+  return typeof label === "string" && label.trim() !== "" ? label : codeText("transform", id);
 }
 
 // First stored transform_id of this indicator's cells in a scorecard (null when no cell carries one).

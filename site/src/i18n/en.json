@@ -1693,5 +1693,137 @@
  },
  "X_PRINT_URL": {
   "t": "Page URL:"
+ },
+ "CODE.unit.PCT": {
+  "t": "%"
+ },
+ "CODE.unit.PCT_GDP": {
+  "t": "% of GDP"
+ },
+ "CODE.unit.PC_GDP": {
+  "t": "% of GDP"
+ },
+ "CODE.unit.PCT_POT_GDP": {
+  "t": "% of potential GDP"
+ },
+ "CODE.unit.PC_ACT": {
+  "t": "% of the active population"
+ },
+ "CODE.unit.IDX": {
+  "t": "index"
+ },
+ "CODE.unit.I21": {
+  "t": "index, 2021 = 100"
+ },
+ "CODE.unit.I25": {
+  "t": "index, 2025 = 100"
+ },
+ "CODE.unit.BALANCE": {
+  "t": "balance, points"
+ },
+ "CODE.unit.INTL_USD_PPP": {
+  "t": "international dollars, PPP"
+ },
+ "CODE.unit.USD": {
+  "t": "US dollars"
+ },
+ "CODE.unit.EUR": {
+  "t": "euro"
+ },
+ "CODE.unit.LCU": {
+  "t": "local currency units"
+ },
+ "CODE.unit.MONTHS": {
+  "t": "months"
+ },
+ "CODE.seasonal.SA": {
+  "t": "seasonally adjusted"
+ },
+ "CODE.seasonal.SCA": {
+  "t": "seasonally and calendar adjusted"
+ },
+ "CODE.seasonal.NSA": {
+  "t": "not seasonally adjusted"
+ },
+ "CODE.seasonal.NA": {
+  "t": "not applicable"
+ },
+ "CODE.status.OBS": {
+  "t": "observed"
+ },
+ "CODE.status.EST": {
+  "t": "estimate"
+ },
+ "CODE.status.PROV": {
+  "t": "provisional"
+ },
+ "CODE.status.PROJ": {
+  "t": "projection"
+ },
+ "CODE.status.DEL": {
+  "t": "deleted"
+ },
+ "CODE.status.MISS": {
+  "t": "missing at the source"
+ },
+ "CODE.load.initial": {
+  "t": "initial"
+ },
+ "CODE.load.new_period": {
+  "t": "new period"
+ },
+ "CODE.load.revision": {
+  "t": "revision"
+ },
+ "CODE.load.tombstone": {
+  "t": "tombstone"
+ },
+ "CODE.load.import": {
+  "t": "import"
+ },
+ "CODE.transform.LEVEL": {
+  "t": "level"
+ },
+ "CODE.transform.YOY": {
+  "t": "change on a year earlier, %"
+ },
+ "CODE.transform.YOY_PCT_POINT_CHANGE": {
+  "t": "change on a year earlier, percentage points"
+ },
+ "CODE.transform.DIFF12": {
+  "t": "12-month difference"
+ },
+ "CODE.transform.M3M3_ANN": {
+  "t": "3-month on 3-month, annualised"
+ },
+ "CODE.transform.QOQ_ANN": {
+  "t": "quarter on quarter, annualised"
+ },
+ "CODE.transform.REAL_RATE": {
+  "t": "real rate"
+ },
+ "CODE.transform.SPREAD_VS_REF": {
+  "t": "spread to the reference"
+ },
+ "CODE.transform.SUM12_PCT_GDP": {
+  "t": "12-month sum, % of GDP"
+ },
+ "CODE.transform.RESERVE_COVER": {
+  "t": "reserve cover"
+ },
+ "CODE.transform.GLOBAL_LCU_YOY": {
+  "t": "global change in local currency on a year earlier"
+ },
+ "CODE.freq.D": {
+  "t": "Daily"
+ },
+ "CODE.freq.M": {
+  "t": "Monthly"
+ },
+ "CODE.freq.Q": {
+  "t": "Quarterly"
+ },
+ "CODE.freq.A": {
+  "t": "Annual"
  }
 }

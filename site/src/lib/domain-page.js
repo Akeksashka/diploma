@@ -6,6 +6,7 @@ import {pcSwitch} from "./compare-controls.js";
 import {glyphSprite} from "./glyphs.js";
 import {cardView} from "./heatmap.js";
 import {domainBlock} from "./scorecard-view.js";
+import {codeText, unitLabelText, xTickFormat} from "./code-text.js";
 
 // V22 (ADR-037 decision 3, A1.7; AC-V2-51 amended): the domain heatmap C5 is the percentile layer. It is rendered on this page only while `pc` is on, as a secondary block that is
 // collapsed (a closed <details>); the orientation sentence goes with it. Without pc the page holds the domain's indicator links and the "Show percentile" switch.
@@ -13,7 +14,7 @@ import {domainBlock} from "./scorecard-view.js";
 export function domainPage(html, view, {store, inputs, allDomainsHref = "../domains", indicatorHref = (id) => `../indicator/${id}`}) {
   // c is cleared: Country is not a control of this page (amendment 2.4), so a carried c must not mark or filter the heatmap.
   const heat = () => domainBlock(html, cardView(inputs.scorecard, {...inputs, state: {...store.get(), c: []}}), {card: true, orientation: true});
-  const links = () => html`<ul class="mm-domain-indicators" id="domain-indicators">${(view.indicatorIds ?? []).map((id) => (inputs.indicators ?? []).find((i) => i.indicator_id === id)).filter(Boolean).map((i) => html`<li><a href="${indicatorHref(i.indicator_id)}" data-link="indicator" data-carry>${i.name ?? i.indicator_id}</a>${i.unit_label ? html` (${i.unit_label})` : ""}</li>`)}</ul>`;
+  const links = () => html`<ul class="mm-domain-indicators" id="domain-indicators">${(view.indicatorIds ?? []).map((id) => (inputs.indicators ?? []).find((i) => i.indicator_id === id)).filter(Boolean).map((i) => html`<li><a href="${indicatorHref(i.indicator_id)}" data-link="indicator" data-carry>${i.name ?? i.indicator_id}</a>${i.unit_label ? html` (${unitLabelText(i.unit_label)})` : ""}</li>`)}</ul>`;
   const render = () => html`${links()}${store.get().pc === true ? html`<details class="mm-secondary" id="c5-secondary" data-card="c5"><summary>${DRAFT_COMPARE_SECONDARY(DRAFT_COMPARE_CARD_TITLES.c5)}</summary>${heat()}</details>` : ""}`;
   const root = html`<div class="mm-domain-page">
 ${glyphSprite(html)}

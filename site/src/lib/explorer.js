@@ -11,6 +11,7 @@ import {isLevelDefault, shortUnit} from "./series-meta.js";
 import {transformLabel} from "./indicator-model.js";
 import {isRebasable, rebase, rebaseOffered} from "./rebase.js";
 import {i18n} from "./i18n.js";
+import {codeText, unitLabelText, xTickFormat} from "./code-text.js";
 const X = (key, params) => i18n.t(key, params);
 
 export const INTERACTION_LIMIT_BYTES = 5_000_000; // spec section 8: data fetched by one interaction
@@ -228,10 +229,10 @@ export function autoBase(seriesList) {
 function unitText(ctx, ind, meta, column, rebaseBase) {
   if (rebaseBase != null) return rebaseUnit(rebaseBase) ?? REBASED_UNIT;
   if (column === "value_yoy") return X("X_UNIT_YOY");
-  const label = ind?.unit_label ?? null;
+  const label = unitLabelText(ind?.unit_label) ?? null;
   // CR-6: transformed_value has no stored unit, so the default transform is named, never given the level's unit_label.
   if (column === "value_default_tf" && !isLevelDefault(ind)) return X("X_UNIT_DEFAULT_TF", {label: transformLabel(ind, null)});
-  if (meta?.unit_code) return `${meta.unit_code}${meta.unit_mult ? ` x 10^${meta.unit_mult}` : ""}${label ? ` (${label})` : ""}`;
+  if (meta?.unit_code) return `${codeText("unit", meta.unit_code)}${meta.unit_mult ? ` x 10^${meta.unit_mult}` : ""}${label ? ` (${label})` : ""}`;
   return label;
 }
 

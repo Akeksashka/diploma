@@ -5,6 +5,7 @@
 
 import {AGGREGATE_NOT_RANKED, ALERT_LEVEL_PREFIX, CAVEAT, DIRECTION_LABELS, directionWithTarget, DESCRIPTIVE_CELL, FLAG_AHEAD, FLAG_ESTIMATE, FLAG_INHERITED, FLAG_LAGGING, FLAG_UNALIGNED, FLAG_UNALIGNED_FISCAL, INFORMATIONAL_NOTICE, NA, NOT_PUBLISHED, NOT_RANKED_INFO_ONLY, NOT_RANKED_INHERITED, NO_POSITION, NO_POSITION_LOW_COVERAGE, NO_RANK_STALE, PEER_NOTE_HEAD, PEER_NOTE_TAIL, PERCENTILE_COLUMN_LABEL, UNRANKED, UNRANKED_DOMAIN_CELL, notRankedCell} from "./copy.js";
 import {i18n} from "./i18n.js";
+import {codeText, unitLabelText, xTickFormat} from "./code-text.js";
 const X = (key, params) => i18n.t(key, params);
 
 export {CAVEAT, PERCENTILE_COLUMN_LABEL};
@@ -70,7 +71,7 @@ export function directionOf(meta) {
   if (meta.rank_mode === "descriptive_only") return {key: "descriptive", text: DIRECTION_LABELS.descriptive};
   if (meta.rank_mode === "target_distance") {
     const stored = meta.target?.value;
-    const text = isNum(stored) ? directionWithTarget(DIRECTION_LABELS.target, formatValue(stored), meta.unit_label ?? "") : DIRECTION_LABELS.target;
+    const text = isNum(stored) ? directionWithTarget(DIRECTION_LABELS.target, formatValue(stored), unitLabelText(meta.unit_label) ?? "") : DIRECTION_LABELS.target;
     return {key: "target", text};
   }
   if (meta.rank_mode === "monotone_good" && meta.good_dir === 1) return {key: "higher", text: DIRECTION_LABELS.higher};
@@ -82,7 +83,7 @@ export function directionOf(meta) {
 // carries the stored fields the heatmap needs (percentile only when it is the one shown); nothing here is derived.
 export function indicatorCell(ind, ctx) {
   const meta = ctx.indicator;
-  const unit = meta?.unit_label ?? null;
+  const unit = unitLabelText(meta?.unit_label) ?? null;
   const base = {
     indicatorId: ind.indicator_id,
     name: meta?.name ?? ind.indicator_id,
@@ -205,7 +206,7 @@ export function domainView(scIn, {entities = [], indicators = [], domains = []} 
   const columnIds = [...listed, ...cellIds.filter((id) => !listed.includes(id))];
   const columns = columnIds.map((id) => {
     const m = indById.get(id);
-    return {indicatorId: id, name: m?.name ?? id, unit: m?.unit_label ?? null, direction: directionOf(m)};
+    return {indicatorId: id, name: m?.name ?? id, unit: unitLabelText(m?.unit_label) ?? null, direction: directionOf(m)};
   });
   const rows = [...summaries].sort(byName).map((summary) => ({
     entityId: summary.entityId,
